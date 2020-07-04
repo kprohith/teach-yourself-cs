@@ -1,0 +1,261 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-54.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-53.html">previous</a></span><span>, <a href="curriculum-Z-H-55.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_part_Temp_226"></a>
+<h1 class="part" align="center"><div class="partheading">&nbsp;</div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_part_Temp_226">Epilogue</a></h1>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<div align="right"><table width="60%"><tr><td>
+<span class="epigraph">
+
+<p></p>
+<div align="left">
+<em>ROS: I mean, what exactly do you <em>do</em>?<br>
+PLAYER: We keep to our usual stuff, more or less, only inside out.  We 
+do on stage things that are supposed to happen off.  Which is a kind
+of integrity, if you look on every exit as being an entrance somewhere 
+else.<br>
+ </em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Tom Stoppard, <em>Rosencrantz and Guildenstern are Dead</em>
+</div><p>
+</p>
+
+</span>
+</td></tr></table>
+</div>
+<p></p>
+<p>
+We have reached the end of this introduction to computing and program
+design. While there is more to learn about both subjects, this is a good
+point to stop, to summarize, and to look ahead.</p>
+<p>
+</p>
+<a name="node_sec_Temp_227"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_227">Computing</a></h2>
+<p></p>
+<p>
+From elementary school to high school we learn to compute with one form of
+data: numbers. Our first use of numbers is to count real things, say, three
+apples, five friends, twelve bagels. Later we use numbers without any
+appeal to concrete objects, but we have learned that numbers represent
+information in the real world.</p>
+<p>
+Computing with software is <em>algebra for all kinds of data</em>, not just
+numbers. Nowadays, computer programs process representations of music,
+molecules, law cases, electrical diagrams, architectures of houses, and
+poems. Fortunately, we have learned to represent information with other
+forms of data than just numbers. Otherwise, computing and programming would
+become extremely tedious tasks.</p>
+<p>
+Above all, we shouldn't forget that computing means manipulating data
+through proper basic operations.  Some operations create new values. Others
+extract values from values.  Yet others modify values.  Finally, there are
+also basic operations for determining to which class a piece of data
+belongs. Built-in operations and functions are of course just another class
+of data.  Definition is value creation; application is a form of value
+extraction.<a name="call_footnote_Temp_228"></a><a href="#footnote_Temp_228"><sup><small>79</small></sup></a></p>
+<p>
+When we define a function, we combine basic data operations. There are two
+fundamental mechanisms for combining functions: function composition and
+conditional expressions. The former means that the result of one function
+becomes the argument of another one. The latter represents a choice among
+several possibilities. When we eventually apply a function, we trigger a
+computation. </p>
+<p>
+In this book we have studied the laws of basic operations and the laws of
+operation combination. Using these laws we can understand, in principle,
+how any function processes its input data and how it produces its results
+and effects. Because the computer is extremely fast and good at using these
+laws, it can perform such evaluations for more data and for larger programs
+than we can do with paper and pencil.</p>
+<p>
+</p>
+<a name="node_sec_Temp_229"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_229">Programming</a></h2>
+<p></p>
+<p>
+Programs consist of definitions and expressions. Large programs consist of
+hundreds and thousands of definitions and expressions. Programmers design
+functions, use other programmer's functions, leave, start on the
+project. Without a strong discipline we cannot hope to produce software of
+high quality. The key to programming discipline is to understand the design
+of programs as a means to describe computations, which, in turn, is to
+manipulate data through combinations of basic operations.</p>
+<p>
+For that reason, the design of every program -- whether it is small and for
+personal use or large and for business use -- must start with an analysis
+of the surrounding world of information and a description of the classes of
+data that represent the relevant information. If the classes are unusual or
+new, we make up examples so we understand the structure of the class
+description. After we understand the world of information surrounding our
+project and its data representation, we make a plan.</p>
+<p>
+A project plan identifies what data we wish to produce from the data that
+the program will be given. In many cases, though, a program doesn't process
+data in just one way but in many ways. For example, a program for managing
+bank accounts must handle deposits, withdrawals, interest calculations, tax
+form generation, and many other tasks. In other cases, a program may have
+to compute complex relationships. For example, a program for simulating a
+ping-pong game must compute the movement of the ball, bounces on the table,
+bounces from the paddle, paddle movements, etc.  In either case, we need to
+describe what the various ways of processing data are and how they relate
+to each other.  Then we rank them and start with the most important one. We
+develop a working product, make sure that it meets our specifications, and
+refine the product by adding more functions or taking care of more cases or
+both.</p>
+<p>
+Designing a function requires a rigorous understanding of what it computes.
+Unless we can describe its purpose and its effect with concise statements,
+we can't produce the function. In almost all cases, it helps to make up
+examples and work through the function's computation by hand. For
+complicated functions or for functions that use generative recursion,
+<a name="node_idx_2646"></a> 
+we should include some examples with the purpose statements. The examples
+illustrate the purpose and effect statements for others who may have to
+read or modify the program.</p>
+<p>
+Studying examples tends to suggest the basic design recipe. In most cases,
+the design of a function is structural,
+<a name="node_idx_2648"></a>even if it uses an accumulator or
+structure mutation. In a few others, we must use generative recursion. For
+these cases, it is important to explain the method for generating new
+problems and to sketch why the computation terminates. </p>
+<p>
+When the definition is complete, we must test the function. Testing
+discovers mistakes, which we are bound to make due to all kinds of
+reasons. The best testing process turns independently developed examples
+into test suites, that is, a bunch of expressions that apply the function
+to select input examples and compare its results and effects with expected
+results and effects (mostly) automatically. If a mismatch is discovered,
+the test suite reports a problem. The test suite should never be discarded,
+only commented out. Every time we modify the function, we must use the test
+suite to check that we didn't introduce mistakes. If we changed the
+underlying process, we may have to adapt the test suite mutatis
+mutandis.</p>
+<p>
+No matter how hard we work, a function (or program) isn't done the first
+time it works for our test suite. We must consider whether the development
+of the function revealed new interesting examples and turn such examples
+into additional tests. And we must edit the program. In particular, we must
+use abstraction properly to eliminate all patterns wherever possible.</p>
+<p>
+If we respect these guidelines, we will produce decent software. It will
+work because we understand why and how it works. Others who must modify or
+enhance this software will understand it, because we include sufficient
+information on its development process. Still, to produce great software,
+we must practice following these guidelines and also learn a lot more about
+computing and programming than a first book can teach.</p>
+<p>
+</p>
+<a name="node_sec_Temp_230"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_230">Moving On</a></h2>
+<p></p>
+<p>
+The knowledge and design skills from this book are a good foundation for
+learning more about programming, computing, and even practical work on
+software. First, the skills are good for learning the currently fashionable
+collection of object-oriented languages,
+<a name="node_idx_2650"></a>especially Java. The two languages
+share a philosophy of programming. In both settings, computing means
+dealing with data, and programming means describing classes of values and
+functions on them.  Unlike Scheme, however, Java requires programmers to
+spell out the class descriptions in Java, not just in English, and to place
+function definitions with class descriptions. As a result, Java requires
+programmers to learn a lot of syntactic conventions and is unsuitable as a
+first language.</p>
+<p>
+Second, a programmer must study the fundamental ideas of computing. Thus
+far, our studies have focused on the laws of computing for data-oriented
+programming languages.
+<a name="node_idx_2652"></a>Using the programming skills from this book, we can
+design and implement a simulation of how the hardware computes. By doing so
+we see the laws of computing from a radically different perspective. The
+contrast points to a number of interesting questions:
+</p>
+<ol>
+<li><p>The two mechanisms of computing are rather different. Can one
+mechanism compute what the other one can compute and vice versa?</p>
+<p>
+</p>
+<li><p>The laws we have used are mathematical and abstract. They do not take
+into account any real-world limitations. Does this mean that we can compute
+whatever we wish? </p>
+<p>
+</p>
+<li><p>The (simulated) hardware shows that computers have limitations. How
+do these limitations affect what we can compute? 
+</p>
+</li></ol><p>
+Research on these questions created the discipline of computing and still
+guides the design of most computing curricula.</p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-30.html#node_part_IX"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Full<br>
+Scheme</a>
+</td></tr></table><p>
+Finally, the design knowledge of this book is enough to build some
+real-world programs in Scheme. DrScheme with its built-in Web browser and
+email capabilities is such a program. Building large real-world programs,
+however, requires some more knowledge about the functions that Scheme uses
+to create GUIs, to connect computers on a network, to script things such as
+shells, common gateway interfaces (CGI), COM objects, and so on. </p>
+<p>
+Material on all three topics is available from this book's Web site in a
+form that extends the coverage and the style of the book. The book's Web
+site is</p>
+<p>
+<code class="verbatim">http://www.htdp.org/</code></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Check in with this site on a regular basis and continue to study
+computing and programming. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_228"></a><a href="#call_footnote_Temp_228"><sup><small>79</small></sup></a> An object in a language such as Java is a function
+with many different bodies. Each method represents a different way of
+extracting data from an object.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-53.html">previous</a></span><span>, <a href="curriculum-Z-H-55.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-54.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/replace-eol-simp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="list-ref.html">17.3.1</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.4.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-ref-simpl.html">17.4.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#|
+;Data Definition:
+a list-of-numbers is either
+  1. empty or
+  2. (cons n lon)
+  where n is a number and lon is a list-of-numbers
+
+;Contract, Purpose, Header:
+
+(define (replace-eol-with alon1 alon2) ...)
+
+
+;Template:
+(define (replace-eol-with alon1 alon2) 
+  (cond
+    [(and (empty? alon1) (empty? alon2)) 
+     ...]
+    [(and (empty? alon1) (cons? alon2)) 
+     ...(first alon2)...(rest alon2)...]
+    [(and (cons? alon1) (empty? alon2))      
+     ...(first alon1)...(rest alon1)...]
+    [(and (cons? alon1) (cons? alon2)) 
+     ...(first alon1)...(rest alon1)...
+     ...(first alon2)...(rest alon2)...]))
+
+;;replace-eol-with : 
+;;  list-of-numbers list-of-numbers  -&gt;  list-of-numbers
+;;to construct a new list by replacing 
+;;empty in alon1 with alon2
+;Definition following the strategy of section 17.3:
+(define (replace-eol-with alon1 alon2) 
+  (cond
+    [(and (empty? alon1) (empty? alon2)) 
+     empty]
+    [(and (empty? alon1) (cons? alon2)) 
+     alon2]
+    [(and (cons? alon1) (empty? alon2))      
+     alon1]
+    [(and (cons? alon1) (cons? alon2)) 
+     (cons (first alon1) 
+           (replace-eol-with (rest alon1) alon2))]))
+|#
+
+;Definition from above - simplified:
+(define (replace-eol-with alon1 alon2) 
+  (cond
+    [(empty? alon1) 
+     alon2]
+    [(empty? alon2)      
+     alon1]
+    [else 
+     (cons (first alon1) 
+           (replace-eol-with (rest alon1) alon2))]))
+
+;Tests:
+(check-expect 
+ (replace-eol-with empty empty)
+ empty)
+
+(check-expect 
+ (replace-eol-with empty (list 1 2 3))
+ (list 1 2 3))
+
+(check-expect 
+ (replace-eol-with (list 1 2 3) empty)
+ (list 1 2 3))
+
+(check-expect 
+ (replace-eol-with (list 1 2 3) (list 7 8 9))
+ (list 1 2 3 7 8 9))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/replace-eol-simp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

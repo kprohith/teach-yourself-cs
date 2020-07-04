@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en" itemscope itemtype="http://schema.org/Product"> <!--<![endif]-->
+<html>
+<head>
+<title>Racket: From PLT Scheme to Racket</title>
+<meta name="generator" content="Racket" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<link rel="icon" href="/plticon-1-2.ico" type="image/ico" />
+<link rel="shortcut icon" href="/plticon-1-2.ico" type="image/x-icon" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<link rel="stylesheet" href="/gumby-1-2.css" />
+<script src="/modernizr-2.6.2.min.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-48767493-1', 'racket-lang.org');
+ga('send', 'pageview');</script>
+</head>
+<body><div class="navbar gumby-content" style="position: fixed;" gumby-fixed="top" id="nav1"><div class="row"><a class="toggle" gumby-trigger="#nav1 &gt; .row &gt; ul" href="#"><i class="icon-menu"></i></a>
+<a class="four columns logo" href="/"><img class="logo" src="/logo-and-text-1-2.png" width="198" height="60" alt="Racket" /></a>
+<span class="one colums"></span> <ul class="five columns"><li><a href="https://pkgs.racket-lang.org/">Packages</a></li>
+<li><a href="https://docs.racket-lang.org/">Documentation</a></li>
+<li><a href="https://blog.racket-lang.org/">Blog</a></li>
+<li><div class="medium metro info btn icon-left entypo icon-install"><a href="https://download.racket-lang.org/">Download</a></div></li></ul></div></div><div style="height: 60px;"></div>
+<div class="bodycontent">  <style>
+.nestedheading {
+  text-align: center;
+  font-weight: bold;
+  font-size: large;
+}
+.nested {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.faqsection {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+}
+.faqques {
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.faqans {
+  margin-left: 1em;
+}
+</style>
+
+<div class="row"><div class="nine columns">
+<div class="nestedheading">PLT Scheme is a Racket</div>
+
+<div class="nested">Sure, it has parentheses, uses the keyword <tt>lambda</tt>, provides
+lexical scope, and emphasizes macros — but don't be fooled.  PLT Scheme
+is no minimalist embodiment of 1930s math or 1970s technology.  PLT
+Scheme is a cover for a gang of academic hackers who want to fuse
+cutting-edge programming-language research with everyday programming.
+They draw you in with the promise of a simple and polite little Scheme,
+but soon you'll find yourself using modules, contracts, keyword
+arguments, classes, static types, and even curly braces.</div>
+
+
+<div class="nestedheading">Racket is (kind of) a Scheme</div>
+
+<div class="nested">Racket is still a dialect of Lisp and a descendant of Scheme.  The
+tools developed by PLT will continue to support R5RS, R6RS, the old
+<tt>mzscheme</tt> environment, Typed Scheme, and more.  At the same time,
+instead of having to say “PLT's main variant of Scheme,” programmers can
+now simply say “Racket” to refer to the specific descendant of Scheme
+that powers PLT's languages and libraries.</div>
+
+
+<div class="faqsection"><div class="nestedheading">Anticipated Questions</div>
+
+
+<div class="faqentry"><div class="faqques"><a name="why">Why change the name?</a></div>
+<div class="faqans"><p>The <i>Scheme</i> part of the name <i>PLT Scheme</i> is misleading, and
+it is often an obstacle to explaining and promoting PLT research and
+tools.</p>
+<p>For example, when you type “scheme” into Google, the first hit is a
+Wikipedia entry written from an R5RS perspective.  That's appropriate
+for a Wikipedia page on Scheme, but it's not a good introduction to PLT
+Scheme. As long as we call our language <i>Scheme</i>, we struggle to
+explain our language, and we are usually forced to start the
+explanation with a disclaimer.  At the same time, to the degree that
+the PLT community has defined <i>Scheme</i> through market share,
+publications, and educational outreach, we interfere with everyone
+else's ability to define <i>Scheme</i> — and many have a valid claim to
+that ability.</p>
+<p>By switching to <i>Racket</i>, we expect to resolve this communication
+problem.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="what">What will the change look like?</a></div>
+<div class="faqans"><p><i>DrScheme</i> becomes <i>DrRacket</i>.  The <tt>mzscheme</tt> executable
+becomes <tt>racket</tt>, and <tt>mred</tt> becomes <tt>gracket</tt> (following a
+common convention for “GUI <tt>racket</tt>”).  We change each <tt>#lang
+scheme</tt> to <tt>#lang racket</tt> in the Racket distribution, although
+<tt>#lang scheme</tt> will be supported for backward compatibility. The
+<tt><a href="http://plt-scheme.org">http://plt-scheme.org</a></tt> site will be replaced by
+<tt><a href="https://racket-lang.org">https://racket-lang.org</a></tt>.  The <tt>plt-scheme</tt> mailing list becomes
+the <tt>racket</tt> mailing list (<tt>users@racket-lang.org</tt>).</p>
+<p>The Racket site and documentation will note that Racket is a descendant
+of Scheme, but most current uses of the word “Scheme” (which implicitly
+mean PLT Scheme) will be replaced by “Racket.”</p>
+<p>Racket programmers are <i>Racketeers</i>, of course.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="scheme">Does this mean that PLT will no longer implement Scheme?</a></div>
+<div class="faqans"><p>There will be little difference between the current <tt>#lang scheme</tt>
+and the new <tt>#lang racket</tt>, but the latter will become the preferred
+form.</p>
+<p>In addition, PLT will continue to support standards such as R5RS and
+R6RS.  The transition from/to various Scheme languages to/from Racket
+will be as easy/difficult as before.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="transition">What happens to all of the old programs, scripts,
+address books, bookmarks, papers, etc. that refer to <i>PLT Scheme</i>
+instead of <i>Racket</i>?</a></div>
+<div class="faqans"><p>Old executables, web sites, mailing addresses, and module names will
+forward to the new ones.  We will work to make the transition as
+painless as possible and to preserve old references for as long as
+possible.</p></div></div>
+
+<div class="faqentry"><div class="faqques"><a name="edu">How can I tell my department that we should teach with Racket
+instead of Scheme?  They've never heard of <i>Racket</i>.</a></div>
+<div class="faqans"><p>If you felt comfortable claiming that PLT Scheme was Scheme before,
+then you can still say that you want to teach with Scheme, even if the
+environment is called <i>DrRacket</i>.  Racket is a descendant of
+Scheme, just like PLT Scheme was.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="brand">Aren't you worried that you will lose brand recognition by
+switching from the name <i>Scheme</i> to <i>Racket</i>?</a></div>
+<div class="faqans"><p>Yes.  Nevertheless, we think the long-term benefit of a new name will
+outweigh the short-term difficulties of changing.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="plt">Instead of picking a new name, why not just call the language
+<i>PLT</i>?</a></div>
+<div class="faqans"><p>Some of us tried that, informally.  It felt awkward, because we use
+<i>PLT</i> to refer to a group of people, and because we have used
+<i>PLT</i> as a modifier for <i>Scheme</i> and other nouns.  Switching
+the language name from one noun to another sounds better, it's clearer,
+and it's easier to explain.</p></div></div>
+
+
+<div class="faqentry"><div class="faqques"><a name="suggestions">Couldn't you find a better name?
+<i>[Insert name here]</i> would be better.</a></div>
+<div class="faqans"><p>Thank you for the suggestion.  The name <i>Racket</i> meets some basic
+criteria: it isn't used already, it's easy to pronounce and spell, and
+it has a vague connection to the word “scheme.”  Mostly, though, we
+just like it.</p></div></div>
+</div></div></div></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+//<![CDATA[
+window.jQuery || document.write('<script src=/jquery-1.9.1.min.js><\/script>')
+//]]>
+</script>
+<script src="/gumby.min.js"></script>
+<script src="/plugins.js"></script>
+<script src="/main.js"></script>
+</body></html>

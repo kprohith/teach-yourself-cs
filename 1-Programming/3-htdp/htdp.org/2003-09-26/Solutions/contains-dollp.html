@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/contains-dollp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="speak.html">10.1.9</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="show-picture.html">10.2.2</a><pre>;; an inventory is either:
+;;  - empty, or
+;;  - (cons ir inv)
+;; where ir is an inventroy record and inv is an inventory
+
+;; An inventory record (ir) is a structure:
+;;  (make-ir s n)
+;; where s is a symbol and n is a posnum
+(define-struct ir (name price))
+
+;; contains-doll? : inventory -&gt; boolean
+;; determines if an-inv contains a record for 'doll.
+
+#|
+;; TEMPLATE
+(define (contains-doll? an-inv)
+  (cond
+    [(empty? an-inv) ...]
+    [else (ir-name (first an-inv)) ...
+          (ir-price (first an-inv)) ...
+          (contains-doll? (rest an-inv))]))
+|#
+
+(define (contains-doll? an-inv)
+  (cond
+    [(empty? an-inv) false]
+    [else (or (symbol=? 'doll (ir-name (first an-inv)))
+              (contains-doll? (rest an-inv)))]))
+
+;; EXAMPLES AS TESTS
+
+(contains-doll? empty) "should be" false
+(contains-doll? (cons (make-ir 'rocket 1) empty)) "should be" false
+(contains-doll? (cons (make-ir 'doll 1) empty)) "should be" true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/contains-dollp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

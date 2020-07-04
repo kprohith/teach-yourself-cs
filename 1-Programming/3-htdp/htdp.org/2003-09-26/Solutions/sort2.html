@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sort2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 12.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="sort1.html">12.2.1</a> | <a href="../Book/curriculum-Z-H-16.html#node_thm_12.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="draw-poly0.html">12.3.1</a><pre>;; search-sorted : number list-of-numbers -&gt; boolean
+;; to determine if n is is alon
+(define (search-sorted n alon)
+  (cond
+    [(empty? alon) false]
+    [else (cond
+            [(= n (first alon)) true]
+            [(&lt; n (first alon)) false]
+            [(&gt; n (first alon)) (search-sorted n (rest alon))])]))
+
+;; EXAMPLES AS TESTS
+(search-sorted 0 empty) "should be" false
+
+(search-sorted 2 (cons 1 (cons 2 (cons 3 (cons 4 empty)))))
+"should be" true
+
+(search-sorted 2 (cons 1 (cons 3 (cons 4 empty))))
+"should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sort2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

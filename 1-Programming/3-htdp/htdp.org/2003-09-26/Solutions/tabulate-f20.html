@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tabulate-f20.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.4.4; How to Design Programs </title>
+</head>
+<body>
+<a href="pi-11.html">11.4.3</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.4.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="tabulate-f-limit.html">11.4.5</a><pre>;; a list-of-posns is either:
+;;  - empty
+;;  - (cons posn list-of-posns)
+
+;; f : number -&gt; number
+(define (f x) 
+  (+ (* 3 (* x x)) 
+     (+ (* -6 x) 
+        -1)))
+
+;; tabulate-f : number -&gt; list-of-posns
+;; produces a list of posns of length n. Each
+;; posn's x coordinate is a number, from 0 to n, and each
+;; posn's y coordinate is the result of f on the same posn's
+;; x coordinate.
+
+#|
+;; TEMPLATE
+(define (tabulate-f n)
+  (cond
+    [(zero? n) ...]
+    [else (tabulate-f (sub1 n)) ...]))
+|#
+
+(define (tabulate-f n)
+  (cond
+    [(zero? n) empty]
+    [else (cons (make-posn n (f n))
+                (tabulate-f (sub1 n)))]))
+
+;; EXAMPLES AS TESTS
+(tabulate-f 0) "should be" empty
+(tabulate-f 4) "should be"
+(cons (make-posn 4 23)
+      (cons (make-posn 3 8)
+            (cons (make-posn 2 -1)
+                  (cons (make-posn 1 -4)
+                        empty))))
+
+; -------------------------------------------------------------------------
+
+;; tabulate-f20 : N -&gt; list-of-posns
+;; produces a list of posns of length n-20. Each
+;; posn's x coordinate is a number, from 20 to n, and each
+;; posn's y coordinate is the result of f on the same posn's
+;; x coordinate.
+
+#|
+;; TEMPLATE
+(define (tabulate-f20 n)
+  (cond
+    [(= 20 n) ...]
+    [else (tabulate-f20 (sub1 n)) ...]))
+|#
+
+(define (tabulate-f20 n)
+  (cond
+    [(= 20 n) empty]
+    [else (cons (make-posn n (f n))
+                (tabulate-f20 (sub1 n)))]))
+
+;; EXAMPLES AS TESTS
+(tabulate-f20 20) "should be" empty
+(tabulate-f20 24) "should be"
+(cons (make-posn 24 1583)
+      (cons (make-posn 23 1448)
+            (cons (make-posn 22 1319)
+                  (cons (make-posn 21 1196)
+                        empty))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tabulate-f20.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

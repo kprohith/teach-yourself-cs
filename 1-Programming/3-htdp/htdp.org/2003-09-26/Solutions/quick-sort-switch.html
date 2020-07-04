@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/quick-sort-switch.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 25.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-32.html#node_thm_25.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student with Lambda
+
+
+;; [List-of Number] -&gt; [List-of Number]
+;; sort the given list of numbers in ascending order
+
+(check-expect (power-sort '(3 2 4 1 6)) '(1 2 3 4 6))
+(check-expect
+ (sorted? (power-sort (build-list 10000 (lambda (_) (random 100000))))) true)
+
+(define (power-sort l)
+  (local ((define THRESHOLD 100)
+
+          ;; [List-of Number] -&gt; [List-of Number]
+          ;; quick sort until lists are shorter than THRESHOLD,
+          ;; then switch to insertion sort
+          ;; TERMINATION: the list is shorter for every recursive call
+          (define (limited-qs l)
+            (cond
+              [(&lt;= (length l) THRESHOLD) (insertion-sort l)]
+              [else
+               (local ((define pivot (first l))
+                       (define small
+                         (limited-qs (filter (lambda (n) (&lt; n pivot)) l)))
+                       (define equals
+                         (filter (lambda (n) (= n pivot)) l))
+                       (define large
+                         (limited-qs (filter (lambda (n) (&gt; n pivot)) l))))
+                 (append small equals large))]))
+
+          ;; [List-of Number] -&gt; [List-of Number]
+          ;; created a sorted version of one-lon
+          (define (insertion-sort one-lon)
+            (cond
+              [(empty? one-lon) '()]
+              [(cons? one-lon)
+               (insert (first one-lon) (insertion-sort (rest one-lon)))]))
+
+          ;; Number[List-of Number] -&gt; [List-of Number]
+          ;; puts n into one-lon, whic is sorted in ascending order
+          (define (insert n one-lon)
+            (cond
+              [(empty? one-lon) (list n)]
+              [(cons? one-lon)
+               (if (&lt;= (first one-lon) n)
+                   (cons (first one-lon) (insert n (rest one-lon)))
+                   (cons n one-lon))])))
+    ;; -- start here --
+    (limited-qs l)))
+
+;; [List-of Number] -&gt; [List-of Number]
+;; is this list sorted in ascending order?
+(check-expect (sorted? '()) true)
+(check-expect (sorted? '(1 2 3)) true)
+(check-expect (sorted? '(1 3 2)) false)
+(define (sorted? l)
+  (local (;; (cons Number [List-of Number]) -&gt; Boolean
+          ;; is this list of at least one number sorted?
+          (define (sorted1? l)
+            (cond
+              [(empty? (rest l)) true]
+              [else (and (&lt;= (first l) (second l)) (sorted1? (rest l)))])))
+    (cond
+      [(empty? l) true]
+      [(cons? l) (sorted1? l)])))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/quick-sort-switch.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

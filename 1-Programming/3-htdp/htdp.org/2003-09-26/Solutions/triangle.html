@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/triangle.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="us-dm.html">2.2.2</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="convert3.html">2.2.4</a><pre>;; triangle : number number -&gt; number
+;; calculates the area of a triangle, given its base and height
+
+;; EXAMPLES:
+;; if the base is 10 and the height is 5, the area of the triangle is 25.
+;; if the base is 2 and the height is 5, the area of the triangle is 5.
+
+(define (triangle base height)
+  (* 1/2 base height))
+
+;; EXAMPLES TURNED INTO TEST CASES:
+(triangle 10 5) "should be" 25
+(triangle 2 5) "should be" 5
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/triangle.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

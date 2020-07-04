@@ -1,0 +1,702 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-45.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-44.html">previous</a></span><span>, <a href="curriculum-Z-H-46.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_36"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_36">Section  36</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_36">Designing Functions with Memory</a></h1>
+<p></p>
+<p>
+<a name="node_idx_2132"></a></p>
+<p>
+Section&nbsp;<a href="curriculum-Z-H-43.html#node_chap_34">34</a> motivated the idea of functions with memory;
+section&nbsp;<a href="curriculum-Z-H-44.html#node_chap_35">35</a> explained how variable definitions and
+<code class="scheme"><span class="keyword">set!</span></code> together can achieve the effect of memory. It is now time
+to discuss the design of programs with memory. </p>
+<p>
+Designing functions with memory requires three important steps: 
+</p>
+<ol>
+<li><p>We must determine that a program requires memory. </p>
+<p>
+</p>
+<li><p>We must identify the data that goes into the memory. </p>
+<p>
+</p>
+<li><p>We must understand which of the services are supposed to modify the
+memory and which are to use the memory. 
+</p>
+</li></ol><p>
+The need for the first step is obvious. Once we know that a program
+requires memory, we must conduct a data analysis for the program's
+memory. That is, we must figure out what kind of data the program puts
+into memory and retrieves from there. Finally, we must carefully design
+those functions for the program that change the memory. The others are
+those that use the variables (without modification); they are typically
+designed with one of the recipes we have already discussed.</p>
+<p>
+</p>
+<a name="node_sec_36.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_36.1">36.1&nbsp;&nbsp;The Need for Memory</a></h2>
+<p></p>
+<p>
+Programs need memory because we want them to work with users who know
+little or nothing about programming. Even if we wanted users to employ
+DrScheme's <tt>Interactions</tt>
+<a name="node_idx_2134"></a>window, we would organize our programs so
+that each service corresponds to a function and the functions collaborate
+through memory. With graphical user interfaces, we are almost forced to
+think of programs as a collection of collaborating functions attached to
+various widgets in a window. Finally, even programs that work in physical
+devices such as elevators or VCRs are forced to interact with the device in
+some fixed way, and that often includes keeping around information about
+the history of device-program interactions. In short, the interface between
+the program and the rest of the world dictates whether a program needs
+memory and what kind of memory it needs. </p>
+<p>
+Fortunately it is relatively easy to recognize when programs need
+memory. As discussed already, there are two situations. The first involves
+programs that provide more than one service to users. Each service
+corresponds to a function. A user may apply these functions in DrScheme's
+<tt>Interactions</tt><a name="node_idx_2136"></a>window, or they may be applied in response to some
+user action in a graphical user interface. The second involves a program
+that provides a single service and is implemented with a single user-level
+function. But the program may have to produce different answers when it is
+applied to the same arguments.</p>
+<p>
+</p>
+<p>
+Let us take a look at some concrete examples for each situation. Software
+for managing an address book is a classical example of the first kind. In
+sections&nbsp;<a href="curriculum-Z-H-43.html#node_chap_34">34</a> and&nbsp;<a href="curriculum-Z-H-44.html#node_chap_35">35</a>, we saw how one function
+adds entries to the address book and another looks them up. Clearly, the
+use of the ``addition service'' affects future uses of the ``lookup
+service'' and therefore requires memory. Indeed, the memory in this case
+corresponds to a natural physical object: the address book that people used
+to keep before there were electronic notebooks.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_183"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<img src="curriculum6-Z-G-1.gif" border="0" alt="[curriculum6-Z-G-1.gif]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="curriculum6-Z-G-2.gif" border="0" alt="[curriculum6-Z-G-2.gif]"><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 99:</b>&nbsp;&nbsp;Organizational charts for programs with memory</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Next, consider a warehouse with a clerk that registers the items that
+people deliver and pick up. Every time someone delivers an item, the clerk
+enters it into a ledger; an inquiry for a specific item triggers a search
+in the ledger; when someone picks up an item, the clerk removes it from the
+ledger. If we were to provide a function for managing the ledger, the
+program would have to offer three services: one for entering items, one for
+searching in the ledger, and one for removing entries from the ledger. Of
+course, we can't remove something that isn't in the warehouse, so the
+program must ensure that the two services interact properly. The memory in
+this program will be similar to the ledgers that warehouse clerks use (or
+used), that is, a physical object.</p>
+<p>
+The second class of memory need also has classical examples. The traffic
+light simulation mentioned in section&nbsp;<a href="curriculum-Z-H-43.html#node_chap_34">34</a> is one of
+them. Recall that the description of the program <code class="scheme"><span class="variable">next</span></code> says that
+every time it is applied, it redraws the picture on a canvas according to
+the common traffic rules. Because two evaluations of <code class="scheme">(<span class="variable">next</span>)</code> in a
+row produce two different effects, this program needs memory.</p>
+<p>
+For another example, take a look at the Scheme function <code class="scheme"><span class="builtin">random</span></code>.
+It consumes a natural number <em>n</em> <u>&gt;</u> 1 and produces a number between 0 and
+<em>n</em> <tt>-</tt> 1.  If we evaluate <code class="scheme">(<span class="builtin">random</span> <span class="selfeval">10</span>)</code> twice in a row, we may or may
+not obtain the same digit. Again, to achieve this effect, the implementor
+of <code class="scheme"><span class="builtin">random</span></code> needed to equip the function with some memory.</p>
+<p>
+In general, as we analyze a problem statement, we should draw organization
+charts. Figure&nbsp;<a href="#node_fig_Temp_183">99</a> contains sample charts for the
+phone-book and the traffic-light programs. They represent each service that
+the program is to support with a rectangular box.  Arrows going into the
+box indicate what kind of data a service consumes; outgoing arrows specify
+the output. Memory is represented with circles. An arrow from a circle to a
+box means that the service uses the memory as an input; an arrow to a
+circle means that the service changes the memory. The two charts show that
+services commonly use memory and change it.</p>
+<p>
+</p>
+<a name="node_sec_36.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_36.2">36.2&nbsp;&nbsp;Memory and State Variables</a></h2>
+<p></p>
+<p>
+<a name="node_idx_2138"></a><a name="node_idx_2140"></a></p>
+<p>
+Memory is implemented with variable definitions. The memory-using programs
+we have seen use a single variable to represent the memory of a
+function. In principle, a single variable is enough to implement all memory
+needs, but this is usually inconvenient. Typically, the memory analysis
+suggests how many variables we need and which services need which
+variables. When memory changes, the corresponding variables assume a new
+value or, put differently, the state of the variable declaration changes
+and reflects the memory change over time. We therefore refer to variables
+that implement memory as <small>S</small><small>T</small><small>A</small><small>T</small><small>E</small> <small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>B</small><small>L</small><small>E</small><small>S</small>.
+<a name="node_idx_2142"></a><a name="node_idx_2144"></a></p>
+<p>
+Every service in a program corresponds to a function that may employ
+auxiliary functions. A service that changes the memory of a program is
+implemented with a function that uses <code class="scheme"><span class="keyword">set!</span></code> on some of the state
+variables. To understand how a function should change a state variable, we
+need to know what kind of values the variable may represent and what its
+purpose is.  In other words, we must develop a contract and a purpose
+statement for state variables in the same manner in which we develop
+contracts and purpose statements for function definitions.</p>
+<p>
+Let us take a look at the address-book and the traffic-light examples. The
+first one has one state variable: <code class="scheme"><span class="variable">address-book</span></code>.  It is intended to
+represent a list of entries, where each entry is a list of two items: a
+name and a number. To document that <code class="scheme"><span class="variable">address-book</span></code> may represent
+only such lists, we add a contract as follows:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">address-book</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">number</span>))</code></span>
+<span class="comment">;; to keep track of pairs of names and phone numbers</span>
+(<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+</pre></div><p>
+By the definition of <code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code>, it is permissible to use
+<code class="scheme"><span class="builtin">empty</span></code> as the initial value of <code class="scheme"><span class="variable">address-book</span></code>.</p>
+<p>
+From the contract for the state variable, we can conclude that the following
+assignment is nonsensical: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">address-book</span> <span class="selfeval">5</span>)
+</pre></div><p>
+It sets <code class="scheme"><span class="variable">address-book</span></code> to <code class="scheme"><span class="selfeval">5</span></code>, which is not a list. The
+expression therefore violates the state variable's contract. But
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+</pre></div><p>
+is proper, because it sets <code class="scheme"><span class="variable">address-book</span></code> back to its initial
+value. Here is a third assignment:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="variable">address-book</span>))
+</pre></div><p>
+It helps us gain some understanding of how functions can change the value of
+<code class="scheme"><span class="variable">address-book</span></code> in a useful manner.  Because <code class="scheme"><span class="variable">address-book</span></code>
+stands for a list of lists, <code class="scheme">(<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="variable">address-book</span>)</code>
+constructs a longer list of the right kind. Hence the <code class="scheme"><span class="keyword">set!</span></code>
+expression just changes the state variable to stand for a different value in
+the class of <code class="scheme">(<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">number</span>))</code>.</p>
+<p>
+A program that controls a traffic light should have a state variable
+for the current color of the traffic light. This variable should
+assume one of three values: <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, or
+<code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, which suggests a data definition: 
+<a name="node_idx_2146"></a>A <i>TL-color</i> is either 
+<code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>. </p>
+<p>
+Here is the variable definition with a contract
+and purpose statement:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">current-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span></code></span>
+<span class="comment">;; to keep track of the current color of the traffic light</span>
+(<span class="keyword">define</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)
+</pre></div><p>
+As before, the expression 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="selfeval">5</span>)
+</pre></div><p>
+is nonsensical because <code class="scheme"><span class="selfeval">5</span></code> is not one of the three legitimate
+symbols mentioned in the contract. In contrast,
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>)
+</pre></div><p>
+is perfectly okay. </p>
+<p>
+The right-hand side of an assignment does not have to consist of a value or
+an expression that almost instantaneously produces a value. In many cases
+it makes sense to use a function to compute the new value. Here is a
+function that computes the next color for our traffic
+light:
+<a name="node_idx_2148"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">next-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">TL-color</span></code></span>
+<span class="comment">;; to compute the next color for a traffic light </span>
+(<span class="keyword">define</span> (<span class="variable">next-color</span> <span class="variable">c</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">c</span>) <span class="keyword">'</span><span class="variable">green</span>]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">c</span>) <span class="keyword">'</span><span class="variable">yellow</span>]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">c</span>) <span class="keyword">'</span><span class="variable">red</span>]))
+</pre></div><p>
+Using this function, we can now write an assignment that switches the state
+of <code class="scheme"><span class="variable">current-color</span></code> appropriately:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">current-color</span> (<span class="variable">next-color</span> <span class="variable">current-color</span>))
+</pre></div><p>
+Because <code class="scheme"><span class="variable">current-color</span></code> is one of the three legitimate symbols, 
+we can apply <code class="scheme"><span class="variable">next-color</span></code> to the value of <code class="scheme"><span class="variable">current-color</span></code>. 
+The function also produces one of these three symbols, so that the next
+state of <code class="scheme"><span class="variable">current-color</span></code> is again proper. </p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_36.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_36.3">36.3&nbsp;&nbsp;Functions that Initialize Memory</a></h2>
+<p></p>
+<p>
+After we have developed contracts and purpose statements for the state
+variables of a program, we immediately define a function that sets the state
+variables to proper values. We call this function an 
+<small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>A</small><small>L</small><small>I</small><small>Z</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_2150"></a>or an <small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>A</small><small>L</small><small>I</small><small>Z</small><small>E</small><small>R</small>. A program's <code class="scheme"><span class="variable">initializer</span></code> is
+the first function that is used during an execution; a program may also
+provide other means to invoke the initializer. </p>
+<p>
+For our current examples, the initializers are straightforward. Here is one
+for the address-book example: 
+<a name="node_idx_2152"></a><a name="node_idx_2154"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">init-address-book</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">init-address-book</span>)
+  (<span class="keyword">set!</span> <span class="variable">address-book</span> <span class="builtin">empty</span>))
+</pre></div><p>
+The one for traffic-light is equally trivial:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">init-traffic-light</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">init-traffic-light</span>)
+  (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>))
+</pre></div><p>
+In setting <code class="scheme"><span class="variable">current-color</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, we follow a
+conventional rule of engineering to put devices into their least harmful
+state when starting it up.<a name="call_footnote_Temp_184"></a><a href="#footnote_Temp_184"><sup><small>70</small></sup></a></p>
+<p>
+At first glance, these initializers don't seem to add much to our
+programs. Both set the respective state variables to the values that are
+their defined values. For both cases, however, it is easy to see that 
+the initializer could do some additional useful work. The first one, for
+example, could create and display the graphical user interface for an
+address book; the second one could create and display a canvas that
+displays the current state of the traffic light. </p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_36.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_36.4">36.4&nbsp;&nbsp;Functions that Change Memory</a></h2>
+<p></p>
+<p>
+Once we have the state variables and their initializers in place, we turn
+our attention to the design of functions that modify a program's memory.
+Unlike the functions in the preceding parts of the book, the
+memory-changing functions not only consume and produce data, they also
+affect the definitions of the state variables. We therefore speak of the
+<small>E</small><small>F</small><small>F</small><small>E</small><small>C</small><small>T</small> 
+<a name="node_idx_2156"></a>that functions have on the state variables.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_185"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Data Def.</u>: A <i>TL-color</i> is either <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>. </span>
+
+<span class="comment">;; <u>State Variable</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">current-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span></code></span>
+<span class="comment">;; to keep track of the current color of the traffic light</span>
+(<span class="keyword">define</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)
+
+<span class="comment">;; <u>Contract</u>: <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+
+<span class="comment">;; <u>Purpose</u>: the function always produces <code class="scheme">(void)</code></span>
+
+<span class="comment">;; <u>Effect</u>: to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+<span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+
+<span class="comment">;; <u>Header</u>: omitted for this particular example</span>
+
+<span class="comment">;; <u>Examples</u>: </span>
+<span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code></span>
+<span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code></span>
+<span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+
+<span class="comment">;; <u>Template</u>: data-directed on state-variable that is to be mutated</span>
+<span class="comment">;; <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp;<code class="scheme">(<span class="keyword">cond</span></code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">[(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]</code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">[(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]</code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">[(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]))</code></span>
+
+<span class="comment">;; <u>Definition</u>:</span>
+(<span class="keyword">define</span> (<span class="variable">next</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>)]))
+  
+<span class="comment">;; <u>Tests</u>:</span>
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>) (<span class="variable">next</span>) (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>))
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>) (<span class="variable">next</span>) (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>))
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>) (<span class="variable">next</span>) (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 100:</b>&nbsp;&nbsp;The design recipe for state variables: A complete example</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Let us now take a look at the stages of our most basic design recipe and
+how we can accommodate effects on state variables: 
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Data Analysis:</b></dt><dd> Even functions that affect the state of variables
+consume and (possibly) produce data. Thus we still need to analyze how to
+represent information and, if necessary, introduce structure and data
+definitions. <p>
+For example, the traffic-light example benefits from the data definition
+for <code class="scheme"><span class="variable">TL-color</span></code> (see above).</p>
+<p>
+</p>
+</dd><dt><b>Contract, Purpose, and Effect:</b></dt><dd> The first major change concerns the
+second step. In addition to specifying what a function consumes and
+produces, we must also write down which variables it affects and how it
+affects those state variables. The effect of a function on state variables
+must be consistent with the purpose statement of a variable. <p>
+Consider the traffic-light example again. It requires a function that
+switches the color of the traffic light in accordance with the traffic
+laws. The function checks the variable <code class="scheme"><span class="variable">current-color</span></code> and affects
+its state. Here is how we should specify this function: </p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+<span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">next</span>) ...)
+</pre></div><p></p>
+<p>
+The function consumes no data and always produces the invisible value; in
+Scheme this value is called <code class="scheme"><span class="variable">void</span></code>. Because the function has no
+purpose in the traditional sense, it is accompanied by an effect statement
+only.</p>
+<p>
+Here is the specification for <code class="scheme"><span class="variable">add-to-address-book</span></code>: 
+<a name="node_idx_2158"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-to-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to add <code class="scheme">(<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">phone</span>)</code> to the front of <code class="scheme"><span class="variable">address-book</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">phone</span>) ...)
+</pre></div><p>
+We can tell from the effect statement that the definition of
+<code class="scheme"><span class="variable">address-book</span></code> is modified in a fashion that's coherent with its
+purpose statement and contract. </p>
+<p>
+</p>
+</dd><dt><b>Program Examples:</b></dt><dd> Examples are as important as ever, but formulating
+them has become more difficult. As before, we must develop examples that
+illustrate the relationship between inputs and outputs, but, because
+functions now have effects, we also need examples that illustrate those. <p>
+Let us return to our first running example, the <code class="scheme"><span class="variable">next</span></code> function for
+traffic lights. It affects one state-variable: <code class="scheme"><span class="variable">current-color</span></code>.
+Because this variable can stand for one of three symbols, we can actually
+characterize all of its possible effects with examples: </p>
+<p>
+</p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> afterwards</span>
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> afterwards</span>
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> and we evaluate <code class="scheme">(<span class="variable">next</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">current-color</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> afterwards</span>
+</pre></div><p></p>
+<p>
+</p>
+<p>
+In contrast, the state variable <code class="scheme"><span class="variable">address-book</span></code> can stand for an
+infinite number of values, so it is impossible to make up a comprehensive 
+series of examples. But it is still important to state a few, because 
+examples make it easier to develop the function body later: </p>
+<p>
+</p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme"><span class="builtin">empty</span></code> and </span>
+<span class="comment">;; we evaluate <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>))</code> afterwards. </span>
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>))</code> and </span>
+<span class="comment">;; we evaluate <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>))</code> afterwards. </span>
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="variable">E-1</span> ... <span class="variable">E-2</span>)</code> and </span>
+<span class="comment">;; we evaluate <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, </span>
+<span class="comment">;; then <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)  <span class="variable">E-1</span> ... <span class="variable">E-2</span>)</code> afterwards. </span>
+</pre></div><p></p>
+<p>
+</p>
+<p>
+Not surprisingly, the language of examples involves words of a temporal
+nature. After all, assignments emphasize the notion of time in
+programming.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Warning</strong>:  The state variable is never a parameter of a function.&nbsp;</p>
+<p>
+</p>
+</dd><dt><b>The Template:</b></dt><dd> The template for state-changing functions is like that
+of an ordinary function, but the body should also contain <code class="scheme"><span class="keyword">set!</span></code>
+expressions to specify the state variables that are to be modified:<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fun-for-state-change</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)
+  (<span class="keyword">set!</span> <span class="variable">a-state-variable</span> ...))
+</pre></div><p></p>
+<p>
+The computation of the next value for <code class="scheme"><span class="variable">a-state-variable</span></code> can be left
+to an auxiliary function, which consumes <code class="scheme"><span class="variable">x</span></code>, <code class="scheme"><span class="variable">y</span></code>, and
+<code class="scheme"><span class="variable">z</span></code>. Our two examples fit this pattern. </p>
+<p>
+On occasion, we should add selector and <strong>cond</strong>-expressions, based on
+the data definitions for the function's inputs. Consider <code class="scheme"><span class="variable">next</span></code>
+again. The data definition for its input suggests a
+<strong>cond</strong>-expression:
+<a name="node_idx_2160"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">next</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> ...)]))
+</pre></div><p>
+In this simple case, we can indeed go with either alternative and design a
+proper program. </p>
+<p>
+</p>
+</dd><dt><b>The Body:</b></dt><dd> As always, the development of the full function requires a
+solid understanding of the examples, of how they are computed, and of the
+template.  For functions with effects, the completion of the <code class="scheme"><span class="keyword">set!</span></code>
+expression is the most demanding step. In some cases, the right-hand side
+involves nothing but primitive operations, the function's parameters, and
+the state variable (or several of them). In others, it is best to develop
+an auxiliary function (without effect) that consumes the current value of
+the state variable and the function's parameters and that produces the new
+value of the state variable.<p>
+The function <code class="scheme"><span class="variable">add-to-address-book</span></code> is an example of the first
+kind. The right-hand side of the <strong>set!</strong>-expression consists of
+<code class="scheme"><span class="variable">address-book</span></code>, <code class="scheme"><span class="builtin">cons</span></code>, <code class="scheme"><span class="builtin">list</span></code>, and nothing else. </p>
+<p>
+The traffic-light example, in contrast, is an example for both
+choices. Here is a definition that is based on the template:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">next</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">current-color</span>) (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>)]))
+</pre></div><p>
+Writing one based on an auxiliary function is also straightforward: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">next</span>)
+  (<span class="keyword">set!</span> <span class="variable">current-color</span> (<span class="variable">next-color</span> <span class="variable">current-color</span>)))
+</pre></div><p>
+For the definition of <code class="scheme"><span class="variable">next-color</span></code>, see
+page&nbsp;<a href="">45</a>. </p>
+<p>
+<a name="node_idx_2162"></a></p>
+</dd><dt><b>Testing:</b></dt><dd> In the past, we have tested functions by translating the
+examples into boolean-valued expressions and by adding them to the bottom
+of the <tt>Definitions</tt>
+<a name="node_idx_2164"></a>window. For functions with effects, we use a
+similar approach, but to verify that functions have the desired effect on
+state variables is a complex task.<p>
+There are two ways to test functions with effects. First, we can set the
+state variable into a desired state, apply the function, and then check
+whether the function has the desired result and effect. The <code class="scheme"><span class="variable">next</span></code>
+function is a particularly good one for this approach. We characterized its
+complete behavior with three examples. All three can be translated into 
+<strong>begin</strong>-expressions that test as suggested. Here is one example:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>)
+       (<span class="variable">next</span>)
+       (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>))
+</pre></div><p>
+Each line sets the state variable <code class="scheme"><span class="variable">current-color</span></code> to the desired
+color, evaluates <code class="scheme">(<span class="variable">next</span>)</code>, and then checks whether the effect is
+appropriate. We can also do this for the <code class="scheme"><span class="variable">add-to-address-book</span></code>
+function, though the tests are less comprehensive than those for
+<code class="scheme"><span class="variable">next</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+       (<span class="builtin">equal?</span> <span class="keyword">'</span>((<span class="variable">Adam</span> <span class="selfeval">1</span>)) <span class="variable">address-book</span>))
+</pre></div><p>
+In this test, we check only that <code class="scheme"><span class="variable">Adam</span></code> and <code class="scheme"><span class="selfeval">1</span></code> are properly
+added to the initially <code class="scheme"><span class="builtin">empty</span></code> list.</p>
+<p>
+Second, we can capture the value of a state variable before it is tested,
+apply the memory-changing function, and then conduct appropriate tests. 
+Consider the following expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ([<span class="keyword">define</span> <span class="variable">current-value-of</span> <span class="variable">address-book</span>])
+  (<span class="keyword">begin</span>
+    (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+    (<span class="builtin">equal?</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="variable">current-value-of</span>) <span class="variable">address-book</span>)))
+</pre></div><p>
+It defines <code class="scheme"><span class="variable">current-value-of</span></code> to be the value of
+<code class="scheme"><span class="variable">address-book</span></code> at the beginning of the evaluation, and at the end
+checks that the appropriate entry was added at the front and that nothing 
+changed for the rest of the value. </p>
+<p>
+To conduct tests for functions with effects, especially tests of the second
+kind, it is useful to abstract the test
+expression into a function: 
+<a name="node_idx_2166"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">test-for-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">add-to-address-book</span></code> has the appropriate</span>
+<span class="comment">;; effect on <code class="scheme"><span class="variable">address-book</span></code> and no more than that</span>
+<span class="comment">;; effect: same as <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">number</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">test-for-address-book</span> <span class="variable">name</span> <span class="variable">number</span>)
+  (<span class="keyword">local</span> ([<span class="keyword">define</span> <span class="variable">current-value-of</span> <span class="variable">address-book</span>])
+    (<span class="keyword">begin</span>
+      (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">number</span>)
+      (<span class="builtin">equal?</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">number</span>) <span class="variable">current-value-of</span>) 
+              <span class="variable">address-book</span>))))
+</pre></div><p>
+Using this function, we can now easily test <code class="scheme"><span class="variable">add-to-address-book</span></code>
+several times and ensure for each test that its effects are appropriate: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="variable">test-for-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+     (<span class="variable">test-for-address-book</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+     (<span class="variable">test-for-address-book</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>))
+</pre></div><p> 
+The <strong>and</strong>-expression guarantees that the test expressions are
+evaluated in order and that all of them produce <code class="scheme"><span class="builtin">true</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+</dd><dt><b>Future Reuse:</b></dt><dd> Once we have a complete, tested program, we should
+remember its existence, <em>what</em> it computes, and what its <em>effects</em> are. We do not, however, need to remember <em>how</em> it
+computes.  If we encounter a situation that calls for the same computation
+and the same effects, we can reuse the program as if it were a primitive
+operation. <strong>Warning</strong>: In the presence of effects, it is much more
+difficult to reuse a function than in the world of algebraic programs. 
+</dd></dl><p>
+Figures&nbsp;<a href="#node_fig_Temp_185">100</a> and&nbsp;<a href="#node_fig_Temp_186">101</a>
+summarize our two running examples; the header in the first one is omitted 
+because it is useless for the purpose and effect statements in this
+particular case. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_186"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Data Def.</u>: lists of arbitrary length: <code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code>, lists of two items: <code class="scheme">(<span class="builtin">list</span> <span class="variable">Y</span> <span class="variable">Z</span>)</code></span>
+
+<span class="comment">;; <u>State Variable</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">address-book</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">number</span>))</code></span>
+<span class="comment">;; to keep track of pairs of names and phone numbers</span>
+(<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+
+<span class="comment">;; <u>Contract</u>: <code class="scheme"><span class="variable">add-to-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+
+<span class="comment">;; <u>Purpose</u>: the function always produces <code class="scheme">(void)</code></span>
+
+<span class="comment">;; <u>Effect</u>: to add <code class="scheme">(<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">phone</span>)</code> to the front of <code class="scheme"><span class="variable">address-book</span></code></span>
+
+<span class="comment">;; <u>Header</u>: </span>
+<span class="comment">;; <code class="scheme">(<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">phone</span>) ...)</code></span>
+
+<span class="comment">;; <u>Examples</u>: </span>
+<span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme"><span class="builtin">empty</span></code> and we evaluate</span>
+<span class="comment">;; <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>))</code>.</span>
+<span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>))</code> and we evaluate</span>
+<span class="comment">;; <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>))</code>.</span>
+<span class="comment">;; if <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="variable">E-1</span> ... <span class="variable">E-2</span>)</code> and we evaluate</span>
+<span class="comment">;; <code class="scheme">(<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)</code>, <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)  <span class="variable">E-1</span> ... <span class="variable">E-2</span>)</code>.</span>
+
+<span class="comment">;; <u>Template</u>: omitted</span>
+
+<span class="comment">;; <u>Definition</u>:</span>
+(<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">phone</span>)
+  (<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">phone</span>) <span class="variable">address-book</span>)))
+  
+<span class="comment">;; <u>Tests</u>:</span>
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+       (<span class="builtin">equal?</span> <span class="keyword">'</span>((<span class="variable">Adam</span> <span class="selfeval">1</span>)) <span class="variable">address-book</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 101:</b>&nbsp;&nbsp;The design recipe for state variables: A second example</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_36.4.1"></a>
+<b>Exercise 36.4.1.</b>&nbsp;&nbsp; 
+Modify the traffic light program in figure&nbsp;<a href="#node_fig_Temp_185">100</a> to
+draw the current state of the traffic light onto a canvas. Start by adding
+the initializer. Use the solutions for
+section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.2">6.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/traffic-state.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_36.4.2"></a>
+<b>Exercise 36.4.2.</b>&nbsp;&nbsp; 
+Modify the phone book program in figure&nbsp;<a href="#node_fig_Temp_186">101</a> so
+that it offers a graphical user interface. Start by adding the
+initializer. Use the solution of
+exercise&nbsp;<a href="curriculum-Z-H-44.html#node_thm_35.4.2">35.4.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pb-state.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+
+
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_184"></a><a href="#call_footnote_Temp_184"><sup><small>70</small></sup></a> A device should also go into the least
+harmful state when it detects an internal failure. Unfortunately, many 
+software engineers don't follow this rule.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-44.html">previous</a></span><span>, <a href="curriculum-Z-H-46.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-45.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

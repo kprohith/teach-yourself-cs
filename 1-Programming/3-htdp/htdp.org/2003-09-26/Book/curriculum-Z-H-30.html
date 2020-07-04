@@ -1,0 +1,381 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-30.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-29.html">previous</a></span><span>, <a href="curriculum-Z-H-31.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_24"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_24">Section  24</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_24">Intermezzo 4: Defining Functions on the Fly</a></h1>
+<p></p>
+<p>
+</p>
+<p>
+<a name="node_idx_1634"></a><a name="node_idx_1636"></a></p>
+<p>
+Many uses of abstract functions require the definition of auxiliary
+functions. Consider <code class="scheme"><span class="variable">filter1</span></code>, which consumes a filtering function,
+a list, and a filtering item. In the previous section alone, we
+encountered three uses of <code class="scheme"><span class="variable">filter1</span></code> with three different auxiliary
+functions: <code class="scheme"><span class="variable">squared?</span></code>, <code class="scheme">&lt;<sub><em>i</em><em>r</em></sub></code>, and <code class="scheme"><span class="variable">eq-ir?</span></code>.</p>
+<p>
+Since these auxiliary functions are only used as arguments to
+<code class="scheme"><span class="variable">filter1</span></code>, we should employ the program organization guidelines
+from the preceding intermezzo&nbsp;(<a href="curriculum-Z-H-23.html#node_chap_18">18</a>). That is, we should
+use a <strong>local</strong>-expression to indicate that the application of
+<code class="scheme"><span class="variable">filter1</span></code> and the auxiliary function definition belong together.
+Here is one possible arrangement for the <code class="scheme"><span class="variable">filter1</span></code><code class="scheme"><span class="variable">-eq-ir?</span></code>
+combination: 
+<a name="node_idx_1638"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find</span> <span class="selfeval">:</span> <span class="variable">list-of-IRs</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">find</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">eq-ir?</span> <span class="variable">ir</span> <span class="variable">p</span>)
+	    (<span class="builtin">symbol=?</span> (<span class="builtin">ir-name</span> <span class="variable">ir</span>) <span class="variable">p</span>)))
+    (<span class="variable">filter1</span> <span class="variable">eq-ir?</span> <span class="variable">aloir</span> <span class="variable">t</span>)))
+</pre></div><p></p>
+<p>
+An alternative arrangement places the <strong>local</strong>-expression where the
+function is needed:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find</span> <span class="selfeval">:</span> <span class="variable">list-of-IRs</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">find</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="variable">filter1</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">eq-ir?</span> <span class="variable">ir</span> <span class="variable">p</span>)
+		     (<span class="builtin">symbol=?</span> (<span class="builtin">ir-name</span> <span class="variable">ir</span>) <span class="variable">p</span>)))
+	     <span class="variable">eq-ir?</span>)
+           <span class="variable">aloir</span> <span class="variable">t</span>))
+</pre></div><p>
+This alternative is feasible because the names of functions -- like
+<code class="scheme"><span class="variable">eq-ir?</span></code> -- are now legitimate expressions and can play the 
+role of <code class="scheme"><span class="keyword">local</span></code>'s body. Thus the <strong>local</strong>-expression
+introduces a function definition and returns the function as its result. 
+<a name="node_idx_1640"></a><a name="node_idx_1642"></a></p>
+<p>
+Because good programmers use abstract functions and organize their programs
+in a tidy manner, it is not surprising that Scheme provides a short-hand
+for this particular, frequent use of <code class="scheme"><span class="keyword">local</span></code>. The short-hand is
+called a <strong>lambda</strong>-expression and greatly facilitates the
+introduction of functions like <code class="scheme"><span class="variable">eq-ir?</span></code>, <code class="scheme"><span class="variable">squared?</span></code>, or
+<code class="scheme">&lt;<sub><em>i</em><em>r</em></sub></code>. The following two subsections introduce the syntax and
+semantics of <strong>lambda</strong>-expressions. The last subsection discusses
+its pragmatics. </p>
+<p>
+</p>
+<a name="node_sec_Temp_132"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_132">Syntax of <strong>lambda</strong></a></h3>
+<p> 
+</p>
+<p>
+A <strong>lambda</strong>-expression is just a new form of expression:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top">(<code class="scheme"><span class="keyword">lambda</span></code> (<tt>&lt;var&gt;</tt> ... <tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+Its distinguishing characteristic is the keyword <strong>lambda</strong>. It is
+followed by a sequence of variables, enclosed in a pair of
+parentheses. The last component is an expression. <p>
+Here are three useful examples: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">c</span>) (<span class="builtin">&gt;</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) <span class="variable">c</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">symbol=?</span> (<span class="builtin">ir-name</span> <span class="variable">ir</span>) <span class="variable">p</span>))</code>
+</p>
+</li></ol><p>
+They correspond to <code class="scheme"><span class="variable">squared?</span></code>, <code class="scheme">&lt;<sub><em>i</em><em>r</em></sub></code>, and <code class="scheme"><span class="variable">eq-ir?</span></code>,
+respectively, the three motivating examples discussed above.</p>
+<p>
+A <strong>lambda</strong>-expression defines an anonymous function, that is, a
+function without a name. The sequence of variables behind <strong>lambda</strong> are the function's parameters; the third component is the
+function's body.</p>
+<p>
+</p>
+<a name="node_sec_Temp_133"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_133">Scope and Semantics of <strong>lambda</strong></a></h3>
+<p>
+</p>
+<p>
+As discussed in the introduction, a <strong>lambda</strong>-expression is just a
+short-hand for a <strong>local</strong>-expression. In general, we can think of 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x-1</span> ...  <span class="variable">x-n</span>) <span class="builtin">exp</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+as
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">a-new-name</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>) <span class="builtin">exp</span>))
+  <span class="variable">a-new-name</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+The name of the function, <code class="scheme"><span class="variable">a-new-name</span></code>, may not occur in
+<code class="scheme"><span class="builtin">exp</span></code>.<p>
+The short-hand explanation suggests that 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x-1</span> ...  <span class="variable">x-n</span>) <span class="builtin">exp</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+introduces <code class="scheme"><span class="variable">x-1</span></code> <tt>...</tt><code class="scheme"><span class="variable">x-n</span></code> as binding occurrences and that 
+the scope of parameters is <code class="scheme"><span class="builtin">exp</span></code>. Of course, if <code class="scheme"><span class="builtin">exp</span></code> contains
+further binding constructs (say, a nested <strong>local</strong>-expression), then
+the scope of the variables may have a hole. <p>
+Similarly, the explanation implies basic facts that govern the evaluation of
+<strong>lambda</strong>-expressions:
+<a name="node_idx_1644"></a></p>
+<ol>
+<li><p>A <strong>lambda</strong>-expression is a value because functions are values.</p>
+<p>
+</p>
+<li><p>The application of <strong>lambda</strong>-expressions to values proceeds
+according to our usual laws of function application, assuming
+we expand the short-hand first.
+</p>
+</li></ol><p>
+Here is a sample use of <code class="scheme"><span class="keyword">lambda</span></code>:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+           (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>))
+	   <span class="selfeval">8</span>)
+</pre></div><p>
+The application of <code class="scheme"><span class="variable">filter1</span></code> consumes the
+<strong>lambda</strong>-expression, a (short) list of inventory records, and a
+threshold. Given our suggestion, the evaluation
+<a name="node_idx_1646"></a>can be understood by an
+expansion of the <strong>lambda</strong>-expression into a corresponding
+<strong>local</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">...
+<span class="builtin">=</span> (<span class="variable">filter1</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (&lt;<sub><em>i</em><em>r</em></sub> <span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))) &lt;<sub><em>i</em><em>r</em></sub>)
+           (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>))
+	   <span class="selfeval">8</span>)
+<span class="builtin">=</span> (<span class="variable">filter1</span> &lt;<sub><em>i</em><em>r</em></sub> 
+           (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>))
+	   <span class="selfeval">8</span>)
+</pre></div><p>
+For the last step, the local definition of <code class="scheme">&lt;<sub><em>i</em><em>r</em></sub></code> is lifted and
+added to the top-level definitions. From here, the evaluation proceeds 
+as in section&nbsp;<a href="curriculum-Z-H-25.html#node_sec_19.2">19.2</a>.</p>
+<p>
+While it is natural to think of <code class="scheme"><span class="keyword">lambda</span></code> as a short-hand, the last
+two points also suggest a way of understanding <strong>lambda</strong>-expressions
+directly. In particular, we can adapt the law of application to
+<strong>lambda</strong>-expressions:</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">  ((<span class="keyword">lambda</span> (<span class="variable">x-1</span> ... <span class="variable">x-n</span>) <span class="builtin">exp</span>)   
+   <span class="variable">val-1</span> ... <span class="variable">val-n</span>)  
+  
+  </pre></div></td><td>&nbsp;</td><td><div align="left"><pre class="scheme">  <span class="builtin">=</span> <span class="builtin">exp</span>
+    <span class="variable">with all occurrences of <code class="scheme"><span class="variable">x-1</span> ... <span class="variable">x-n</span></code></span>
+    <span class="variable">replaced by <code class="scheme"><span class="variable">val-1</span> ... <span class="variable">val-n</span></code></span>
+  </pre></div></td><td>
+</td></tr></table></div>
+
+That is, the application of a <strong>lambda</strong>-expression proceeds just
+like that of an ordinary function. We replace the parameters of the
+function with the actual argument values and compute the value of the
+function body. <p>
+Let us reconsider the above example in this light: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+           (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>))
+           <span class="selfeval">8</span>)
+
+<span class="comment">As usual, this application is replaced by the body of <code class="scheme"><span class="variable">filter1</span></code></span>
+<span class="comment">with all parameters replaced by their values. This step places a</span>
+<span class="comment"><strong>lambda</strong>-expression into the function position of an application:</span>
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [((<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+      (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>) <span class="selfeval">8</span>) 
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+       (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+	        (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+	        <span class="selfeval">8</span>))]
+    [<span class="keyword">else</span>
+      (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+  	       (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+	       <span class="selfeval">8</span>)])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)) <span class="selfeval">8</span>)
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+       (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+	        (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+	        <span class="selfeval">8</span>))]
+    [<span class="keyword">else</span>
+      (<span class="variable">filter1</span> (<span class="keyword">lambda</span> (<span class="variable">ir</span> <span class="variable">p</span>) (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+  	       (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">10</span>)))
+	       <span class="selfeval">8</span>)])
+
+<span class="builtin">=</span> ...
+</pre></div><p>
+From here, the evaluation proceeds as usual. Still, even this short-hand
+evaluation shows that, while using <strong>lambda</strong>-expressions in programs is convenient,
+replacing it with a named function (often) simplifies calculations.</p>
+<p>
+</p>
+<p><a name="node_thm_24.0.7"></a>
+<b>Exercise 24.0.7.</b>&nbsp;&nbsp; 
+Decide which of the following phrases are legal <strong>lambda</strong>-expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">y</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> () <span class="selfeval">10</span>)</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) <span class="variable">x</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">lambda</span> <span class="variable">x</span> <span class="selfeval">10</span>)</code>
+</p>
+</li></ol><p>
+Explain why they are legal or illegal. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/lambda1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_24.0.8"></a>
+<b>Exercise 24.0.8.</b>&nbsp;&nbsp; 
+Draw arrows from the underlined occurrences of <code class="scheme"><span class="variable">x</span></code> to their binding
+occurrences in each of the following three <strong>lambda</strong>-expressions: 
+</p>
+<ol>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>)))
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span>
+     (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+       (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable"><u><em>x</em></u></span>)
+	  (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)))))
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span>
+     ((<span class="keyword">lambda</span> (<span class="variable">x</span>)
+	(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable"><u><em>x</em></u></span>)
+	   (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)))
+      (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>))))
+</pre></div>
+</li></ol><p>
+Also draw a box for the corresponding scope of each underlined <code class="scheme"><span class="variable">x</span></code>
+and holes in the scope where necessary. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/lambda2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_24.0.9"></a>
+<b>Exercise 24.0.9.</b>&nbsp;&nbsp; 
+Evaluate the following expressions by hand: 
+</p>
+<ol>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">((<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+   (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>)))
+ <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">((<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+   (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span>
+      (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+	(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable"><u><em>x</em></u></span>)
+	   (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)))))
+ <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="scheme">((<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>)
+   (<span class="builtin">+</span> <span class="variable"><u><em>x</em></u></span>
+      ((<span class="keyword">lambda</span> (<span class="variable">x</span>)
+	 (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable"><u><em>x</em></u></span>)
+	    (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)))
+       (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>))))
+ <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/lambda3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_134"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_134">Pragmatics of <strong>lambda</strong></a></h3>
+<p> 
+</p>
+<p>
+The guideline for using <strong>lambda</strong>-expressions is straightforward: </p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Lambda Expressions
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Use <strong>lambda</strong>-expressions when a function is not
+recursive and is only needed once in an argument position.
+</p></font></td></tr>
+</table>
+<p>
+If we were to apply the guideline to the programs in the preceding
+sections, we would quickly see how much <code class="scheme"><span class="keyword">lambda</span></code> simplifies the use
+of abstracted functions. For that reason, Scheme offers many abstracted
+functions in its libraries. In future sections, we will encounter many
+more examples where <strong>lambda</strong>-expressions are convenient.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+
+<p>
+</p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-29.html">previous</a></span><span>, <a href="curriculum-Z-H-31.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-30.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

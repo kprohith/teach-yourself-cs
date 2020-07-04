@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.5; How to Design Programs </title>
+</head>
+<body>
+<a href="list-5.html">17.8.4</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web-1.html">17.8.6</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.5 list-equal?
+------------------------------------------------------------
+;Data Definition:
+An atom is either
+   1. a number
+   2. a boolean
+   3. a symbol
+
+a list-of-atoms is either
+  1. empty or
+  2. (cons a loa)
+  where a is an atom and loa is a list-of-atoms
+
+;Template:
+(define (list-equal? a-list another-list)
+  (cond
+    [(empty? a-list) ...]
+    [(cons? a-list)
+     ...(first a-list)...(first another-list)...
+     ...(list-equal? (rest a-list) (rest another-list))...]))
+|#
+;; list-equal? : list-of-atoms list-of-atoms  -&gt;  boolean
+;; to determine whether a-list and another-list 
+;; contain the same atoms in the same order
+(define (list-equal? a-list another-list)
+  (cond
+    [(empty? a-list) (empty? another-list)]
+    [else
+     (and (cons? another-list)
+          (atom=? (first a-list) (first another-list))
+          (list-equal? (rest a-list) 
+                       (rest another-list)))]))
+
+;Examples and Tests:
+(check-expect
+ (list-equal? empty empty) 
+ true)
+
+(check-expect
+ (list-equal? empty (list 1 false 'a)) 
+ false)
+
+(check-expect
+ (list-equal? (list 1 false 'a) empty)
+ false)
+
+(check-expect
+ (list-equal? (list 1 false 'a) 
+              (list 1 false 'a)) 
+ true)
+
+(check-expect
+ (list-equal? (list 1 false 'a) 
+              (list 'a 1 false)) 
+ false)
+
+(check-expect
+ (list-equal? (list 1 false 'a) 
+              (list 3 false 'a)) 
+ false)
+
+#| We need a helper function that reports 
+whether two atoms are the same
+------------------------------------------------------------
+;template:
+(define (atom=? a-atom another-atom)
+  (cond
+    [(number? a-atom)...]
+    [(boolean? a-atom)...]
+    [(symbol? a-atom)...]))
+|#
+;;atom=?: atom atom -&gt; boolean
+;;consumes two atoms and returns true if
+;;they are equal, false otherwise
+(define (atom=? a-atom another-atom)
+  (cond
+    [(number? a-atom)
+     (and (number? another-atom)
+          (= a-atom another-atom))]
+    [(boolean? a-atom)
+     (and (boolean? another-atom)
+          (boolean=? a-atom another-atom))]
+    [(symbol? a-atom)
+     (and (symbol? another-atom)
+          (symbol=? a-atom another-atom))]))
+
+;Examples as Tests:
+(check-expect
+ (atom=? 5 5)
+ true)
+
+(check-expect
+ (atom=? 5 7)
+ false)
+
+(check-expect
+ (atom=? 5 true)
+ false)
+
+(check-expect
+ (atom=? 5 'a)
+ false)
+
+(check-expect
+ (atom=? true true)
+ true)
+
+(check-expect
+ (atom=? true false)
+ false)
+
+(check-expect
+ (atom=? true 5)
+ false)
+
+(check-expect
+ (atom=? true 'a)
+ false)
+
+(check-expect
+ (atom=? 'w 'w)
+ true)
+
+(check-expect
+ (atom=? 'w 's)
+ false)
+
+(check-expect
+ (atom=? 'w 5)
+ false)
+
+(check-expect
+ (atom=? 'w false)
+ false)
+
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

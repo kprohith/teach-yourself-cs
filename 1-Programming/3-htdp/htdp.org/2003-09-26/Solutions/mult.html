@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/mult.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.5.2; How to Design Programs </title>
+</head>
+<body>
+<a href="add.html">11.5.1</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.5.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="expt.html">11.5.3</a><pre>;; add : N N -&gt; N
+;; to add n and x
+(define (add n x)
+  (cond
+    [(zero? n) x]
+    [else (add1 (add (sub1 n) x))]))
+
+;; EXAMPLES AS TEST
+(add 0 0) "should be" 0
+(add 0 10) "should be" 10
+(add 10 0) "should be" 10
+(add 10 10) "should be" 20
+
+; -------------------------------------------------------------------------
+
+;; multiply-by-pi : N -&gt; N
+;; to multiply a natural number by pi
+(define (multiply-by-pi n)
+  (cond 
+    [(zero? n) 0]
+    [else (+ pi (multiply-by-pi (sub1 n)))]))
+
+;; EXAMPLES AS TESTS
+(multiply-by-pi 0) "should be" 0
+(multiply-by-pi 2) "should be" (* pi 2)
+
+;; multiply : N N -&gt; N
+;; to multiply n times x without using +
+(define (multiply n x)
+  (cond
+    [(zero? n) 0]
+    [else (add x (multiply (sub1 n) x))]))
+
+;; EXAMPLES AS TESTS
+(multiply 10 0) "should be" 0
+(multiply 0 10) "should be" 0
+(multiply 3 3) "should be" 9
+
+;; multiply-no+ : N N -&gt; N
+;; to multiply n times x
+(define (multiply-no+ n x)
+  (cond
+    [(zero? n) 0]
+    [else (+ x (multiply-no+ (sub1 n) x))]))
+
+;; EXAMPLES AS TESTS
+(multiply-no+ 10 0) "should be" 0
+(multiply-no+ 0 10) "should be" 0
+(multiply-no+ 3 3) "should be" 9
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/mult.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

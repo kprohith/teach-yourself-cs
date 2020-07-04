@@ -1,0 +1,330 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-17.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-16.html">previous</a></span><span>, <a href="curriculum-Z-H-18.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_13"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_13">Section  13</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_13">Intermezzo 2: List Abbreviations</a></h1>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-18.html#node_chap_12"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Intermediate<br>
+Student</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p>
+Using <code class="scheme"><span class="builtin">cons</span></code> to create lists is cumbersome if a list
+contains many items. Fortunately, Scheme provides the <a name="node_idx_1024"></a> <code class="scheme"><span class="builtin">list</span></code> operation, which consumes an arbitrary number of values and
+creates a list. Here is Scheme's extended syntax:
+</p>
+<div align="left"><pre class="scheme"><span class="variable"><tt>&lt;prm&gt;</tt></span> <span class="builtin">=</span> <span class="builtin">list</span>
+</pre></div><p>
+The extended collection of values is 
+</p>
+<div align="left"><pre class="scheme"><span class="variable"><tt>&lt;val&gt;</tt></span> <span class="builtin">=</span> (<span class="builtin">list</span> <span class="variable"><tt>&lt;val&gt;</tt></span> ... <span class="variable"><tt>&lt;val&gt;</tt></span>)
+</pre></div><p>
+</p>
+<p>
+A simpler way to understand <code class="scheme"><span class="builtin">list</span></code> expressions is to think
+of them as abbreviations. Specifically, every expression of the
+shape 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="variable">exp-1</span> ... <span class="variable">exp-n</span>)
+</pre></div><p>
+stands for a series of <em>n</em> <code class="scheme"><span class="builtin">cons</span></code> expressions:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="variable">exp-1</span> (<span class="builtin">cons</span> ... (<span class="builtin">cons</span> <span class="variable">exp-n</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+Recall that <code class="scheme"><span class="builtin">empty</span></code> is not an item of the list here, but the rest of
+the list. Here are three examples:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> <span class="builtin">empty</span>)) 
+
+(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Houston</span> <span class="keyword">'</span><span class="variable">Dallas</span> <span class="keyword">'</span><span class="variable">SanAntonio</span>)
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Houston</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Dallas</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">SanAntonio</span> <span class="builtin">empty</span>))) 
+
+(<span class="builtin">list</span> false true false false)
+<span class="builtin">=</span> (<span class="builtin">cons</span> false (<span class="builtin">cons</span> true (<span class="builtin">cons</span> false (<span class="builtin">cons</span> false <span class="builtin">empty</span>))))
+</pre></div><p>
+They introduce lists with two, three, and four items,
+respectively. </p>
+<p>
+Of course, we can apply <code class="scheme"><span class="builtin">list</span></code> not only to values but also
+to expressions:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">list</span> (<span class="builtin">+</span> <span class="selfeval">0</span> <span class="selfeval">1</span>) (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>))
+<span class="builtin">=</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+Before the list is constructed, the expressions must be evaluated. 
+If during the evaluation of an expression an error occurs, the list
+is never formed: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">list</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>) (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>))
+<span class="builtin">=</span> <span class="variable">/:</span> <span class="variable">divide</span> <span class="variable">by</span> <span class="variable">zero</span>
+</pre></div><p>
+In short, <code class="scheme"><span class="builtin">list</span></code> behaves just like any other primitive operation. </p>
+<p>
+The use of <code class="scheme"><span class="builtin">list</span></code> greatly simplifies the notation for lists
+with many items and lists that contains lists or structures. Here
+is an example: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span>)
+</pre></div><p>
+This list contains 10 items and its formation with <code class="scheme"><span class="builtin">cons</span></code>
+and <code class="scheme"><span class="builtin">empty</span></code> would require 10 uses of <code class="scheme"><span class="builtin">cons</span></code> and one 
+instance of <code class="scheme"><span class="builtin">empty</span></code>. Similarly, the list 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">bob</span> <span class="selfeval">0</span> <span class="keyword">'</span><span class="variable">a</span>) 
+        (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">carl</span> <span class="selfeval">1</span> <span class="keyword">'</span><span class="variable">a</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">dana</span> <span class="selfeval">2</span> <span class="keyword">'</span><span class="variable">b</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">erik</span> <span class="selfeval">3</span> <span class="keyword">'</span><span class="variable">c</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">frank</span> <span class="selfeval">4</span> <span class="keyword">'</span><span class="variable">a</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">grant</span> <span class="selfeval">5</span> <span class="keyword">'</span><span class="variable">b</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">hank</span> <span class="selfeval">6</span> <span class="keyword">'</span><span class="variable">c</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">ian</span> <span class="selfeval">8</span> <span class="keyword">'</span><span class="variable">a</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">john</span> <span class="selfeval">7</span> <span class="keyword">'</span><span class="variable">d</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">karel</span> <span class="selfeval">9</span> <span class="keyword">'</span><span class="variable">e</span>))
+</pre></div><p>
+requires 11 uses of <code class="scheme"><span class="builtin">list</span></code> in contrast to 40 of <code class="scheme"><span class="builtin">cons</span></code> and 11
+of <code class="scheme"><span class="builtin">empty</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_13.0.3"></a>
+<b>Exercise 13.0.3.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="builtin">cons</span></code> and <code class="scheme"><span class="builtin">empty</span></code> to construct the equivalent of the
+following lists: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">adam</span> <span class="selfeval">0</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">eve</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">louisXIV</span> <span class="selfeval">2</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>.
+</p>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list-cons2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_13.0.4"></a>
+<b>Exercise 13.0.4.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="builtin">list</span></code> to construct the equivalent of the following lists: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">a</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">b</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">c</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">d</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> <span class="builtin">empty</span>)))))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> <span class="builtin">empty</span>)) <span class="builtin">empty</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">a</span> (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> <span class="builtin">empty</span>) (<span class="builtin">cons</span> false <span class="builtin">empty</span>)))</code>.
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> <span class="builtin">empty</span>)) (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> <span class="builtin">empty</span>)) <span class="builtin">empty</span>))</code>
+</p>
+</li></ol><p>
+Start by determining how many items each list and each nested list
+contains. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list-cons3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_13.0.5"></a>
+<b>Exercise 13.0.5.</b>&nbsp;&nbsp; 
+On rare occasions, we encounter lists formed with <code class="scheme"><span class="builtin">cons</span></code> and
+<code class="scheme"><span class="builtin">list</span></code>. Reformulate the following lists using <code class="scheme"><span class="builtin">cons</span></code> and
+<code class="scheme"><span class="builtin">empty</span></code> exclusively:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">a</span> (<span class="builtin">list</span> <span class="selfeval">0</span> false))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">13</span> <span class="builtin">empty</span>)))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="builtin">empty</span> <span class="builtin">empty</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> <span class="builtin">empty</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">a</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> false <span class="builtin">empty</span>)))</code>.
+</p>
+</li></ol><p>
+Then formulate the lists using <code class="scheme"><span class="builtin">list</span></code>. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list-cons4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_13.0.6"></a>
+<b>Exercise 13.0.6.</b>&nbsp;&nbsp; 
+Determine the values of the following expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">list</span> (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span>) (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">c</span>) false)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> (<span class="builtin">+</span> <span class="selfeval">10</span> <span class="selfeval">20</span>) (<span class="builtin">*</span> <span class="selfeval">10</span> <span class="selfeval">20</span>) (<span class="builtin">/</span> <span class="selfeval">10</span> <span class="selfeval">20</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">dana</span> <span class="keyword">'</span><span class="variable">jane</span> <span class="keyword">'</span><span class="variable">mary</span> <span class="keyword">'</span><span class="variable">laura</span>)</code>
+</p>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list-cons1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_13.0.7"></a>
+<b>Exercise 13.0.7.</b>&nbsp;&nbsp; 
+Determine the values of 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">first</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+
+(<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list-cons5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+The use of <code class="scheme"><span class="builtin">list</span></code> makes it significantly easier to evaluate
+expressions involving lists. Here are the recursive steps from an example
+from section&nbsp;<a href="curriculum-Z-H-13.html#node_sec_9.5">9.5</a>:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">sum</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))))
+     (<span class="variable">sum</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>)))))
+<span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>))
+     (<span class="variable">sum</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))))
+<span class="comment">At this place, we use one of the equations governing </span>
+<span class="comment">the new primitive operations for the first time: </span>
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">22.05</span>
+     (<span class="variable">sum</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">22.05</span>
+     (<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))))
+        (<span class="variable">sum</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))))))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">22.05</span>
+     (<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>))
+        (<span class="variable">sum</span> <span class="builtin">empty</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">22.05</span> (<span class="builtin">+</span> <span class="selfeval">17.95</span> (<span class="variable">sum</span> <span class="builtin">empty</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">22.05</span> (<span class="builtin">+</span> <span class="selfeval">17.95</span> <span class="selfeval">0</span>))
+</pre></div><p>
+Since the laws of <code class="scheme"><span class="builtin">first</span></code> and <code class="scheme"><span class="builtin">rest</span></code> carry over to
+<code class="scheme"><span class="builtin">list</span></code> values in a natural manner, an evaluation using <code class="scheme"><span class="builtin">list</span></code>
+does not need to expand <code class="scheme"><span class="builtin">list</span></code> into uses of <code class="scheme"><span class="builtin">cons</span></code> and
+<code class="scheme"><span class="builtin">empty</span></code>. </p>
+<p>
+</p>
+<p>
+Following an old programming language  
+<a name="node_idx_1026"></a>convention,<a name="call_footnote_Temp_80"></a><a href="#footnote_Temp_80"><sup><small>39</small></sup></a> we may abbreviate lists and symbols even further. If a list is
+formulated with <code class="scheme"><span class="builtin">list</span></code>, we can simply agree to drop list and that
+each opening parenthesis stands for itself and the word <code class="scheme"><span class="builtin">list</span></code>. For
+example,
+</p>
+<div align="left"><pre class="scheme"><span class="keyword">'</span>(<span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)
+<span class="comment">abbreviates </span>
+(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)
+<span class="comment">or</span>
+(<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> <span class="builtin">empty</span>))) .
+</pre></div><p>
+Similarly, 
+</p>
+<div align="left"><pre class="scheme"><span class="keyword">'</span>((<span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="selfeval">3</span> <span class="selfeval">4</span>) (<span class="selfeval">5</span> <span class="selfeval">6</span>))
+<span class="comment">stands for</span>
+(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">4</span>) (<span class="builtin">list</span> <span class="selfeval">5</span> <span class="selfeval">6</span>))<span class="keyword">,</span>
+</pre></div><p>
+which can be further expanded into <code class="scheme"><span class="builtin">cons</span></code> and <code class="scheme"><span class="builtin">empty</span></code>
+expressions. </p>
+<p>
+If we drop quotes in front of symbols, writing lists of symbols is a breeze: 
+</p>
+<div align="left"><pre class="schemeresponse"><span class="keyword">'</span>(<span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>)
+<span class="comment">This short-hand is an abbreviation for</span>
+(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+</pre></div><p>
+And, more impressively, 
+</p>
+<div align="left"><pre class="schemeresponse"><span class="keyword">'</span>(<span class="variable">&lt;html&gt;</span> 
+   (<span class="variable">&lt;title&gt;</span> <span class="variable">My</span> <span class="builtin">First</span> <span class="variable">Web</span> <span class="variable">Page</span>)
+   (<span class="variable">&lt;body&gt;</span> <span class="variable">Oh!</span>))
+<span class="comment">stands for</span>
+(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">&lt;html&gt;</span> 
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">&lt;title&gt;</span> <span class="keyword">'</span><span class="variable">My</span> <span class="keyword">'</span><span class="builtin">First</span> <span class="keyword">'</span><span class="variable">Web</span> <span class="keyword">'</span><span class="variable">Page</span>)
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">&lt;body&gt;</span> <span class="keyword">'</span><span class="variable">Oh!</span>)) .
+</pre></div><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_13.0.8"></a>
+<b>Exercise 13.0.8.</b>&nbsp;&nbsp; 
+Restore <code class="scheme"><span class="builtin">list</span></code> and quotes where necessary: 
+</p>
+<ol>
+<li><p>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="schemeresponse"><span class="keyword">'</span>(<span class="selfeval">1</span> <span class="variable">a</span> <span class="selfeval">2</span> <span class="variable">b</span> <span class="selfeval">3</span> <span class="variable">c</span>)
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="schemeresponse"><span class="keyword">'</span>((<span class="variable">alan</span> <span class="selfeval">1000</span>)
+  (<span class="variable">barb</span> <span class="selfeval">2000</span>)
+  (<span class="variable">carl</span> <span class="selfeval">1500</span>)
+  (<span class="variable">dawn</span> <span class="selfeval">2300</span>))
+</pre></div><p>
+</p>
+<li><p>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</p>
+<div align="left"><pre class="schemeresponse"><span class="keyword">'</span>((<span class="variable">My</span> <span class="builtin">First</span> <span class="variable">Paper</span>)
+  (<span class="variable">Sean</span> <span class="variable">Fisler</span>)
+  (<span class="variable">Section</span> <span class="selfeval">1</span> 
+    (<span class="variable">Subsection</span> <span class="selfeval">1</span> <span class="variable">Life</span> <span class="variable">is</span> <span class="variable">difficult</span>)
+    (<span class="variable">Subsection</span> <span class="selfeval">2</span> <span class="variable">But</span> <span class="variable">learning</span> <span class="variable">things</span> <span class="variable">makes</span> <span class="variable">it</span> <span class="variable">interesting</span>))
+  (<span class="variable">Section</span> <span class="selfeval">2</span>
+    <span class="variable">Conclusion?</span> <span class="variable">What</span> <span class="variable">conclusion?</span>))  
+</pre></div>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quote-list.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_80"></a><a href="#call_footnote_Temp_80"><sup><small>39</small></sup></a> The convention
+is due to LISP, an early but highly advanced programming language designed
+in 1958. Scheme inherited many ideas from LISP, but it is a different
+language.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-16.html">previous</a></span><span>, <a href="curriculum-Z-H-18.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-17.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

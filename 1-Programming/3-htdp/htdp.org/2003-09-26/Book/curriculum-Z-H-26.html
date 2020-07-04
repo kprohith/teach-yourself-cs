@@ -1,0 +1,482 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-26.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-25.html">previous</a></span><span>, <a href="curriculum-Z-H-27.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_20"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_20">Section  20</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_20">Functions are Values</a></h1>
+<p> 
+</p>
+<p>
+The functions of section&nbsp;<a href="curriculum-Z-H-25.html#node_chap_19">19</a> stretch our understanding
+of evaluation. It is easy to understand how functions consume numbers and
+symbols; cosuming structures and lists is a bit more complicated, but still
+within our grasp; but functions consuming functions is a strange idea. As a
+matter of fact, the functions of section&nbsp;<a href="curriculum-Z-H-25.html#node_chap_19">19</a> violate the
+Scheme grammar of section&nbsp;<a href="curriculum-Z-H-11.html#node_chap_8">8</a>.</p>
+<p>
+In this section, we discuss how to adjust Scheme's grammar and evaluation
+rules so that we can understand the role of functions as data or values.
+<a name="node_idx_1436"></a>Without a good understanding of these ideas, we cannot hope to abstract
+functions. Once we understand these ideas, we can turn to the problem of
+writing contracts for such functions.  Finally, the last part of the
+section introduces functions that produce functions, another powerful
+abstraction technique.</p>
+<p>
+</p>
+<a name="node_sec_20.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_20.1">20.1&nbsp;&nbsp;Syntax and Semantics</a></h2>
+<p></p>
+<p>
+The abstract functions of section&nbsp;<a href="curriculum-Z-H-25.html#node_chap_19">19</a> violate Scheme's
+basic grammar in two ways. First, the names of functions and primitive
+operations are used as arguments in applications.
+<a name="node_idx_1438"></a>An argument, though, is
+an expression, and the class of expressions does not contain primitive
+operations and function names. It does contain variables, but we agreed that
+they are only those variables mentioned in variable definitions and as
+function parameters.  Second, parameters are used as if they were functions,
+that is, the first position of applications. But the grammar of
+section&nbsp;<a href="curriculum-Z-H-11.html#node_chap_8">8</a> allows only the names of functions and primitive
+operations in this place. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_114"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<strong>define</strong> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define</strong> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define-struct</strong> <tt>&lt;var&gt;</tt> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>)) </td></tr>
+<tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  <tt>&lt;var&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;boo&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;sym&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;prm&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  empty </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>cond</strong> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>cond</strong> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<code class="scheme"><span class="keyword">else</span></code> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>local</strong> (<tt>&lt;def&gt;</tt> <tt>...</tt><tt>&lt;def&gt;</tt>) <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><tt>&lt;var&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="variable">x</span></code>  |   <code class="scheme"><span class="variable">area-of-disk</span></code>  |  <code class="scheme"><span class="variable">circumference</span></code>  | <tt>...</tt></td></tr>
+<tr><td valign="top"><tt>&lt;boo&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme">true</code>  |  <code class="scheme">false</code> </td></tr>
+<tr><td valign="top"><tt>&lt;sym&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code>  |  <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>  |  <code class="scheme"><span class="keyword">'</span><span class="variable">sum</span></code>  |  <tt>...</tt></td></tr>
+<tr><td valign="top"><tt>&lt;num&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="selfeval">1</span></code>  |  <code class="scheme"><span class="selfeval">-1</span></code>  |  <code class="scheme"><span class="selfeval">3/5</span></code>  |  
+<code class="scheme"><span class="selfeval">1.22</span></code>  |  <tt>...</tt></td></tr>
+<tr><td valign="top"><tt>&lt;prm&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="builtin">+</span></code>  |  <code class="scheme"><span class="builtin">-</span></code>  |  
+<code class="scheme"><span class="builtin">cons</span></code>  |  <code class="scheme"><span class="builtin">first</span></code>  |  <code class="scheme"><span class="builtin">rest</span></code>  |  <tt>...</tt></td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 56:</b>&nbsp;&nbsp;<tt>Intermediate Student</tt> Scheme: The grammar</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Spelling out the problem suggests the necessary changes. First, we should
+include the names of functions and primitive operations in the definition
+of <tt>&lt;exp&gt;</tt>. Second, the first position in an application
+<a name="node_idx_1440"></a>should allow
+things other than function names and primitive operations; at a minimum, it
+must allow variables that play the role of function parameters. In
+anticipation of other uses of functions, we agree on allowing expressions
+in that position.</p>
+<p>
+Here is a summary of the three changes:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  <tt>&lt;var&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;prm&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+Figure&nbsp;<a href="#node_fig_Temp_114">56</a> displays the entire Scheme grammar, with all
+the extensions we have encountered so far. It shows that the accommodation of
+abstract functions does not lengthen the grammar, but makes it
+simpler.<p>
+The same is true of the evaluation rules. Indeed, they don't change at
+all. What changes is the set of values. To accommodate functions as
+arguments of functions, the simplest change is to say that the set of values
+includes the names of functions and primitive operations: 
+</p>
+<div align="center"><table><tr><td>
+
+</td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+<table border="0"><tr><td valign="top"><tt>&lt;val&gt;</tt> </td><td valign="top">= </td><td valign="top"> &nbsp;  <tt>&lt;boo&gt;</tt>  |  <tt>&lt;sym&gt;</tt>  |  <tt>&lt;num&gt;</tt>  |  empty  |  <tt>&lt;lst&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |     <tt>&lt;var&gt;</tt> (names of <code class="scheme"><span class="keyword">define</span></code>d functions)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |     <tt>&lt;prm&gt;</tt> </td></tr>
+<tr><td valign="top"><tt>&lt;lst&gt;</tt> </td><td valign="top">= </td><td valign="top">empty  |  (cons <tt>&lt;val&gt;</tt> <tt>&lt;lst&gt;</tt>) 
+</td></tr></table>
+</td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+</td></tr></table></div>
+
+Put differently, if we now wish to decide whether we can apply the
+substitution rule for functions, we must still ensure that all arguments are
+values, but we must recognize that function names and primitive operations
+count as values, too. <p>
+</p>
+<p><a name="node_thm_20.1.1"></a>
+<b>Exercise 20.1.1.</b>&nbsp;&nbsp; 
+Assume the <tt>Definitions</tt>
+<a name="node_idx_1442"></a>window in DrScheme contains <code class="scheme">(<span class="keyword">define</span>
+(<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)</code>.  Identify the values among the following expressions:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">f</span> <span class="builtin">empty</span>)</code> 
+</p>
+<li><p><code class="scheme">(<span class="variable">f</span> <span class="variable">f</span>)</code> 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">f</span> (<span class="builtin">cons</span> <span class="selfeval">10</span> (<span class="builtin">cons</span> (<span class="variable">f</span> <span class="selfeval">10</span>) <span class="builtin">empty</span>)))</code> 
+</p>
+</li></ol><p>
+Explain why they are values and why the remaining expressions are
+not values.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem-funcs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_20.1.2"></a>
+<b>Exercise 20.1.2.</b>&nbsp;&nbsp; 
+Argue why the following sentences are legal definitions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="variable">x</span> <span class="selfeval">10</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">f</span>)</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="variable">x</span> <span class="keyword">'</span><span class="variable">a</span> <span class="variable">y</span> <span class="keyword">'</span><span class="variable">b</span>))</code> 
+</p>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-funcs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_20.1.3"></a>
+<b>Exercise 20.1.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">a-function=?</span></code>.  The function determines whether two functions
+from numbers to numbers produce the same results for <code class="scheme"><span class="selfeval">1.2</span></code>,
+<code class="scheme"><span class="selfeval">3</span></code>, and <code class="scheme"><span class="selfeval">-5.7</span></code>.</p>
+<p>
+Can we hope to define <code class="scheme"><span class="variable">function=?</span></code>, which determines whether two
+functions (from numbers to numbers) are equal?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem2-funcs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_20.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_20.2">20.2&nbsp;&nbsp;Contracts for Abstract and Polymorphic Functions</a></h2>
+<p></p>
+<p>
+When we first abstracted <code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">above</span></code> into
+<code class="scheme"><span class="variable">filter1</span></code>, we did not formulate a contract.  Unlike the functions we
+had defined before, <code class="scheme"><span class="variable">filter1</span></code> consumed a type of values that we
+never before used as data: primitive operations and other functions. Still,
+we eventually agreed in plain English writing that <code class="scheme"><span class="variable">filter1</span></code>'s first
+argument, <code class="scheme"><span class="variable">rel-op</span></code>, would always be a function that consumes two
+numbers and produces a boolean value.</p>
+<p>
+If, in the past, we had been asked to write a contract for <code class="scheme"><span class="variable">rel-op</span></code>,
+we would have written 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">rel-op</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+</pre></div><p>
+Considering that functions and primitive operations are values, this
+contract says that an arrow symbol, <code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code>, describes a class of
+values: functions and primitive operations.  The names on the left of
+<code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> specify what each value in the class of functions must be
+applied to; the name on the right says what each value is going to produce
+if it is applied to proper values. In general, we say that 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">A</span> <span class="variable">B</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">C</span>)
+</pre></div><p>
+means the class of all functions and primitives that consume an element in
+<code class="scheme"><span class="variable">A</span></code> and an element in <code class="scheme"><span class="variable">B</span></code> and produce an element in
+<code class="scheme"><span class="variable">C</span></code>. Or more succinctly, they are functions ``from <code class="scheme"><span class="variable">A</span></code> and
+<code class="scheme"><span class="variable">B</span></code> to <code class="scheme"><span class="variable">C</span></code>.''</p>
+<p>
+The arrow notation is like the <code class="scheme">(<span class="keyword">listof</span> ...)</code> notation from the
+previous section. Both specify a class of data via a combination of other
+classes. For <code class="scheme"><span class="keyword">listof</span></code>, we used data definitions to agree on what
+they mean. Others can follow the example and introduce their own
+abbreviations based on data definitions.  For arrows, we just made an
+agreement, and it stays with us for good.</p>
+<p>
+Using the arrow notation, we can formulate a first contract and a proper
+purpose statement for <code class="scheme"><span class="variable">filter1</span></code>: 
+<a name="node_idx_1444"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">filter1</span> <span class="selfeval">:</span> (<span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) <span class="variable">lon</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code> </span>
+<span class="comment">;; to construct the list of those numbers <code class="scheme"><span class="variable">n</span></code> on <code class="scheme"><span class="variable">alon</span></code> for which</span>
+<span class="comment">;; <code class="scheme">(<span class="variable">rel-op</span> <span class="variable">n</span> <span class="variable">t</span>)</code> evaluates to <code class="scheme"><span class="builtin">true</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">filter1</span> <span class="variable">rel-op</span> <span class="variable">alon</span> <span class="variable">t</span>) ...)
+</pre></div><p>
+The unusual part of the contract is that it specifies the class to which
+the first argument must belong not with a name introduced by a data
+definition but with a direct data definition, using the arrow notation.
+More concretely, it specifies that the first argument must be a function or
+a primitive operation and, as discussed, what kind of arguments it consumes
+and what kind of value it produces.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_20.2.1"></a>
+<b>Exercise 20.2.1.</b>&nbsp;&nbsp; 
+Explain the following classes of functions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code>, 
+</p>
+<li><p><code class="scheme">(<span class="variable">boolean</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code>, 
+</p>
+<li><p><code class="scheme">(<span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>)</code>, 
+</p>
+<li><p><code class="scheme">(<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>))</code>, and
+</p>
+<li><p><code class="scheme">((<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/arrows-dd.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_20.2.2"></a>
+<b>Exercise 20.2.2.</b>&nbsp;&nbsp; 
+Formulate contracts for the following functions: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">sort</span></code>, which consumes a list of numbers and a function that
+consumes two numbers (from the list) and produces a boolean; <code class="scheme"><span class="variable">sort</span></code>
+produces a list of numbers.</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="builtin">map</span></code>, which consumes a function from numbers to numbers and a
+list of numbers; it also produces a list of numbers. </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">project</span></code>, which consumes a list of lists of symbols and a
+function from lists of symbols to symbols; it produces a list of
+symbols.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/fancy-contracts.html">Solution</a></p>
+</li></ol><p>
+
+</p>
+
+   <hr>
+ <p></p>
+<p>
+The second version of <code class="scheme"><span class="variable">filter1</span></code> was the result of abstracting
+<code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">below-ir</span></code>. Its definition did not differ from
+the first version, but the process of abstracting from <code class="scheme"><span class="variable">below-ir</span></code>
+clarified that <code class="scheme"><span class="variable">filter1</span></code> could be applied to all kinds of lists, not
+just lists of numbers.</p>
+<p>
+To describe all kinds of lists, we use <code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code>.
+Here is a first attempt at a contract for <code class="scheme"><span class="variable">filter1</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">filter1</span> <span class="selfeval">:</span> ... (<span class="keyword">listof</span> <span class="variable">X</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code> </span>
+</pre></div><p>
+The key to using <code class="scheme"><span class="variable">filter1</span></code> with different classes of lists is to use
+a comparison function that can compare the items on the list with the
+second argument, which is a number. That is, the first argument is a
+function in the class
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">X</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)
+</pre></div><p>
+which means it consumes an element of <code class="scheme"><span class="variable">X</span></code> and a number, and
+produces a boolean. Put together, we get the following contract for
+<code class="scheme"><span class="variable">filter1</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">filter1</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code> </span>
+</pre></div><p></p>
+<p>
+As in our contract for <code class="scheme"><span class="builtin">length</span></code>, <code class="scheme"><span class="variable">X</span></code> here stands for an
+arbitrary collection of Scheme data. We can replace it with anything, as
+long as all three occurrences are replaced by the same thing. Hence, by
+using <code class="scheme"><span class="variable">X</span></code> in the description of the first parameter, the second
+parameter, and the result, we specify that <code class="scheme"><span class="variable">rel-op</span></code> consumes
+elements of class <code class="scheme"><span class="variable">X</span></code>, that the second argument is a list of
+<code class="scheme"><span class="variable">X</span></code>s, and that the result of <code class="scheme"><span class="variable">filter1</span></code> is also a list of
+<code class="scheme"><span class="variable">X</span></code>s.</p>
+<p>
+When we wish to apply <code class="scheme"><span class="variable">filter1</span></code>, we must check that the arguments
+make sense.  Suppose we wish to evaluate
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">8</span> <span class="selfeval">10</span>) <span class="selfeval">2</span>)
+</pre></div><p>
+Before we do that, we should confirm that <code class="scheme"><span class="variable">filter1</span></code> can indeed
+consume <code class="scheme"><span class="builtin">&lt;</span></code> and <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">8</span> <span class="selfeval">10</span>)</code>, given its contract. A quick
+check shows that <code class="scheme"><span class="builtin">&lt;</span></code> makes sense because it belongs to the class 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)
+</pre></div><p>
+and <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">8</span> <span class="selfeval">10</span>)</code> makes sense because it belongs to 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)
+</pre></div><p>
+The two classes are identical to the first two argument parts of
+<code class="scheme"><span class="variable">filter1</span></code>'s contract if <code class="scheme"><span class="variable">X</span></code> is replaced by
+<code class="scheme"><span class="variable">number</span></code>. More generally, to ensure that arguments make sense, we
+must find replacements of the variables in contracts so that the functions
+contract and the classes of the arguments match.</p>
+<p>
+For a second example, consider 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">filter1</span> &lt;<sub><em>i</em><em>r</em></sub> <span class="variable">LOIR</span> <span class="selfeval">10</span>)
+</pre></div><p>
+Here, we must replace <code class="scheme"><span class="variable">X</span></code> with <code class="scheme"><span class="variable">IR</span></code>, because <code class="scheme">&lt;<sub><em>i</em><em>r</em></sub></code>
+has the contract 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">IR</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)
+</pre></div><p>
+and <code class="scheme"><span class="variable">LOIR</span></code> belongs to <code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>. Again, the application
+is legitimate because all the arguments belong to the required collections
+of data.</p>
+<p>
+Let us look at one more example: the use of <code class="scheme"><span class="variable">filter1</span></code> to extract all
+toys with the same name from a list of inventory records:
+<a name="node_idx_1446"></a><a name="node_idx_1448"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">IR</span>) <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">IR</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">find</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="variable">filter1</span> <span class="variable">eq-ir?</span> <span class="variable">aloir</span> <span class="variable">t</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">eq-ir?</span> <span class="selfeval">:</span> <span class="variable">IR</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">eq-ir?</span> <span class="variable">ir</span> <span class="variable">p</span>)
+  (<span class="builtin">symbol=?</span> (<span class="builtin">ir-name</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+</pre></div><p>
+It is straightforward to check with examples that the function works
+properly. Our task here is to understand how this agrees with
+<code class="scheme"><span class="variable">filter1</span></code>'s contract. The obvious problem is that the ``threshold''
+argument is a symbol, not a number. The use of <code class="scheme"><span class="variable">filter1</span></code> is
+therefore in conflict with its current contract. To overcome this
+deficiency, we must introduce another variable, say, <code class="scheme"><span class="variable">TH</span></code> for
+thresholds, that stands for some collection of data:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">filter1</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">TH</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) <span class="variable">TH</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code> </span>
+</pre></div><p></p>
+<p>
+Now we can replace <code class="scheme"><span class="variable">X</span></code> with the name of one data collection and
+<code class="scheme"><span class="variable">TH</span></code> with that of a second one or possibly the same. In particular,
+the application 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">filter1</span> <span class="variable">eq-ir?</span> <span class="variable">LOIR</span> <span class="keyword">'</span><span class="variable">doll</span>)
+</pre></div><p>
+works because a replacement of <code class="scheme"><span class="variable">X</span></code> by <code class="scheme"><span class="variable">IR</span></code> and <code class="scheme"><span class="variable">TH</span></code> by
+symbol in <code class="scheme"><span class="variable">filter1</span></code>'s contract shows that the arguments are
+legitimate. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_20.2.3"></a>
+<b>Exercise 20.2.3.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="variable">filter1</span></code> to develop a function that consumes a list of symbols
+and extracts all those that are not equal to <code class="scheme"><span class="keyword">'</span><span class="variable">car</span></code>. Give
+<code class="scheme"><span class="variable">filter1</span></code>'s corresponding contract.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/filter-contract.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_20.2.4"></a>
+<b>Exercise 20.2.4.</b>&nbsp;&nbsp; 
+Formulate <em>general</em> contracts for the following functions: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">sort</span></code>, which consumes a list of items and a function that
+consumes two items (from the list) and produces a boolean; it produces a list
+of items.</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="builtin">map</span></code>, which consumes a function from list items to <code class="scheme"><span class="variable">X</span></code>s and a
+list; it produces a list of <code class="scheme"><span class="variable">X</span></code>s.</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">project</span></code>, which consumes a list of lists and a function from
+lists to <code class="scheme"><span class="variable">X</span></code>s; it produces a list of <code class="scheme"><span class="variable">X</span></code>s.
+</p>
+</li></ol><p>
+Compare with
+exercise&nbsp;<a href="#node_thm_20.2.2">20.2.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/fancy-contracts-poly.html">Solution</a></p>
+<p></p>
+<p>
+<a name="node_idx_1450"></a><a name="node_idx_1452"></a></p>
+<p></p>
+<p><strong>Contracts and Types</strong>:  In summary, the contracts for functions are
+made up of types. A <small>T</small><small>Y</small><small>P</small><small>E</small> is either
+</p>
+<ol>
+<li><p>a basic type, such as number, symbol, boolean, or <code class="scheme"><span class="builtin">empty</span></code>;</p>
+<p>
+</p>
+<li><p>a defined type, such as <code class="scheme"><span class="variable">inventory-record</span></code>, 
+<code class="scheme"><span class="variable">list-of-numbers</span></code>, or <code class="scheme"><span class="variable">family-tree</span></code>; </p>
+<p>
+</p>
+<li><p>a function type, such as <code class="scheme">(<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>)</code> or
+<code class="scheme">(<span class="variable">boolean</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span>)</code>; </p>
+<p>
+</p>
+<li><p>a parametric type, which is either a defined type or a function type
+with type variables.
+</p>
+</li></ol><p>
+When we wish to use a function with a parametric type, we must first find a
+replacement for all the variables in the function's contract so that we
+know the arguments belong to proper classes. If this cannot be done, we
+must either revise the contract or question our decision to reuse this
+function.&nbsp;</p>
+<p>
+</p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-25.html">previous</a></span><span>, <a href="curriculum-Z-H-27.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-26.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

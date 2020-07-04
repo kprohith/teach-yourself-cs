@@ -1,0 +1,540 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm0.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.11; How to Design Programs </title>
+</head>
+<body>
+<a href="blue-eye-local.html">18.1.10</a> | <a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.11">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student
+
+#| 18.1.11 evaluate last-occurrence by hand
+------------------------------------------------------------
+How many local-expressions are lifted? 2
+
+;Data Definition:
+A star (record) is a structure:
+ (make-star s t) 
+where s and t are symbols.
+|#
+(define-struct star (name instrument))
+
+;Here is an example:
+(define alos 
+  (list (make-star 'Chris 'saxophone)
+        (make-star 'Robby 'trumpet)
+        (make-star 'Matt 'violin)
+        (make-star 'Wen 'guitar)
+        (make-star 'Matt 'radio)))
+
+;-----------------------------------------------------------
+
+;; last-occurrence : symbol list-of-star  -&gt;  star or false
+;; to find the last star record in alostars 
+;; that contains s in name field
+(define (last-occurrence s alostars)
+  (cond
+    [(empty? alostars) false]
+    [else (local 
+            ((define r (last-occurrence s (rest alostars))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first alostars)) s) 
+               (first alostars)]
+              [else false]))]))
+
+
+;;Evaluate by hand:
+(last-occurrence 'Matt
+                 (list (make-star 'Matt 'violin)
+                       (make-star 'Matt 'radio)))
+
+;-----------------------------------------------------------
+(cond
+  [(empty? (list (make-star 'Matt 'violin)
+                 (make-star 'Matt 'radio))) 
+   false]
+  [else 
+   (local 
+     ((define r 
+        (last-occurrence 'Matt 
+                         (rest (list (make-star 'Matt 'violin)
+                                     (make-star 'Matt 'radio))))))
+     (cond
+       [(star? r) r]
+       [(symbol=? 
+         (star-name (first (list (make-star 'Matt 'violin)
+                                 (make-star 'Matt 'radio)))) 
+         'Matt) 
+        (first (list (make-star 'Matt 'violin)
+                     (make-star 'Matt 'radio)))]
+       [else false]))])
+
+;-----------------------------------------------------------
+(cond
+  [false 
+   false]
+  [else 
+   (local 
+     ((define r 
+        (last-occurrence 'Matt 
+                         (rest (list (make-star 'Matt 'violin)
+                                     (make-star 'Matt 'radio))))))
+     (cond
+       [(star? r) r]
+       [(symbol=? 
+         (star-name (first (list (make-star 'Matt 'violin)
+                                 (make-star 'Matt 'radio)))) 
+         'Matt) 
+        (first (list (make-star 'Matt 'violin)
+                     (make-star 'Matt 'radio)))]
+       [else false]))])
+
+;-----------------------------------------------------------
+(cond
+  [else 
+   (local 
+     ((define r 
+        (last-occurrence 'Matt 
+                         (rest (list (make-star 'Matt 'violin)
+                                     (make-star 'Matt 'radio))))))
+     (cond
+       [(star? r) r]
+       [(symbol=? 
+         (star-name (first (list (make-star 'Matt 'violin)
+                                 (make-star 'Matt 'radio)))) 
+         'Matt) 
+        (first (list (make-star 'Matt 'violin)
+                     (make-star 'Matt 'radio)))]
+       [else false]))])
+
+;-----------------------------------------------------------
+(local 
+  ((define r 
+     (last-occurrence 'Matt 
+                      (rest (list (make-star 'Matt 'violin)
+                                  (make-star 'Matt 'radio))))))
+  (cond
+    [(star? r) r]
+    [(symbol=? 
+      (star-name (first (list (make-star 'Matt 'violin)
+                              (make-star 'Matt 'radio)))) 
+      'Matt) 
+     (first (list (make-star 'Matt 'violin)
+                  (make-star 'Matt 'radio)))]
+    [else false]))
+
+;-----------------------------------------------------------
+(local 
+  ((define r_0 
+     (last-occurrence 'Matt 
+                      (rest (list (make-star 'Matt 'violin)
+                                  (make-star 'Matt 'radio))))))
+  (cond
+    [(star? r_0) r_0]
+    [(symbol=? 
+      (star-name (first (list (make-star 'Matt 'violin)
+                              (make-star 'Matt 'radio)))) 
+      'Matt) 
+     (first (list (make-star 'Matt 'violin)
+                  (make-star 'Matt 'radio)))]
+    [else false]))
+
+;-----------------------------------------------------------
+;first local-expression lifted
+(define r_0 
+  (last-occurrence 'Matt 
+                   (rest (list (make-star 'Matt 'violin)
+                               (make-star 'Matt 'radio)))))
+
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+
+;-----------------------------------------------------------
+#| We now go through the steps to reduce r_0. Because we are not
+allowed to redefine the same function, this reduction process
+is commented out. 
+
+(define r_0 
+  (last-occurrence 'Matt 
+                   (list (make-star 'Matt 'radio))))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (cond
+    [(empty? (list (make-star 'Matt 'radio))) 
+     false]
+    [else (local 
+            ((define r (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio))))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+               (first (list (make-star 'Matt 'radio)))]
+              [else false]))]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (cond
+    [false 
+     false]
+    [else (local 
+            ((define r (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio))))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+               (first (list (make-star 'Matt 'radio)))]
+              [else false]))]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (cond
+    [else (local 
+            ((define r (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio))))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+               (first (list (make-star 'Matt 'radio)))]
+              [else false]))]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (local 
+    ((define r (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio))))))
+    (cond
+      [(star? r) r]
+      [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+       (first (list (make-star 'Matt 'radio)))]
+      [else false])))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (local 
+    ((define r_1 (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio))))))
+    (cond
+      [(star? r_1) r_1]
+      [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+       (first (list (make-star 'Matt 'radio)))]
+      [else false])))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+Here the second local-expression is lifted
+
+(define r_1 (last-occurrence 'Matt (rest (list (make-star 'Matt 'radio)))))
+(define r_0 
+  (cond
+    [(star? r_1) r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_1
+(define r_1 
+  (cond
+    [(empty? empty) 
+     false]
+    [else (local 
+            ((define r (last-occurrence 'Matt (rest empty))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first empty)) 'Matt) 
+               (first empty)]
+              [else false]))]))
+(define r_0 
+  (cond
+    [(star? r_1) r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_1
+(define r_1 
+  (cond
+    [true 
+     false]
+    [else (local 
+            ((define r (last-occurrence 'Matt (rest empty))))
+            (cond
+              [(star? r) r]
+              [(symbol=? (star-name (first empty)) 'Matt) 
+               (first empty)]
+              [else false]))]))
+(define r_0 
+  (cond
+    [(star? r_1) r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+Here r-1 has been completely reduced and can now be
+substituted in |#
+(define r_1 false)
+#|
+(define r_0 
+  (cond
+    [(star? r_1) r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+(define r_0 
+  (cond
+    [(star? false) r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (cond
+    [false r_1]
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (cond
+    [(symbol=? (star-name (first (list (make-star 'Matt 'radio)))) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (cond
+    [(symbol=? (star-name (make-star 'Matt 'radio)) 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (cond
+    [(symbol=? 'Matt 'Matt) 
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (cond
+    [true
+     (first (list (make-star 'Matt 'radio)))]
+    [else false]))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+reducing the right-hand side of definition r_0
+
+(define r_0 
+  (first (list (make-star 'Matt 'radio))))
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+Here r_0 has been completey reduced and can be 
+substituted in |#
+
+;(define r_0 (make-star 'Matt 'radio))                        
+(cond
+  [(star? r_0) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+
+(cond
+  [(star? (make-star 'Matt 'radio)) r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+
+(cond
+  [true r_0]
+  [(symbol=? 
+    (star-name (first (list (make-star 'Matt 'violin)
+                            (make-star 'Matt 'radio)))) 
+    'Matt) 
+   (first (list (make-star 'Matt 'violin)
+                (make-star 'Matt 'radio)))]
+  [else false])
+;-----------------------------------------------------------
+
+r_0
+;-----------------------------------------------------------
+
+(make-star 'Matt 'radio)
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm0.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

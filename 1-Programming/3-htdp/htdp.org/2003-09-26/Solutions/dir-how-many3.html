@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 16.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="file-example3.html">16.3.1</a> | <a href="../Book/curriculum-Z-H-21.html#node_thm_16.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="file-du.html">16.3.3</a><pre>;; Language: Beginning Student
+
+;; Language: Beginning Student with List Abbreviations
+
+(define-struct file (name size content))
+
+;; A file is a structure:
+;;   (make-file n s x) 
+;; where n is a symbol, s is a number, and x is some Scheme value.
+
+;; A list-of-files is either
+;;   empty, or
+;;   (cons s lof) where s is a file and lof is a list of files.
+
+(define-struct dir (name dirs files))
+
+;; A dir is a structure:
+;;   (make-dir n ds fs) 
+;; where n is a symbol, ds is a list of directories, and fs is a list of files.
+
+;; A list-of-directories is either
+;;   empty or
+;;   (cons s lod) where s is a dir and lod is a list of directories.
+
+
+;; files: 
+(define hang (make-file 'hang 8 empty))
+(define draw (make-file 'draw 2 empty))
+(define read (make-file 'read! 19 empty))
+(define one  (make-file 'part1 99 empty))
+(define two  (make-file 'part2 52 empty))
+(define thre (make-file 'part3 17 empty))
+(define rdme (make-file 'read 10 empty))
+
+;; directories: 
+(define Code (make-dir 'Code '() (list hang draw)))
+(define Docs (make-dir 'Docs '() (list read)))
+(define Libs (make-dir 'Libs (list Code Docs) '()))
+(define Text (make-dir 'Text '() (list one two thre)))
+(define Top  (make-dir 'TS (list Text Libs) (list rdme)))
+
+; -------------------------------------------------------------------------
+
+;; 16.3.2: Contract: define a function to produce the number of files in a dir3 tree.
+
+;; Dir -&gt; Nat 
+;; count the number of files in a-dir 
+
+(check-expect (how-many Code) 2)
+(check-expect (how-many Docs) 1)
+(check-expect (how-many Libs) 3)
+(check-expect (how-many Text) 3)
+(check-expect (how-many Top)  7)
+
+(define (how-many a-dir)
+  (+ (how-many-in-dir-list (dir-dirs a-dir)) 
+     (how-many-in-file-list (dir-files a-dir))))
+
+;; List-of-dirs -&gt; Nat 
+;; counts the number of files in dirs 
+
+;; derived from (how-many Libs) above 
+(check-expect (how-many-in-dir-list (list Code Docs)) 3)
+
+(define (how-many-in-dir-list dirs)
+  (cond
+    [(empty? dirs) 0]
+    [else (+ (how-many (first dirs))
+             (how-many-in-dir-list (rest dirs)))]))
+
+;; List-of-files -&gt; Nat 
+;; counts the number of files in files 
+
+;; derived from (how-many Docs) above 
+(check-expect (how-many-in-file-list (list read)) 1)
+
+(define (how-many-in-file-list files)
+  (cond
+    [(empty? files) 0]
+    [else (add1 (how-many-in-file-list (rest files)))]))
+
+#|
+The question also asks:
+
+Why are we confident that the function produces correct results?
+
+By following the design recipe, we know that each function eventually
+lives up to the promise of its purpose statement. Hence when we call
+'how-many-in-dir-list' from 'how-many', we are confident that the
+function will deliver the number of files in a list of directories --
+no matter how complicated the computation gets. Similarly, when we
+call 'how-many' from 'how-many-in-dir-list', we know that it computes
+how many files are in a single directory -- no matter what it needs to
+do to compute this number. Even if something goes wrong, the test
+cases quickly expose which function(s) messed up.
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

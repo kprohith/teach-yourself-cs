@@ -1,0 +1,840 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-33.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-32.html">previous</a></span><span>, <a href="curriculum-Z-H-34.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_26"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_26">Section  26</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_26">Designing Algorithms</a></h1>
+<p></p>
+<p>
+<a name="node_idx_1708"></a><a name="node_idx_1710"></a></p>
+<p>
+At first glance, the algorithms <code class="scheme"><span class="variable">move-until-out</span></code> and
+<code class="scheme"><span class="variable">quick-sort</span></code> have little in common. One processes structures; the
+other processes lists. One creates a new structure for the generative step;
+the other splits up a list into three pieces and recurs on two of them. In
+short, a comparison of the two examples of generative recursion suggests
+that the design of algorithms is an ad hoc activity and that it is
+impossible to come up with a general design recipe. A closer look, however,
+suggests a different picture.</p>
+<p>
+First, even though we speak of algorithms as processes that solve problems,
+they are still functions that consume and produce data. In other words, we
+still choose data to represent a problem, and we must definitely understand
+the nature of our data if we wish to understand the process. Second, we
+describe the processes in terms of data, for example, ``creating a new
+structure'' or ``partitioning a list of numbers.'' Third, we always
+distinguish between input data for which it is trivial to produce a
+solution and those for which it is not. Fourth, the generation of problems
+is the key to the design of algorithms. Although the idea of how to
+generate a new problem might be independent of a data representation, it
+must certainly be implemented for whatever form of representation we choose
+for our problem. Finally, once the generated problems have been solved, the
+solutions must be combined with other values.</p>
+<p>
+Let us examine the six general stages of our structural design recipe in
+light of our discussion:
+<a name="node_idx_1712"></a></p>
+<dl><dt></dt><dd>
+</dd><dt><b>Data analysis and design:</b></dt><dd> The choice of a data representation for
+a problem often affects our thinking about the process. Sometimes the
+description of a process dictates a particular choice of representation. On
+other occasions, it is possible and worthwhile to explore alternatives. In
+any case, we must analyze and define our data collections. <p>
+</p>
+</dd><dt><b>Contract, purpose, header:</b></dt><dd> We also need a contract, a definition
+header, and a purpose statement. Since the generative step has no
+connection to the structure of the data definition, the purpose statement
+should not only specify <strong>what</strong> the function does but should also
+include a comment that explains in general terms <strong>how</strong> it works.<p>
+</p>
+</dd><dt><b>Function examples:</b></dt><dd> In our previous design recipes, the function
+examples merely specified which output the function should produce for some
+given input. For algorithms, examples should illustrate <strong>how</strong> the
+algorithm proceeds for some given input. This helps us to design, and
+readers to understand, the algorithm. For functions such as
+<code class="scheme"><span class="variable">move-until-out</span></code> the process is trivial and doesn't need more than a
+few words. For others, including, <code class="scheme"><span class="variable">quick-sort</span></code>, the process relies
+on a non-trivial idea for its generative step, and its explanation requires
+a good example such as the one in figure&nbsp;<a href="curriculum-Z-H-32.html#node_fig_Temp_137">67</a>.<p>
+</p>
+</dd><dt><b>Template:</b></dt><dd> Our discussion suggests a general template for algorithms: <p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">generative-recursive-fun</span> <span class="variable">problem</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">trivially-solvable?</span> <span class="variable">problem</span>)
+     (<span class="variable">determine-solution</span> <span class="variable">problem</span>)]
+    [<span class="keyword">else</span>
+     (<span class="variable">combine-solutions</span>
+       ... <span class="variable">problem</span> ...
+       (<span class="variable">generative-recursive-fun</span> (<span class="variable">generate-problem-1</span> <span class="variable">problem</span>))
+       <span class="variable"><img src="curriculum-Z-G-D-5.gif" border="0" alt="[curriculum-Z-G-D-5.gif]"></span>
+       (<span class="variable">generative-recursive-fun</span> (<span class="variable">generate-problem-n</span> <span class="variable">problem</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Definition:</b></dt><dd> Of course, this template is only a suggestive blueprint,
+not a definitive shape.  Each function in the template is to remind us that
+we need to think about the following four questions: <p>
+</p>
+<ol>
+<li><p>What is a trivially solvable problem? </p>
+<p>
+</p>
+<li><p>What is a corresponding solution? </p>
+<p>
+</p>
+<li><p>How do we generate new problems that are more easily solvable
+than the original problem? Is there one new problem that we generate
+or are there several?</p>
+<p>
+</p>
+<li><p>Is the solution of the given problem the same as the solution of
+(one of) the new problems? Or, do we need to combine the solutions to
+create a solution for the original problem? And, if so, do we need
+anything from the original problem data?</p>
+<p>
+</p>
+</li></ol><p> </p>
+<p>
+To define the algorithm, we must express the answers to these four
+questions in terms of our chosen data representation.</p>
+<p>
+</p>
+</dd><dt><b>Test:</b></dt><dd> Once we have a complete function, we must also test it. As
+before, the goal of testing is to discover bugs and to eliminate them. 
+Remember that testing cannot validate that the function works correctly 
+for all possible inputs. Also remember that it is best to formulate tests
+as boolean-valued expressions that automatically compare the expected value
+with the computed value (see section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a>).
+</dd></dl><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_26.0.7"></a>
+<b>Exercise 26.0.7.</b>&nbsp;&nbsp; 
+Formulate informal answers to the four key questions for the problem of
+modeling a ball's movement across a canvas until it is out of bounds.
+&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gen-fun-instance1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_26.0.8"></a>
+<b>Exercise 26.0.8.</b>&nbsp;&nbsp; 
+Formulate informal answers to the four key questions for the
+<code class="scheme"><span class="variable">quick-sort</span></code> problem. How many instances of
+<code class="scheme"><span class="variable">generate-problem</span></code> are there?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gen-fun-instance2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_26.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_26.1">26.1&nbsp;&nbsp;Termination</a></h2>
+<p></p>
+<p>
+Unfortunately, the standard recipe is not good enough for the design of
+algorithms.  Up to now, a function has always produced an output for any
+legitimate input. That is, the evaluation has always stopped. After all,
+by the nature of our recipe, each natural recursion
+<a name="node_idx_1714"></a>consumes an immediate
+piece of the input, not the input itself.  Because data is constructed in
+a hierarchical manner, this means that the input shrinks at every
+stage. Hence the function sooner or later consumes an atomic piece of
+data and stops.</p>
+<p>
+With functions based on generative recursion,
+<a name="node_idx_1716"></a>this is no longer true. The
+internal recursions don't consume an immediate component of the input but
+some new piece of data, which is generated from the input. As
+exercise&nbsp;<a href="curriculum-Z-H-32.html#node_thm_25.1.1">25.1.1</a> shows, this step may produce the input over
+and over again and thus prevent the evaluation from ever producing a
+result. We say that the program <small>L</small><small>O</small><small>O</small><small>P</small><small>S</small> 
+<a name="node_idx_1718"></a>or is in an <small>I</small><small>N</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>E</small> <small>L</small><small>O</small><small>O</small><small>P</small>.
+<a name="node_idx_1720"></a></p>
+<p>
+In addition, even the slightest mistake in translating the process
+description into a function definition may cause an infinite loop.  The
+problem is most easily understood with an example. Consider the following
+definition of <code class="scheme"><span class="variable">smaller-items</span></code>, one of the two ``problem
+generators'' for <code class="scheme"><span class="variable">quick-sort</span></code>:
+<a name="node_idx_1722"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">smaller-items</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a list with all those numbers on <code class="scheme"><span class="variable">alon</span></code>  </span>
+<span class="comment">;; that are smaller than or equal to <code class="scheme"><span class="variable">threshold</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> <span class="variable">threshold</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">if</span> (<span class="builtin">&lt;=</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">threshold</span>) 
+	      (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">smaller-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))
+	      (<span class="variable">smaller-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))]))
+</pre></div><p>
+Instead of <code class="scheme"><span class="builtin">&lt;</span></code> it employs <code class="scheme"><span class="builtin">&lt;=</span></code> to compare numbers. As a
+result, this function produces <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">5</span>)</code> when applied to
+<code class="scheme">(<span class="builtin">list</span> <span class="selfeval">5</span>)</code> and <code class="scheme"><span class="selfeval">5</span></code>.</p>
+<p>
+Worse, if the <code class="scheme"><span class="variable">quick-sort</span></code> function from figure&nbsp;<a href="curriculum-Z-H-32.html#node_fig_Temp_138">68</a> is
+combined with this new version of <code class="scheme"><span class="variable">smaller-items</span></code>, it doesn't produce
+any output for <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">5</span>)</code>: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="builtin">append</span> (<span class="variable">quick-sort</span> (<span class="variable">smaller-items</span> <span class="selfeval">5</span> (<span class="builtin">list</span> <span class="selfeval">5</span>)))
+          (<span class="builtin">list</span> <span class="selfeval">5</span>)
+          (<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="selfeval">5</span> (<span class="builtin">list</span> <span class="selfeval">5</span>))))
+<span class="builtin">=</span> (<span class="builtin">append</span> <span class="variable"><u><code class="scheme">(<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">5</span>))</code></u></span>
+          (<span class="builtin">list</span> <span class="selfeval">5</span>)
+          (<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="selfeval">5</span> (<span class="builtin">list</span> <span class="selfeval">5</span>))))
+</pre></div><p>
+The first recursive use demands that <code class="scheme"><span class="variable">quick-sort</span></code> solve the problem
+of sorting <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">5</span>)</code> -- but that is the exact problem that we
+started with. Since this is a circular evaluation, <code class="scheme">(<span class="variable">quick-sort</span>
+(<span class="builtin">list</span> <span class="selfeval">5</span>))</code> never produces a result.  More generally, there is no guarantee
+that the size of the input for a recursive call brings us closer to a
+solution than the original input.</p>
+<p>
+<a name="node_idx_1724"></a>
+<a name="node_idx_1726"></a>
+<a name="node_idx_1728"></a>
+<a name="node_idx_1730"></a>
+<a name="node_idx_1732"></a>
+<a name="node_idx_1734"></a>
+<a name="node_idx_1736"></a>
+<a name="node_idx_1738"></a>
+<a name="node_idx_1740"></a>
+<a name="node_idx_1742"></a>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_139"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase           </td><td valign="top">Goal     </td><td valign="top">Activity </td></tr>
+<tr><td valign="top">Examples        </td><td valign="top">
+<p></p>
+<div align="left">to characterize the input-<br>
+output relationship<br>
+and the computational process via examples </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">
+create and show examples of trivially solvable problems 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> create and show examples that require recursive processing
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> illustrate how to work through the examples</div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define an algorithm </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">
+formulate tests for trivially solvable problems 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> formulate answers for the trivial cases 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> determine how to generate new problems from the given problem,
+possibly using auxiliary functions 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> determine how to combine the solutions of these problems into a
+solution for the given problem
+</div><p></p></td></tr>
+<tr><td valign="top" colspan="3"><img src="curriculum-Z-G-D-5.gif" border="0" alt="[curriculum-Z-G-D-5.gif]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="curriculum-Z-G-D-5.gif" border="0" alt="[curriculum-Z-G-D-5.gif]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="curriculum-Z-G-D-5.gif" border="0" alt="[curriculum-Z-G-D-5.gif]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td></tr>
+<tr><td valign="top">Termin.        
+</td><td valign="top"><p></p>
+<div align="left">to argue that the algorithm terminates for all possible inputs </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">
+show that the inputs to the recursive applications are smaller than the
+given input</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+</td></tr>
+<tr><td align="center"><b>Figure 69:</b>&nbsp;&nbsp;Designing algorithms</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The lesson from this example is that the design of algorithms requires one
+more step in our design recipe: a <small>T</small><small>E</small><small>R</small><small>M</small><small>I</small><small>N</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>A</small><small>R</small><small>G</small><small>U</small><small>M</small><small>E</small><small>N</small><small>T</small>,
+<a name="node_idx_1744"></a>which
+explains why the process produces an output for every input and how the
+function implements this idea; or a warning, which
+explains when the process may not terminate. 
+For <code class="scheme"><span class="variable">quick-sort</span></code>, the argument might look like this:
+</p>
+<blockquote>
+At each step, <code class="scheme"><span class="variable">quick-sort</span></code> partitions the list into two sublists
+using <code class="scheme"><span class="variable">smaller-items</span></code> and <code class="scheme"><span class="variable">larger-items</span></code>. Each function
+produces a list that is smaller than the input (the second argument), even
+if the threshold (the first argument) is an item on the list.  Hence each
+recursive application of <code class="scheme"><span class="variable">quick-sort</span></code> consumes a strictly shorter
+list than the given one.  Eventually, <code class="scheme"><span class="variable">quick-sort</span></code> receives
+and returns <code class="scheme"><span class="builtin">empty</span></code>.
+</blockquote>
+Without such an argument an algorithm must be considered incomplete. <p>
+A good termination argument may on occasion also reveal additional
+termination cases. For example, <code class="scheme">(<span class="variable">smaller-items</span> <span class="variable">N</span> (<span class="builtin">list</span> <span class="variable">N</span>))</code> and
+<code class="scheme">(<span class="variable">larger-items</span> <span class="variable">N</span> (<span class="builtin">list</span> <span class="variable">N</span>))</code> always produce <code class="scheme"><span class="builtin">empty</span></code> for any
+<code class="scheme"><span class="variable">N</span></code>. Therefore we know that <code class="scheme"><span class="variable">quick-sort</span></code>'s answer for
+<code class="scheme">(<span class="builtin">list</span> <span class="variable">N</span>)</code> is <code class="scheme">(<span class="builtin">list</span> <span class="variable">N</span>)</code>.<a name="call_footnote_Temp_140"></a><a href="#footnote_Temp_140"><sup><small>55</small></sup></a> To add this
+knowledge to <code class="scheme"><span class="variable">quick-sort</span></code>, we simply add a <code class="scheme"><span class="keyword">cond</span></code>-clause:
+<a name="node_idx_1746"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">quick-sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) <span class="variable">alon</span>]
+    [<span class="keyword">else</span> (<span class="builtin">append</span> 
+	    (<span class="variable">quick-sort</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>))) 
+	    (<span class="builtin">list</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) 
+	    (<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>))))]))
+</pre></div><p>
+The condition <code class="scheme">(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> is one way to ask
+whether <code class="scheme"><span class="variable">alon</span></code> contains one item. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_139">69</a> summarizes the suggestions on the design of
+algorithms. The dots indicate that the design of an algorithm requires 
+a new step: the termination argument. Read the table in conjunction with
+those of the preceding chapters. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_26.1.1"></a>
+<b>Exercise 26.1.1.</b>&nbsp;&nbsp; 
+Define the function <code class="scheme"><span class="variable">tabulate-div</span></code>, which accepts a number <code class="scheme"><span class="variable">n</span></code>
+and tabulates the list of all of its divisors, starting with
+<code class="scheme"><span class="selfeval">1</span></code> and ending in <code class="scheme"><span class="variable">n</span></code>. A number <code class="scheme"><span class="variable">d</span></code> is a divisior of a
+number <code class="scheme"><span class="variable">n</span></code> if the remainder of dividing <code class="scheme"><span class="variable">n</span></code> by <code class="scheme"><span class="variable">d</span></code> is
+<code class="scheme"><span class="selfeval">0</span></code>, that is, <code class="scheme">(<span class="builtin">=</span> (<span class="builtin">remainder</span> <span class="variable">n</span> <span class="variable">d</span>) <span class="selfeval">0</span>)</code> is true. The smallest
+divisior of any number is <code class="scheme"><span class="selfeval">1</span></code>; the largest one is the number
+itself.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/prime-tab.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_26.1.2"></a>
+<b>Exercise 26.1.2.</b>&nbsp;&nbsp;   
+<a name="node_idx_1748"></a>Develop the function <code class="scheme"><span class="variable">merge-sort</span></code>, which sorts a list of numbers in
+ascending order, using the following two auxiliary functions: 
+</p>
+<ol>
+<li><p>The first one, <code class="scheme"><span class="variable">make-singles</span></code>, constructs a list of
+one-item lists from the given list of numbers. For example, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">make-singles</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">5</span> <span class="selfeval">9</span> <span class="selfeval">3</span>))
+        (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span>) (<span class="builtin">list</span> <span class="selfeval">5</span>) (<span class="builtin">list</span> <span class="selfeval">9</span>) (<span class="builtin">list</span> <span class="selfeval">3</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<li><p>The second one, <code class="scheme"><span class="variable">merge-all-neighbors</span></code>, merges pairs of neighboring
+lists. More specifically, it consumes a list of lists (of numbers) and
+merges neighbors. For example, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">merge-all-neighbors</span> (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span>) (<span class="builtin">list</span> <span class="selfeval">5</span>) (<span class="builtin">list</span> <span class="selfeval">9</span>) (<span class="builtin">list</span> <span class="selfeval">3</span>)))
+        (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">5</span>) (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">9</span>)))
+
+(<span class="builtin">equal?</span> (<span class="variable">merge-all-neighbors</span> (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">5</span>) (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">9</span>)))
+        (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">5</span> <span class="selfeval">9</span>)))
+</pre></div><p>
+In general, this function yields a list that is approximately half as long as
+the input. Why is the output not always half as long as the input? 
+</p>
+</li></ol><p>
+Make sure to develop the functions independently. </p>
+<p>
+The function <code class="scheme"><span class="variable">merge-sort</span></code> first uses <code class="scheme"><span class="variable">make-singles</span></code> to create
+a list of single lists; then it relies on <code class="scheme"><span class="variable">merge-all-neighbors</span></code> to
+shorten the list of lists until it contains a single list. The latter is
+the result.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/merge-sort.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_26.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_26.2">26.2&nbsp;&nbsp;Structural versus Generative Recursion</a></h2>
+<p></p>
+<p>
+The template for algorithms is so general that it even covers functions
+based on structural recursion.
+<a name="node_idx_1750"></a>Consider the version with one termination 
+clause and one generation step: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">generative-recursive-fun</span> <span class="variable">problem</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">trivially-solvable?</span> <span class="variable">problem</span>)
+     (<span class="variable">determine-solution</span> <span class="variable">problem</span>)]
+    [<span class="keyword">else</span>
+      (<span class="variable">combine-solutions</span>
+	<span class="variable">problem</span>
+	(<span class="variable">generative-recursive-fun</span> (<span class="variable">generate-problem</span> <span class="variable">problem</span>)))]))
+</pre></div><p>
+If we replace <code class="scheme"><span class="variable">trivially-solvable?</span></code> with <code class="scheme"><span class="builtin">empty?</span></code> and 
+<code class="scheme"><span class="variable">generate-problem</span></code> with <code class="scheme"><span class="builtin">rest</span></code>, the outline <code class="scheme"><span class="variable">is</span></code> a
+template for a list-processing function: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">generative-recursive-fun</span> <span class="variable">problem</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">problem</span>) (<span class="variable">determine-solution</span> <span class="variable">problem</span>)]
+    [<span class="keyword">else</span>
+      (<span class="variable">combine-solutions</span>
+	<span class="variable">problem</span>
+	(<span class="variable">generative-recursive-fun</span> (<span class="builtin">rest</span> <span class="variable">problem</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+<p><a name="node_thm_26.2.1"></a>
+<b>Exercise 26.2.1.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">determine-solution</span></code> and <code class="scheme"><span class="variable">combine-solutions</span></code> so that
+the function <code class="scheme"><span class="variable">generative-recursive-fun</span></code> computes the length of its
+input.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/generative-length.html">Solution</a></p>
+<p></p>
+<p>
+This discussion raises the question of whether there is a difference between
+between functions based on structural recursion and those based on
+generative recursion. The answer is ``it depends.'' Of course, we could say
+that all functions using structural recursion are just special cases of
+generative recursion. This ``everything is equal'' attitude, however, is of
+no help if we wish to understand the process of designing functions. It
+confuses two classes of functions that are designed with different
+approaches and that have different consequences. One relies on a systematic
+data analysis and not much more; the other requires a deep, often
+mathematical, insight into the problem-solving process itself. One
+leads programmers to naturally terminating functions; the other requires a
+termination argument. </p>
+<p>
+A simple inspection of a function's definition quickly shows whether a
+function uses structural or generative recursion. All self-applications of
+a structurally recursive function always receive an immediate component of
+the current input for further processing. For example, for a
+<code class="scheme"><span class="builtin">cons</span></code>tructed list, the immediate components are the <code class="scheme"><span class="builtin">first</span></code>
+item and the <code class="scheme"><span class="builtin">rest</span></code> of the list. Hence, if a function consumes a
+plain list and its recursive use does not consume the rest of the list,
+its definition is not structural but generative. Or, put positively,
+properly recursive algorithms consume newly generated input, which may or
+may not contain components of the input. In any case, the new piece of data
+represents a different problem than the given one, but still a problem of
+the same general class of problems.</p>
+<p>
+</p>
+<a name="node_sec_26.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_26.3">26.3&nbsp;&nbsp;Making Choices</a></h2>
+<p></p>
+<p>
+A user cannot distinguish <code class="scheme"><span class="variable">sort</span></code> and <code class="scheme"><span class="variable">quick-sort</span></code>. Both
+consume a list of numbers; both produce a list that consists of the same
+numbers arranged in ascending order. To an observer, the functions are
+completely equivalent.<a name="call_footnote_Temp_141"></a><a href="#footnote_Temp_141"><sup><small>56</small></sup></a>  This raises the question of which of the two a
+programmer should provide. More generally, if we can develop a function
+using structural recursion and an equivalent one using generative
+recursion, what should we do?
+<a name="node_idx_1754"></a><a name="node_idx_1756"></a></p>
+<p>
+To understand this choice better, let's discuss another classical example of
+generative recursion from mathematics: the problem of finding the greatest
+common divisor of two positive natural numbers.<a name="call_footnote_Temp_142"></a><a href="#footnote_Temp_142"><sup><small>57</small></sup></a> All such numbers
+have at least one divisor in common: 1. On 
+occasion, this is also the only common divisor. For example, 2 and 3 have
+only 1 as common divisor because 2 and 3, respectively, are the only other
+divisors. Then again, 6 and 25 are both numbers with several divisors:
+</p>
+<ol>
+<li><p>6 is evenly divisible by 1, 2, 3, and 6;
+</p>
+<li><p>25 is evenly divisible by 1, 5, and 25.
+</p>
+</li></ol><p>
+Still, the greatest common divisior of 25 and 6 is 1. In contrast, 
+18 and 24 have many common divisors: 
+</p>
+<ol>
+<li><p>18 is evenly divisible by 1, 2, 3, 6, 9, and 18; 
+</p>
+<li><p>24 is evenly divisible by 1, 2, 3, 4, 6, 8, 12, and 24.
+</p>
+</li></ol><p>
+The greatest common divisor is 6. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Following the design recipe, we start with a contract, a purpose statement,
+and a header: 
+</p>
+<p></p>
+<p><a name="node_idx_1758"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">gcd</span> <span class="selfeval">:</span> <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>] <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to find the greatest common divisior of <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code></span>
+(<span class="keyword">define</span> (<span class="builtin">gcd</span> <span class="variable">n</span> <span class="variable">m</span>) 
+  ...)
+</pre></div><p>
+</p>
+<p></p>
+<p>The contract specifies the precise inputs: natural
+numbers that are greater or equal to <code class="scheme"><span class="selfeval">1</span></code> (not <code class="scheme"><span class="selfeval">0</span></code>).</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Now we need to make a decision whether we want to pursue a design based on
+structural or on generative recursion. Since the answer is by no means
+obvious, we develop both. For the structural version, we must consider
+which input the function should process: <code class="scheme"><span class="variable">n</span></code>, <code class="scheme"><span class="variable">m</span></code>, or both.
+A moment's consideration suggests that what we really need is a function
+that starts with the smaller of the two and outputs the first
+number smaller or equal to this input that evenly divides both <code class="scheme"><span class="variable">n</span></code>
+and <code class="scheme"><span class="variable">m</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_143"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1760"></a><a name="node_idx_1762"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">gcd-structural</span> <span class="selfeval">:</span> <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>] <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to find the greatest common divisior of <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code></span>
+<span class="comment">;; <strong>structural</strong> recursion using data definition of <code class="scheme"><strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>]</code> </span>
+(<span class="keyword">define</span> (<span class="variable">gcd-structural</span> <span class="variable">n</span> <span class="variable">m</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">first-divisior-&lt;=</span> <span class="variable">i</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">1</span>) <span class="selfeval">1</span>]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="builtin">remainder</span> <span class="variable">n</span> <span class="variable">i</span>) <span class="selfeval">0</span>) 
+			    (<span class="builtin">=</span> (<span class="builtin">remainder</span> <span class="variable">m</span> <span class="variable">i</span>) <span class="selfeval">0</span>))
+		       <span class="variable">i</span>]
+		      [<span class="keyword">else</span> (<span class="variable">first-divisior-&lt;=</span> (<span class="builtin">-</span> <span class="variable">i</span> <span class="selfeval">1</span>))])])))
+    (<span class="variable">first-divisior-&lt;=</span> (<span class="variable">min</span> <span class="variable">m</span> <span class="variable">n</span>))))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 70:</b>&nbsp;&nbsp;Finding the greatest common divisor via structural recursion</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+We use <code class="scheme"><span class="keyword">local</span></code> to define an appropriate auxiliary function: see
+figure&nbsp;<a href="#node_fig_Temp_143">70</a>.  The conditions ``evenly divisible'' have
+been encoded as <code class="scheme">(<span class="builtin">=</span> (<span class="builtin">remainder</span> <span class="variable">n</span> <span class="variable">i</span>) <span class="selfeval">0</span>)</code> and <code class="scheme">(<span class="builtin">=</span> (<span class="builtin">remainder</span> <span class="variable">m</span>
+<span class="variable">i</span>) <span class="selfeval">0</span>)</code>. The two ensure that <code class="scheme"><span class="variable">i</span></code> divides <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code>
+without a remainder.  Testing <code class="scheme"><span class="variable">gcd-structural</span></code> with the examples
+shows that it finds the expected answers.</p>
+<p>
+Although the design of <code class="scheme"><span class="variable">gcd-structural</span></code> is rather straightforward,
+it is also naive. It simply tests for every number whether it divides 
+both <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code> evenly and returns the first such number. 
+For small natural numbers, this process works just fine. Consider the
+following example, however: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">gcd-structural</span> <span class="selfeval">101135853</span> <span class="selfeval">45014640</span>)
+</pre></div><p>
+The result is <code class="scheme"><span class="selfeval">177</span></code> and to get there <code class="scheme"><span class="variable">gcd-structural</span></code> had to
+compare 101135676, that is, 101135853  <tt>-</tt>  177, numbers. This is a large effort
+and even reasonably fast computers spend several minutes on this task.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_26.3.1"></a>
+<b>Exercise 26.3.1.</b>&nbsp;&nbsp; 
+Enter the definition of <code class="scheme"><span class="variable">gcd-structural</span></code> into the <tt>Definitions</tt>
+<a name="node_idx_1764"></a>window and evaluate <code class="scheme">(<span class="keyword">time</span> (<span class="variable">gcd-structural</span> <span class="selfeval">101135853</span> <span class="selfeval">45014640</span>))</code> in 
+the <tt>Interactions</tt>
+<a name="node_idx_1766"></a>window.</p>
+<p>
+<strong>Hint:</strong> After testing <code class="scheme"><span class="variable">gcd-structural</span></code> conduct the performance tests
+in the Full Scheme language (without debugging), which evaluates expressions
+faster than the lower language levels but with less protection. Add 
+<code class="scheme">(<span class="variable">require-library</span> <span class="selfeval">&quot;core.ss&quot;</span>)</code>
+to the top of the <tt>Definitions</tt>
+<a name="node_idx_1768"></a>window. Have some reading handy!&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gcd-struct-time.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+Since mathematicians recognized the inefficiency of the ``structural
+algorithm'' a long time ago, they studied the problem of finding divisiors
+in more depth. The essential insight is that for two natural numbers
+<code class="scheme"><span class="variable">larger</span></code> and <code class="scheme"><span class="variable">smaller</span></code>, their greatest common divisor is
+equal to the greatest common divisior of <code class="scheme"><span class="variable">smaller</span></code> and the
+<code class="scheme"><span class="builtin">remainder</span></code> of <code class="scheme"><span class="variable">larger</span></code> divided into <code class="scheme"><span class="variable">smaller</span></code>. Here
+is how we can put this insight into equational form: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">gcd</span> <span class="variable">larger</span> <span class="variable">smaller</span>) 
+<span class="builtin">=</span> (<span class="builtin">gcd</span> <span class="variable">smaller</span> (<span class="builtin">remainder</span> <span class="variable">larger</span> <span class="variable">smaller</span>))
+</pre></div><p>
+Since <code class="scheme">(<span class="builtin">remainder</span> <span class="variable">larger</span> <span class="variable">smaller</span>)</code> is smaller than both
+<code class="scheme"><span class="variable">larger</span></code> and <code class="scheme"><span class="variable">smaller</span></code>, the right-hand side use of
+<code class="scheme"><span class="builtin">gcd</span></code> consumes <code class="scheme"><span class="variable">smaller</span></code> first. </p>
+<p>
+Here is how this insight applies to our small example: 
+</p>
+<ol>
+<li><p>The given numbers are <code class="scheme"><span class="selfeval">18</span></code> and <code class="scheme"><span class="selfeval">24</span></code>. </p>
+<p>
+</p>
+<li><p>According to the mathematicians' insight, they have the same greatest
+common divisor as <code class="scheme"><span class="selfeval">18</span></code> and <code class="scheme"><span class="selfeval">6</span></code>.</p>
+<p>
+</p>
+<li><p>And these two have the same greatest common divisor as <code class="scheme"><span class="selfeval">6</span></code> and
+<code class="scheme"><span class="selfeval">0</span></code>.
+</p>
+</li></ol><p>
+And here we seem stuck because <code class="scheme"><span class="selfeval">0</span></code> is nothing expected. But,
+<code class="scheme"><span class="selfeval">0</span></code> can be evenly divided by every number, so we have 
+found our answer: <code class="scheme"><span class="selfeval">6</span></code>.</p>
+<p>
+Working through the example not only explains the idea but also suggests
+how to discover the case with a trivial solution. When the smaller of the 
+two numbers is <code class="scheme"><span class="selfeval">0</span></code>, the result is the larger number. Putting
+everything together, we get the following definition:
+<a name="node_idx_1770"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">gcd-generative</span> <span class="selfeval">:</span> <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>] <strong>N</strong>[<span class="variable">&gt;=1</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to find the greatest common divisior of <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code></span>
+<span class="comment">;; <strong>generative</strong> recursion: <code class="scheme">(<span class="builtin">gcd</span> <span class="variable">n</span> <span class="variable">m</span>)</code> = <code class="scheme">(<span class="builtin">gcd</span> <span class="variable">n</span> (<span class="builtin">remainder</span> <span class="variable">m</span> <span class="variable">n</span>))</code> if <code class="scheme">(<span class="builtin">&lt;=</span> <span class="variable">m</span> <span class="variable">n</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">gcd-generative</span> <span class="variable">n</span> <span class="variable">m</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">clever-gcd</span> <span class="variable">larger</span> <span class="variable">smaller</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">=</span> <span class="variable">smaller</span> <span class="selfeval">0</span>) <span class="variable">larger</span>]
+	      [<span class="keyword">else</span> (<span class="variable">clever-gcd</span> <span class="variable">smaller</span> (<span class="builtin">remainder</span> <span class="variable">larger</span> <span class="variable">smaller</span>))])))
+    (<span class="variable">clever-gcd</span> (<span class="variable">max</span> <span class="variable">m</span> <span class="variable">n</span>) (<span class="variable">min</span> <span class="variable">m</span> <span class="variable">n</span>))))
+</pre></div><p>
+The <code class="scheme"><span class="keyword">local</span></code> definition introduces the workhorse of the function:
+<code class="scheme"><span class="variable">clever-gcd</span></code>, a function based on generative recursion.  Its first
+line discovers the trivially solvable case by comparing <code class="scheme"><span class="variable">smaller</span></code> to
+<code class="scheme"><span class="selfeval">0</span></code> and produces the matching solution.  The generative step uses
+<code class="scheme"><span class="variable">smaller</span></code> as the new first argument and <code class="scheme">(<span class="builtin">remainder</span> <span class="variable">larger</span>
+<span class="variable">smaller</span>)</code> as the new second argument to <code class="scheme"><span class="variable">clever-gcd</span></code>, exploiting the
+above equation.</p>
+<p>
+If we now use <code class="scheme"><span class="variable">gcd-generative</span></code> with our complex example from above:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">gcd-generative</span> <span class="selfeval">101135853</span> <span class="selfeval">45014640</span>)
+</pre></div><p>
+we see that the response is nearly instantaneous. A hand-evaluation shows
+that <code class="scheme"><span class="variable">clever-gcd</span></code> recurs only nine times before it produces the
+solution: <code class="scheme"><span class="selfeval">177</span></code>. In short, generative recursion has helped find us a
+much faster solution to our problem.</p>
+<p>
+</p>
+<p><a name="node_thm_26.3.2"></a>
+<b>Exercise 26.3.2.</b>&nbsp;&nbsp; 
+Formulate informal answers to the four key questions for
+<code class="scheme"><span class="variable">gcd-generative</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gcd-gen-questions.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_26.3.3"></a>
+<b>Exercise 26.3.3.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">gcd-generative</span></code> and evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">time</span> (<span class="variable">gcd-generative</span> <span class="selfeval">101135853</span> <span class="selfeval">45014640</span>))
+</pre></div><p>
+in the <tt>Interactions</tt>
+<a name="node_idx_1772"></a>window.</p>
+<p>
+Evaluate <code class="scheme">(<span class="variable">clever-gcd</span> <span class="selfeval">101135853</span> <span class="selfeval">45014640</span>)</code> by hand. Show only those lines
+that introduce a new recursive call to
+<code class="scheme"><span class="variable">clever-gcd</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gcd-gen-time.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_26.3.4"></a>
+<b>Exercise 26.3.4.</b>&nbsp;&nbsp; 
+Formulate a termination argument for
+<code class="scheme"><span class="variable">gcd-generative</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gcd-gen-term.html">Solution</a></p>
+<p></p>
+<p>
+Considering the above example, it is tempting to develop functions using
+generative recursion. After all, they produce answers faster! This
+judgment is too rash for three reasons. First, even a well-designed
+algorithm isn't always faster than an equivalent structurally recursive
+function. For example, <code class="scheme"><span class="variable">quick-sort</span></code> wins only for large lists; for
+small ones, the standard <code class="scheme"><span class="variable">sort</span></code> function is faster. Worse, a badly
+designed algorithm can wreak havoc on the performance of a program. Second,
+it is typically easier to design a function using the recipe for structural
+recursion. Conversely, designing an algorithm requires an idea of how to
+generate new, smaller problems, a step that often requires deep
+mathematical insight. Finally, people who read functions can easily
+understand structurally recursive functions, even without much
+documentation. To understand an algorithm, the generative step must be
+well explained, and even with a good explanation, it may still be difficult
+to grasp the idea. </p>
+<p>
+Experience shows that most functions in a program employ structural
+recursion; only a few exploit generative recursion. When we encounter a
+situation where a design could use either the recipe for structural or
+generative recursion, the best approach is often to start with a structural
+version. If it turns out to be too slow, the alternative design using
+generative recursion should be explored. If it is chosen, it is important
+to document the problem generation with good examples and to give a good
+termination argument. </p>
+<p>
+</p>
+<p><a name="node_thm_26.3.5"></a>
+<b>Exercise 26.3.5.</b>&nbsp;&nbsp; 
+Evaluate  
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">10</span> <span class="selfeval">6</span> <span class="selfeval">8</span> <span class="selfeval">9</span> <span class="selfeval">14</span> <span class="selfeval">12</span> <span class="selfeval">3</span> <span class="selfeval">11</span> <span class="selfeval">14</span> <span class="selfeval">16</span> <span class="selfeval">2</span>))
+</pre></div><p>
+by hand. Show only those lines that introduce a new recursive call to
+<code class="scheme"><span class="variable">quick-sort</span></code>. How many recursive applications of <code class="scheme"><span class="variable">quick-sort</span></code>
+are required? How many recursive applications of <code class="scheme"><span class="builtin">append</span></code>? Suggest a
+general rule for a list of length <code class="scheme"><span class="variable">N</span></code>.</p>
+<p>
+Evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span> <span class="selfeval">10</span> <span class="selfeval">11</span> <span class="selfeval">12</span> <span class="selfeval">13</span> <span class="selfeval">14</span>))
+</pre></div><p>
+by hand. How many recursive applications of <code class="scheme"><span class="variable">quick-sort</span></code> are
+required? How many recursive applications of <code class="scheme"><span class="builtin">append</span></code>?  Does this
+contradict the first part of the exercise?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-time1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_26.3.6"></a>
+<b>Exercise 26.3.6.</b>&nbsp;&nbsp; 
+Add <code class="scheme"><span class="variable">sort</span></code> and <code class="scheme"><span class="variable">quick-sort</span></code> to the
+<tt>Definitions</tt><a name="node_idx_1774"></a>window. Test the functions and then explore how fast each works on various
+lists. The experiment should confirm the claim that the plain <code class="scheme"><span class="variable">sort</span></code>
+function wins (in many comparisons) over <code class="scheme"><span class="variable">quick-sort</span></code> for short
+lists and vice versa. Determine the cross-over point. Then build a
+<code class="scheme"><span class="variable">sort-quick-sort</span></code> function that behaves like <code class="scheme"><span class="variable">quick-sort</span></code> for
+large lists and switches over to the plain <code class="scheme"><span class="variable">sort</span></code> function for lists
+below the cross-over point.</p>
+<p>
+<strong>Hints:</strong> (1) Use the ideas of exercise&nbsp;<a href="#node_thm_26.3.5">26.3.5</a> to create
+test cases. (2) Develop <code class="scheme"><span class="variable">create-tests</span></code>, a function that creates
+large test cases randomly. Then evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">test-case</span> (<span class="variable">create-tests</span> <span class="selfeval">10000</span>))
+(<span class="variable">collect-garbage</span>)
+(<span class="keyword">time</span> (<span class="variable">sort</span> <span class="variable">test-case</span>))
+(<span class="variable">collect-garbage</span>)
+(<span class="keyword">time</span> (<span class="variable">quick-sort</span> <span class="variable">test-case</span>))
+</pre></div><p>
+The uses of <code class="scheme"><span class="variable">collect-garbage</span></code> helps DrScheme deal with large
+lists.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-time2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_140"></a><a href="#call_footnote_Temp_140"><sup><small>55</small></sup></a> Of course, we could have
+just argued that the sorted version of a one-item list  is the list,
+which is the basis of exercise&nbsp;<a href="curriculum-Z-H-32.html#node_thm_25.2.2">25.2.2</a>.</p>
+<p><a name="footnote_Temp_141"></a><a href="#call_footnote_Temp_141"><sup><small>56</small></sup></a> The concept of observably equivalent
+functions and expressions plays a central role in the study of programming
+languages 
+<a name="node_idx_1752"></a>and their meaning.</p>
+<p><a name="footnote_Temp_142"></a><a href="#call_footnote_Temp_142"><sup><small>57</small></sup></a> The material on
+the greatest common divisor was suggested by John Stone.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-32.html">previous</a></span><span>, <a href="curriculum-Z-H-34.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-33.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,126 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-9.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-8.html">previous</a></span><span>, <a href="drscheme-Z-H-10.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_5"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_5">Section  5</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_5">Symbolic Information</a></h1>
+<p></p>
+<p>
+Spaces are allowed between a <code class="scheme"><span class="keyword">'</span></code> and the sequence of characters
+that make up a symbol, but this is discouraged as a matter of
+style. Spaces cannot appear between other characters in the
+symbol. The set of legal characters to build symbols is the same as
+for program variable names, so parentheses, quotes, <code class="scheme"><span class="selfeval">#</span></code>,
+<code class="verbatim">;</code>, and <code class="verbatim">|</code> must be avoided. Also, like variable
+names, symbols are case-sensitive:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="variable">&gt;</span> (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="keyword">'</span><span class="variable">Hello</span>)
+<span class="builtin">false</span>
+</pre></div>
+</blockquote><br>
+<p>
+Don't forget the starting quote. Without it, DrScheme does not see a
+symbol, but instead attempts to find the meaning of a name. This can
+lead to an error:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="variable">&gt;</span> (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="variable">hello</span>)
+<span class="variable">reference</span> <span class="variable">to</span> <span class="variable">undefined</span> <span class="variable">identifier:</span> <span class="variable">hello</span>
+</pre></div>
+</blockquote><br>
+or more confusing behavior if DrScheme happens to recognize the name:
+<br>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="variable">&gt;</span> (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="keyword">and</span> <span class="keyword">and</span>)
+<span class="variable">Invalid</span> <span class="variable">use</span> <span class="variable">of</span> <span class="variable">keyword</span> <span class="keyword">and</span>
+<span class="variable">&gt;</span> (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">not</span> <span class="variable">not</span>)
+<span class="variable">symbol=?:</span> <span class="variable">expected</span> <span class="variable">symbols</span> <span class="variable">as</span> <span class="variable">arguments</span><span class="keyword">,</span> <span class="variable">received</span> <span class="keyword">'</span><span class="variable">not</span> <span class="keyword">and</span> <span class="variable">not</span>
+</pre></div>
+</blockquote><br>
+<em>Don't</em> add a quote when you really mean a variable:
+<br>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">is-hello?</span> <span class="variable">s</span>)
+  (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="keyword">'</span><span class="variable">s</span>)) <span class="comment">; wrong: 's is never 'hello</span>
+(<span class="keyword">define</span> (<span class="variable">is-hello?</span> <span class="variable">s</span>)
+  (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="variable">s</span>)) <span class="comment">; right: s is sometimes 'hello</span>
+</pre></div>
+</blockquote><br>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Images</strong></p>
+<p>To insert an image into a program, move the blinking caret to the
+place in your program where you want the image, and select the
+<strong><tt>Insert Image</tt></strong> item from the <strong><tt>Edit</tt></strong> menu. DrScheme
+will then provide a dialog for selecting an image file. After you
+have selected a file, the image will be inserted at the blinking
+caret.
+</p>
+<blockquote>
+<strong>Beware!</strong> If you use images in your program, DrScheme saves your
+program file in a special format, instead of the normal text
+format. Only DrScheme can read this special format.
+</blockquote>
+If there is a problem loading an image from a file, DrScheme displays
+a box with an ``x'' instead of a picture. The problem is usually due
+to a corrupted image file.<p>
+Images can also be copied from web pages viewed through DrScheme's
+Help Desk. The <strong><tt>File|Open URL...</tt></strong> menu item opens a web
+page in Help Desk.</p>
+<p>
+Under Windows, images copied from other programs (besides DrScheme)
+can also be pasted into DrScheme.</p>
+<p>
+</p>
+<a name="node_sec_5.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_5.1">5.1&nbsp;&nbsp;Finger Exercises with Symbols</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Exercise Notes</strong></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 5.1.2</strong>   For
+information about selecting a teachpack, see the <strong>Exercise Notes</strong>
+for <a href="drscheme-Z-H-6.html#node_sec_2.2">Exercise 2.2.1</a>.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 5.1.5</strong>   For
+information about selecting a teachpack, see the <strong>Exercise Notes</strong>
+for <a href="drscheme-Z-H-6.html#node_sec_2.2">Exercise 2.2.1</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-8.html">previous</a></span><span>, <a href="drscheme-Z-H-10.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-9.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

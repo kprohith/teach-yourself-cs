@@ -1,0 +1,536 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-5.html">previous</a></span><span>, <a href="curriculum-Z-H-7.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_3"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_3">Section  3</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_3">Programs are Function Plus Variable Definitions</a></h1>
+<p></p>
+<p>
+<a name="node_idx_192"></a>In general, a program consists not just of one, but of many definitions.
+The <code class="scheme"><span class="variable">area-of-ring</span></code> program, for example, consists of two
+definitions: the one for <code class="scheme"><span class="variable">area-of-ring</span></code> and another one for
+<code class="scheme"><span class="variable">area-of-disk</span></code>. We refer to both as <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>s
+<a name="node_idx_194"></a><a name="node_idx_196"></a>and, using mathematical terminology in a loose way, say that the program
+is <small>C</small><small>O</small><small>M</small><small>P</small><small>O</small><small>S</small><small>E</small><small>D</small> 
+<a name="node_idx_198"></a>of several functions. Because the first one,
+<code class="scheme"><span class="variable">area-of-ring</span></code>, is the function we really wish to use, we refer to
+it as the <small>M</small><small>A</small><small>I</small><small>N</small> <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small>;
+<a name="node_idx_200"></a>the second one, <code class="scheme"><span class="variable">area-of-disk</span></code>, is an <small>A</small><small>U</small><small>X</small><small>I</small><small>L</small><small>I</small><small>A</small><small>R</small><small>Y</small>
+<small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small>, occasionally also called <small>H</small><small>E</small><small>L</small><small>P</small><small>E</small><small>R</small> <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small>.<a name="node_idx_202"></a><a name="node_idx_204"></a></p>
+<p>
+The use of auxiliary functions makes the design process manageable and
+renders programs readable.  Compare the following two versions of
+<code class="scheme"><span class="variable">area-of-ring</span></code>:
+<a name="node_idx_206"></a></p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left">
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) 
+  (<span class="builtin">-</span> (<span class="variable">area-of-disk</span> <span class="variable">outer</span>)
+     (<span class="variable">area-of-disk</span> <span class="variable">inner</span>)))
+</pre></div>
+</div></td><td></td><td><div align="left">
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) 
+  (<span class="builtin">-</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">outer</span> <span class="variable">outer</span>))
+     (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">inner</span> <span class="variable">inner</span>))))
+</pre></div>
+</div></td><td>
+</td></tr></table></div>
+
+The definition on the left composes auxiliary functions. Designing it
+helped us break up the original problem into smaller, more easily
+solvable problems. Reading it reminds us of our reasoning that the area
+is the difference between the area of the full disk and the area of the
+hole. In contrast, the definition on the right requires a reader to
+reconstruct the idea that the two subexpressions compute the area of two
+disks. Furthermore, we would have had to produce the right definition in
+one monolithic block, without benefit of dividing the problem-solving
+process into smaller steps.<p>
+For a small program such as <code class="scheme"><span class="variable">area-of-ring</span></code>, the differences between
+the two styles are minor. For large programs, however, using auxiliary
+functions is not an option but a necessity.  That is, even if we are asked
+to write a single program, we should consider breaking it up into several
+small programs and <small>C</small><small>O</small><small>M</small><small>P</small><small>O</small><small>S</small><small>I</small><small>N</small><small>G</small> 
+<a name="node_idx_208"></a>them as needed. Although we are not
+yet in a position to develop truly large programs, we can still get a
+feeling for the idea by developing two versions in parallel. </p>
+<p>
+The first subsection contrasts the two development styles with an example
+from the business domain. It demonstrates how breaking up a program into
+several function definitions
+<a name="node_idx_210"></a><a name="node_idx_212"></a>can greatly increase our confidence in the
+correctness of the overall program. The second subsection introduces the
+concept of a variable definition,
+<a name="node_idx_214"></a><a name="node_idx_216"></a>which is an additional important
+ingredient for the development of programs.  The last subsection proposes
+some exercises.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_3.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_3.1">3.1&nbsp;&nbsp;Composing Functions</a></h2>
+<p> 
+</p>
+<p>
+Consider the following problem: 
+</p>
+<blockquote>
+Imagine the owner of a movie theater who has complete freedom in setting
+ticket prices. The more he charges, the fewer the people who can afford
+tickets. In a recent experiment the owner determined a precise
+relationship between the price of a ticket and average attendance. At a
+price of $5.00 per ticket, 120 people attend a performance. Decreasing
+the price by a dime ($.10) increases attendance by 15. Unfortunately,
+the increased attendance also comes at an increased cost. Every
+performance costs the owner $180. Each attendee costs another four
+cents ($0.04). The owner would like to know the exact relationship
+between profit and ticket price so that he can determine the price at
+which he can make the highest profit.
+</blockquote>
+While the task is clear, how to go about it is not. All we can say at
+this point is that several quantities depend on each other. <p>
+When we are confronted with such a situation, it is best to tease out the
+various dependencies one at a time:
+</p>
+<ol>
+<li><p><i>Profit</i> 
+<a name="node_idx_218"></a>is the difference between revenue and costs. </p>
+<p>
+</p>
+<li><p>The <i>revenue</i> <a name="node_idx_220"></a>is exclusively generated by the sale of
+tickets. It is the product of ticket price and number of attendees.</p>
+<p>
+</p>
+<li><p>The <i>costs</i> <a name="node_idx_222"></a>consist of two parts: a fixed part ($180) and a
+variable part that depends on the number of attendees. </p>
+<p>
+</p>
+<li><p>Finally, the problem statement also specifies how the number of
+attendees depends on the ticket price.
+</p>
+</li></ol><p>
+Let's formulate a function for each of these dependencies; after all,
+functions compute how quantities depend on each other. </p>
+<p>
+<a name="node_idx_224"></a><a name="node_idx_226"></a><a name="node_idx_228"></a><a name="node_idx_230"></a>We start with contracts, headers, and purpose statements. Here is the one
+for <code class="scheme"><span class="variable">profit</span></code>: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">profit</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the profit as the difference between revenue and costs</span>
+<span class="comment">;; at some given <code class="scheme"><span class="variable">ticket-price</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">profit</span> <span class="variable">ticket-price</span>) ...)
+</pre></div><p>
+It depends on the ticket price because both revenue and cost depend on
+the ticket price. Here are the remaining three: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">revenue</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the revenue, given <code class="scheme"><span class="variable">ticket-price</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">revenue</span> <span class="variable">ticket-price</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">cost</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the costs, given <code class="scheme"><span class="variable">ticket-price</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">cost</span> <span class="variable">ticket-price</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">attendees</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the number of attendees, given <code class="scheme"><span class="variable">ticket-price</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">attendees</span> <span class="variable">ticket-price</span>) ...)
+</pre></div><p>
+Each purpose statement is a rough transliteration of some part of the
+problem statement.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_3.1.1"></a>
+<b>Exercise 3.1.1.</b>&nbsp;&nbsp; 
+The next step is to make up examples for each of the functions. Determine
+how many attendees can afford a show at a ticket price of $3.00, $4.00,
+and $5.00. Use the examples to formulate a general rule that shows how to
+compute the number of attendees from the ticket price. Make up more
+examples if needed.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/movie-examples.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_3.1.2"></a>
+<b>Exercise 3.1.2.</b>&nbsp;&nbsp; 
+Use the results of exercise&nbsp;<a href="#node_thm_3.1.1">3.1.1</a> to determine how much
+it costs to run a show at $3.00, $4.00, and $5.00. Also determine how
+much revenue each show produces at those prices. Finally, figure out how
+much profit the monopolistic movie owner can make with each show. Which is
+the best price (of these three) for maximizing the
+profit?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/movie-examples2.html">Solution</a></p>
+<p> </p>
+<p>
+Once we have written down the basic material about our functions and
+calculated out several examples, we can replace the ``<tt>...</tt>'' with
+Scheme expressions. The left column of figure&nbsp;<a href="#node_fig_Temp_23">5</a> contains
+complete definitions of all four functions. The <code class="scheme"><span class="variable">profit</span></code> function
+computes its result as the difference between the result of
+<code class="scheme"><span class="variable">revenue</span></code> and <code class="scheme"><span class="variable">cost</span></code>, just as the problem analysis and
+purpose statement suggest. The computation of both depends on
+<code class="scheme"><span class="variable">ticket-price</span></code>, which is what the applications say. To compute the
+revenue, we first compute the number of attendees for the given
+<code class="scheme"><span class="variable">ticket-price</span></code> and multiply it with
+<code class="scheme"><span class="variable">ticket-price</span></code>. Similarly, to compute the cost we add the fixed
+portion of the cost to the variable part, which is the product of the
+number of attendees and <code class="scheme"><span class="selfeval">0.04</span></code> (four cents). Finally, the
+computation of the number of attendees also follows the problem
+statement. The base attendance at a price of five dollars is 120, and for
+each 10 cents less than five dollars, 15 more attendees show up. </p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_23"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_232"></a><a name="node_idx_234"></a><a name="node_idx_236"></a><a name="node_idx_238"></a></p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; How to design a program </span>
+(<span class="keyword">define</span> (<span class="variable">profit</span> <span class="variable">ticket-price</span>)
+  (<span class="builtin">-</span> (<span class="variable">revenue</span> <span class="variable">ticket-price</span>)
+     (<span class="variable">cost</span> <span class="variable">ticket-price</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">revenue</span> <span class="variable">ticket-price</span>)
+  (<span class="builtin">*</span>  (<span class="variable">attendees</span> <span class="variable">ticket-price</span>) <span class="variable">ticket-price</span>))
+
+(<span class="keyword">define</span> (<span class="variable">cost</span> <span class="variable">ticket-price</span>)
+  (<span class="builtin">+</span> <span class="selfeval">180</span> 
+     (<span class="builtin">*</span> <span class="selfeval">.04</span> (<span class="variable">attendees</span> <span class="variable">ticket-price</span>))))
+
+(<span class="keyword">define</span> (<span class="variable">attendees</span> <span class="variable">ticket-price</span>)
+  (<span class="builtin">+</span> <span class="selfeval">120</span>
+     (<span class="builtin">*</span> (<span class="builtin">/</span> <span class="selfeval">15</span> <span class="selfeval">.10</span>) (<span class="builtin">-</span> <span class="selfeval">5.00</span> <span class="variable">ticket-price</span>))))
+</pre></div>
+</div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; How <strong>not</strong> to design a program </span>
+(<span class="keyword">define</span> (<span class="variable">profit</span> <span class="variable">price</span>)
+  (<span class="builtin">-</span> (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">120</span>
+	   (<span class="builtin">*</span> (<span class="builtin">/</span> <span class="selfeval">15</span> <span class="selfeval">.10</span>)
+	      (<span class="builtin">-</span> <span class="selfeval">5.00</span> <span class="variable">price</span>)))
+	<span class="variable">price</span>)
+     (<span class="builtin">+</span> <span class="selfeval">180</span> 
+	(<span class="builtin">*</span> <span class="selfeval">.04</span>
+	   (<span class="builtin">+</span> <span class="selfeval">120</span>
+	      (<span class="builtin">*</span> (<span class="builtin">/</span> <span class="selfeval">15</span> <span class="selfeval">.10</span>)
+		 (<span class="builtin">-</span> <span class="selfeval">5.00</span> <span class="variable">price</span>)))))))
+
+
+
+
+</pre></div>
+</div></td><td>
+</td></tr></table></div>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 5:</b>&nbsp;&nbsp;Two ways to express the <i>profit</i> program</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Instead of developing a function per dependency in the problem statement,
+we could have tried to express the relationship between the ticket price
+and the owner's profit in a single function. The right column in
+figure&nbsp;<a href="#node_fig_Temp_23">5</a> shows the most straightforward way of doing so. And
+indeed, it is easy to check that the two profit programs in
+figure&nbsp;<a href="#node_fig_Temp_23">5</a> produce the same profit when given the same ticket
+price. Still, it is also obvious that while the arrangement on the left
+conveys the intention behind the program directly, the program on the right
+is nearly impossible to understand. Worse, if we are asked to modify some
+aspect of the program, say, the relationship between the number of
+attendees and the price of the ticket, we can do this for the left column
+in a small amount of time, but we need to spend a much longer time for the
+right one.</p>
+<p>
+Based on our experience, we thus formulate the first and most important
+guideline of programming:
+<a name="node_idx_240"></a><a name="node_idx_242"></a></p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Auxiliary Functions
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Formulate auxiliary function definitions for
+every dependency between quantities mentioned in the problem statement or
+discovered with example calculations.
+</p></font></td></tr>
+</table>
+<p>
+Sometimes we will find that some of the required functions are
+already available as programs for other problems. Indeed, we have already
+encountered such an example: <code class="scheme"><span class="variable">area-of-disk</span></code>.  At other times, we
+will make a list of functions and develop each one separately. We may
+then find that some of the functions, such as <code class="scheme"><span class="variable">attendees</span></code>, are
+useful in several other definitions, leading to a network-like
+relationship among functions.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_3.1.3"></a>
+<b>Exercise 3.1.3.</b>&nbsp;&nbsp; 
+Determine the profit that the movie owner makes at $3.00, $4.00, and
+$5.00 using the program definitions in both columns. Make
+sure that the results are the same as those predicted in
+exercise&nbsp;<a href="#node_thm_3.1.2">3.1.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/profit-eval.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_3.1.4"></a>
+<b>Exercise 3.1.4.</b>&nbsp;&nbsp; 
+After studying the cost structure of a show, the owner discovered several
+ways of lowering the cost. As a result of his improvements, he no longer
+has a fixed cost. He now simply pays $1.50 per attendee.  </p>
+<p>
+Modify both programs to reflect this change. When the programs are
+modified, test them again with ticket prices of $3.00, $4.00, and
+$5.00 and compare the results.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/profit-comp.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<a name="node_sec_3.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_3.2">3.2&nbsp;&nbsp;Variable Definitions</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-7.html#node_sec_3.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Defining <br>
+Variables</a>
+</td></tr></table><p></p>
+<p>
+<a name="node_idx_244"></a><a name="node_idx_246"></a></p>
+<p>
+When a number occurs many times in our program(s), we should give it a name
+using a <small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>B</small><small>L</small><small>E</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>, which associates a name with a
+value. One example is <code class="scheme"><span class="selfeval">3.14</span></code>, which we have used in place of
+<img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]">. Here is how we could give this number a name:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">PI</span> <span class="selfeval">3.14</span>)
+</pre></div><p>
+Now, every time we refer to <code class="scheme"><span class="variable">PI</span></code>, DrScheme replaces it with
+<code class="scheme"><span class="selfeval">3.14</span></code>. </p>
+<p>
+Using a name for a constant makes it easier to replace it with a different
+value. Suppose our program contains the definition for <code class="scheme"><span class="variable">PI</span></code>, and we
+decide that we need a better approximation of <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> for the entire
+program. By changing the definition to
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">PI</span> <span class="selfeval">3.14159</span>)
+</pre></div><p>
+the improvement is used everywhere where we use <code class="scheme"><span class="variable">PI</span></code>.  If we didn't
+have a name like <code class="scheme"><span class="variable">PI</span></code> for <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]">, we would have to find and all
+instances of <code class="scheme"><span class="selfeval">3.14</span></code> in the program and replace them with
+<code class="scheme"><span class="selfeval">3.14159</span></code>.</p>
+<p>
+Let us formulate this observation as our second guideline:</p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Variable Definitions
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Give names to frequently used constants
+and use the names instead of the constants in programs.
+</p></font></td></tr>
+</table>
+<p>
+Initially, we won't use many variable definitions for
+constants, because our programs are small. But, as we learn to write
+larger programs, we will make more use of variable definitions. As we will
+see, the ability to have a single point of control for changes is
+important for variable and function definitions. 
+<a name="node_idx_248"></a><a name="node_idx_250"></a></p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_3.2.1"></a>
+<b>Exercise 3.2.1.</b>&nbsp;&nbsp; 
+Provide variable definitions for all constants that appear in the profit
+program of figure&nbsp;<a href="#node_fig_Temp_23">5</a> and replace the constants with their
+names.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/profit-constants.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_3.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_3.3">3.3&nbsp;&nbsp;Finger Exercises on Composing Functions</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-7.html#node_sec_3.3"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Using ``<tt>...</tt>''</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p><a name="node_thm_3.3.1"></a>
+<b>Exercise 3.3.1.</b>&nbsp;&nbsp;  
+The United States uses the <i>English</i> system of (length) measurements.
+The rest of the world uses the <i>metric</i> system. So, people who travel
+abroad and companies that trade with foreign partners often need to convert
+English measurements to metric ones and vice versa. </p>
+<p>
+Here is a table that shows the six major units of length measurements of the
+English system:<a name="call_footnote_Temp_24"></a><a href="#footnote_Temp_24"><sup><small>12</small></sup></a>
+
+
+
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top" colspan="4">English&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td><td valign="top" colspan="2">metric </td></tr>
+<tr><td valign="top">1 <strong>inch</strong>    </td><td valign="top"></td><td valign="top"></td><td valign="top"></td><td valign="top">= </td><td valign="top">2.54 </td><td valign="top">cm </td></tr>
+<tr><td valign="top">1 <strong>foot</strong>    </td><td valign="top">= </td><td valign="top">12         </td><td valign="top">in.   </td></tr>
+<tr><td valign="top">1 <strong>yard</strong>    </td><td valign="top">= </td><td valign="top">3         </td><td valign="top">ft.   </td></tr>
+<tr><td valign="top">1 <strong>rod</strong>     </td><td valign="top">= </td><td valign="top">5(1/2) </td><td valign="top">yd.   </td></tr>
+<tr><td valign="top">1 <strong>furlong</strong> </td><td valign="top">= </td><td valign="top">40         </td><td valign="top">rd.   </td></tr>
+<tr><td valign="top">1 <strong>mile</strong>    </td><td valign="top">= </td><td valign="top">8         </td><td valign="top">fl.   </td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+<p>
+Develop the functions 
+<code class="scheme"><i>inches</i><tt>-&gt;</tt><i>cm</i></code>, 
+<code class="scheme"><i>feet</i><tt>-&gt;</tt><i>inches</i></code>, 
+<code class="scheme"><i>yards</i><tt>-&gt;</tt><i>feet</i></code>,
+<code class="scheme"><i>rods</i><tt>-&gt;</tt><i>yards</i></code>,
+<code class="scheme"><i>furlongs</i><tt>-&gt;</tt><i>rods</i></code>, 
+and 
+<code class="scheme"><i>miles</i><tt>-&gt;</tt><i>furlongs</i></code>. </p>
+<p>
+Then develop the functions <code class="scheme"><i>feet</i><tt>-&gt;</tt><i>cm</i></code>, <code class="scheme"><i>yards</i><tt>-&gt;</tt><i>cm</i></code>,
+<code class="scheme"><i>rods</i><tt>-&gt;</tt><i>inches</i></code>, and <code class="scheme"><i>miles</i><tt>-&gt;</tt><i>feet</i></code>. </p>
+<p>
+<strong>Hint:</strong> Reuse functions as much as possible. Use variable definitions to
+specify constants.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/compose1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_3.3.2"></a>
+<b>Exercise 3.3.2.</b>&nbsp;&nbsp; 
+Develop the program <code class="scheme"><span class="variable">volume-cylinder</span></code>. It consumes the radius of a
+cylinder's base disk and its height; it computes the volume of the
+cylinder.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/compose-cylinder.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_3.3.3"></a>
+<b>Exercise 3.3.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">area-cylinder</span></code>. The program consumes the radius of the
+cylinder's base disk and its height. Its result is the surface area of the
+cylinder.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/area-cylinder.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_3.3.4"></a>
+<b>Exercise 3.3.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">area-pipe</span></code>. It computes the surface area of
+a pipe, which is an open cylinder. The program consumes three values: the
+pipe's inner radius, its length, and the thickness of its wall.</p>
+<p>
+Develop two versions: a program that consists of a single definition and a
+program that consists of several function definitions.  Which one evokes
+more confidence?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/area-pipe.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_3.3.5"></a>
+<b>Exercise 3.3.5.</b>&nbsp;&nbsp; 
+Develop the program <code class="scheme"><span class="variable">height</span></code>, which computes the height that a
+rocket reaches in a given amount of time. If the rocket accelerates at 
+a constant rate <em>g</em>, it reaches a speed of <em>g</em>  &middot;  <em>t</em> in <code class="scheme"><span class="variable">t</span></code> time
+units and a height of 1/2 * <em>v</em> * <em>t</em> where <em>v</em> is the speed at <em>t</em>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/compose-rocket.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_3.3.6"></a>
+<b>Exercise 3.3.6.</b>&nbsp;&nbsp; 
+Recall the program <code class="scheme"><i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i></code> from
+exercise&nbsp;<a href="curriculum-Z-H-5.html#node_thm_2.2.1">2.2.1</a>. The program consumes a temperature measured in
+Fahrenheit and produces the Celsius equivalent. </p>
+<p>
+Develop the program <code class="scheme"><i>Celsius</i><tt>-&gt;</tt><i>Fahrenheit</i></code>, which consumes a
+temperature measured in Celsius and produces the Fahrenheit equivalent.</p>
+<p>
+Now consider the function 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">I</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to convert a Fahrenheit temperature to Celsius and back </span>
+(<span class="keyword">define</span> (<span class="variable">I</span> <span class="variable">f</span>)
+  (<i>Celsius</i><tt>-&gt;</tt><i>Fahrenheit</i> (<i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="variable">f</span>)))
+</pre></div><p>
+Evaluate <code class="scheme">(<span class="variable">I</span> <span class="selfeval">32</span>)</code> by hand and using DrScheme's stepper. What does
+this suggest about the composition of the two
+functions?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/compose-f2c.html">Solution</a></p>
+<p> 
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_24"></a><a href="#call_footnote_Temp_24"><sup><small>12</small></sup></a> See <em>The World Book Encyclopedia <strong>1993</strong></em>,
+Weights and Measurements.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-5.html">previous</a></span><span>, <a href="curriculum-Z-H-7.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

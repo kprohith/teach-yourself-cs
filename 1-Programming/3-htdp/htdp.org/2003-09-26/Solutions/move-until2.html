@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/move-until2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 25.1.2; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-32.html#node_thm_25.1.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; -----------------------------------------------------------------------------
+;; move-balls : (Listof Ball) -&gt; true
+;; move all balls until all of them are out of bounds
+
+;; loop version
+(define (move-balls.v0 lob)
+  (cond
+    [(empty? lob) true]
+    [else (and (andmap draw-and-clear lob) ;; **full credit without this line**
+               (move-balls (map move-ball (filter in-bounds? lob))))]))
+
+;; -----------------------------------------------------------------------------
+;; non-loop version, note two auxiliary functions and their tests
+
+(define (move-balls lob)
+  (cond
+    [(empty? lob) true]
+    [else (and (andmap draw-and-clear lob) ;; full credit without this line
+               (move-balls (move-all (remove-outs lob))))]))
+
+;; (Listof Ball) -&gt; (Listof Ball)
+;; remove all balls that are outside
+(define (remove-outs lob)
+  (cond
+    [(empty? lob) empty]
+    [else (if (in-bounds? (first lob))
+              (cons (first lob) (remove-outs (rest lob)))
+              (remove-outs (rest lob)))]))
+
+;; (Listof Ball) -&gt; (Listof Ball)
+;; move all balls on a list
+(define (move-all lob)
+  (cond
+    [(empty? lob) empty]
+    [else (cons (move-ball (first lob)) (move-all (rest lob)))]))
+
+;; -----------------------------------------------------------------------------
+;; from book:
+
+(define-struct ball (x y delta-x delta-y))
+;; A ball is a structure:
+;;   (make-ball Number Number Number Number)
+
+;; move-ball : Ball -&gt; Ball
+;; to create a new ball, modeling a move by a-ball
+;; structural design, physics knowledge
+(define (move-ball a-ball)
+  (make-ball (+ (ball-x a-ball) (ball-delta-x a-ball))
+             (+ (ball-y a-ball) (ball-delta-y a-ball))
+             (ball-delta-x a-ball)
+             (ball-delta-y a-ball)))
+
+;; in-bounds? : Ball  -&gt;  boolean
+;; to determine whether a-ball is outside of the bounds
+;; domain knowledge, geometry
+(define (in-bounds? a-ball)
+  (and (&lt;= 0 (ball-x a-ball) WIDTH)
+       (&lt;= 0 (ball-y a-ball) HEIGHT)))
+
+;; draw-and-clear : Ball  -&gt;  true
+;; draw, sleep, clear a disk from the canvas
+;; structural design, Scheme knowledge
+(define (draw-and-clear a-ball)
+  (and (draw-solid-disk (make-posn (ball-x a-ball) (ball-y a-ball)) 5'red)
+       (sleep-for-a-while DELAY)
+       (clear-solid-disk (make-posn (ball-x a-ball) (ball-y a-ball)) 5'red)))
+
+;; Dimension of canvas
+(define WIDTH 100)
+(define HEIGHT 100)
+(define DELAY .1)
+
+;; run program run
+(start HEIGHT HEIGHT)
+
+;; -----------------------------------------------------------------------------
+;; EXAMPLES/TESTS:
+
+(equal? (remove-outs (list (make-ball 50 50 -1 -3)))
+        (list (make-ball 50 50 -1 -3)))
+(equal? (remove-outs (list (make-ball -50 -50 -1 -3)))
+        empty)
+
+(equal? (move-all (list (make-ball 50 50 -1 -3)))
+        (list (move-ball (make-ball 50 50 -1 -3))))
+
+(equal? (move-balls (list (make-ball 50 50 -1 -3)))
+        true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/move-until2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

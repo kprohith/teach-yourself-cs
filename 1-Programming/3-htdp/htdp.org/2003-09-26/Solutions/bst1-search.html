@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst1-search.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="bst1.html">14.2.1</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="bst0.html">14.2.3</a><pre>(define-struct node (ssn name left right))
+
+;; A binary tree is either
+;;   1. false or 
+;;   2. (make-node soc pn lft rgt) 
+;;         where soc is a number, pn is a symbol,
+;;         and lft and rgt are bts. 
+
+
+;; search-bt : number binary-tree -&gt; false or 
+;; returns true if a-n is in a-bt, and false if not.
+(define (search-bt a-n a-bt)
+  (cond
+    [(boolean? a-bt) #f]
+    [else 
+     (cond
+       [(= (node-ssn a-bt) a-n)
+        (node-name a-bt)]
+       [(boolean? (search-bt a-n (node-left a-bt)))
+        (search-bt a-n (node-right a-bt))]
+       [else
+        (search-bt a-n (node-left a-bt))])]))
+
+;; EXAMPLES as tests
+
+(search-bt 1 false)
+"should be" 
+false
+
+(search-bt 1 (make-node 2 'x false false))
+"should be"
+false
+
+(search-bt 2 (make-node 2 'x false false))
+"should be" 
+'x
+
+(search-bt 2 
+             (make-node 1 
+                        'x
+                        (make-node 2 'y false false)
+                        (make-node 3 'z false false)))
+"should be" 
+'y
+
+(search-bt 3
+             (make-node 1 
+                        'x 
+                        (make-node 2 'y false false)
+                        (make-node 3 'z false false)))
+"should be" 
+'z
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst1-search.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

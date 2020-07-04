@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bezier.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 27.1.5; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-34.html#node_thm_27.1.5">Problem Statement</a>
+<pre>#| ------------------------------------------------------------------------
+   Fitting a curve through three points
+
+   bezier : posn posn posn -&gt; #t
+	  
+   PURPOSE: draw a curve via Bezier method 
+
+   (bezier p1 p2 p3)
+   = (and (bezier p1 (mid p1 p2) (mid (mid p1 p2) (mid p2 p3)))
+	  (bezier (mid (mid p1 p2) (mid p2 p3)) (mid p2 p3) p3))
+   in generative case
+
+   = #t + draw triangle 
+   in base case
+
+   Example: 
+   (bezier (make-posn 100 100) (make-posn 200 200) (make-posn 300 100))
+   draws a curve from (100,100) to (300,100)
+
+Credit: Geraldine Morine wrote the first version of this exercise. 
+|#
+
+(define stop? #f)
+(define (bezier p1 p2 p3)
+  (cond
+    ((too-small? p1 p2 p3) (draw-triangle p1 p2 p3 RED))
+    (else (local ((define r2 (mid p1 p3))
+		  (define q2 (mid p2 p3))
+		  (define ce (mid r2 q2)))                  
+	    (and (when stop? 
+                   (set! too-small (lambda x #t)))
+                 (bezier p1 r2 ce) 
+                 (bezier ce q2 p3))))))
+
+;; draw-triangle : posn posn posn color -&gt; #t
+;; Purpose: draw a triangle on the screen 
+(define (draw-triangle p1 p2 p3 c)
+  (and (draw-solid-line p1 p2 c)
+       (draw-solid-disk p1 5 BLACK)
+       (draw-solid-line p2 p3 c)
+       (draw-solid-disk p2 5 GREEN)
+       (draw-solid-line p3 p1 c)
+       (draw-solid-disk p3 5 RED)))
+
+;; too-small? : posn posn posn -&gt; boolean
+(define (too-small? p1 p2 p3)
+  (local ((define delta1 (posn+ p1 (posn* -1 p2)))
+	  (define delta2 (posn+ p2 (posn* -1 p3))))
+    (and 
+     (&lt;= (abs (+ (posn-x delta1) (posn-y delta1))) TOLERANCE)
+     (&lt;= (abs (+ (posn-x delta2) (posn-y delta2))) TOLERANCE))))
+     
+;; mid : posn posn -&gt; posn 
+(define (mid p1 p2)
+  (posn* 1/2 (posn+ p1 p2)))
+
+;; posn+ : posn posn -&gt; posn 
+(define (posn+ p1 p2)
+  (make-posn (+ (posn-x p1) (posn-x p2)) (+ (posn-y p1) (posn-y p2))))
+
+;; posn* : num posn -&gt; posn 
+(define (posn* s p)
+  (make-posn (* (posn-x p) s) (* (posn-y p) s)))
+
+(define TOLERANCE 10)
+
+#| ------------------------------------------------------------------------
+   Tests: (mid, posn+, posn* are borrowed and have been tested before)
+|#
+
+(define p1 (make-posn 50 50))
+(define p2 (make-posn 150 150))
+(define p3 (make-posn 200 100))
+
+(start 300 200)
+
+(draw-triangle p1 p2 p3 BLUE)
+(define TOLERANCE 150)
+(bezier p1 p2 p3)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bezier.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

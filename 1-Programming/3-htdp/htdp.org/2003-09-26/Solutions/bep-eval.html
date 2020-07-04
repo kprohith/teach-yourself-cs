@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bep-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.1.2; How to Design Programs </title>
+</head>
+<body>
+<a href="ftn-or.html">14.1.1</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.1.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="count-ft.html">14.1.3</a><pre>;; A family-tree-node (short: ftn) is either
+;;
+;;   1. empty; or
+;;   2. (make-child f m na da ec)
+;;      where f and m are ftns, na
+;;      and ec are symbols, and da is a number.
+(define-struct child (father mother name date eyes))
+
+;; Oldest Generation:
+(define Carl (make-child empty empty 'Carl 1926 'green))
+(define Bettina (make-child empty empty 'Bettina 1926 'green))
+
+;; Middle Generation: 
+(define Adam (make-child Carl Bettina 'Adam 1950 'yellow))
+(define Dave (make-child Carl Bettina 'Dave 1955 'black))
+(define Eva (make-child Carl Bettina 'Eva 1965 'blue))
+(define Fred (make-child empty empty 'Fred 1966 'pink))
+
+;; Youngest Generation: 
+(define Gustav (make-child Fred Eva 'Gustav 1988 'brown))
+
+;; blue-eyed-ancestor? : ftn -&gt; boolean
+;; to determine whether a-ftree contains a child
+;; structure with 'blue in the eyes field 
+;; version 2: using an or-expression 
+(define (blue-eyed-ancestor? a-ftree) 
+  (cond 
+    [(empty? a-ftree) false]
+    [else (or (symbol=? (child-eyes a-ftree) 'blue) 
+              (or (blue-eyed-ancestor? (child-father a-ftree))
+                  (blue-eyed-ancestor? (child-mother a-ftree))))]))
+
+
+(blue-eyed-ancestor? empty)
+"should be"
+(cond 
+  [(empty? empty) false]
+  [else (or (symbol=? (child-eyes empty) 'blue)
+            (or (blue-eyed-ancestor? (child-father empty))
+                (blue-eyed-ancestor? (child-mother empty))))])
+"should be"
+(cond 
+  [true false]
+  [else (or (symbol=? (child-eyes empty) 'blue)
+            (or (blue-eyed-ancestor? (child-father empty))
+                (blue-eyed-ancestor? (child-mother empty))))])
+"should be"
+false
+
+(blue-eyed-ancestor? Gustav)
+"should be"
+(blue-eyed-ancestor?
+ (make-child Fred Eva 'Gustav 1988 'brown))
+"should be"
+(blue-eyed-ancestor?
+ (make-child (make-child empty empty 'Fred 1966 'pink)
+             Eva
+             'Gustav
+             1988
+             'brown))
+"should be"
+(blue-eyed-ancestor?
+ (make-child (make-child empty empty 'Fred 1966 'pink)
+             (make-child Carl Bettina 'Eva 1965 'blue)
+             'Gustav
+             1988
+             'brown))
+"should be"
+(blue-eyed-ancestor?
+ (make-child (make-child empty empty 'Fred 1966 'pink)
+             (make-child (make-child empty empty 'Carl 1926 'green) 
+                         Bettina
+                         'Eva
+                         1965
+                         'blue)
+             'Gustav
+             1988
+             'brown))
+"should be"
+(blue-eyed-ancestor?
+ (make-child (make-child empty empty 'Fred 1966 'pink)
+             (make-child (make-child empty empty 'Carl 1926 'green) 
+                         (make-child empty empty 'Bettina 1926 'green)
+                         'Eva
+                         1965
+                         'blue)
+             'Gustav
+             1988
+             'brown))
+"should be"
+(or (blue-eyed-ancestor? (make-child empty empty 'Fred 1966 'pink))
+    (blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                     (make-child empty empty 'Bettina 1926 'green)
+                                     'Eva
+                                     1965
+                                     'blue)))
+"should be"
+(or (or (blue-eyed-ancestor? empty)
+        (blue-eyed-ancestor? empty))
+    (blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                     (make-child empty empty 'Bettina 1926 'green)
+                                     'Eva
+                                     1965
+                                     'blue)))
+"should be"
+(or (or false
+        (blue-eyed-ancestor? empty))
+    (blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                     (make-child empty empty 'Bettina 1926 'green)
+                                     'Eva
+                                     1965
+                                     'blue)))
+(or (blue-eyed-ancestor? empty)
+    (blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                     (make-child empty empty 'Bettina 1926 'green)
+                                     'Eva
+                                     1965
+                                     'blue)))
+"should be"
+(or false
+    (blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                     (make-child empty empty 'Bettina 1926 'green)
+                                     'Eva
+                                     1965
+                                     'blue)))
+"should be"
+(blue-eyed-ancestor? (make-child (make-child empty empty 'Carl 1926 'green) 
+                                 (make-child empty empty 'Bettina 1926 'green)
+                                 'Eva
+                                 1965
+                                 'blue))
+"should be"
+true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bep-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

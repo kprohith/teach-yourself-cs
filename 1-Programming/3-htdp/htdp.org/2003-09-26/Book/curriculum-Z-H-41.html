@@ -1,0 +1,619 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-41.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-40.html">previous</a></span><span>, <a href="curriculum-Z-H-42.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_33"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_33">Section  33</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_33">Intermezzo 6: The Nature of Inexact Numbers</a></h1>
+<p></p>
+<p>
+Computers represent and process information in chunks of a fixed size.
+Because computers were first used for numerical calculations, early
+computer engineers developed a representation for numbers in terms of
+fixed-size chunks. Programming languages 
+<a name="node_idx_2042"></a>must mediate the gap between these
+fixed-size representations and the true mathematics. Because using the
+hardware representation for numbers makes a program's calculations as
+efficient as possible, most designers and implementors of programming
+languages adopted the hardware-based choice.</p>
+<p>
+This intermezzo explains the fixed-size representation for numbers and its
+consequences in some detail. The first subsection introduces a concrete
+fixed-size representation for numbers, discusses what it implies for the
+representation of numbers, and shows how to calculate with such
+numbers. The second and third section illustrate the two most fundamental
+problems of fixed-size number arithmetic: overflow and underflow,
+respectively.
+<a name="node_idx_2044"></a></p>
+<p>
+
+</p>
+<a name="node_sec_33.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_33.1">33.1&nbsp;&nbsp;Fixed-size Number Arithmetic</a></h2>
+<p></p>
+<p>
+Suppose we can use four digits to represent numbers. If we represent
+natural numbers, the representable range is 0 <tt>...</tt>9999. Alternatively we
+could represent 10,000 fractions between 0 and 1 with that many digits. In
+either case, this is a rather small range of numbers and not useful for
+most scientific or business computations.  </p>
+<p>
+We can represent a larger range of numbers if we use a different notation
+for numbers instead. In science, for example, we encounter so-called
+scientific notation, which represents numbers as two parts:
+</p>
+<ol>
+<li><p>a <small>M</small><small>A</small><small>N</small><small>T</small><small>I</small><small>S</small><small>S</small><small>A</small>,
+<a name="node_idx_2046"></a>which is a base number, and
+</p>
+<li><p>an <small>E</small><small>X</small><small>P</small><small>O</small><small>N</small><small>E</small><small>N</small><small>T</small>,
+<a name="node_idx_2048"></a>which is used to determine a 10-based factor.
+</p>
+</li></ol><p>
+For pure scientific notation, the base is between 0 and 9. We relax this
+constraint and just write numbers as 
+</p>
+<div align="center"><img src="curriculumE-Z-G-1.gif" border="0" alt="[curriculumE-Z-G-1.gif]"></div><p>
+where <i>m</i> is the mantissa and <i>e</i> the exponent. For example,
+one representation of 1200 with this scheme is
+</p>
+<div align="center"><img src="curriculumE-Z-G-2.gif" border="0" alt="[curriculumE-Z-G-2.gif]"></div><p>
+another one is 
+</p>
+<div align="center"><img src="curriculumE-Z-G-3.gif" border="0" alt="[curriculumE-Z-G-3.gif]"></div><p>
+In general, a number has several equivalents in mantissa-exponent
+representation. </p>
+<p>
+We can also use negative exponents, which add fractions at the cost of one
+extra piece of data: the sign of the exponent. For example, 
+</p>
+<div align="center"><img src="curriculumE-Z-G-4.gif" border="0" alt="[curriculumE-Z-G-4.gif]"></div><p>
+stands for 
+</p>
+<div align="center"><img src="curriculumE-Z-G-5.gif" border="0" alt="[curriculumE-Z-G-5.gif]"></div><p>
+As before, the fraction has several representations in the new notation.</p>
+<p>
+To use a form of mantissa-exponent notation for our problem, we must decide
+how many digits we wish to use for the representation of the mantissa and
+how many for the exponent. Here we use two for each and a sign for the
+exponent; other choices are possible. Given this decision, we can still
+represent 0 as
+</p>
+<div align="center"><img src="curriculumE-Z-G-6.gif" border="0" alt="[curriculumE-Z-G-6.gif]"></div><p>
+The maximal number we can represent is 
+</p>
+<div align="center"><img src="curriculumE-Z-G-7.gif" border="0" alt="[curriculumE-Z-G-7.gif]"></div><p>
+which is 99 followed by 99 0's. If we use negative exponents in addition to
+positive ones, we can also represent 
+</p>
+<div align="center"><img src="curriculumE-Z-G-8.gif" border="0" alt="[curriculumE-Z-G-8.gif]"></div><p>
+which is a small number close to 0.  Thus we can now represent a vastly
+larger range of numbers with four digits and a sign than before. But this
+improvement comes with its own problems.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_174"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2050"></a><a name="node_idx_2052"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-inex</span> <span class="selfeval">:</span> <strong>N</strong> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">inex</span></code></span>
+<span class="comment">;; to make an instance of <code class="scheme"><span class="variable">inex</span></code> after checking the appropriateness</span>
+<span class="comment">;; of the arguments</span>
+(<span class="keyword">define</span> (<span class="variable">create-inex</span> <span class="variable">m</span> <span class="variable">s</span> <span class="variable">e</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="keyword">and</span> (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> <span class="variable">m</span> <span class="selfeval">99</span>) (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> <span class="variable">e</span> <span class="selfeval">99</span>) (<span class="keyword">or</span> (<span class="builtin">=</span> <span class="variable">s</span> <span class="selfeval">+1</span>) (<span class="builtin">=</span> <span class="variable">s</span> <span class="selfeval">-1</span>)))
+     (<span class="builtin">make-inex</span> <span class="variable">m</span> <span class="variable">s</span> <span class="variable">e</span>)]
+    [<span class="keyword">else</span>
+     (<span class="builtin">error</span> <span class="keyword">'</span><span class="builtin">make-inex</span> <span class="selfeval">&quot;(&lt;= 0 m 99), +1 or -1, (&lt;= 0 e 99) expected&quot;</span>)]))
+
+<span class="comment">;; <code class="scheme"><i>inex</i><tt>-&gt;</tt><i>number</i> <span class="selfeval">:</span> <span class="variable">inex</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to convert an <code class="scheme"><span class="variable">inex</span></code> into its numeric equivalent </span>
+(<span class="keyword">define</span> (<i>inex</i><tt>-&gt;</tt><i>number</i> <span class="variable">an-inex</span>)
+  (<span class="builtin">*</span> (<span class="builtin">inex-mantissa</span> <span class="variable">an-inex</span>) 
+     (<span class="builtin">expt</span> <span class="selfeval">10</span> (<span class="builtin">*</span> (<span class="builtin">inex-sign</span> <span class="variable">an-inex</span>) (<span class="builtin">inex-exponent</span> <span class="variable">an-inex</span>)))))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 94:</b>&nbsp;&nbsp;Functions for inexact representations</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+To understand the problems, it is best to agree on a fixed representation
+schema and to experiment with the number representations. Let's represent a
+fixed-size number with a structure that has three fields:</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2054"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">inex</span> (<span class="variable">mantissa</span> <span class="variable">sign</span> <span class="variable">exponent</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The first and last field contain the mantissa and exponent of the
+number, the <code class="scheme"><span class="variable">sign</span></code> field is <code class="scheme"><span class="selfeval">+1</span></code> or <code class="scheme"><span class="selfeval">-1</span></code> and
+represents the sign of the exponent. This sign field enables us to
+represent numbers between <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="selfeval">1</span></code>.</p>
+<p>
+Here is the data definition: </p>
+<p>
+An <code class="scheme"><span class="variable">inex</span></code> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-inex</span> <span class="variable">m</span> <span class="variable">s</span> <span class="variable">e</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">m</span></code>  and <code class="scheme"><span class="variable">e</span></code> are natural numbers in
+[<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">99</span></code>] and <code class="scheme"><span class="variable">s</span></code> is <code class="scheme"><span class="selfeval">+1</span></code> or
+<code class="scheme"><span class="selfeval">-1</span></code>. <p>
+Because the conditions on the fields of an <code class="scheme"><span class="variable">inex</span></code>
+structure are so stringent, we use the function <code class="scheme"><span class="variable">create-inex</span></code> to
+create these structures. Figure&nbsp;<a href="#node_fig_Temp_174">94</a> contains the
+function definition for <code class="scheme"><span class="variable">create-inex</span></code>, which is a generalized
+constructor, that is, a checked constructor (see
+<a name="node_idx_2056"></a>section&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.5">7.5</a>). The figure also defines the
+function <code class="scheme"><i>inex</i><tt>-&gt;</tt><i>number</i></code>, which turns <code class="scheme"><span class="variable">inex</span></code>s into numbers
+according to the principles of our new notation.</p>
+<p>
+Let's translate the above example, <code class="scheme"><span class="selfeval">1200</span></code>, into our Scheme representation: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">12</span> <span class="selfeval">+1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+The alternative representation, 120  &middot;  10<sup>1</sup>, is illegal in our Scheme
+world, however. If we evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">120</span> <span class="selfeval">+1</span> <span class="selfeval">1</span>)
+</pre></div><p>
+we get an error message because the arguments don't satisfy the stated data
+contract. For other numbers, though, we can find two <code class="scheme"><span class="variable">inex</span></code>
+equivalents. One example is <code class="scheme"><span class="selfeval">0.0000000000000000005</span></code>, which we can
+express as 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">50</span> <span class="selfeval">-1</span> <span class="selfeval">20</span>)
+<span class="comment">and</span>
+(<span class="variable">create-inex</span> <span class="selfeval">5</span> <span class="selfeval">-1</span> <span class="selfeval">19</span>)
+</pre></div><p>
+Confirm the equivalence of these two representations with <code class="scheme"><i>inex</i><tt>-&gt;</tt><i>number</i></code>. </p>
+<p>
+The range of <code class="scheme"><span class="variable">inex</span></code> numbers is vast:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">MAX-POSITIVE</span> (<span class="builtin">make-inex</span> <span class="selfeval">99</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>))
+(<span class="keyword">define</span> <span class="variable">MIN-POSITIVE</span> (<span class="builtin">make-inex</span> <span class="selfeval">1</span> <span class="selfeval">-1</span> <span class="selfeval">99</span>))
+</pre></div><p>
+That is, we can represent large numbers that consist of up to 101 digits in
+the standard decimal notation; we can also represent small positive
+fractions smaller than <code class="scheme"><span class="selfeval">1</span></code> down to the fraction 1 over 10<tt>...</tt>0
+with 99 zeros. The appearances, however, are deceiving.  Not all real
+numbers in the range between 0 and <code class="scheme"><span class="variable">MAX-POSITIVE</span></code> can be translated
+into an <code class="scheme"><span class="variable">inex</span></code> structure. In particular, any positive number less
+than
+</p>
+<div align="center"><img src="curriculumE-Z-G-9.gif" border="0" alt="[curriculumE-Z-G-9.gif]"></div><p> 
+has no equivalent <code class="scheme"><span class="variable">inex</span></code> structure. Similarly, the <code class="scheme"><span class="variable">inex</span></code>
+representation has gaps in the middle. For example, the successor of 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">12</span> <span class="selfeval">+1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+is
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">13</span> <span class="selfeval">+1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+The first <code class="scheme"><span class="variable">inex</span></code> structure corresponds to <code class="scheme"><span class="selfeval">1200</span></code>, the second
+one to <code class="scheme"><span class="selfeval">1300</span></code>.  Numbers in the middle, such as <code class="scheme"><span class="selfeval">1240</span></code> or
+<code class="scheme"><span class="selfeval">1260</span></code>, can only be represented as one or the other. The standard
+choice is to round the number to the closest representable equivalent.
+In short, we must approximate such mathematical numbers as we translate
+into a chosen representation. </p>
+<p>
+Finally, we must also consider arithmetic operations on <code class="scheme"><span class="variable">inex</span></code>
+structures. Adding two <code class="scheme"><span class="variable">inex</span></code> representations with the same exponent
+means adding the two mantissas: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)
+	 (<span class="variable">create-inex</span> <span class="selfeval">2</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)) 
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">3</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)
+</pre></div><p>
+Translated into mathematical notation, we have
+</p>
+<div align="center"><img src="curriculumE-Z-G-10.gif" border="0" alt="[curriculumE-Z-G-10.gif]"></div><p>
+When the addition of two mantissas yields too many digits, we may have to
+find a suitable representation. Consider the example of adding
+</p>
+<div align="center"><img src="curriculumE-Z-G-11.gif" border="0" alt="[curriculumE-Z-G-11.gif]"></div><p> 
+to itself. Mathematically we get 
+</p>
+<div align="center"><img src="curriculumE-Z-G-12.gif" border="0" alt="[curriculumE-Z-G-12.gif]"></div><p> 
+but we can't just translate this number naively into our chosen
+representation because 110 &gt; 99. The proper corrective action is to
+represent the result as  
+</p>
+<div align="center"><img src="curriculumE-Z-G-13.gif" border="0" alt="[curriculumE-Z-G-13.gif]"></div><p> 
+Or, translated into Scheme, we must ensure that <code class="scheme"><span class="variable">inex+</span></code> computes as
+follows: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">55</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)
+         (<span class="variable">create-inex</span> <span class="selfeval">55</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)) 
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">11</span> <span class="selfeval">+1</span> <span class="selfeval">1</span>)
+</pre></div><p>
+More generally, if the mantissa of the result is too large, we must divide
+it by <code class="scheme"><span class="selfeval">10</span></code> and increase the exponent by one. </p>
+<p>
+Sometimes the result contains more mantissa digits than we can
+represent. In those cases, <code class="scheme"><span class="variable">inex+</span></code> must round to the closest
+equivalent in the <code class="scheme"><span class="variable">inex</span></code> world. For example:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">56</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)
+         (<span class="variable">create-inex</span> <span class="selfeval">56</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>)) 
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">11</span> <span class="selfeval">+1</span> <span class="selfeval">1</span>)
+</pre></div><p>
+This corresponds to the precise calculation: 
+</p>
+<div align="center"><img src="curriculumE-Z-G-14.gif" border="0" alt="[curriculumE-Z-G-14.gif]"></div><p>
+Because the result has too many mantissa digits, the integer division of
+the result mantissa by <code class="scheme"><span class="selfeval">10</span></code> produces an approximate result:
+</p>
+<div align="center"><img src="curriculumE-Z-G-15.gif" border="0" alt="[curriculumE-Z-G-15.gif]"></div><p>
+This is an example of the many approximations that make <small>I</small><small>N</small><small>E</small><small>X</small><small>A</small><small>C</small><small>T</small> <small>A</small><small>R</small><small>I</small><small>T</small><small>H</small><small>M</small><small>E</small><small>T</small><small>I</small><small>C</small> 
+<a name="node_idx_2058"></a>inexact.</p>
+<p>
+We can also multiply numbers represented as <code class="scheme"><span class="variable">inex</span></code> structures. Recall that
+</p>
+<div align="center"><img src="curriculumE-Z-G-16.gif" border="0" alt="[curriculumE-Z-G-16.gif]"></div><p>
+Thus we get: 
+</p>
+<div align="center"><img src="curriculumE-Z-G-17.gif" border="0" alt="[curriculumE-Z-G-17.gif]"></div><p>
+or, in Scheme notation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex*</span> (<span class="variable">create-inex</span> <span class="selfeval">2</span> <span class="selfeval">+1</span> <span class="selfeval">4</span>)
+	 (<span class="variable">create-inex</span> <span class="selfeval">8</span> <span class="selfeval">+1</span> <span class="selfeval">10</span>)) 
+<span class="builtin">=</span> (<span class="builtin">make-inex</span> <span class="selfeval">16</span> <span class="selfeval">+1</span> <span class="selfeval">14</span>)
+</pre></div><p>
+As with addition, things are not always straightforward. When the result
+has too many significant digits in the mantissa, <code class="scheme"><span class="variable">inex*</span></code> has to
+increase the exponent:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex*</span> (<span class="variable">create-inex</span> <span class="selfeval">20</span> <span class="selfeval">-1</span> <span class="selfeval">1</span>)
+	 (<span class="variable">create-inex</span>  <span class="selfeval">5</span> <span class="selfeval">+1</span> <span class="selfeval">4</span>)) 
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">10</span> <span class="selfeval">+1</span> <span class="selfeval">4</span>)
+</pre></div><p>
+In the process, <code class="scheme"><span class="variable">inex*</span></code> will introduce an approximation if the true
+mantissa doesn't have an exact equivalent in the class of <code class="scheme"><span class="variable">inex</span></code>
+structures: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex*</span> (<span class="variable">create-inex</span> <span class="selfeval">27</span> <span class="selfeval">-1</span> <span class="selfeval">1</span>)
+	 (<span class="variable">create-inex</span>  <span class="selfeval">7</span> <span class="selfeval">+1</span> <span class="selfeval">4</span>)) 
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">19</span> <span class="selfeval">+1</span> <span class="selfeval">4</span>)
+</pre></div><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_33.1.1"></a>
+<b>Exercise 33.1.1.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">inex+</span></code>, which adds <code class="scheme"><span class="variable">inex</span></code>
+representations that have the same exponent. The function must be able to
+deal with examples that increase the exponent. Furthermore, it must signal
+its own error if the result is out of range for <code class="scheme"><span class="variable">inex</span></code>
+representations. </p>
+<p>
+</p>
+<p></p>
+<p><strong>Challenge</strong>:  Extend <code class="scheme"><span class="variable">inex+</span></code> so that it can deal with inputs
+whose exponents differ by <code class="scheme"><span class="selfeval">1</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">+1</span> <span class="selfeval">0</span>) (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">-1</span> <span class="selfeval">1</span>))
+        (<span class="variable">create-inex</span> <span class="selfeval">11</span> <span class="selfeval">-1</span> <span class="selfeval">1</span>))
+</pre></div><p>
+Do not attempt to deal with larger classes of inputs than that without
+reading the following subsection.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/inex-arith-plus.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_33.1.2"></a>
+<b>Exercise 33.1.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">inex*</span></code>, which multiplies <code class="scheme"><span class="variable">inex</span></code>
+representations.  The function must be able to deal with examples that
+increase the exponent. Furthermore, it must signal its own error if the
+result is out of range for <code class="scheme"><span class="variable">inex</span></code>
+representations.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/inex-arith-times.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_33.1.3"></a>
+<b>Exercise 33.1.3.</b>&nbsp;&nbsp; 
+The section illustrated how an inexact representation system for real
+numbers has gaps. For example, 1240 was represented as <code class="scheme">(<span class="variable">create-inex</span>
+<span class="selfeval">12</span> <span class="selfeval">+1</span> <span class="selfeval">2</span>)</code> by rounding off the last significant digit of the mantissa. 
+The problem is, round-off errors can accumulate. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">add</span></code>, which adds up <code class="scheme"><span class="variable">n</span></code> copies of
+<code class="scheme"><span class="selfeval">#i1/185</span></code>. What is the result for <code class="scheme">(<span class="variable">add</span> <span class="selfeval">185</span>)</code>? What should it
+be? What happens if we multiply the result of the second expression with a
+large number?</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">sub</span></code>, which counts how often <code class="scheme"><span class="selfeval">1/185</span></code>
+can be subtracted from the argument until the argument is <code class="scheme"><span class="selfeval">0</span></code>. How
+often should the evaluation recur before <code class="scheme">(<span class="variable">sub</span> <span class="selfeval">1</span>)</code> and <code class="scheme">(<span class="variable">sub</span>
+<span class="selfeval">#i1.</span>)</code> is evaluated?  What happens in the second case?
+Why?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/inex-arith-round.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+
+</p>
+<a name="node_sec_33.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_33.2">33.2&nbsp;&nbsp;Overflow</a></h2>
+<p></p>
+<p>
+While the use of scientific notation expands the range of numbers we can
+represent with fixed-size chunks of data, it still doesn't cover
+arbitrarily large numbers. Some numbers are just too big to fit into a
+fixed-size number representation. For example, </p>
+<div align="center"><img src="curriculumE-Z-G-18.gif" border="0" alt="[curriculumE-Z-G-18.gif]"></div><p> can't
+be represented, because the exponent 500 won't fit into two digits, and the
+mantissa is as large as it can be.</p>
+<p>
+Numbers that are too large for our representation schema can arise during a
+computation. For example, two numbers that we can represent can add up to a
+number that we cannot represent: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">50</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>)
+         (<span class="variable">create-inex</span> <span class="selfeval">50</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>))
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">100</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>)
+</pre></div><p>
+which violates the data contract, or
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex+</span> (<span class="variable">create-inex</span> <span class="selfeval">50</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>)
+         (<span class="variable">create-inex</span> <span class="selfeval">50</span> <span class="selfeval">+1</span> <span class="selfeval">99</span>))
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">10</span> <span class="selfeval">+1</span> <span class="selfeval">100</span>)
+</pre></div><p>
+which also breaks the contract for <code class="scheme"><span class="variable">inex</span></code> structures. When the
+result of <code class="scheme"><span class="variable">inex</span></code> arithmetic produces numbers that are too large to
+be represented, we say (arithmetic) <small>O</small><small>V</small><small>E</small><small>R</small><small>F</small><small>L</small><small>O</small><small>W</small> 
+<a name="node_idx_2060"></a>occurred.</p>
+<p>
+When overflow occurs, some language implementations signal an error and
+stop the computation.  Others designate some symbol, called infinity, for
+all numbers that are too large. Arithmetic operations are aware of infinity
+and propagate it. </p>
+<p>
+</p>
+<p></p>
+<p><strong>Negative Numbers</strong>:  If our <code class="scheme"><span class="variable">inex</span></code> structures had a sign field
+for the mantissa, then two negative numbers can add up to one that is so
+negative that it can't be represented either. This is also called overflow,
+though to emphasize the distinction people sometimes say overflow in the
+negative direction.&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_33.2.1"></a>
+<b>Exercise 33.2.1.</b>&nbsp;&nbsp; 
+DrScheme's inexact number system uses an infinity value to deal with
+overflow.  Determine the integer <code class="scheme"><span class="variable">n</span></code> such that <code class="scheme">(<span class="builtin">expt</span>
+<span class="selfeval">#i10.</span> <span class="variable">n</span>)</code> is still an inexact Scheme number and <code class="scheme">(<span class="builtin">expt</span> <span class="selfeval">#i10.</span> (<span class="builtin">+</span> <span class="variable">n</span>
+<span class="selfeval">1</span>))</code> is approximated with infinity. <strong>Hint:</strong> Use a function to compute
+<code class="scheme"><span class="variable">n</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/flow-large.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_33.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_33.3">33.3&nbsp;&nbsp;Underflow</a></h2>
+<p></p>
+<p>
+At the opposite end of the spectrum, we have already seen small numbers
+that cannot be represented with <code class="scheme"><span class="variable">inex</span></code> structures. For example,
+10<sup><tt>-</tt>500</sup> is not 0, but it's smaller than the smallest non-zero number we
+can represent. An arithemtic <small>U</small><small>N</small><small>D</small><small>E</small><small>R</small><small>F</small><small>L</small><small>O</small><small>W</small> 
+<a name="node_idx_2062"></a>arises when we multiply
+two small numbers and the result is too small to fit into our class of
+<code class="scheme"><span class="variable">inex</span></code> structures:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">inex*</span> (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">-1</span> <span class="selfeval">10</span>)
+         (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">-1</span> <span class="selfeval">99</span>))
+<span class="builtin">=</span> (<span class="variable">create-inex</span> <span class="selfeval">1</span> <span class="selfeval">-1</span> <span class="selfeval">109</span>)
+</pre></div><p>
+which causes an error. </p>
+<p>
+When underflow occurs, some language implementations signal an error;
+others use 0 to approximate the result. An approximation with 0 for
+underflow is qualitatively different from our ealier kinds of
+approximations. In approximating 1250 with <code class="scheme">(<span class="variable">create-inex</span> <span class="selfeval">12</span> <span class="selfeval">+1</span> <span class="selfeval">2</span>)</code>,
+we approximated by dropping significant digits from the mantissa, but we
+were left with a non-zero mantissa. The result is within 10% of the number
+we wanted to represent. Appromixating on underflow, however, means dropping
+the entire mantissa. The result is not within a predictable precentage
+range of the true result.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_33.3.1"></a>
+<b>Exercise 33.3.1.</b>&nbsp;&nbsp; 
+DrScheme's inexact number system uses <code class="scheme"><span class="selfeval">#i0</span></code> to approximate underflow.
+Determine the smallest integer <code class="scheme"><span class="variable">n</span></code> such that <code class="scheme">(<span class="builtin">expt</span> <span class="selfeval">#i10.</span> <span class="variable">n</span>)</code>
+is still an inexact Scheme number and <code class="scheme">(<span class="builtin">expt</span> <span class="selfeval">#i10.</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>))</code> is
+approximated with <code class="scheme"><span class="selfeval">0</span></code>. <strong>Hint:</strong> Use a function to compute
+<code class="scheme"><span class="variable">n</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/flow-small.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_33.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_33.4">33.4&nbsp;&nbsp;DrScheme's Numbers</a></h2>
+<p></p>
+<p>
+Most programming languages 
+<a name="node_idx_2064"></a>support only inexact number representations (and
+arithmetic) for both integers and reals. 
+<a name="node_idx_2066"></a><a name="node_idx_2068"></a>Scheme, in contrast, supports both
+exact and inexact numbers and arithmetic. Of course, the base of the
+representation is 2, not 10, because Scheme uses the underlying computer's
+on-off machinery. </p>
+<p>
+As the note on page&nbsp;<a href="curriculum-Z-H-5.html">5</a> explained, DrScheme's teaching
+levels interpret all numbers in our programs as exact rationals, unless
+they are prefixed with <code class="scheme"><span class="selfeval">#i</span></code>. Some numeric operations, though,
+produce inexact numbers. Plain Scheme, which is called Full Scheme in
+DrScheme, interprets all numbers with a dot as inexact numbers;<a name="call_footnote_Temp_175"></a><a href="#footnote_Temp_175"><sup><small>66</small></sup></a> it also prints inexact reals with just a dot, implying
+that all such numbers are inexact and possibly distant from the actual
+result. </p>
+<p>
+</p>
+<p>
+Scheme programmers can thus choose to use exact arithmetic or inexact
+arithmetic as necessary. 
+<a name="node_idx_2070"></a><a name="node_idx_2072"></a>For example, numbers in financial statements
+should always be interpreted as exact numbers; arithmetical operations on
+such numbers should be as precise as possible. For some problems, however,
+we may not wish to spend the extra time to produce exact
+results. Scientific computations are a primary example. In such cases, we
+may wish switch to inexact numbers and arithmetic. </p>
+<p>
+<a name="node_idx_2074"></a></p>
+<p></p>
+<p><strong>Numerical Analysis</strong>: 
+When we use inexact numbers and arithmetic, it
+is natural to ask how much the program's results differs from the true
+results. Over the past few decades, the study of this complex question has
+evolved into an advanced topic, called numerical analysis. The discipline
+has become a subject of its own right in applied mathematics or in computer
+science departments.&nbsp;</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_33.4.1"></a>
+<b>Exercise 33.4.1.</b>&nbsp;&nbsp; 
+Evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">expt</span> <span class="selfeval">1.001</span> <span class="selfeval">1e-12</span>)
+</pre></div><p>
+in <tt>Full</tt> Scheme (any variant) and in <tt>Intermediate Student</tt>
+Scheme.  Explain the observations.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/dr-number.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_33.4.2"></a>
+<b>Exercise 33.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">my-expt</span></code>, which raises one number to the power
+of some integer. Using this function, conduct the following experiment. Add 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">inex</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">#i1e-12</span>))
+(<span class="keyword">define</span> <span class="variable">exac</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1e-12</span>))
+</pre></div><p>
+to the <tt>Definitions</tt>
+<a name="node_idx_2076"></a>window. What is <code class="scheme">(<span class="variable">my-expt</span> <span class="variable">inex</span> <span class="selfeval">30</span>)</code>?
+How about <code class="scheme">(<span class="variable">my-expt</span> <span class="variable">exac</span> <span class="selfeval">30</span>)</code>? Which answer is more
+useful?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/inex-time.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_33.4.3"></a>
+<b>Exercise 33.4.3.</b>&nbsp;&nbsp; 
+When we add two inexact numbers of vastly different orders of magnitude, we
+may get the larger one back as the result. For example, if we are using
+only 15 significant digits, then we run into problems when adding numbers
+which vary by more than a factor of 10<sup>16</sup>: 
+</p>
+<div align="center"><img src="curriculumE-Z-G-19.gif" border="0" alt="[curriculumE-Z-G-19.gif]"></div><p>
+but if the number system supports only 15 digits, the closest answer is
+10<sup>16</sup>. At first glance, this doesn't look too bad. After all, being
+wrong by one part in 10<sup>16</sup> (ten million billion) is close enough to the
+accurate result. Unfortunately, this kind of problem can add up to huge
+problems. </p>
+<p>
+</p>
+<p>
+Consider the following list of inexact numbers: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">JANUS</span>
+  (<span class="builtin">list</span> <span class="selfeval">#i31</span>
+        <span class="selfeval">#i2e+34</span>
+        <span class="selfeval">#i-1.2345678901235e+80</span>
+        <span class="selfeval">#i2749</span>
+        <span class="selfeval">#i-2939234</span>
+        <span class="selfeval">#i-2e+33</span>
+        <span class="selfeval">#i3.2e+270</span>
+        <span class="selfeval">#i17</span>
+        <span class="selfeval">#i-2.4e+270</span>
+        <span class="selfeval">#i4.2344294738446e+170</span>
+        <span class="selfeval">#i1</span>
+        <span class="selfeval">#i-8e+269</span>
+        <span class="selfeval">#i0</span>
+        <span class="selfeval">#i99</span>))
+</pre></div><p>
+Determine the values <code class="scheme">(<span class="variable">sum</span> <span class="variable">JANUS</span>)</code> and <code class="scheme">(<span class="variable">sum</span> (<span class="builtin">reverse</span> <span class="variable">JANUS</span>))</code>. 
+Explain the difference. Can we trust computers?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/janus.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_175"></a><a href="#call_footnote_Temp_175"><sup><small>66</small></sup></a> We
+can force Full Scheme to interpret numbers with a dot as exact by prefixing
+the numbers with #e.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-40.html">previous</a></span><span>, <a href="curriculum-Z-H-42.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-41.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

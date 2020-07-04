@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose-f2c.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.3.6; How to Design Programs </title>
+</head>
+<body>
+<a href="compose-rocket.html">3.3.5</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.3.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="boolean1.html">4.1.1</a><pre>;; fahrenheit-&gt;celsius : number -&gt; number
+;; computes the celsius equivalent of t
+(define (fahrenheit-&gt;celsius t)
+  (* 5/9 (- t 32)))
+
+;; celsius-&gt;fahrenheit : number -&gt; number
+;; computes the farenheit equivalent of t
+(define (celsius-&gt;fahrenheit t)
+  (+ (* 9/5 t) 32))
+
+;; I : number -&gt; number
+;; to convert a Fahrenheight temperature to Celsuis and back
+(define (I f)
+  (celsius-&gt;fahrenheit (fahrenheit-&gt;celsius f)))
+
+;; EXAMPLES AS TESTS
+(I 32) "should be" 32
+
+;; these two function compose to produce the identity
+;; function on numbers. 
+;; That is, a function that always returns I always returns
+;; its input.
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose-f2c.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

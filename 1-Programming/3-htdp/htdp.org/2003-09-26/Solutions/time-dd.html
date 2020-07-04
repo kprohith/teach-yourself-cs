@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/time-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.4.2; How to Design Programs </title>
+</head>
+<body>
+<a href="def-struct-dd.html">6.4.1</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.4.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="word-dd.html">6.4.3</a><pre>;; DATA DEFINITION
+;; a time is a structure:
+;;   (make-time H M S)
+;; where H, M, and S are numbers
+(define-struct time (hours minutes seconds))
+
+;; DATA EXAMPLES
+(make-time 9 47 0)
+(make-time 21 47 0)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/time-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

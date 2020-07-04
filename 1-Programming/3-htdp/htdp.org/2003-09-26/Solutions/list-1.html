@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.3; How to Design Programs </title>
+</head>
+<body>
+<a href="list-2.html">17.8.2</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-5.html">17.8.4</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.3 sym-list=?
+------------------------------------------------------------
+;Data Definition:
+a list-of-symbols is either
+  1. empty or
+  2. (cons s los)
+  where s is a symbol and los is a list-of-symbols
+
+;Template:
+(define (sym-list=? a-list another-list)
+  (cond
+    [(empty a-list)...]
+    [else
+     ...(first a-list)...(first another-list)...
+     ...(sym-list=? (rest a-list) (rest another-list))...]))
+|#
+;; sym-list=? : list-of-symbols list-of-symbols  -&gt;  boolean
+;; to determine whether a-list and another-list 
+;; contain the same symbols in the same order
+(define (sym-list=? a-list another-list)
+  (cond
+    [(empty? a-list) 
+     (empty? another-list)]
+    [else
+     (and (cons? another-list)
+          (and (symbol=? (first a-list) (first another-list))
+               (sym-list=? (rest a-list) (rest another-list))))]))
+
+;Examples as Tests:
+(check-expect
+ (sym-list=? empty empty) 
+ true)
+
+(check-expect
+ (sym-list=? empty (cons 'a empty)) 
+ false)
+
+(check-expect
+ (sym-list=? (cons 'a empty) empty)
+ false)
+
+(check-expect
+ (sym-list=? (cons 'a (cons 'b (cons 'c empty))) 
+             (cons 'a (cons 'b (cons 'c empty)))) 
+ true)
+
+(check-expect
+ (sym-list=? (cons 'a (cons 'b (cons 'c empty))) 
+             (cons 'a (cons 'c empty))) 
+ false)
+
+(check-expect
+ (sym-list=? (cons 'a (cons 'b (cons 'c empty))) 
+             (cons 'a (cons 'c (cons 'b empty)))) 
+ false)
+
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

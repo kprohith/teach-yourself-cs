@@ -1,0 +1,1261 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-19.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-18.html">previous</a></span><span>, <a href="curriculum-Z-H-20.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_14"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_14">Section  14</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_14">More Self-referential Data Definitions</a></h1>
+<p></p>
+<p>
+</p>
+<p>
+Lists and natural numbers are two classes of data whose description
+requires self-referential data definitions. Both data definitions consist
+of two clauses; both have a single self-reference. Many interesting classes
+of data, however, require more complex definitions than that. Indeed, there
+is no end to the variations. It is therefore necessary to learn how to
+formulate data definitions on our own, starting with informal descriptions
+of information. Once we have those, we can just follow a slightly modified
+design recipe for self-referential data definitions.
+<a name="node_idx_1028"></a> </p>
+<p>
+</p>
+<a name="node_sec_14.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_14.1">14.1&nbsp;&nbsp;Structures in Structures</a></h2>
+<p> 
+</p>
+<p>
+Medical researchers rely on family trees to do research on hereditary
+diseases. They may, for example, search a family tree for a certain eye
+color. Computers can help with these tasks, so it is natural to design
+representations of family trees and functions for processing them.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+One way to maintain a family tree of a family is to add a node to the tree
+every time a child is born. From the node, we can draw connections to the
+node for the father and the one for the mother, which tells us how the
+people in the tree are related. For those people in the tree whose parents
+are unknown, we do not draw any connections. The result is a so-called
+<i>ancestor family tree</i>
+<a name="node_idx_1030"></a>because, given any node in the tree, we can find the ancestors
+of that person if we follow the arrows but not the descendants. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+As we record a family tree, we may also want to record certain pieces of
+information. The birth date, birth weight, the color of the eyes, and the
+color of the hair are the pieces of information that we care about. Others
+record different information. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_81"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><img src="curriculum2-Z-G-1.gif" border="0" alt="[curriculum2-Z-G-1.gif]"><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 35:</b>&nbsp;&nbsp;A sample ancestor family tree</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+See figure&nbsp;<a href="#node_fig_Temp_81">35</a> for a drawing of an ancestor family tree. Adam
+is the child of Bettina and Carl; he has yellow eyes and was born in
+1950. Similarly, Gustav is the child of Eva and Fred, has brown eyes, and
+was born in 1988. To represent a child in a family tree is to combine
+several pieces of information: information about the father, the mother,
+the name, the birth date, and eye color. This suggests that we define a new
+structure:
+<a name="node_idx_1032"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">child</span> (<span class="variable">father</span> <span class="variable">mother</span> <span class="variable">name</span> <span class="variable">date</span> <span class="variable">eyes</span>))
+</pre></div><p>
+The five fields of <code class="scheme"><span class="variable">child</span></code> structures record the required
+information, which suggests the following data definition:
+</p>
+<blockquote>
+A <code class="scheme"><span class="variable">child</span></code> is a structure:<br>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-child</span> <span class="variable">f</span> <span class="variable">m</span> <span class="variable">na</span> <span class="variable">da</span> <span class="variable">ec</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">m</span></code> are <code class="scheme"><span class="variable">child</span></code> structures; <code class="scheme"><span class="variable">na</span></code>
+and <code class="scheme"><span class="variable">ec</span></code> are symbols; and <code class="scheme"><span class="variable">da</span></code> is a number.
+</blockquote>
+While this data definition is simple, it is unfortunately also useless. The
+definition refers to itself but, because it doesn't have any clauses, there
+is no way to create a <code class="scheme"><span class="variable">child</span></code> structure. If we tried to create a
+<code class="scheme"><span class="variable">child</span></code> structure, we would have to write
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> 
+  (<span class="builtin">make-child</span>
+    (<span class="builtin">make-child</span> 
+      (<span class="builtin">make-child</span> 
+        ... 
+        )))
+   ... ... ... ...)
+</pre></div><p>
+without end. It is for this reason that we demand that all self-referential
+data definitions consist of several clauses (for now) and that at least one
+of them does not refer to the data definition.</p>
+<p>
+Let's postpone the data definition for a moment and study instead how we
+can use <code class="scheme"><span class="variable">child</span></code> structures to represent family trees.  Suppose we
+are about to add a child to an existing family tree, and furthermore
+suppose that we already have representations for the parents. Then we can
+just construct a new <code class="scheme"><span class="variable">child</span></code> structure. For example, for Adam we
+could create the following <code class="scheme"><span class="variable">child</span></code> structure:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> <span class="variable">Carl</span> <span class="variable">Bettina</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1950</span> <span class="keyword">'</span><span class="variable">yellow</span>)
+</pre></div><p>
+assuming <code class="scheme"><span class="variable">Carl</span></code> and <code class="scheme"><span class="variable">Bettina</span></code> stand for representations of
+Adam's parents. </p>
+<p>
+The problem is that we don't always know a person's parents.  In the family
+depicted in figure&nbsp;<a href="#node_fig_Temp_81">35</a>, we don't know Bettina's parents.
+Yet, even if we don't know a person's father or mother, we must still use
+some Scheme value for the two fields in a <code class="scheme"><span class="variable">child</span></code> structure.  We
+could use all kinds of values to signal a lack of information (<code class="scheme"><span class="selfeval">5</span></code>,
+<code class="scheme"><span class="builtin">false</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">none</span></code>); here, we use <code class="scheme"><span class="builtin">empty</span></code>.  For
+example, to construct a <code class="scheme"><span class="variable">child</span></code> structure for Bettina, we do the
+following:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Bettina</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)
+</pre></div><p>
+Of course, if only one of the two parents is missing, we fill just that
+field with <code class="scheme"><span class="builtin">empty</span></code>.</p>
+<p>
+Our analysis suggests that a <code class="scheme"><span class="variable">child</span></code> node has the following data
+definition: 
+</p>
+<blockquote>
+A <em>child node</em> is <code class="scheme">(<span class="builtin">make-child</span> <span class="variable">f</span> <span class="variable">m</span> <span class="variable">na</span> <span class="variable">da</span> <span class="variable">ec</span>)</code> where
+<ol>
+<li><p><code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">m</span></code> are either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or 
+</p>
+<li><p><code class="scheme"><span class="variable">child</span></code> nodes; 
+</p>
+</li></ol><p>
+</p>
+<li><p><code class="scheme"><span class="variable">na</span></code> and <code class="scheme"><span class="variable">ec</span></code> are symbols;
+</p>
+<li><p><code class="scheme"><span class="variable">da</span></code> is a number.
+</p>
+</li></ol><p>
+</p>
+</blockquote>
+This definition is special in two regards.  First, it is a self-referential
+data definition involving structures. Second, the data definition mentions
+two alternatives for the first and second component. This violates our
+conventions concerning the shape of data definitions.<p>
+We can avoid this problem by defining the collection of nodes in a family
+tree instead: </p>
+<p>
+<a name="node_idx_1034"></a><a name="node_idx_1036"></a>A <i>family-tree-node</i> (short: <i>ftn</i>) is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>; or
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-child</span> <span class="variable">f</span> <span class="variable">m</span> <span class="variable">na</span> <span class="variable">da</span> <span class="variable">ec</span>)</code> <br>
+where <code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">m</span></code> are <i>ftn</i>s, <code class="scheme"><span class="variable">na</span></code><br>
+and <code class="scheme"><span class="variable">ec</span></code> are symbols, and <i>da</i> is a number. 
+</p>
+</li></ol><p></p>
+<p>
+This new definition satisfies our conventions. It consists of two
+clauses. One of the clauses is self-referential, the other is not. </p>
+<p>
+In contrast to previous data definitions involving structures, the
+definition of <code class="scheme"><span class="variable">ftn</span></code> is not a plain explanation of what kind of data
+can show up in which field. Instead, it is multi-clausal and
+self-referential. Considering that this is the first such data definition,
+let us carefully translate the example from figure&nbsp;<a href="#node_fig_Temp_81">35</a> and
+thus reassure ourselves that the new class of data can represent the
+information of interest. </p>
+<p>
+The information for Carl is easy to translate into a <code class="scheme"><span class="variable">ftn</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)
+</pre></div><p>
+Bettina and Fred are represented with similar nodes. Accordingly, the node
+for Adam is created with 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>) 
+            (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Bettina</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)
+            <span class="keyword">'</span><span class="variable">Adam</span> 
+            <span class="selfeval">1950</span> 
+            <span class="keyword">'</span><span class="variable">yellow</span>)
+</pre></div><p></p>
+<p>
+As the examples show, a simple-minded, node-by-node transliteration of
+figure&nbsp;<a href="#node_fig_Temp_81">35</a> requires numerous repetitions of data. For
+example, if we constructed the <code class="scheme"><span class="variable">child</span></code> structure for Dave like the
+one for Adam, we would get
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-child</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>) 
+            (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Bettina</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)
+            <span class="keyword">'</span><span class="variable">Dave</span>
+            <span class="selfeval">1955</span>
+            <span class="keyword">'</span><span class="variable">black</span>)
+</pre></div><p>
+Hence it is a good idea to introduce a variable definition per node and to
+use the variable thereafter. To make things easy, we use <code class="scheme"><span class="variable">Carl</span></code> to
+stand for the <code class="scheme"><span class="variable">child</span></code> structure that describes Carl, and so on. 
+The complete transliteration of the family tree into Scheme can be found in
+figure&nbsp;<a href="#node_fig_Temp_82">36</a>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_82"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; Oldest Generation:</span>
+(<span class="keyword">define</span> <span class="variable">Carl</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+(<span class="keyword">define</span> <span class="variable">Bettina</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Bettina</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+
+<span class="comment">;; Middle Generation:</span>
+(<span class="keyword">define</span> <span class="variable">Adam</span> (<span class="builtin">make-child</span> <span class="variable">Carl</span> <span class="variable">Bettina</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1950</span> <span class="keyword">'</span><span class="variable">yellow</span>))
+(<span class="keyword">define</span> <span class="variable">Dave</span> (<span class="builtin">make-child</span> <span class="variable">Carl</span> <span class="variable">Bettina</span> <span class="keyword">'</span><span class="variable">Dave</span> <span class="selfeval">1955</span> <span class="keyword">'</span><span class="variable">black</span>))
+(<span class="keyword">define</span> <span class="variable">Eva</span> (<span class="builtin">make-child</span> <span class="variable">Carl</span> <span class="variable">Bettina</span> <span class="keyword">'</span><span class="variable">Eva</span> <span class="selfeval">1965</span> <span class="keyword">'</span><span class="variable">blue</span>))
+(<span class="keyword">define</span> <span class="variable">Fred</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Fred</span> <span class="selfeval">1966</span> <span class="keyword">'</span><span class="variable">pink</span>))
+
+<span class="comment">;; Youngest Generation: </span>
+(<span class="keyword">define</span> <span class="variable">Gustav</span> (<span class="builtin">make-child</span> <span class="variable">Fred</span> <span class="variable">Eva</span> <span class="keyword">'</span><span class="variable">Gustav</span> <span class="selfeval">1988</span> <span class="keyword">'</span><span class="variable">brown</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 36:</b>&nbsp;&nbsp;A Scheme representation of the sample family tree</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The structure definitions in figure&nbsp;<a href="#node_fig_Temp_82">36</a> naturally correspond
+to an image of deeply nested boxes. Each box has five compartments. The
+first two contain boxes again, which in turn contain boxes in their first
+two compartments, and so on. Thus, if we were to draw the structure
+definitions for the family tree using nested boxes, we would quickly be
+overwhelmed by the details of the picture. Furthermore, the picture would
+copy certain portions of the tree just like our attempt to use
+<code class="scheme"><span class="builtin">make-child</span></code> without variable definitions.  For these reasons, it is
+better to imagine the structures as boxes and arrows, as originally drawn
+in figure&nbsp;<a href="#node_fig_Temp_81">35</a>. In general, a programmer must flexibly switch
+back and forth between both of these graphical illustrations. For
+extracting values from structures, the boxes-in-boxes image works best; for
+finding our way around large collections of interconnected structures, the
+boxes-and-arrows image works better.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+Equipped with a firm understanding of the family tree representation, we
+can turn to the design of functions that consume family trees. Let us first
+look at a generic function of this kind:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">fun-for-ftn</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">fun-for-ftn</span> <span class="variable">a-ftree</span>) ...)
+</pre></div><p>
+After all, we should be able to construct the template without considering
+the purpose of a function.</p>
+<p>
+Since the data definition for <code class="scheme"><span class="variable">ftn</span></code>s contains two clauses, the
+template must consist of a <strong>cond</strong>-expression with two clauses. The
+first deals with <code class="scheme"><span class="builtin">empty</span></code>, the second with <code class="scheme"><span class="variable">child</span></code>
+structures:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">fun-for-ftn</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">fun-for-ftn</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) ...]
+    [<span class="keyword">else</span> <span class="comment">; <code class="scheme">(<span class="builtin">child?</span> <span class="variable">a-ftree</span>)</code></span>
+      ... ]))
+</pre></div><p>
+Furthermore, for the first clause, the input is atomic so there is nothing
+further to be done. For the second clause, though, the input contains five
+pieces of information: two other family tree nodes, the person's name,
+birth date, and eye color:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">fun-for-ftn</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">fun-for-ftn</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) ...]
+    [<span class="keyword">else</span>
+      ... (<span class="variable">fun-for-ftn</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)) ...
+      ... (<span class="variable">fun-for-ftn</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)) ...
+      ... (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) ...
+      ... (<span class="builtin">child-date</span> <span class="variable">a-ftree</span>) ...
+      ... (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) ...]))
+</pre></div><p>
+We also apply <code class="scheme"><span class="variable">fun-for-ftn</span></code> to the <code class="scheme"><span class="variable">father</span></code> and
+<code class="scheme"><span class="variable">mother</span></code> fields because of the self-references in the second clause
+of the data definition. </p>
+<p>
+Let us now turn to a concrete example: <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>, the
+function that determines whether anyone in some given family tree has blue
+eyes:
+<a name="node_idx_1038"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-ancestor?</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-ftree</span></code> contains a <code class="scheme"><span class="variable">child</span></code></span>
+<span class="comment">;; structure with <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-ancestor?</span> <span class="variable">a-ftree</span>) ...)
+</pre></div><p> </p>
+<p>
+Following our recipe, we first develop some examples. Consider the family
+tree node for Carl. He does not have blue eyes, and because he doesn't have
+any (known) ancestors in our family tree, the family tree represented by
+this node does not contain a person with blue eyes. In short,
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-ancestor?</span> <span class="variable">Carl</span>)
+</pre></div><p>
+evaluates to <code class="scheme"><span class="builtin">false</span></code>. In contrast, the family tree represented by
+<code class="scheme"><span class="variable">Gustav</span></code> contains a node for Eva who does have blue eyes. Hence 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-ancestor?</span> <span class="variable">Gustav</span>)
+</pre></div><p>
+evaluates to <code class="scheme"><span class="builtin">true</span></code>.</p>
+<p>
+The function template is like that of <code class="scheme"><span class="variable">fun-for-ftn</span></code>, except that we
+use the name <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>. As always, we use the template
+to guide the function design. First we assume that <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>)</code>
+holds. In that case, the family tree is empty, and nobody has blue
+eyes. Hence the answer must be <code class="scheme">false</code>. </p>
+<p>
+The second clause of the template contains several expressions, which we
+must interpret:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>))</code>, which determines
+whether someone in the father's <code class="scheme"><span class="variable">ftn</span></code> has blue eyes; 
+</p>
+<li><p><code class="scheme">(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>))</code>, which determines
+whether someone in the mother's <code class="scheme"><span class="variable">ftn</span></code> has blue eyes; 
+</p>
+<li><p><code class="scheme">(<span class="builtin">child-name</span> <span class="variable">a-ftree</span>)</code>, which extracts the <code class="scheme"><span class="variable">child</span></code>'s name; 
+</p>
+<li><p><code class="scheme">(<span class="builtin">child-date</span> <span class="variable">a-ftree</span>)</code>, which extracts the
+<code class="scheme"><span class="variable">child</span></code>'s date of birth; and 
+</p>
+<li><p><code class="scheme">(<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>)</code>,  which extracts the
+<code class="scheme"><span class="variable">child</span></code>'s eye color. 
+</p>
+</li></ol><p>
+It is now up to us to use these values properly. Clearly, if the
+<code class="scheme"><span class="variable">child</span></code> structure contains <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code>
+field, the function's answer is <code class="scheme">true</code>. Otherwise, the function produces
+<code class="scheme">true</code> if there is a blue-eyed person in either the father's or the
+mother's family tree. The rest of the data is useless. </p>
+<p>
+Our discussion suggests that we formulate a conditional expression and that
+the first condition is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>)
+</pre></div><p>
+The two recursions are the other two conditions. If either one produces
+<code class="scheme">true</code>, the function produces <code class="scheme">true</code>. The <code class="scheme"><span class="keyword">else</span></code>-clause 
+produces <code class="scheme">false</code>. </p>
+<p>
+In summary, the answer in the second clause is the expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) true]
+  [(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)) true]
+  [(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)) true]
+  [<span class="keyword">else</span> false])
+</pre></div><p>
+The first definition in figure&nbsp;<a href="#node_fig_Temp_83">37</a> pulls everything
+together. The second definition shows how to formulate this
+<strong>cond</strong>-expression as an equivalent <strong>or</strong>-expression, testing
+one condition after the next, until one of them is <code class="scheme">true</code> or all of
+them have evaluated to <code class="scheme">false</code>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_83"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1040"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-ancestor?</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-ftree</span></code> contains a <code class="scheme"><span class="variable">child</span></code></span>
+<span class="comment">;; structure with <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+<span class="comment">;; version 1: using a nested <strong>cond</strong>-expression</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-ancestor?</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) true]
+            [(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)) true]
+            [(<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)) true]
+            [<span class="keyword">else</span> false])]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<hr><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-ancestor?</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-ftree</span></code> contains a <code class="scheme"><span class="variable">child</span></code></span>
+<span class="comment">;; structure with <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+<span class="comment">;; version 2: using an <strong>or</strong>-expression</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-ancestor?</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">or</span> (<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>)
+              (<span class="keyword">or</span> (<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>))
+                  (<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>))))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 37:</b>&nbsp;&nbsp;Two functions for finding a blue-eyed ancestor</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The function <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code> is unusual in that it uses the
+recursions as conditions in a <strong>cond</strong>-expressions. To understand how
+this works, let us evaluate an application of <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>
+to <code class="scheme"><span class="variable">Carl</span></code> by hand:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">blue-eyed-ancestor?</span> <span class="variable">Carl</span>)
+<span class="builtin">=</span> (<span class="variable">blue-eyed-ancestor?</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)) false]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+        [(<span class="builtin">symbol=?</span> 
+           (<span class="builtin">child-eyes</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+           <span class="keyword">'</span><span class="variable">blue</span>)
+         true]
+        [(<span class="variable">blue-eyed-ancestor?</span>
+           (<span class="builtin">child-father</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)))
+         true]
+        [(<span class="variable">blue-eyed-ancestor?</span>
+           (<span class="builtin">child-mother</span> (<span class="builtin">make-child</span> <span class="builtin">empty</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>)))
+         true]
+        [<span class="keyword">else</span> false])])
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="keyword">'</span><span class="variable">blue</span>) true]
+    [(<span class="variable">blue-eyed-ancestor?</span> <span class="builtin">empty</span>) true]
+    [(<span class="variable">blue-eyed-ancestor?</span> <span class="builtin">empty</span>) true]
+    [<span class="keyword">else</span> false])
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [false true]
+    [false true]
+    [false true]
+    [<span class="keyword">else</span> false])
+<span class="builtin">=</span> false 
+</pre></div><p>
+The evaluation confirms that <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code> works properly
+for <code class="scheme"><span class="variable">Carl</span></code>, and it also illustrates how the function works. </p>
+<p>
+</p>
+<p><a name="node_thm_14.1.1"></a>
+<b>Exercise 14.1.1.</b>&nbsp;&nbsp; 
+The second definition of <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>  in
+figure&nbsp;<a href="#node_fig_Temp_83">37</a> uses an <strong>or</strong>-expression instead of a
+nested conditional.  Use a hand-evaluation to show that this definition
+produces the same output for the inputs <code class="scheme"><span class="builtin">empty</span></code> and
+<code class="scheme"><span class="variable">Carl</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ftn-or.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.1.2"></a>
+<b>Exercise 14.1.2.</b>&nbsp;&nbsp; 
+Confirm that 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-ancestor?</span> <span class="builtin">empty</span>)
+</pre></div><p>
+evaluates to <code class="scheme"><span class="builtin">false</span></code> with a hand-evaluation. </p>
+<p>
+Evaluate <code class="scheme">(<span class="variable">blue-eyed-ancestor?</span> <span class="variable">Gustav</span>)</code> by hand and with
+DrScheme. For the hand-evaluation, skip those steps in the evaluation that
+concern extractions, comparisons, and conditions involving
+<code class="scheme"><span class="builtin">empty?</span></code>. Also reuse established equations where possible,
+especially the one above.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bep-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.1.3"></a>
+<b>Exercise 14.1.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">count-persons</span></code>.  The function consumes a family tree node
+and produces the number of people in the corresponding family
+tree.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/count-ft.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.1.4"></a>
+<b>Exercise 14.1.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">average-age</span></code>. It consumes a family tree node
+and the current year. It produces the average age of all people in the
+family tree.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/age-ft.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.1.5"></a>
+<b>Exercise 14.1.5.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">eye-colors</span></code>, which consumes a family tree node
+and produces a list of all eye colors in the tree. An eye color may occur
+more than once in the list.</p>
+<p>
+<strong>Hint:</strong>  Use the Scheme operation <code class="scheme"><span class="builtin">append</span></code>, which consumes two lists
+and produces the concatenation of the two lists. For example: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">append</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)) 
+<span class="builtin">=</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+</pre></div><p>
+We discuss the development of functions like <code class="scheme"><span class="builtin">append</span></code> in
+section&nbsp;<a href="curriculum-Z-H-22.html#node_chap_17">17</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ec-ft.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.1.6"></a>
+<b>Exercise 14.1.6.</b>&nbsp;&nbsp; 
+Suppose we need the function <code class="scheme"><span class="variable">proper-blue-eyed-ancestor?</span></code>.  It is
+like <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code> but responds with <code class="scheme">true</code> only when
+some proper ancestor, not the given one, has blue eyes.</p>
+<p>
+The contract for this new function is the same as for the old one:
+<a name="node_idx_1042"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">proper-blue-eyed-ancestor?</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-ftree</span></code> has a blue-eyed ancestor</span>
+(<span class="keyword">define</span> (<span class="variable">proper-blue-eyed-ancestor?</span> <span class="variable">a-ftree</span>) ...)
+</pre></div><p>
+The results differ slightly.</p>
+<p>
+To appreciate the difference, we need to look at Eva, who is blue-eyed,
+but does not have a blue-eyed ancestor. Hence
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-ancestor?</span> <span class="variable">Eva</span>)
+</pre></div><p>
+is <code class="scheme"><span class="builtin">true</span></code> but
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">proper-blue-eyed-ancestor?</span> <span class="variable">Eva</span>)
+</pre></div><p>
+is <code class="scheme"><span class="builtin">false</span></code>. After all <code class="scheme"><span class="variable">Eva</span></code> is not a proper ancestor of herself. </p>
+<p>
+Suppose a friend sees the purpose statement and comes up with this solution:
+<a name="node_idx_1044"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">proper-blue-eyed-ancestor?</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">or</span> (<span class="variable">proper-blue-eyed-ancestor?</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>))
+              (<span class="variable">proper-blue-eyed-ancestor?</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)))]))
+</pre></div><p>
+What would be the result of <code class="scheme">(<span class="variable">proper-blue-eyed-ancestor?</span> <span class="variable">A</span>)</code> for <em>any</em> <code class="scheme"><span class="variable">ftn</span></code> <code class="scheme"><span class="variable">A</span></code>? </p>
+<p>
+Fix the friend's solution.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/proper-bea.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_14.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_14.2">14.2&nbsp;&nbsp;Extended Exercise: Binary Search Trees</a></h2>
+<p></p>
+<p>
+Programmers often work with trees, though rarely with family trees. A
+particularly well-known form of tree is the binary search tree.  Many
+applications employ binary search trees to store and to retrieve
+information.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+To be concrete, we discuss binary trees that manage information about
+people. In this context, a binary tree is similar to a family tree but
+instead of <code class="scheme"><span class="variable">child</span></code> structures it contains <code class="scheme"><span class="variable">node</span></code>s:
+<a name="node_idx_1046"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">node</span> (<span class="variable">ssn</span> <span class="variable">name</span> <span class="variable">left</span> <span class="variable">right</span>))
+</pre></div><p>
+Here we have decided to record the social security number, the name, and
+two other trees. The latter are like the parent fields of family trees,
+though the relationship between a <code class="scheme"><span class="variable">node</span></code> and its <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code> trees is not based on family relationships. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The corresponding data definition is just like the one for family trees:
+<a name="node_idx_1048"></a><a name="node_idx_1050"></a>A <i>binary-tree</i> (short: <i>BT</i>) is either
+</p>
+<ol>
+<li><p><code class="scheme">false</code>; or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-node</span> <span class="variable">soc</span> <span class="variable">pn</span> <span class="variable">lft</span> <span class="variable">rgt</span>)</code> <br>
+where <code class="scheme"><span class="variable">soc</span></code> is a number, <code class="scheme"><span class="variable">pn</span></code> is a symbol,
+and <code class="scheme"><span class="variable">lft</span></code> and <code class="scheme"><span class="variable">rgt</span></code> are <code class="scheme"><span class="variable">BT</span></code>s. 
+</p>
+</li></ol><p></p>
+<p>
+The choice of <code class="scheme">false</code> to indicate lack of information is
+arbitrary. We could have chosen <code class="scheme"><span class="builtin">empty</span></code> again, but <code class="scheme">false</code> is an
+equally good and equally frequent choice that we should become familiar
+with.</p>
+<p>
+Here are two binary trees: </p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">   (<span class="builtin">make-node</span>
+     <span class="selfeval">15</span>
+     <span class="keyword">'</span><span class="variable">d</span> 
+     false
+     (<span class="builtin">make-node</span> <span class="selfeval">24</span> <span class="keyword">'</span><span class="variable">i</span> false false))
+</pre></div>&nbsp;&nbsp;<div align="left"><pre class="scheme">(<span class="builtin">make-node</span>
+  <span class="selfeval">15</span>
+  <span class="keyword">'</span><span class="variable">d</span>
+  (<span class="builtin">make-node</span> <span class="selfeval">87</span> <span class="keyword">'</span><span class="variable">h</span> false false)
+  false)
+</pre></div><p>
+</p>
+<p></p>
+<p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_84">38</a> shows how we should think about such
+trees. The trees are drawn upside down, that is, with the root at the top
+and the crown of the tree at the bottom. Each circle corresponds to a node,
+labeled with the <code class="scheme"><span class="variable">ssn</span></code> field of a corresponding <code class="scheme"><span class="variable">node</span></code>
+structure. The trees omit <code class="scheme">false</code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.2.1"></a>
+<b>Exercise 14.2.1.</b>&nbsp;&nbsp;   
+Draw the two trees above in the manner of figure&nbsp;<a href="#node_fig_Temp_84">38</a>.  Then
+develop <code class="scheme"><span class="variable">contains-bt</span></code>. The function consumes a number and a
+<code class="scheme"><span class="variable">BT</span></code> and determines whether the number occurs in the
+tree.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst1.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_14.2.2"></a>
+<b>Exercise 14.2.2.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">search-bt</span></code>. The function consumes a number <code class="scheme"><span class="variable">n</span></code> and a
+<code class="scheme"><span class="variable">BT</span></code>. If the tree contains a <code class="scheme"><span class="variable">node</span></code> structure whose
+<code class="scheme"><span class="variable">soc</span></code> field is <code class="scheme"><span class="variable">n</span></code>, the function produces the value of the
+<code class="scheme"><span class="variable">pn</span></code> field in that node. Otherwise, the function produces
+<code class="scheme">false</code>. </p>
+<p>
+<strong>Hint:</strong>  Use <code class="scheme"><span class="variable">contains-bt</span></code>. Or, use <code class="scheme"><span class="builtin">boolean?</span></code> to find out
+whether <code class="scheme"><span class="variable">search-bt</span></code> was successfully used on a subtree. We will
+discuss this second technique, called backtracking, in the intermezzo at
+the end of this part.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst1-search.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_84"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+<table bgcolor="beige">
+<tr>
+<td align="left">Tree A:</td>
+<td align="right">Tree B:</td>
+</tr>
+<tr>
+<td align="left"><img src="../icons/bst1.gif" alt="[bst]"></td>
+<td align="right"><img src="../icons/bst2.gif" alt="[bst]"></td>
+</tr>
+</table>
+
+<p>
+&nbsp;<br>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 38:</b>&nbsp;&nbsp;A binary search tree and a binary tree</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+Both trees in figure&nbsp;<a href="#node_fig_Temp_84">38</a> are binary trees but they differ in a
+significant way. If we read the numbers in the two trees from left to right
+we obtain two sequences:
+</p>
+<div align="center"><img src="curriculum2-Z-G-2.gif" border="0" alt="[curriculum2-Z-G-2.gif]"></div><p>
+The sequence for tree A is sorted in ascending order, the one for B is not.</p>
+<p>
+A binary tree that has an ordered sequence of information is a
+<small>B</small><small>I</small><small>N</small><small>A</small><small>R</small><small>Y</small> <small>S</small><small>E</small><small>A</small><small>R</small><small>C</small><small>H</small> <small>T</small><small>R</small><small>E</small><small>E</small>. Every binary search tree is a binary tree,
+but not every binary tree is a binary search tree. We say that the class of
+binary search trees is a <small>P</small><small>R</small><small>O</small><small>P</small><small>E</small><small>R</small> <small>S</small><small>U</small><small>B</small><small>C</small><small>L</small><small>A</small><small>S</small><small>S</small> of that of binary trees,
+that is, a class that does not contain all binary trees. More concretely, we
+formulate a condition -- or data
+<a name="node_idx_1052"></a>invariant -- that distinguishes a binary search tree from a binary tree:</p>
+<p>
+<a name="node_idx_1054"></a><a name="node_idx_1056"></a></p>
+<blockquote>
+<div align="center">&nbsp;The BST Invariant&nbsp;</div>
+<p>
+A <i>binary-search-tree</i> (short: <i>BST</i>) is a <code class="scheme"><span class="variable">BT</span></code>:
+</p>
+<ol>
+<li><p><code class="scheme">false</code> is always a <code class="scheme"><span class="variable">BST</span></code>; 
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-node</span> <span class="variable">soc</span> <span class="variable">pn</span> <span class="variable">lft</span> <span class="variable">rgt</span>)</code> is a <code class="scheme"><span class="variable">BST</span></code> if 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">lft</span></code> and <code class="scheme"><span class="variable">rgt</span></code> are <code class="scheme"><span class="variable">BST</span></code>s, 
+</p>
+<li><p>all <code class="scheme"><span class="variable">ssn</span></code> numbers in <code class="scheme"><span class="variable">lft</span></code> are smaller than <code class="scheme"><span class="variable">soc</span></code>, and 
+</p>
+<li><p>all <code class="scheme"><span class="variable">ssn</span></code> numbers in <code class="scheme"><span class="variable">rgt</span></code> are larger than <code class="scheme"><span class="variable">soc</span></code>.
+</p>
+</li></ol><p>
+</p>
+</li></ol><p>
+</p>
+</blockquote><p>
+The second and third conditions are different from what we have
+seen in previous data definitions. They place an additional and unusual
+burden on the construction  <code class="scheme"><span class="variable">BST</span></code>s. We must inspect all numbers in
+these trees and ensure that they are smaller (or larger) than
+<code class="scheme"><span class="variable">soc</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.2.3"></a>
+<b>Exercise 14.2.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">inorder</span></code>. It consumes a binary tree and
+produces a list of all the <code class="scheme"><span class="variable">ssn</span></code> numbers in the tree. The list 
+contains the numbers in the left-to-right order we have used above. </p>
+<p>
+<strong>Hint:</strong>  Use the Scheme operation <code class="scheme"><span class="builtin">append</span></code>, which concatenates
+lists:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">append</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) (<span class="builtin">list</span> <span class="selfeval">4</span>) (<span class="builtin">list</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span>))
+<span class="comment">evaluates to </span>
+(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span>)
+</pre></div><p>
+What does <code class="scheme"><span class="variable">inorder</span></code> produce for a binary search tree?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst0.html">Solution</a></p>
+<p> </p>
+<p>
+Looking for a specific <code class="scheme"><span class="variable">node</span></code> in a <code class="scheme"><span class="variable">BST</span></code> takes fewer steps
+than looking for the same <code class="scheme"><span class="variable">node</span></code> in a <code class="scheme"><span class="variable">BT</span></code>. To find out
+whether a <code class="scheme"><span class="variable">BT</span></code> contains a node with a specific <code class="scheme"><span class="variable">ssn</span></code> field, a
+function may have to look at every <code class="scheme"><span class="variable">node</span></code> of the tree. In contrast,
+to inspect a binary search tree requires far fewer inspections than
+that. Suppose we are given the <code class="scheme"><span class="variable">BST</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-node</span> <span class="selfeval">66</span> <span class="keyword">'</span><span class="variable">a</span> <span class="variable">L</span> <span class="variable">R</span>)
+</pre></div><p>
+If we are looking for <code class="scheme"><span class="selfeval">66</span></code>, we have found it. Now suppose we are
+looking for <code class="scheme"><span class="selfeval">63</span></code>. Given the above <code class="scheme"><span class="variable">node</span></code>, we can focus the
+search on <code class="scheme"><span class="variable">L</span></code> because <em>all</em> <code class="scheme"><span class="variable">node</span></code>s with <code class="scheme"><span class="variable">ssn</span></code>s
+smaller than <code class="scheme"><span class="selfeval">66</span></code> are in <code class="scheme"><span class="variable">L</span></code>. Similarly, if we were to look
+for <code class="scheme"><span class="selfeval">99</span></code>, we would ignore <code class="scheme"><span class="variable">L</span></code> and focus on <code class="scheme"><span class="variable">R</span></code> because
+<em>all</em> <code class="scheme"><span class="variable">node</span></code>s with <code class="scheme"><span class="variable">ssn</span></code>s larger than <code class="scheme"><span class="selfeval">66</span></code> are
+in <code class="scheme"><span class="variable">R</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.2.4"></a>
+<b>Exercise 14.2.4.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">search-bst</span></code>.  The function consumes a number <code class="scheme"><span class="variable">n</span></code> and
+a <code class="scheme"><span class="variable">BST</span></code>. If the tree contains a <code class="scheme"><span class="variable">node</span></code> structure whose
+<code class="scheme"><span class="variable">soc</span></code> field is <code class="scheme"><span class="variable">n</span></code>, the function produces the value of the
+<code class="scheme"><span class="variable">pn</span></code> field in that node. Otherwise, the function produces
+<code class="scheme">false</code>. The function organization must exploit the BST
+Invariant so that the function performs as few comparisons as
+necessary. Compare searching in binary search trees with searching in
+sorted lists (exercise&nbsp;<a href="curriculum-Z-H-16.html#node_thm_12.2.2">12.2.2</a>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst2.html">Solution</a></p>
+<p> </p>
+<p>
+Building a binary tree is easy; building a binary search tree is a
+complicated, error-prone affair.  To create a <code class="scheme"><span class="variable">BT</span></code> we combine two
+<code class="scheme"><span class="variable">BT</span></code>s, an <code class="scheme"><span class="variable">ssn</span></code> number and a <code class="scheme"><span class="variable">name</span></code> with
+<code class="scheme"><span class="builtin">make-node</span></code>. The result is, by definition, a <code class="scheme"><span class="variable">BT</span></code>. To create
+a <code class="scheme"><span class="variable">BST</span></code>, this procedure fails because the result would typically not
+be a <code class="scheme"><span class="variable">BST</span></code>. For example, if one tree contains <code class="scheme"><span class="selfeval">3</span></code> and
+<code class="scheme"><span class="selfeval">5</span></code>, and the other one contains <code class="scheme"><span class="selfeval">2</span></code> and <code class="scheme"><span class="selfeval">6</span></code>, there is
+no way to join these two <code class="scheme"><span class="variable">BST</span></code>s into a single binary search tree. </p>
+<p>
+We can overcome this problem in (at least) two ways. First, given a list of
+numbers and symbols, we can determine by hand what the corresponding
+<code class="scheme"><span class="variable">BST</span></code> should look like and then use <code class="scheme"><span class="builtin">make-node</span></code> to build
+it. Second, we can write a function that builds a <code class="scheme"><span class="variable">BST</span></code> from the
+list, one <code class="scheme"><span class="variable">node</span></code> after another.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.2.5"></a>
+<b>Exercise 14.2.5.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">create-bst</span></code>. It consumes a <code class="scheme"><span class="variable">BST</span></code>
+<code class="scheme"><span class="variable">B</span></code>, a number <code class="scheme"><span class="variable">N</span></code>, and a symbol <code class="scheme"><span class="variable">S</span></code>. It produces a
+<code class="scheme"><span class="variable">BST</span></code> that is just like <code class="scheme"><span class="variable">B</span></code> and that in place of one
+<code class="scheme">false</code> subtree contains the <code class="scheme"><span class="variable">node</span></code> structure
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-node</span> <span class="variable">N</span> <span class="variable">S</span> false false)
+</pre></div><p></p>
+<p>
+Test the function with <code class="scheme">(<span class="variable">create-bst</span> false <span class="selfeval">66</span> <span class="keyword">'</span><span class="variable">a</span>)</code>; this should create a
+single <code class="scheme"><span class="variable">node</span></code>. Then show that the following holds:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">create-bst</span> (<span class="variable">create-bst</span> false <span class="selfeval">66</span> <span class="keyword">'</span><span class="variable">a</span>) <span class="selfeval">53</span> <span class="keyword">'</span><span class="variable">b</span>)
+<span class="builtin">=</span> (<span class="builtin">make-node</span> <span class="selfeval">66</span> 
+             <span class="keyword">'</span><span class="variable">a</span>
+             (<span class="builtin">make-node</span> <span class="selfeval">53</span> <span class="keyword">'</span><span class="variable">b</span> false false)
+             false)
+</pre></div><p>
+Finally, create tree A from figure&nbsp;<a href="#node_fig_Temp_84">38</a> using
+<code class="scheme"><span class="variable">create-bst</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.2.6"></a>
+<b>Exercise 14.2.6.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">create-bst-from-list</span></code>. It consumes a list of
+numbers and names; it produces a <code class="scheme"><span class="variable">BST</span></code> by repeatedly applying  
+<code class="scheme"><span class="variable">create-bst</span></code>. </p>
+<p>
+The data definition for a list of numbers and names is as follows: </p>
+<p>
+<a name="node_idx_1058"></a>A <i>list-of-number/name</i> is either  
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="variable">ssn</span> <span class="variable">nom</span>) <span class="variable">lonn</span>)</code><br>
+where <code class="scheme"><span class="variable">ssn</span></code> is a number, <code class="scheme"><span class="variable">nom</span></code> a symbol, <br>
+and <code class="scheme"><span class="variable">lonn</span></code> is a <code class="scheme"><span class="variable">list-of-number/name</span></code>. 
+</p>
+</li></ol><p></p>
+<p>
+Consider the following examples: 
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<p><table>
+<tr>
+<td>
+<pre><tt>
+<br>(define sample
+<br>  '((99 o)
+<br>    (77 l)
+<br>    (24 i)
+<br>    (10 h)
+<br>    (95 g)
+<br>    (15 d)
+<br>    (89 c)
+<br>    (29 b)
+<br>    (63 a)))
+</tt>
+</pre>
+</td>
+<td>
+<pre><tt>
+<br>(define sample
+<br>  (list (list 99 'o)
+<br>    (list 77 'l)
+<br>    (list 24 'i)
+<br>    (list 10 'h)
+<br>    (list 95 'g)
+<br>    (list 15 'd)
+<br>    (list 89 'c)
+<br>    (list 29 'b)
+<br>    (list 63 'a)))
+</tt>
+</pre>
+</td>
+</tr></table>
+<p>
+They are equivalent, although the left one is defined with the quote
+abbreviation, the right one using <code class="scheme"><span class="builtin">list</span></code>. The left tree in
+figure&nbsp;<a href="#node_fig_Temp_84">38</a> is the result of using <code class="scheme"><span class="variable">create-bst-from-list</span></code>
+on this list.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst4.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<a name="node_sec_14.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_14.3">14.3&nbsp;&nbsp;Lists in Lists</a></h2>
+<p> </p>
+<p>
+The World Wide Web, or just ``the Web,'' has become the most interesting
+part of the Internet, a global network of computers. Roughly speaking, the
+Web is a collection of Web pages. Each Web page is a sequence of words,
+pictures, movies, audio messages, and many more things. Most important, Web
+pages also contain links to other Web pages.</p>
+<p>
+A Web browser enables people to view Web pages. It presents a Web page as a
+sequence of words, images, and so on. Some of the words on a page may be
+underlined. Clicking on underlined words leads to a new Web page.  Most
+modern browsers also provide a Web page composer. These are tools that help
+people create collections of Web pages. A composer can, among other things,
+search for words or replace one word with another.  In short, Web pages are
+things that we should be able to represent on computers, and there are many
+functions that process Web pages.</p>
+<p>
+To simplify our problem, we consider only Web pages of words and nested Web
+pages. One way of understanding such a page is as a sequence of words and
+Web pages. This informal description suggests a natural representation of
+Web pages as lists of symbols, which represent words, and Web pages, which
+represent nested Web pages.  After all, we have emphasized before that a
+list may contain different kinds of things. Still, when we spell out this
+idea as a data definition, we get something rather unusual:</p>
+<p>
+<a name="node_idx_1060"></a><a name="node_idx_1062"></a>A <i>Web-page</i> (short: <i>WP</i>) is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>;
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">wp</span>)</code> <br>
+where <code class="scheme"><span class="variable">s</span></code> is a symbol and <code class="scheme"><span class="variable">wp</span></code> is a Web page; or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">ewp</span> <span class="variable">wp</span>)</code> <br>
+where both <code class="scheme"><span class="variable">ewp</span></code> and <code class="scheme"><span class="variable">wp</span></code> are Web pages. 
+</p>
+</li></ol><p></p>
+<p>
+This data definition differs from that of a list of symbols in
+that it has three clauses instead of two and that it has three
+self-references instead of one. Of these self-references, the one at the
+beginning of a <code class="scheme"><span class="builtin">cons</span></code>tructed list is the most unusual. We refer
+to such Web pages as <i>immediately embedded</i> 
+<a name="node_idx_1064"></a>Web pages.</p>
+<p>
+Because the data definition is unusual, we construct some examples of Web
+pages before we continue. Here is a plain page:
+</p>
+<div align="left"><pre class="scheme"><span class="keyword">'</span>(<span class="variable">The</span> <span class="variable">TeachScheme!</span> <span class="variable">Project</span> <span class="variable">aims</span> <span class="variable">to</span> <span class="variable">improve</span> <span class="variable">the</span> 
+  <span class="variable">problem-solving</span> <span class="keyword">and</span> <span class="variable">organization</span> <span class="variable">skills</span> <span class="variable">of</span> <span class="variable">high</span> 
+  <span class="variable">school</span> <span class="variable">students.</span> <span class="variable">It</span> <span class="variable">provides</span> <span class="variable">software</span> <span class="keyword">and</span> <span class="variable">lecture</span> 
+  <span class="variable">notes</span> <span class="variable">as</span> <span class="variable">well</span> <span class="variable">as</span> <span class="variable">exercises</span> <span class="keyword">and</span> <span class="variable">solutions</span> <span class="variable">for</span> <span class="variable">teachers.</span>)
+</pre></div><p>
+It contains nothing but words. Here is a complex page:
+</p>
+<div align="left"><pre class="scheme"><span class="keyword">'</span>(<span class="variable">The</span> <span class="variable">TeachScheme</span> <span class="variable">Web</span> <span class="variable">Page</span>
+  <span class="variable">Here</span> <span class="variable">you</span> <span class="variable">can</span> <span class="variable">find:</span> 
+  (<span class="variable">LectureNotes</span> <span class="variable">for</span> <span class="variable">Teachers</span>)
+  (<span class="variable">Guidance</span> <span class="variable">for</span> (<span class="variable">DrScheme:</span> <span class="variable">a</span> <span class="variable">Scheme</span> <span class="variable">programming</span> <span class="variable">environment</span>))
+  (<span class="variable">Exercise</span> <span class="variable">Sets</span>)
+  (<span class="variable">Solutions</span> <span class="variable">for</span> <span class="variable">Exercises</span>)
+  <span class="variable">For</span> <span class="variable">further</span> <span class="variable">information:</span> <span class="builtin">write</span> <span class="variable">to</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="1360707b767e76537060">[email&#160;protected]</a></span>)
+</pre></div><p>
+The immediately embedded pages start with parentheses and the symbols
+<code class="scheme"><span class="keyword">'</span><span class="variable">LectureNotes</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">Guidance</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">Exercises</span></code>, and
+<code class="scheme"><span class="keyword">'</span><span class="variable">Solutions</span></code>. The second embedded Web page contains another embedded
+page, which starts with the word <code class="scheme"><span class="keyword">'</span><span class="variable">DrScheme</span></code>. We say this page is
+<i>embedded</i> 
+<a name="node_idx_1066"></a>with respect to the entire page.</p>
+<p>
+Let's develop the function <code class="scheme"><span class="variable">size</span></code>, which consumes a Web page and
+produces the number of words that it and all of its embedded pages contain:
+<a name="node_idx_1068"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">size</span> <span class="selfeval">:</span> <span class="variable">WP</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to count the number of symbols that occur in <code class="scheme"><span class="variable">a-wp</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">size</span> <span class="variable">a-wp</span>) ...)
+</pre></div><p></p>
+<p>
+The two Web pages above suggest two good examples, but they are too
+complex. Here are three examples, one per subclass of data: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">size</span> <span class="builtin">empty</span>)
+   <span class="selfeval">0</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">size</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">One</span> <span class="builtin">empty</span>))
+   <span class="selfeval">1</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">size</span> (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">One</span> <span class="builtin">empty</span>) <span class="builtin">empty</span>))
+   <span class="selfeval">1</span>)
+</pre></div><p>
+The first two examples are obvious. The third one deserves a short
+explanation. It is a Web page that contains one immediately embedded Web
+page, and nothing else. The embedded Web page is the one of the second
+example, and it contains the one and only symbol of the third example. </p>
+<p>
+To develop the template for <code class="scheme"><span class="variable">size</span></code>, let's carefully step through the
+design recipe. The shape of the data definition suggests that we need three
+<code class="scheme"><span class="keyword">cond</span></code>-clauses: one for the <code class="scheme"><span class="builtin">empty</span></code> page, one for a page that
+starts with a symbol, and one for a page that starts with an embedded Web
+page. While the first condition is the familiar test for <code class="scheme"><span class="builtin">empty</span></code>,
+the second and third need closer inspection because both clauses in the
+data definition use <code class="scheme"><span class="builtin">cons</span></code>, and a simple <code class="scheme"><span class="builtin">cons?</span></code> won't
+distinguish between the two forms of data. </p>
+<p>
+If the page is not <code class="scheme"><span class="builtin">empty</span></code>, it is certainly <code class="scheme"><span class="builtin">cons</span></code>tructed,
+and the distinguishing feature is the first item on the list. In other
+words, the second condition must use a predicate that tests the first item
+on <code class="scheme"><span class="variable">a-wp</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">size</span> <span class="selfeval">:</span> <span class="variable">WP</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to count the number of symbols that occur in a-wp</span>
+(<span class="keyword">define</span> (<span class="variable">size</span> <span class="variable">a-wp</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-wp</span>) ...]
+    [(<span class="builtin">symbol?</span> (<span class="builtin">first</span> <span class="variable">a-wp</span>)) ... (<span class="builtin">first</span> <span class="variable">a-wp</span>) ... (<span class="variable">size</span> (<span class="builtin">rest</span> <span class="variable">a-wp</span>)) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">size</span> (<span class="builtin">first</span> <span class="variable">a-wp</span>)) ... (<span class="variable">size</span> (<span class="builtin">rest</span> <span class="variable">a-wp</span>)) ...]))
+</pre></div><p>
+The rest of the template is as usual. The second and third <code class="scheme"><span class="keyword">cond</span></code>
+clauses contain selector expressions for the first item and the rest of the
+list. Because <code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-wp</span>)</code> is always a Web page and because
+<code class="scheme">(<span class="builtin">first</span> <span class="variable">a-wp</span>)</code> is one in the third case, we also add a recursive
+call to size for these selector expressions.</p>
+<p>
+Using the examples and the template, we are ready to design <code class="scheme"><span class="variable">size</span></code>:
+see figure&nbsp;<a href="#node_fig_Temp_85">39</a>. The differences between the definition and the
+template are minimal, which shows again how much of a function we can design
+by merely thinking systematically about the data definition for its inputs.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_85"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">size</span> <span class="selfeval">:</span> <span class="variable">WP</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to count the number of symbols that occur in a-wp</span>
+(<span class="keyword">define</span> (<span class="variable">size</span> <span class="variable">a-wp</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-wp</span>) <span class="selfeval">0</span>]
+    [(<span class="builtin">symbol?</span> (<span class="builtin">first</span> <span class="variable">a-wp</span>)) (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="variable">size</span> (<span class="builtin">rest</span> <span class="variable">a-wp</span>)))]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">size</span> (<span class="builtin">first</span> <span class="variable">a-wp</span>)) (<span class="variable">size</span> (<span class="builtin">rest</span> <span class="variable">a-wp</span>)))]))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 39:</b>&nbsp;&nbsp;The definition of <i>size</i> for Web pages</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.3.1"></a>
+<b>Exercise 14.3.1.</b>&nbsp;&nbsp; 
+Briefly explain how to define <code class="scheme"><span class="variable">size</span></code> using its template and the
+examples. Test <code class="scheme"><span class="variable">size</span></code> using the examples from above. 
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.3.2"></a>
+<b>Exercise 14.3.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">occurs1</span></code>. The function consumes a Web page and a
+symbol. It produces the number of times the symbol occurs in the Web page,
+ignoring the nested Web pages.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">occurs2</span></code>. It is like <code class="scheme"><span class="variable">occurs1</span></code>, but
+counts <em>all</em> occurrences of the symbol, including in embedded Web
+pages.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/web2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.3.3"></a>
+<b>Exercise 14.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">replace</span></code>. The function consumes two symbols,
+<code class="scheme"><span class="variable">new</span></code> and <code class="scheme"><span class="variable">old</span></code>, and a Web page, <code class="scheme"><span class="variable">a-wp</span></code>. It
+produces a page that is structurally identical to <code class="scheme"><span class="variable">a-wp</span></code> but with
+all occurrences of <code class="scheme"><span class="variable">old</span></code> replaced by <code class="scheme"><span class="variable">new</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/web3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_14.3.4"></a>
+<b>Exercise 14.3.4.</b>&nbsp;&nbsp; 
+People do not like deep Web trees because they require too many page
+switches to reach useful information. For that reason a Web page designer
+may also want to measure the depth of a page. A page containing only
+symbols has depth <code class="scheme"><span class="selfeval">0</span></code>. A page with an immediately embedded page has
+the depth of the embedded page plus <code class="scheme"><span class="selfeval">1</span></code>. If a page has several
+immediately embedded Web pages, its depth is the maximum of the depths of
+embedded Web pages plus <code class="scheme"><span class="selfeval">1</span></code>. Develop <code class="scheme"><span class="variable">depth</span></code>, which consumes
+a Web page and computes its depth.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/web4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_14.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_14.4">14.4&nbsp;&nbsp;Extended Exercise: Evaluating Scheme</a></h2>
+<p> 
+</p>
+<p>
+</p>
+<p>
+DrScheme is itself a program that consists of several parts. One function
+checks whether the definitions and expressions we wrote down are
+grammatical Scheme expressions. Another one evaluates Scheme
+expressions. With what we have learned in this section, we can now develop
+simple versions of these functions.</p>
+<p>
+Our first task is to agree on a data representation for Scheme programs. In
+other words, we must figure out how to represent a Scheme expression as a
+piece of Scheme data. This sounds unusual, but it is not difficult. Suppose
+we just want to represent numbers, variables, additions, and
+multiplications for a start. Clearly, numbers can stand for numbers and
+symbols for variables. Additions and multiplications, however, call for a
+class of compound data because they consist of an operator and two
+subexpressions.</p>
+<p>
+A straightforward way to represent additions and multiplications is to use
+two structures: one for additions and another one for multiplications.
+Here are the structure definitions:
+<a name="node_idx_1070"></a><a name="node_idx_1072"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">add</span> (<span class="variable">left</span> <span class="variable">right</span>))
+(<span class="keyword">define-struct</span> <span class="variable">mul</span> (<span class="variable">left</span> <span class="variable">right</span>))
+</pre></div><p>
+Each structure has two components. One represents the left expression and
+the other one the right expression of the operation. </p>
+<p>
+
+
+</p>
+
+<center>
+<p><table border="1" cellpadding="3" cellspacing="1" bgcolor="beige">
+              <tr><th>Scheme expression</th> <th>representation of Scheme expression</th></tr>
+<tr><td><code>3</code></td>                  <td><code>3</code></td></tr>
+<tr><td><code>x</code></td>                  <td><code>'x</code></td></tr>
+<tr><td><code>(* 3 10)</code></td>           <td><code>(make-mul 3 10)</code></td></tr>
+<tr><td><code>(+ (* 3 3) (* 4 4))</code></td><td><code>(make-add (make-mul 3 3) (make-mul 4 4))</code></td></tr>
+<tr><td><code>(+ (* x x) (* y y))</code></td><td><code>(make-add (make-mul 'x 'x) (make-mul 'y 'y))</code></td></tr>
+<tr><td><code>(* 1/2 (* 3 3))</code></td>    <td><code>(make-mul 1/2 (make-mul 3 3))</code></td></tr>
+
+</table>
+</center>
+
+<p>
+Let's look at some examples:</p>
+<p>
+</p>
+<p>
+These examples cover all cases: numbers, variables, simple
+expressions, and nested expressions.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_14.4.1"></a>
+<b>Exercise 14.4.1.</b>&nbsp;&nbsp; 
+Provide a data definition for the representation of Scheme
+expressions. Then translate the following expressions into representations:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">+</span> <span class="selfeval">10</span> <span class="selfeval">-10</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">20</span> <span class="selfeval">3</span>) <span class="selfeval">33</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">9/5</span> <span class="variable">c</span>) <span class="selfeval">32</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">o</span> <span class="variable">o</span>)) (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">i</span> <span class="variable">i</span>)))</code>&nbsp;&nbsp;&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scheme-dd.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+A Scheme evaluator is a function that consumes a representation of a Scheme
+expression and produces its value. For example, the expression <code class="scheme"><span class="selfeval">3</span></code>
+has the value <code class="scheme"><span class="selfeval">3</span></code>, <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)</code> has the value <code class="scheme"><span class="selfeval">8</span></code>,
+<code class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">3</span>) (<span class="builtin">*</span> <span class="selfeval">4</span> <span class="selfeval">4</span>))</code> has the value <code class="scheme"><span class="selfeval">25</span></code>, etc.  Since
+we are ignoring definitions for now, an expression that contains a
+variable, for example, <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">3</span> <span class="variable">x</span>)</code>, does not have a value; after all,
+we do not know what the variable stands for. In other words, our Scheme
+evaluator should be applied only to representations of expressions that do
+not contain variables. We say such expressions are <i>numeric</i>.<a name="node_idx_1074"></a></p>
+<p>
+</p>
+<p><a name="node_thm_14.4.2"></a>
+<b>Exercise 14.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">numeric?</span></code>, which consumes (the representation
+of) a Scheme expression and determines whether it is
+numeric.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scheme-numeric.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_14.4.3"></a>
+<b>Exercise 14.4.3.</b>&nbsp;&nbsp;  
+Provide a data definition for numeric expressions.  Develop the function
+<code class="scheme"><span class="variable">evaluate-expression</span></code>. The function consumes (the representation of)
+a numeric Scheme expression and computes its value. When the function is
+tested, modify it so it consumes all kinds of Scheme expressions; the
+revised version raises an error when it encounters a
+variable.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scheme-eval.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_14.4.4"></a>
+<b>Exercise 14.4.4.</b>&nbsp;&nbsp; 
+When people evaluate an application <code class="scheme">(<span class="variable">f</span> <span class="variable">a</span>)</code> they substitute
+<code class="scheme"><span class="variable">a</span></code> for <code class="scheme"><span class="variable">f</span></code>'s parameter in <code class="scheme"><span class="variable">f</span></code>'s body. More generally,
+when people evaluate expressions with variables, they substitute the
+variables with values. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">subst</span></code>. The function consumes (the
+representation of) a variable (<code class="scheme"><span class="variable">V</span></code>), a number (<code class="scheme"><span class="variable">N</span></code>), and
+(the representation of) a Scheme expression. It produces a structurally
+equivalent expression in which all occurrences of <code class="scheme"><span class="variable">V</span></code> are
+substituted by <code class="scheme"><span class="variable">N</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scheme-subst.html">Solution</a></p>
+<p> </p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-18.html">previous</a></span><span>, <a href="curriculum-Z-H-20.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-19.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

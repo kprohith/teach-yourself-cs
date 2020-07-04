@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.3.5; How to Design Programs </title>
+</head>
+<body>
+<a href="random4.html">11.3.4</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.3.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="test-fact.html">11.4.1</a><pre>;; theatre-size : number
+;; size of the grid of the theatre
+(define theatre-size 10)
+
+;; seat-width : number
+;; size of each cell in the grid
+(define seat-width 10)
+
+(define window-size (* seat-width theatre-size))
+
+;; draw-vertical-lines : number -&gt; true
+;; draws the vertical lines of the theatre grid
+(define (draw-vertical-lines n)
+  (cond
+    [(zero? n) true]
+    [else (and (draw-vertical-lines (sub1 n))
+               (draw-solid-line (make-posn 0 (* n seat-width))
+                                (make-posn window-size (* n seat-width))))]))
+
+;; draw-horizontal-lines : number -&gt; true
+;; draws the horizontal lines of the theatre grid
+(define (draw-horizontal-lines n)
+  (cond
+    [(zero? n) true]
+    [else (and (draw-horizontal-lines (sub1 n))
+               (draw-solid-line (make-posn (* n seat-width) 0)
+                                (make-posn (* n seat-width) window-size)))]))
+
+;; riot : number -&gt; true
+(define (riot balls)
+  (cond
+    [(zero? balls) true]
+    [else (and (draw-solid-disk (make-posn (random window-size) (random window-size))
+                                2
+                                'red)
+               (riot (sub1 balls)))]))
+
+(start window-size window-size)
+(draw-vertical-lines theatre-size)
+(draw-horizontal-lines theatre-size)
+
+;; example as test
+(riot 200)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-distance-to-0.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="check-guess.html">5.1.5</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="draw-fig.html">6.2.1</a><pre>;; distance-to-0 : posn -&gt; number
+(define (distance-to-0 a-posn)
+  (sqrt (+ (sqr (posn-x a-posn))
+           (sqr (posn-y a-posn)))))
+
+;; 1.
+(distance-to-0 (make-posn 3 4)) "should be"
+(sqrt (+ (sqr (posn-x (make-posn 3 4)))
+         (sqr (posn-y (make-posn 3 4))))) "should be"
+(sqrt (+ (sqr 3)
+         (sqr (posn-y (make-posn 3 4))))) "should be" 
+(sqrt (+ (sqr 3)
+         (sqr 4))) "should be" 
+(sqrt (+ 9 16)) "should be"
+(sqrt 25) "should be"
+5
+
+;; 2.
+(distance-to-0 (make-posn (* 2 3) (* 2 4))) "should be"
+(distance-to-0 (make-posn 6 8)) "should be"
+(sqrt (+ (sqr (posn-x (make-posn 6 8)))
+         (sqr (posn-y (make-posn 6 8))))) "should be"
+(sqrt (+ (sqr 6)
+         (sqr (posn-y (make-posn 6 8))))) "should be"
+(sqrt (+ (sqr 6)
+         (sqr 8))) "should be"
+(sqrt (+ 36
+         (sqr 8))) "should be"
+(sqrt (+ 36 64)) "should be"
+(sqrt 100) "should be"
+10
+
+;; 3.
+(distance-to-0 (make-posn 12 (- 6 1))) "should be"
+(distance-to-0 (make-posn 12 5)) "should be"
+(sqrt (+ (sqr (posn-x (make-posn 12 5)))
+         (sqr (posn-y (make-posn 12 5))))) "should be"
+(sqrt (+ (sqr 12)
+         (sqr (posn-y (make-posn 12 5))))) "should be"
+(sqrt (+ (sqr 12)
+         (sqr 5))) "should be"
+(sqrt (+ 144 (sqr 5))) "should be"
+(sqrt (+ 144 25)) "should be"
+(sqrt 169) "should be"
+13
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-distance-to-0.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

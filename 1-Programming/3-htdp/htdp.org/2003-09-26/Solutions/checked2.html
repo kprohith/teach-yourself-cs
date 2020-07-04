@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/checked2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.5.1; How to Design Programs </title>
+</head>
+<body>
+<a href="shape-move.html">7.4.6</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.5.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="checked1.html">7.5.2</a><pre>;; area-of-disk : number -&gt; number
+;; to compute the area of a disk with radius r
+(define (area-of-disk r)
+  (* 3.14 (* r r)))
+
+;; checked-area-of-disk : Scheme-value -&gt; boolean
+;; to compute the area of a disk with radius v,
+;; if v is a number.
+(define (checked-area-of-disk v)
+  (cond
+    [(and (number? v) (&gt;= v 0))
+     (area-of-disk v)]
+    [else (error 'checked-area-of-disk "positive number expected")]))
+
+;; EXAMPLES AS TESTS
+(checked-area-of-disk 1) "should be" 3.14
+(checked-area-of-disk -1) error!
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/checked2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

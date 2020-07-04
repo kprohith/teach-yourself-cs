@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/raises.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="draw-list-shapes.html">9.5.8</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="fraud.html">10.1.2</a><pre>;; In order to give everyone a raise to $14, we only need to change 
+;; the 12 to a 14. (and fix the description of the function)
+;; Here is the changed program and some examples:
+
+;; hours-&gt;wages : list-of-numbers -&gt; list-of-numbers
+;; to create a list of weekly wages from
+;; a list of weekly hours (alon)
+(define (hours-&gt;wages alon)
+  (cond
+    [(empty? alon) empty]
+    [else (cons (wage (first alon))
+                (hours-&gt;wages (rest alon)))]))
+
+;; wage : number -&gt; number
+;; to compute the total wage (at $14 per hours)
+(define (wage h)
+  (* 14 h))
+
+(hours-&gt;wages empty) "should be" empty
+(hours-&gt;wages (cons 2 empty)) "should be" (cons 28 empty)
+(hours-&gt;wages (cons 2 (cons 14 (cons 211 empty)))) "should be"
+(cons 28 (cons 196 (cons 2954 empty)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/raises.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

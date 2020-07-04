@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" /><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"2c8dc08a62",applicationID:"55452149"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return o(e,[u.now()].concat(f(arguments)),n?null:this,t),n?void 0:this}}var o=e("handle"),a=e(4),f=e(5),c=e("ee").get("tracer"),u=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],l="api-",d=l+"ixn-";a(p,function(e,n){s[n]=i(l+n,!0,"api")}),s.addPageAction=i(l+"addPageAction",!0),s.setCurrentRouteName=i(l+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i="function"==typeof n;return o(d+"tracer",[u.now(),e,t],r),function(){if(c.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return n.apply(this,arguments)}catch(e){throw c.emit("fn-err",[arguments,this,e],t),e}finally{c.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=i(d+n)}),newrelic.noticeError=function(e,n){"string"==typeof e&&(e=new Error(e)),o("err",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function r(e,n){var t=e.getEntries();t.forEach(function(e){"first-paint"===e.name?c("timing",["fp",Math.floor(e.startTime)]):"first-contentful-paint"===e.name&&c("timing",["fcp",Math.floor(e.startTime)])})}function i(e,n){var t=e.getEntries();t.length>0&&c("lcp",[t[t.length-1]])}function o(e){if(e instanceof s&&!l){var n,t=Math.round(e.timeStamp);n=t>1e12?Date.now()-t:u.now()-t,l=!0,c("timing",["fi",t,{type:e.type,fid:n}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var a,f,c=e("handle"),u=e("loader"),s=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),f=new PerformanceObserver(i);try{a.observe({entryTypes:["paint"]}),f.observe({entryTypes:["largest-contentful-paint"]})}catch(p){}}if("addEventListener"in document){var l=!1,d=["click","keydown","mousedown","pointerdown","touchstart"];d.forEach(function(e){document.addEventListener(e,o,!1)})}}},{}],3:[function(e,n,t){function r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var t=o.split("."),r=n.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf("Chrome")===-1&&f.indexOf("Chromium")===-1&&(i="Safari",o=c[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function r(e,n){var t=[],r="",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],5:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return o}n.exports=r},{}],6:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function i(e){function n(e){return e&&e instanceof r?e:e?c(e,f,o):o()}function t(t,r,i,o){if(!l.aborted||o){e&&e(t,r,i);for(var a=n(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function d(e,n){h[e]=v(e).concat(n)}function m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function v(e){return h[e]||[]}function g(e){return p[e]=p[e]||i(t)}function w(e,n){u(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var h={},y={},b={on:d,addEventListener:d,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(l.aborted=!0,s=l.backlog={})}var f="nr@context",c=e("gos"),u=e(4),s={},p={},l=n.exports=i();l.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e("ee").get("handle");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,o,function(){return i++})}var i=1,o="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=E.info=NREUM.info,n=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();u(y,function(n,t){e[n]||(e[n]=t)}),c("mark",["onload",a()+E.offset],null,"api");var t=d.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function i(){"complete"===d.readyState&&o()}function o(){c("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=e("handle"),u=e(4),s=e("ee"),p=e(3),l=window,d=l.document,m="addEventListener",v="attachEvent",g=l.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:g,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1169.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),e(2),d[m]?(d[m]("DOMContentLoaded",o,!1),l[m]("load",r,!1)):(d[v]("onreadystatechange",i),l[v]("onload",r)),c("mark",["firstbyte",f],null,"api");var x=0,O=e(6)},{}],"wrap-function":[function(e,n,t){function r(e){return!(e&&e instanceof Function&&e.apply&&!e[a])}var i=e("ee"),o=e(5),a="nr@original",f=Object.prototype.hasOwnProperty,c=!1;n.exports=function(e,n){function t(e,n,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f="function"==typeof t?t(r,a):t||{}}catch(u){l([u,"",[r,a,i],f])}s(n+"start",[r,a,i],f);try{return c=e.apply(a,r)}catch(p){throw s(n+"err",[r,a,p],f),p}finally{s(n+"end",[r,a,c],f)}}return r(e)?e:(n||(n=""),nrWrapper[a]=e,p(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i="");var a,f,c,u="-"===i.charAt(0);for(c=0;c<n.length;c++)f=n[c],a=e[f],r(a)||(e[f]=t(a,u?f+i:i,o,f))}function s(t,r,i){if(!c||n){var o=c;c=!0;try{e.emit(t,r,i,n)}catch(a){l([a,t,r,i])}c=o}}function p(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return e[t]=n,n}})}),n}catch(r){l([r])}for(var i in e)f.call(e,i)&&(n[i]=e[i]);return n}function l(n){try{e.emit("internal-error",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+<script>window.dataLayer = window.dataLayer || []; window.dataLayer.push({"drupalLanguage":"en","drupalCountry":"US","siteName":"The MIT Press","entityCreated":"1593125645","entityLangcode":"en","entityStatus":"1","entityUid":"26","entityUuid":"be0ef3b5-a954-4c6e-a4e1-153769b2fc7d","entityVid":"106781","entityName":"ecross@mit.edu","entityType":"node","entityBundle":"homepage","entityId":"51","entityTitle":"Homepage","userUid":0});</script>
+<link rel="shortlink" href="https://mitpress.mit.edu/" />
+<meta name="twitter:card" content="summary" />
+<meta property="og:site_name" content="The MIT Press" />
+<link rel="canonical" href="https://mitpress.mit.edu/" />
+<meta name="dcterms.title" content="The MIT Press" />
+<meta property="og:type" content="website" />
+<meta name="description" content="The MIT Press is a university press affiliated with the Massachusetts Institute of Technology in Cambridge, Massachusetts." />
+<meta name="twitter:title" content="The MIT Press" />
+<meta name="twitter:site" content="@mitpress" />
+<meta name="twitter:description" content="The MIT Press is a university press affiliated with the Massachusetts Institute of Technology in Cambridge, Massachusetts." />
+<meta name="twitter:site:id" content="20774514" />
+<meta property="og:url" content="https://mitpress.mit.edu/" />
+<meta name="dcterms.description" content="The MIT Press is a university press affiliated with the Massachusetts Institute of Technology in Cambridge, Massachusetts." />
+<meta name="google-site-verification" content="KRNSwnzAJXe_hc1JiBlV2l_u5Pk2PySqdsGDNGFN68w" />
+<meta property="og:title" content="The MIT Press" />
+<meta property="og:description" content="The MIT Press is a university press affiliated with the Massachusetts Institute of Technology in Cambridge, Massachusetts." />
+<meta name="twitter:url" content="https://mitpress.mit.edu/node/51" />
+<meta property="og:street_address" content="1 Rogers Street" />
+<meta property="og:locality" content="Cambridge" />
+<meta property="og:region" content="Massachusetts" />
+<meta property="og:postal_code" content="02142-1209" />
+<meta property="og:country_name" content="United States of America" />
+<meta property="og:phone_number" content="(617) 253-5646" />
+<meta property="og:fax_number" content="(617) 258-6779" />
+<meta name="Generator" content="Drupal 8 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/themes/custom/mitpress_theme/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="revision" href="https://mitpress.mit.edu/node/51" />
+
+    <title>The MIT Press</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="all" />
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_lTjAeQcD7yO-fkoxCjY4EHBvPHJNKxKBeEbVhblwl2c.css" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_t5-fuxD-DVNMm6j9BZKz1jpZuXdIhumL1Mz0ujRrvfQ.css" />
+    
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+    <meta name="format-detection" content="telephone=no">
+  </head>
+  <body data-ng-app="widgets" data-fc-api="RUBB2csmFUqYZaL4AR5ijg">
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KCGXRMR" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script type="text/javascript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0];var j=d.createElement(s);var dl=l!='dataLayer'?'&l='+l:'';j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;j.type='text/javascript';j.async=true;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KCGXRMR');</script>
+<!-- End Google Tag Manager -->
+        <a href="#main-content" class="visually-hidden focusable">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<div vocab="http://schema.org/" typeof="Organization">
+  <nav class="header">
+  <div class="container">
+    <div class="l-1up">
+      <h1 class="header__brand">
+        <a href="/" property="url">
+          <?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 148.5 237.7" style="enable-background:new 0 0 148.5 237.7;" xml:space="preserve">
+<path d="M126.2,237.7c-4.9,0-9.7,0-14.6,0c0-64.3,0-128.6,0-193c4.8,0,9.6,0,14.6,0C126.2,108.9,126.2,173.2,126.2,237.7z"/>
+<path d="M89.2,0c4.9,0,9.7,0,14.6,0c0,61.8,0,123.6,0,185.6c-4.9,0-9.7,0-14.6,0C89.2,123.7,89.2,62,89.2,0z"/>
+<path d="M14.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C14.6,91.6,14.6,138.5,14.6,185.6z"/>
+<path d="M22.3,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C22.3,138.6,22.3,91.7,22.3,44.6z"/>
+<path d="M44.6,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C44.6,138.6,44.6,91.7,44.6,44.6z"/>
+<path d="M81.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C81.6,91.6,81.6,138.5,81.6,185.6z"/>
+<path d="M148.5,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C148.5,91.6,148.5,138.5,148.5,185.6z"/>
+</svg>
+
+          <span class="element-invisible"><span property="name">MIT Press</span> <img itemprop="logo" src="<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 148.5 237.7" style="enable-background:new 0 0 148.5 237.7;" xml:space="preserve">
+<path d="M126.2,237.7c-4.9,0-9.7,0-14.6,0c0-64.3,0-128.6,0-193c4.8,0,9.6,0,14.6,0C126.2,108.9,126.2,173.2,126.2,237.7z"/>
+<path d="M89.2,0c4.9,0,9.7,0,14.6,0c0,61.8,0,123.6,0,185.6c-4.9,0-9.7,0-14.6,0C89.2,123.7,89.2,62,89.2,0z"/>
+<path d="M14.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C14.6,91.6,14.6,138.5,14.6,185.6z"/>
+<path d="M22.3,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C22.3,138.6,22.3,91.7,22.3,44.6z"/>
+<path d="M44.6,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C44.6,138.6,44.6,91.7,44.6,44.6z"/>
+<path d="M81.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C81.6,91.6,81.6,138.5,81.6,185.6z"/>
+<path d="M148.5,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C148.5,91.6,148.5,138.5,148.5,185.6z"/>
+</svg>
+" /></span>
+        </a>
+      </h1>
+
+      <div class="header__triggers">
+        <a class="trigger trigger--search" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Search</title><path d="M45.5,35.7V11L35.64,1.09H11L1,11V35.71l10,9.9H35.63l3.51-3.53L54,56.93l2.83-2.83L42,39.25ZM34,41.61H12.61L5,34V12.69l7.63-7.6H34l7.53,7.6V34Z"/></svg>
+
+          <span class="element-invisible">Search</span>
+        </a>
+
+        <a class="trigger trigger--menu" href="#">
+          <span>
+            <?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 22.7 17" style="enable-background:new 0 0 22.7 17;" xml:space="preserve">
+<g>
+	<rect width="22.7" height="1.5"/>
+	<rect y="7.7" width="22.7" height="1.5"/>
+	<rect y="15.4" width="22.7" height="1.5"/>
+</g>
+</svg>
+
+            <span class="element-invisible">Menu</span>
+          </span>
+
+          <span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+            <span class="element-invisible">Close Menu</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="header__drawer-container">
+        <div class="header__drawer">
+          
+  
+              <ul class="header__primary-nav">
+        
+                                <li class="primary-nav__item has-children">
+                  
+                          <a href="/" class="primary-nav__trigger is-active" data-drupal-link-system-path="&lt;front&gt;">Books</a>
+
+                    
+                    
+                    
+<div class="secondary-nav__drawer">
+  <div class="container secondary-nav-container">
+    <span class="secondary-nav__close " aria-label="close" role="button" tabindex='0'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+      <span class="element-invisible">Close</span>
+    </span>
+          
+<div class="l-4col--header nav-books">
+                  <ul class="secondary-nav__list">
+        
+                      <li class="secondary-nav__item">
+        <a href="/topics" data-drupal-link-system-path="topics">View All Topics</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/authors" data-drupal-link-system-path="authors">Authors</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/best-sellers" title="Best Sellers" data-drupal-link-system-path="node/82191">Best Sellers</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="https://thereader.mitpress.mit.edu/" title="The MIT Press Reader">The MIT Press Reader</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/catalogs" data-drupal-link-system-path="node/221">Catalogs</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/books/distributions" data-drupal-link-system-path="books/distributions">Distributed Presses</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/books/forthcoming" title="New and Forthcoming Titles" data-drupal-link-system-path="books/forthcoming">New and Forthcoming</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/podcasts" data-drupal-link-system-path="podcasts">Podcasts</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/books/series" data-drupal-link-system-path="books/series">Series and Imprints</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/books/textbooks" data-drupal-link-system-path="books/textbooks">Textbooks</a>
+
+                            </li>
+      </ul>
+    
+</div>
+<div class="secondary-nav__supporting l-3col--header">
+  <aside class="nav-trending-books">
+    <h3 class="secondary-nav__item nav-books__title">      MIT Press Direct
+  </h3>
+
+    <div class="secondary-nav__supporting secondary-nav__content--books">
+            <p><a href="https://direct.mit.edu/books" target="_blank">MIT Press Direct</a> is a distinctive collection of influential MIT Press books curated for scholars and libraries worldwide.</p>
+
+<p><a href="https://direct.mit.edu/books" target="_blank">More Info &gt;</a></p>
+
+<p> </p>
+  
+    </div>
+  </aside>
+</div>
+
+
+  
+          </div>
+  <span class="secondary-nav__back-trigger" role="button" aria-label="close" tabindex='0'>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 21.5 21" style="enable-background:new 0 0 21.5 21;" xml:space="preserve">
+   <title>Back</title>
+<g>
+	<polygon points="4.1,8.2 0,4.1 4.1,0 5.1,1 2,4.1 5.1,7.2 	"/>
+	<polygon points="21.5,21 1,21 1,19.6 20.1,19.6 20.1,4.8 1,4.8 1,3.4 21.5,3.4 	"/>
+</g>
+</svg>
+
+    <span class="element-invisible"><span>Books</span>
+</span>
+  </span>
+</div>
+
+                    </li>
+    
+                                <li class="primary-nav__item has-children">
+                  
+                          <a href="/" title="MIT Press Journals" class="primary-nav__trigger is-active" data-drupal-link-system-path="&lt;front&gt;">Journals</a>
+
+                    
+                    
+                    
+<div class="secondary-nav__drawer">
+  <div class="container secondary-nav-container">
+    <span class="secondary-nav__close " aria-label="close" role="button" tabindex='0'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+      <span class="element-invisible">Close</span>
+    </span>
+          
+<div class="l-4col--header nav-books">
+                  <ul class="secondary-nav__list">
+        
+                      <li class="secondary-nav__item">
+        <a href="https://www.mitpressjournals.org/action/showPublications" title="Journals All Topics">Journals All Topics</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="https://www.mitpressjournals.org/topics/arts" title="Arts &amp; Humanities Journals">The Arts &amp; Humanities</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="https://www.mitpressjournals.org/topics/economics" title="Economics">Economics</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="https://www.mitpressjournals.org/topics/sci_tech" title="Science &amp; Technology">Science &amp; Technology</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="https://www.mitpressjournals.org/topics/pol_sci" title="International Affairs, History, &amp; Political Science Journals">International Affairs, History, &amp; Political Science</a>
+
+                            </li>
+      </ul>
+    
+</div>
+<div class="secondary-nav__supporting l-3col--header">
+  <aside class="nav-trending-books">
+    <h3 class="secondary-nav__item nav-books__title">      Journals
+  </h3>
+
+    <div class="secondary-nav__supporting secondary-nav__content--books">
+            <p>MIT Press began publishing journals in 1970 with the first volumes of <a href="https://www.mitpressjournals.org/loi/ling" target="_blank" title="Linguistic Inquiry">Linguistic Inquiry</a> and the <a href="https://www.mitpressjournals.org/loi/jinh" target="_blank" title="Journal of Interdisciplinary History">Journal of Interdisciplinary History</a>. Today we publish over 30 titles in the arts and humanities, social sciences, and science and technology.</p>
+
+<p><a href="https://www.mitpressjournals.org" target="_blank" title="MIT Press Journals">MIT Press Journals</a></p>
+  
+    </div>
+  </aside>
+</div>
+
+
+  
+          </div>
+  <span class="secondary-nav__back-trigger" role="button" aria-label="close" tabindex='0'>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 21.5 21" style="enable-background:new 0 0 21.5 21;" xml:space="preserve">
+   <title>Back</title>
+<g>
+	<polygon points="4.1,8.2 0,4.1 4.1,0 5.1,1 2,4.1 5.1,7.2 	"/>
+	<polygon points="21.5,21 1,21 1,19.6 20.1,19.6 20.1,4.8 1,4.8 1,3.4 21.5,3.4 	"/>
+</g>
+</svg>
+
+    <span class="element-invisible"><span>Journals</span>
+</span>
+  </span>
+</div>
+
+                    </li>
+    
+                                <li class="primary-nav__item">
+                  
+                          <a href="/mit-press-open" data-drupal-link-system-path="node/2366">Open Access</a>
+                    </li>
+    
+                                <li class="primary-nav__item has-children">
+                  
+                          <a href="/" class="primary-nav__trigger is-active" data-drupal-link-system-path="&lt;front&gt;">Resources</a>
+
+                    
+                    
+                    
+<div class="secondary-nav__drawer">
+  <div class="container secondary-nav-container">
+    <span class="secondary-nav__close " aria-label="close" role="button" tabindex='0'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+      <span class="element-invisible">Close</span>
+    </span>
+          <div class="nav-resources">
+                  <ul class="secondary-nav__list">
+        
+                      <li class="secondary-nav__item">
+        <a href="/" data-drupal-link-system-path="&lt;front&gt;" class="is-active">For Instructors</a>
+
+                                        <ul class="tertiary-nav__list">
+        
+                      <li class="tertiary-nav__item">
+        <a href="/instructors" data-drupal-link-system-path="node/231">Requesting an Exam/Desk Copy</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/books/textbooks" title="View All Textbooks" data-drupal-link-system-path="books/textbooks">View All Textbooks</a>
+            </li>
+      </ul>
+    
+                    </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/for-authors" data-drupal-link-system-path="node/296">Current Authors</a>
+
+                                        <ul class="tertiary-nav__list">
+        
+                      <li class="tertiary-nav__item">
+        <a href="/for-authors" title="For Authors, General Information" data-drupal-link-system-path="node/296">General Info</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/latex-and-tex-guidelines" data-drupal-link-system-path="node/3491">LaTex and TeX Guidelines</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/marketing-your-book" title="Marketing Your Book" data-drupal-link-system-path="node/311">Marketing Your Book</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/royalty-and-tax-information" data-drupal-link-system-path="node/3486">Royalty and Tax Information</a>
+            </li>
+      </ul>
+    
+                    </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/prospective-authors" data-drupal-link-system-path="node/276">For Prospective Authors</a>
+
+                                        <ul class="tertiary-nav__list">
+        
+                      <li class="tertiary-nav__item">
+        <a href="/prospective-authors" title="Acquisitions Inquiries" data-drupal-link-system-path="node/276">Acquisitions Inquiries</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/acquisitions-staff" title="Acquisitions Staff" data-drupal-link-system-path="node/3471">Acquisitions Staff</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/submitting-book-proposal" data-drupal-link-system-path="node/3571">Submitting a Book Proposal</a>
+            </li>
+    
+                      <li class="tertiary-nav__item">
+        <a href="/peer-review" title="Peer Review Statement" data-drupal-link-system-path="node/81736">Peer Review</a>
+            </li>
+      </ul>
+    
+                    </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/media-inquiries" data-drupal-link-system-path="node/246">For Journalists</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/booksellers" data-drupal-link-system-path="node/236">For Booksellers</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/Rights-Permissions" data-drupal-link-system-path="node/241">Rights and Permissions</a>
+
+                            </li>
+      </ul>
+    
+</div>
+
+<div class="secondary-nav__supporting--desktop l-4col-isolation--1">
+  <aside class="nav-guides">
+    <h3 class="secondary-nav__item"><a href="">Quick Guides</a></h3>
+        <ul class="nav-guides__list">
+                                                                                                                                                                                                                                        <li class="nav-guides__item">
+          <a href="https://mitpress.mit.edu/sites/default/files/quicklinks/2020-02/author_guidelines_extended_rev2-20.pdf">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>PDF</title><path d="M36.45,0.83h-30v56h45V15.47L37.31,0.83H36.45Zm11,52h-37v-48h22v15h15v33Zm-11-37V5.7l9.78,10.13H36.45Z"/></svg>
+
+            <h4>Author Guidelines</h4>
+          </a>
+        </li>
+                              <li class="nav-guides__item">
+          <a href="/for-authors">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>PDF</title><path d="M36.45,0.83h-30v56h45V15.47L37.31,0.83H36.45Zm11,52h-37v-48h22v15h15v33Zm-11-37V5.7l9.78,10.13H36.45Z"/></svg>
+
+            <h4>Author Questionnaires</h4>
+          </a>
+        </li>
+                              <li class="nav-guides__item">
+          <a href="/for-authors">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>PDF</title><path d="M36.45,0.83h-30v56h45V15.47L37.31,0.83H36.45Zm11,52h-37v-48h22v15h15v33Zm-11-37V5.7l9.78,10.13H36.45Z"/></svg>
+
+            <h4>All Author Guidelines</h4>
+          </a>
+        </li>
+                                              </ul>
+        </aside>
+</div>
+
+  
+          </div>
+  <span class="secondary-nav__back-trigger" role="button" aria-label="close" tabindex='0'>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 21.5 21" style="enable-background:new 0 0 21.5 21;" xml:space="preserve">
+   <title>Back</title>
+<g>
+	<polygon points="4.1,8.2 0,4.1 4.1,0 5.1,1 2,4.1 5.1,7.2 	"/>
+	<polygon points="21.5,21 1,21 1,19.6 20.1,19.6 20.1,4.8 1,4.8 1,3.4 21.5,3.4 	"/>
+</g>
+</svg>
+
+    <span class="element-invisible"><span>Resources</span>
+</span>
+  </span>
+</div>
+
+                    </li>
+    
+                                <li class="primary-nav__item">
+                  
+                          <a href="/give-mit-press" title="Give to the MIT Press" data-drupal-link-system-path="node/201">Give</a>
+                    </li>
+    
+                                <li class="primary-nav__item has-children">
+                  
+                          <a href="/about" class="primary-nav__trigger" data-drupal-link-system-path="node/116">About</a>
+
+                    
+                    
+                    
+<div class="secondary-nav__drawer">
+  <div class="container secondary-nav-container">
+    <span class="secondary-nav__close " aria-label="close" role="button" tabindex='0'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+      <span class="element-invisible">Close</span>
+    </span>
+          <div class="paragraph paragraph--type--megamenu-about paragraph--view-mode--default">
+  <aside class="secondary-nav__supporting nav-about-intro l-about">
+    <h2>      Established in 1962, the MIT Press is one of the largest and most distinguished university presses in the world and a leading publisher of books and journals at the intersection of science, technology, art, social science, and design. 
+  </h2>
+  </aside>
+</div>
+<div class="l-about">
+                  <ul class="secondary-nav__list">
+        
+                      <li class="secondary-nav__item">
+        <a href="/about" title="More about us" data-drupal-link-system-path="node/116">About</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/catalogs" data-drupal-link-system-path="node/221">Catalogs</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/conferences" data-drupal-link-system-path="node/136">Conferences</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/mit-press-editorial-board" title="MIT Press Editorial Board" data-drupal-link-system-path="node/82556">Press Editorial Board</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/give-mit-press" title="Give to the MIT Press" data-drupal-link-system-path="node/201">Give to the MIT Press</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/internships" data-drupal-link-system-path="node/76">Internships</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/jobs" data-drupal-link-system-path="node/81">Jobs</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/mit-press-management-board" title="MIT Press Management Board" data-drupal-link-system-path="node/82551">Press Management Board</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/blog" title="MIT Press News" data-drupal-link-system-path="blog">Press News</a>
+
+                            </li>
+    
+                      <li class="secondary-nav__item">
+        <a href="/mit-press-live" title="MIT Press Live!" data-drupal-link-system-path="node/84061">Virtual Author Events</a>
+
+                            </li>
+      </ul>
+    
+</div>
+
+  
+          </div>
+  <span class="secondary-nav__back-trigger" role="button" aria-label="close" tabindex='0'>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 21.5 21" style="enable-background:new 0 0 21.5 21;" xml:space="preserve">
+   <title>Back</title>
+<g>
+	<polygon points="4.1,8.2 0,4.1 4.1,0 5.1,1 2,4.1 5.1,7.2 	"/>
+	<polygon points="21.5,21 1,21 1,19.6 20.1,19.6 20.1,4.8 1,4.8 1,3.4 21.5,3.4 	"/>
+</g>
+</svg>
+
+    <span class="element-invisible"><span>About</span>
+</span>
+  </span>
+</div>
+
+                    </li>
+    
+                                <li class="primary-nav__item">
+                  
+                          <a href="/" class="primary-nav__trigger is-active" data-drupal-link-system-path="&lt;front&gt;">Contact</a>
+
+                    
+                    
+                    
+<div class="secondary-nav__drawer">
+  <div class="container secondary-nav-container">
+    <span class="secondary-nav__close " aria-label="close" role="button" tabindex='0'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+
+      <span class="element-invisible">Close</span>
+    </span>
+          <div class="paragraph paragraph--type--megamenu-contact paragraph--view-mode--default">
+  <div class="l-contact--1">
+        
+    <div class="nav-message">
+            <a href="/contact-us" class="button button--gray button--large button--has-arrow">Send us a message</a>
+  
+    </div>
+  </div>
+  <aside class="l-contact--2">
+    <h3 class="secondary-nav__item nav-contact__title">Phone</h3>
+          
+<li class="nav-phone__item paragraph paragraph--type--phone-number paragraph--view-mode--default">
+        <a href="tel:%28617%29-253-5646">(617)-253-5646</a>
+  
+  <span>      General Inquiries
+  </span>
+</li>
+
+      
+<li class="nav-phone__item paragraph paragraph--type--phone-number paragraph--view-mode--default">
+        <a href="tel:441243843294">44 1243 843294</a>
+  
+  <span>      Overseas Orders
+  </span>
+</li>
+
+      
+<li class="nav-phone__item paragraph paragraph--type--phone-number paragraph--view-mode--default">
+        <a href="tel:0800243407">0800 243407</a>
+  
+  <span>      UK Only
+  </span>
+</li>
+
+  
+
+    <h3 class="secondary-nav__item nav-contact__title">Online</h3>
+    <ul class="nav-social__list">
+              <li class="nav-social__item">
+          <a href="https://www.facebook.com/mitpress">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>facebook</title><g><g><path d="M17,0H1A1,1,0,0,0,0,1V17a1,1,0,0,0,1,1H9.61V11H7.27V8.31H9.61v-2a3.27,3.27,0,0,1,3.49-3.59,19.25,19.25,0,0,1,2.1.11V5.26H13.77c-1.13,0-1.35.54-1.35,1.32V8.31h2.69L14.76,11H12.42v7H17a1,1,0,0,0,1-1V1A1,1,0,0,0,17,0Z"/></g></g></svg>
+ <span class="element-invisible">Facebook</span>
+          </a>
+        </li>
+                    <li class="nav-social__item">
+          <a href="https://twitter.com/mitpress">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 14.63"><title>twitter</title><g><g><path d="M18,1.73a7.38,7.38,0,0,1-2.12.58,3.7,3.7,0,0,0,1.62-2,7.39,7.39,0,0,1-2.35.9A3.7,3.7,0,0,0,8.86,4.53,10.48,10.48,0,0,1,1.25.68,3.7,3.7,0,0,0,2.4,5.61,3.68,3.68,0,0,1,.72,5.14v0a3.7,3.7,0,0,0,3,3.62A3.7,3.7,0,0,1,2,8.88a3.7,3.7,0,0,0,3.45,2.56A7.41,7.41,0,0,1,.88,13,7.52,7.52,0,0,1,0,13a10.45,10.45,0,0,0,5.66,1.66A10.44,10.44,0,0,0,16.17,4.12q0-.24,0-.48A7.51,7.51,0,0,0,18,1.73Z"/></g></g></svg>
+ <span class="element-invisible">Twitter</span>
+          </a>
+        </li>
+                    <li class="nav-social__item">
+          <a href="https://www.linkedin.com/company/11587565/">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>linkedin</title><g><g><path d="M16.67,0H1.33A1.31,1.31,0,0,0,0,1.3V16.7A1.31,1.31,0,0,0,1.33,18H16.67A1.32,1.32,0,0,0,18,16.7V1.3A1.32,1.32,0,0,0,16.67,0ZM5.34,15.34H2.67V6.75H5.34ZM4,5.57A1.55,1.55,0,1,1,5.55,4,1.55,1.55,0,0,1,4,5.57Zm11.33,9.76H12.67V11.16c0-1,0-2.28-1.39-2.28S9.68,10,9.68,11.09v4.25H7V6.75H9.57V7.92h0a2.8,2.8,0,0,1,2.53-1.39c2.7,0,3.2,1.78,3.2,4.09Z"/></g></g></svg>
+ <span class="element-invisible">LinkedIn</span>
+          </a>
+        </li>
+                    <li class="nav-social__item">
+          <a href="https://www.pinterest.com/mitpress/">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>pinterest</title><g><g><path d="M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0ZM9,17.16a8.15,8.15,0,0,1-2.41-.36,9.12,9.12,0,0,0,1-2.14l.51-1.94a2.18,2.18,0,0,0,1.87.94c2.46,0,4.23-2.26,4.23-5.07a4.79,4.79,0,0,0-5-4.71c-3.52,0-5.39,2.36-5.39,4.93A3.66,3.66,0,0,0,5.44,12c.15.07.24,0,.27-.11l.23-.92a.24.24,0,0,0-.06-.23,3.17,3.17,0,0,1-.61-1.86A3.53,3.53,0,0,1,9,5.3a3.22,3.22,0,0,1,3.41,3.32c0,2.21-1.11,3.73-2.56,3.73a1.18,1.18,0,0,1-1.21-1.47,16.43,16.43,0,0,0,.68-2.72A1,1,0,0,0,8.23,7c-.82,0-1.48.85-1.48,2A2.94,2.94,0,0,0,7,10.2L6,14.25a7.82,7.82,0,0,0,0,2.34,8.15,8.15,0,1,1,3,.56Z"/></g></g></svg>
+ <span class="element-invisible">Pinterest</span>
+          </a>
+        </li>
+                    <li class="nav-social__item">
+          <a href="https://www.instagram.com/mitpress/">
+            <svg id="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 503.84 503.84"><title>glyph-logo_May2016</title><path d="M256,49.47c67.27,0,75.23.26,101.8,1.47,24.56,1.12,37.9,5.22,46.78,8.67a78.05,78.05,0,0,1,29,18.84,78.05,78.05,0,0,1,18.84,29c3.45,8.88,7.55,22.22,8.67,46.78,1.21,26.56,1.47,34.53,1.47,101.8s-.26,75.23-1.47,101.8c-1.12,24.56-5.22,37.9-8.67,46.78a83.43,83.43,0,0,1-47.81,47.81c-8.88,3.45-22.22,7.55-46.78,8.67-26.56,1.21-34.53,1.47-101.8,1.47s-75.24-.26-101.8-1.47c-24.56-1.12-37.9-5.22-46.78-8.67a78.05,78.05,0,0,1-29-18.84,78.05,78.05,0,0,1-18.84-29c-3.45-8.88-7.55-22.22-8.67-46.78-1.21-26.56-1.47-34.53-1.47-101.8s.26-75.23,1.47-101.8c1.12-24.56,5.22-37.9,8.67-46.78a78.05,78.05,0,0,1,18.84-29,78.05,78.05,0,0,1,29-18.84c8.88-3.45,22.22-7.55,46.78-8.67,26.56-1.21,34.53-1.47,101.8-1.47m0-45.39c-68.42,0-77,.29-103.87,1.52S107,11.08,91,17.3A123.49,123.49,0,0,0,46.36,46.36,123.49,123.49,0,0,0,17.3,91C11.08,107,6.82,125.32,5.6,152.13S4.08,187.58,4.08,256s.29,77,1.52,103.87S11.08,405,17.3,421a123.49,123.49,0,0,0,29.06,44.62A123.49,123.49,0,0,0,91,494.69c16,6.23,34.34,10.49,61.15,11.71s35.45,1.52,103.87,1.52,77-.29,103.87-1.52S405,500.92,421,494.69A128.82,128.82,0,0,0,494.69,421c6.23-16,10.49-34.34,11.71-61.15s1.52-35.45,1.52-103.87-.29-77-1.52-103.87S500.92,107,494.69,91a123.49,123.49,0,0,0-29.06-44.62A123.49,123.49,0,0,0,421,17.3C405,11.08,386.68,6.82,359.87,5.6S324.42,4.08,256,4.08Z" transform="translate(-4.08 -4.08)"/><path d="M256,126.64A129.36,129.36,0,1,0,385.36,256,129.36,129.36,0,0,0,256,126.64ZM256,340a84,84,0,1,1,84-84A84,84,0,0,1,256,340Z" transform="translate(-4.08 -4.08)"/><circle cx="386.4" cy="117.44" r="30.23"/></svg> <span class="element-invisible">Instagram</span>
+          </a>
+        </li>
+                    <li class="nav-social__item">
+          <a href="https://www.youtube.com/c/TheMITPress">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M17.1 4.8c-.2-.7-.8-1.3-1.5-1.5-1.3-.4-6.6-.4-6.6-.4s-5.3 0-6.6.4c-.8.2-1.3.7-1.5 1.5C.5 6.1.5 8.9.5 8.9s0 2.8.4 4.1c.2.7.8 1.3 1.5 1.5 1.3.4 6.6.4 6.6.4s5.3 0 6.6-.4c.7-.2 1.3-.8 1.5-1.5.4-1.3.4-4.1.4-4.1s0-2.8-.4-4.1z" fill="#282828"/><path fill="#fff" d="M7.3 11.4l4.4-2.5-4.4-2.5z"/></svg> <span class="element-invisible">YouTube</span>
+          </a>
+        </li>
+          </ul>
+  </aside>
+  <aside class="l-contact--3">
+    <h3 class="secondary-nav__item nav-contact__title">Location</h3>
+    <div class="location-slider">
+            
+<article class="location-slide paragraph paragraph--type--location paragraph--view-mode--default">
+  <div class="location-slide__address">
+    <a href="https://maps.googleapis.com/maps/api/staticmap?key=YOUR_API_KEY&amp;amp;center=42.36578466448335%2C-71.07702945000005&amp;amp;zoom=18&amp;amp;format=png&amp;amp;maptype=roadmap&amp;amp;style=feature%3Awater%7Celement%3Alabels.text.fill%7Ccolor%3A0x9e9e9e&amp;amp;size=480x360">
+      <span>
+              The MIT Press, US<br />
+One Rogers Street,<br />
+Cambridge, MA 02142-1209
+  
+      </span>
+    </a>
+    <span class="location-slide__address-metadata">Address</span>
+  </div>
+  <a href="https://maps.googleapis.com/maps/api/staticmap?key=YOUR_API_KEY&amp;amp;center=42.36578466448335%2C-71.07702945000005&amp;amp;zoom=18&amp;amp;format=png&amp;amp;maptype=roadmap&amp;amp;style=feature%3Awater%7Celement%3Alabels.text.fill%7Ccolor%3A0x9e9e9e&amp;amp;size=480x360">
+            <img class="location-slide__image" src="/sites/default/files/2017-07/MITPress-One-Rogers-St.png" alt="Map of One Rogers Street, Cambridge, MA 02142" />
+
+
+  
+  </a>
+</article>
+
+      
+<article class="location-slide paragraph paragraph--type--location paragraph--view-mode--default">
+  <div class="location-slide__address">
+    <a href="https://www.google.co.uk/maps/place/2,+1+Duchess+St,+Marylebone,+London+W1W+6AN/@51.5194967,-0.1456021,17z/data=!3m1!4b1!4m5!3m4!1s0x48761ad5cfb488c1:0xef7b5ad6b98970f7!8m2!3d51.5194967!4d-0.1434134">
+      <span>
+              The MIT Press, UK<br />
+Suite 2, 1 Duchess Street<br />
+London, W1W 6AN, UK
+  
+      </span>
+    </a>
+    <span class="location-slide__address-metadata">Address</span>
+  </div>
+  <a href="https://www.google.co.uk/maps/place/2,+1+Duchess+St,+Marylebone,+London+W1W+6AN/@51.5194967,-0.1456021,17z/data=!3m1!4b1!4m5!3m4!1s0x48761ad5cfb488c1:0xef7b5ad6b98970f7!8m2!3d51.5194967!4d-0.1434134">
+            <img class="location-slide__image" src="/sites/default/files/2017-06/mitpress-london_0.png" alt="MIT Press, London Address" />
+
+
+  
+  </a>
+</article>
+
+      
+<article class="location-slide paragraph paragraph--type--location paragraph--view-mode--default">
+  <div class="location-slide__address">
+    <a href="https://www.google.com/maps/place/MIT+Press+Bookstore/@42.3623689,-71.1683016,12z/data=!4m18!1m12!4m11!1m3!2m2!1d-71.0994654!2d42.3683301!1m6!1m2!1s0x89e370af514118df:0x2156a08ce4c9c62f!2sthe+mit+press+bookstore!2m2!1d-71.0982617!2d42.3623902!3m4!1s0x89e370af514118df:0x2156a08ce4c9c62f!8m2!3d42.3623902!4d-71.0982617">
+      <span>
+              The MIT Press Bookstore<br />
+301 Massachusetts Ave.<br />
+Cambridge, MA 02139
+  
+      </span>
+    </a>
+    <span class="location-slide__address-metadata">Address</span>
+  </div>
+  <a href="https://www.google.com/maps/place/MIT+Press+Bookstore/@42.3623689,-71.1683016,12z/data=!4m18!1m12!4m11!1m3!2m2!1d-71.0994654!2d42.3683301!1m6!1m2!1s0x89e370af514118df:0x2156a08ce4c9c62f!2sthe+mit+press+bookstore!2m2!1d-71.0982617!2d42.3623902!3m4!1s0x89e370af514118df:0x2156a08ce4c9c62f!8m2!3d42.3623902!4d-71.0982617">
+            <img class="location-slide__image" src="/sites/default/files/2017-06/bookstore-camb.png" alt="MIT Press Bookstore, Cambridge, MA" />
+
+
+  
+  </a>
+</article>
+
+  
+    </div>
+  </aside>
+</div>
+<div class="l-about">
+
+
+</div>
+
+  
+          </div>
+  <span class="secondary-nav__back-trigger" role="button" aria-label="close" tabindex='0'>
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 21.5 21" style="enable-background:new 0 0 21.5 21;" xml:space="preserve">
+   <title>Back</title>
+<g>
+	<polygon points="4.1,8.2 0,4.1 4.1,0 5.1,1 2,4.1 5.1,7.2 	"/>
+	<polygon points="21.5,21 1,21 1,19.6 20.1,19.6 20.1,4.8 1,4.8 1,3.4 21.5,3.4 	"/>
+</g>
+</svg>
+
+    <span class="element-invisible"><span>Contact</span>
+</span>
+  </span>
+</div>
+
+                    </li>
+      </ul>
+    
+
+
+
+
+
+          <div class="header__utility-nav">
+            <ul class="utility-nav__list">
+              <li class="utility-nav__item utility-nav__item--desktop utility-nav__item--search">
+                <a href="#" class="trigger trigger--search">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Search</title><path d="M45.5,35.7V11L35.64,1.09H11L1,11V35.71l10,9.9H35.63l3.51-3.53L54,56.93l2.83-2.83L42,39.25ZM34,41.61H12.61L5,34V12.69l7.63-7.6H34l7.53,7.6V34Z"/></svg>
+
+                  <span class="element-invisible">Search</span>
+                </a>
+              </li>
+                <!--   Firebrand needs this on each page with the widget. -->
+  
+  <img style="display:none" src="//cloud.firebrandtech.com/api/v2/session" width="0" height="0">
+
+<li class="utility-nav__item" title="Profile" data-fc-me="library:true;password:true;billing:true;shipping:true;loginLabel:My Profile;history:true"></li>
+<li class="utility-nav__item" title="Cart" data-fc-cartbadge="cartUrl:localhost/d2r/cart"></li>
+
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      
+<div id="site-search-drawer" class="search-dropdown">
+  <div class="container">
+    <div class="l-1up">
+
+      <div class="search-box">
+        <form class="search-form" action="/search">
+          <label for="site-search" class="element-invisible">Search</label>
+          <input id="site-search" class="search-input" type="search" name="keywords" placeholder='Search' value="" autocomplete="off" />
+          <input class="search-submit" type="submit" value="Search" />
+        </form>
+
+        <ul class="predictive-search" style="display: none"></ul>
+        
+        <a class="advanced-search-link" href="/search#advanced">Advanced Search</a>
+
+        <a class="search__close" aria-label="close" tabindex='0'>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>close</title><polygon points="53.61 7.21 50.78 4.39 29 26.17 7.21 4.39 4.39 7.21 26.17 29 4.39 50.78 7.21 53.61 29 31.83 50.78 53.61 53.61 50.78 31.83 29 53.61 7.21"/></svg>
+          <span class="element-invisible">Close</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+</nav>
+  <main role="main" class="page-main  ">
+    <a id="main-content" tabindex="-1"></a>    
+    
+
+    
+          
+<div data-drupal-messages-fallback class="hidden"></div>  
+<div class="landing-page-wrapper">
+        
+<section class="carousel paragraph paragraph--type--highlights-carousel paragraph--view-mode--default">
+          <div class="carousel-slide carousel-slide-image-3556 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-3556 {
+      background-image: url('/sites/default/files/2020-06/jackson.hastagactivism.3d.down_.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By Sarah J. Jackson, Moya Bailey and Brooke Foucault Welles
+  </span>
+        <h1 class="carousel-slide__title">      #HashtagActivism
+  </h1>
+        <span class="carousel-slide__meta">      <p>How marginalized groups use Twitter to advance counter-narratives, preempt political spin, and build diverse networks of dissent.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/hashtagactivism" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2916 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2916 {
+      background-image: url('/sites/default/files/2020-04/strauss.coillusion.3d.down_.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By David Levi Strauss
+  </span>
+        <h1 class="carousel-slide__title">      Co-Illusion
+  </h1>
+        <span class="carousel-slide__meta">      <p>Reports from America's political crisis, exposing a new “iconopolitics,” in which words and images lose their connection to reality.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/co-illusion" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2921 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2921 {
+      background-image: url('/sites/default/files/2020-04/haig.3d.down_.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      by David Haig
+  </span>
+        <h1 class="carousel-slide__title">      From Darwin to Derrida
+  </h1>
+        <span class="carousel-slide__meta">      <p>How the meaningless process of natural selection produces purposeful beings who find meaning in the world.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/darwin-derrida" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-3561 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-3561 {
+      background-image: url('/sites/default/files/2020-06/webb.3d.down_.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By Maureen Webb
+  </span>
+        <h1 class="carousel-slide__title">      Coding Democracy
+  </h1>
+        <span class="carousel-slide__meta">      <p>Hackers as vital disruptors, inspiring a new wave of activism in which ordinary citizens take back democracy.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/coding-democracy" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2906 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2906 {
+      background-image: url('/sites/default/files/2020-04/dignazio.3d.down%20%281%29.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By Catherine D&#039;Ignazio and Lauren F. Klein
+  </span>
+        <h1 class="carousel-slide__title">      Data Feminism
+  </h1>
+        <span class="carousel-slide__meta">      <p>A new way of thinking about data science and data ethics that is informed by the ideas of intersectional feminism.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/data-feminism" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2901 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2901 {
+      background-image: url('/sites/default/files/2020-04/ramirez.us_.3d.down%20%281%29_0.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      by Ainissa Ramirez
+  </span>
+        <h1 class="carousel-slide__title">      The Alchemy of Us
+  </h1>
+        <span class="carousel-slide__meta">      <p>In the bestselling tradition of <em>Stuff Matters</em> and <em>The Disappearing Spoon</em>: a clever and engaging look at materials, the innovations they made possible, and how these technologies changed us.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/alchemy-us" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2986 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2986 {
+      background-image: url('/sites/default/files/2020-04/F20-hero.carousel.1500.gans%20%281%29.jpg');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By Joshua Gans
+  </span>
+        <h1 class="carousel-slide__title">      Economics in the Age of COVID-19 
+  </h1>
+        <span class="carousel-slide__meta">      <p>A guide to the pandemic economy: essential reading about the long-term implications of our current crisis.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/economics-age-covid-19" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2911 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2911 {
+      background-image: url('/sites/default/files/2020-04/haber.thinking.3d.down_.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      by Jonathan Haber
+  </span>
+        <h1 class="carousel-slide__title">      Critical Thinking
+  </h1>
+        <span class="carousel-slide__meta">      <p>How the concept of critical thinking emerged, how it has been defined, and how critical thinking skills can be taught.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/critical-thinking" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <div class="carousel-slide carousel-slide-image-2766 paragraph paragraph--type--highlights-carousel-slide paragraph--view-mode--default">
+  <style>
+    .carousel-slide-image-2766 {
+      background-image: url('/sites/default/files/2020-03/sekeres.down_.3d.down%20%282%29.png');
+    }
+  </style>
+  <div class="container">
+    <div class="l-carousel-block">
+      <div class="carousel-slide__block">
+        <span class="carousel-slide__label">      By Mikkael A. Sekeres
+  </span>
+        <h1 class="carousel-slide__title">      When Blood Breaks Down
+  </h1>
+        <span class="carousel-slide__meta">      <p>A leading cancer specialist tells the compelling stories of three adult leukemia patients and their treatments, the disease itself, and the drugs developed to treat it.</p>
+  </span>
+          <a href="https://mitpress.mit.edu/books/when-blood-breaks-down" class="button--medium button--gray button--has-arrow">Learn more</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+</section>
+
+      <section class="container">
+  <div class="l-5col-fixed-middle">
+    <div class="rich-text">
+            <p> </p>
+
+<p class="text-align-center"><a class="button button--medium gray button--has-arrow" href="/blog/message-mit-libraries-and-mit-press">The MIT Press and MIT Libraries stand with Black Lives Matter.</a></p>
+
+  
+    </div>
+  </div>
+</section>
+
+      <section class="container">
+  <div class="l-5col-fixed-middle">
+    <div class="rich-text">
+            <p class="text-align-center"><a class="button button--medium gray button--has-arrow" href="/blog/updates-during-covid-19-pandemic">Updates During the COVID-19 Pandemic</a></p>
+
+  
+    </div>
+  </div>
+</section>
+
+      
+<div class="container">
+  <section class="landing-page-section">
+    <div class="l-1up">
+      <div class="landing-carousel covers-carousel">
+              <div>
+  <h2 class="section-title">Knowledge for Action</h2>
+
+                  <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10858">
+            <img class="cover__img" property="image" title="#HashtagActivism" alt="#HashtagActivism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043373%26type%3D.jpg?itok=HhOwEpLx" />
+
+
+
+          <span class="element-invisible" property="name">      #HashtagActivism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11805">
+            <img class="cover__img" property="image" title="Data Feminism" alt="Data Feminism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262044004%26type%3D.jpg?itok=cZNZLf94" />
+
+
+
+          <span class="element-invisible" property="name">      Data Feminism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12255">
+            <img class="cover__img" property="image" title="Design Justice" alt="Design Justice" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043458%26type%3D.jpg?itok=fQjhjdeF" />
+
+
+
+          <span class="element-invisible" property="name">      Design Justice
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11669">
+            <img class="cover__img" property="image" title="Coding Democracy" alt="Coding Democracy" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043557%26type%3D.jpg?itok=zIHWDdfy" />
+
+
+
+          <span class="element-invisible" property="name">      Coding Democracy
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12745">
+            <img class="cover__img" property="image" title="Co-Illusion" alt="Co-Illusion" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043540%26type%3D.jpg?itok=qG9Iml4L" />
+
+
+
+          <span class="element-invisible" property="name">      Co-Illusion
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12609">
+            <img class="cover__img" property="image" title="Propositions for Non-Fascist Living" alt="Propositions for Non-Fascist Living" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262537896%26type%3D.jpg?itok=n3nspwnF" />
+
+
+
+          <span class="element-invisible" property="name">      Propositions for Non-Fascist Living
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11363">
+            <img class="cover__img" property="image" title="Flint Fights Back" alt="Flint Fights Back" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262039857%26type%3D.jpg?itok=YTT_-Yaa" />
+
+
+
+          <span class="element-invisible" property="name">      Flint Fights Back
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12479">
+            <img class="cover__img" property="image" title="Activists Under Surveillance" alt="Activists Under Surveillance" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262517898%26type%3D.jpg?itok=-It9Rc3h" />
+
+
+
+          <span class="element-invisible" property="name">      Activists Under Surveillance
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11851">
+            <img class="cover__img" property="image" title="Propaganda Art in the 21st Century" alt="Propaganda Art in the 21st Century" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262042802%26type%3D.jpg?itok=Qygxr46z" />
+
+
+
+          <span class="element-invisible" property="name">      Propaganda Art in the 21st Century
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12407">
+            <img class="cover__img" property="image" title="Innovation + Equality" alt="Innovation + Equality" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262539562%26type%3D.jpg?itok=Z_PSr5XL" />
+
+
+
+          <span class="element-invisible" property="name">      Innovation + Equality
+  </span>
+        </a>
+      </article>
+      </div>
+
+      <div>
+  <h2 class="section-title">Books Relevant to the Current Public Health Crisis</h2>
+
+                  <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/13916">
+            <img class="cover__img" property="image" title="Economics in the Age of COVID-19" alt="Economics in the Age of COVID-19" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262362801%26type%3D.jpg?itok=KpycDiTi" />
+
+
+
+          <span class="element-invisible" property="name">      Economics in the Age of COVID-19
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11750">
+            <img class="cover__img" property="image" title="Plagues and the Paradox of Progress" alt="Plagues and the Paradox of Progress" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262038454%26type%3D.jpg?itok=0P58_YFI" />
+
+
+
+          <span class="element-invisible" property="name">      Plagues and the Paradox of Progress
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/7582">
+            <img class="cover__img" property="image" title="Global Catastrophes and Trends" alt="Global Catastrophes and Trends" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262195867%26type%3D.jpg?itok=wNDSkkNV" />
+
+
+
+          <span class="element-invisible" property="name">      Global Catastrophes and Trends
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/9186">
+            <img class="cover__img" property="image" title="Disease Eradication in the 21st Century" alt="Disease Eradication in the 21st Century" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262016735%26type%3D.jpg?itok=y64pO2df" />
+
+
+
+          <span class="element-invisible" property="name">      Disease Eradication in the 21st Century
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/8679">
+            <img class="cover__img" property="image" title="Parasites, Pathogens, and Progress" alt="Parasites, Pathogens, and Progress" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262015660%26type%3D.jpg?itok=SoQrMevX" />
+
+
+
+          <span class="element-invisible" property="name">      Parasites, Pathogens, and Progress
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/7390">
+            <img class="cover__img" property="image" title="Contagion and Chaos" alt="Contagion and Chaos" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262162487%26type%3D.jpg?itok=btpf0e0E" />
+
+
+
+          <span class="element-invisible" property="name">      Contagion and Chaos
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/3454">
+            <img class="cover__img" property="image" title="The Health of Nations" alt="The Health of Nations" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262162036%26type%3D.jpg?itok=HiAYr99F" />
+
+
+
+          <span class="element-invisible" property="name">      The Health of Nations
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10550">
+            <img class="cover__img" property="image" title="The Power of Resilience" alt="The Power of Resilience" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262533638%26type%3D.jpg?itok=kOpXftNh" />
+
+
+
+          <span class="element-invisible" property="name">      The Power of Resilience
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12437">
+            <img class="cover__img" property="image" title="Sulphuric Utopias" alt="Sulphuric Utopias" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538732%26type%3D.jpg?itok=1O_S2Rp_" />
+
+
+
+          <span class="element-invisible" property="name">      Sulphuric Utopias
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10652">
+            <img class="cover__img" property="image" title="Ebola&#039;s Message" alt="Ebola&#039;s Message" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262035071%26type%3D.jpg?itok=jWSJMlnt" />
+
+
+
+          <span class="element-invisible" property="name">      Ebola's Message
+  </span>
+        </a>
+      </article>
+      </div>
+
+      <div>
+  <h2 class="section-title">New and Forthcoming</h2>
+
+                  <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10961">
+            <img class="cover__img" property="image" title="The Alchemy of Us" alt="The Alchemy of Us" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043809%26type%3D.jpg?itok=kNwEpHnR" />
+
+
+
+          <span class="element-invisible" property="name">      The Alchemy of Us
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12375">
+            <img class="cover__img" property="image" title="When Blood Breaks Down" alt="When Blood Breaks Down" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043724%26type%3D.jpg?itok=Cmll_-mC" />
+
+
+
+          <span class="element-invisible" property="name">      When Blood Breaks Down
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12584">
+            <img class="cover__img" property="image" title="Leading in the Digital World" alt="Leading in the Digital World" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043946%26type%3D.jpg?itok=ZLE7mfmq" />
+
+
+
+          <span class="element-invisible" property="name">      Leading in the Digital World
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11891">
+            <img class="cover__img" property="image" title="The Power of Experiments" alt="The Power of Experiments" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043878%26type%3D.jpg?itok=9jD9l4IR" />
+
+
+
+          <span class="element-invisible" property="name">      The Power of Experiments
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12461">
+            <img class="cover__img" property="image" title="Concentration" alt="Concentration" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538565%26type%3D.jpg?itok=dZzlEdcJ" />
+
+
+
+          <span class="element-invisible" property="name">      Concentration
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10858">
+            <img class="cover__img" property="image" title="#HashtagActivism" alt="#HashtagActivism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043373%26type%3D.jpg?itok=HhOwEpLx" />
+
+
+
+          <span class="element-invisible" property="name">      #HashtagActivism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11805">
+            <img class="cover__img" property="image" title="Data Feminism" alt="Data Feminism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262044004%26type%3D.jpg?itok=cZNZLf94" />
+
+
+
+          <span class="element-invisible" property="name">      Data Feminism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11669">
+            <img class="cover__img" property="image" title="Coding Democracy" alt="Coding Democracy" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043557%26type%3D.jpg?itok=zIHWDdfy" />
+
+
+
+          <span class="element-invisible" property="name">      Coding Democracy
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11966">
+            <img class="cover__img" property="image" title="The Mental Life of Modernism" alt="The Mental Life of Modernism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262043496%26type%3D.jpg?itok=HH1T1oQS" />
+
+
+
+          <span class="element-invisible" property="name">      The Mental Life of Modernism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/13392">
+            <img class="cover__img" property="image" title="Health Design Thinking" alt="Health Design Thinking" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262539135%26type%3D.jpg?itok=wZsxIE9E" />
+
+
+
+          <span class="element-invisible" property="name">      Health Design Thinking
+  </span>
+        </a>
+      </article>
+      </div>
+
+      <div>
+  <h2 class="section-title">The MIT Press Essential Knowledge series</h2>
+
+                  <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12081">
+            <img class="cover__img" property="image" title="Critical Thinking" alt="Critical Thinking" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538282%26type%3D.jpg?itok=UN1BvbIb" />
+
+
+
+          <span class="element-invisible" property="name">      Critical Thinking
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11954">
+            <img class="cover__img" property="image" title="Contraception" alt="Contraception" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538428%26type%3D.jpg?itok=n9wrPkdG" />
+
+
+
+          <span class="element-invisible" property="name">      Contraception
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12549">
+            <img class="cover__img" property="image" title="AI Ethics" alt="AI Ethics" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538190%26type%3D.jpg?itok=L3ygTMOQ" />
+
+
+
+          <span class="element-invisible" property="name">      AI Ethics
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover cover--mobile matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12135">
+            <img class="cover__img" property="image" title="Extraterrestrials" alt="Extraterrestrials" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538435%26type%3D.jpg?itok=NEHjChU9" />
+
+
+
+          <span class="element-invisible" property="name">      Extraterrestrials
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11728">
+            <img class="cover__img" property="image" title="Macroeconomics" alt="Macroeconomics" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538572%26type%3D.jpg?itok=U0doxcVu" />
+
+
+
+          <span class="element-invisible" property="name">      Macroeconomics
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/10584">
+            <img class="cover__img" property="image" title="fMRI" alt="fMRI" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262538039%26type%3D.jpg?itok=tOy2-fFB" />
+
+
+
+          <span class="element-invisible" property="name">      fMRI
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11679">
+            <img class="cover__img" property="image" title="Cynicism" alt="Cynicism" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262537889%26type%3D.jpg?itok=-AfLQzbl" />
+
+
+
+          <span class="element-invisible" property="name">      Cynicism
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11351">
+            <img class="cover__img" property="image" title="Citizenship" alt="Citizenship" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262537797%26type%3D.jpg?itok=dfktVh3J" />
+
+
+
+          <span class="element-invisible" property="name">      Citizenship
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/11736">
+            <img class="cover__img" property="image" title="Fake Photos" alt="Fake Photos" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262537490%26type%3D.jpg?itok=ZSigeOOi" />
+
+
+
+          <span class="element-invisible" property="name">      Fake Photos
+  </span>
+        </a>
+      </article>
+                <article vocab="http://schema.org/" typeof="Book" data-mh="covers" class="l-cover cover  matchheight">
+        <a class="cover__img-link"  href="/mitpress/title/12108">
+            <img class="cover__img" property="image" title="Sexual Consent" alt="Sexual Consent" src="/sites/default/files/styles/related_title_teaser/http/mitp-content-server.mit.edu%3A18180/books/covers/cover/%3Fcollid%3Dbooks_covers_0%26isbn%3D9780262537322%26type%3D.jpg?itok=qZHu-G8l" />
+
+
+
+          <span class="element-invisible" property="name">      Sexual Consent
+  </span>
+        </a>
+      </article>
+      </div>
+
+  
+      </div>
+    </div>
+  </section>
+</div>
+
+      
+<div class="container">
+  <section class=" class="landing-page-section paragraph paragraph--type--link-carousel paragraph--view-mode--default"">
+    <div class="l-1up">
+      <h2 class="section-title">      Catalogs, Collections, and Initiatives
+  </h2>
+    </div>
+    <div class="l-1up">
+      <div class="products-carousel landing-carousel">
+              <article class="teaser teaser--product matchheight paragraph paragraph--type--link-carousel-ext paragraph--view-mode--default" data-mh="product-small">
+          
+  <a href="http://mitpress.mit.edu/sites/default/files/inline-files/MITPress-F20-seasonal.catalog.optimized.pdf" class="teaser__img-link" tabindex="0">        <img class="teaser__img" src="/sites/default/files/2020-04/mitpress-f2020-cover.png" alt="" />
+
+
+  </a>
+
+  <h3 class="teaser__title">
+    <a href="http://mitpress.mit.edu/sites/default/files/inline-files/MITPress-F20-seasonal.catalog.optimized.pdf" tabindex="0">      Books Catalog
+  </a>
+  </h3>
+
+  <p class="teaser__lede">      New books at the intersection of science, technology, and the arts. Fall 2020 season from the MIT Press.
+  </p>
+</article>
+
+      <article class="teaser teaser--product matchheight paragraph paragraph--type--link-carousel-ext paragraph--view-mode--default" data-mh="product-small">
+          
+  <a href="http://mitpress.mit.edu/sites/default/files/2019-06/MIT_Press_Journals_2019_Catalog.pdf" class="teaser__img-link" tabindex="0">        <img class="teaser__img" src="/sites/default/files/2019-06/Journals-2019-catalog-slug.png" alt="" />
+
+
+  </a>
+
+  <h3 class="teaser__title">
+    <a href="http://mitpress.mit.edu/sites/default/files/2019-06/MIT_Press_Journals_2019_Catalog.pdf" tabindex="0">      Journals Catalog
+  </a>
+  </h3>
+
+  <p class="teaser__lede">      We publish over 30 titles in the arts and humanities, economics, international affairs, history, political science, science and technology.
+  </p>
+</article>
+
+      <article class="teaser teaser--product matchheight paragraph paragraph--type--link-carousel-ext paragraph--view-mode--default" data-mh="product-small">
+          
+  <a href="https://direct.mit.edu/books" class="teaser__img-link" tabindex="0">        <img class="teaser__img" src="/sites/default/files/2019-05/themitpressdirect-hr-slug.png" alt="" />
+
+
+  </a>
+
+  <h3 class="teaser__title">
+    <a href="https://direct.mit.edu/books" tabindex="0">      The MIT Press Direct
+  </a>
+  </h3>
+
+  <p class="teaser__lede">      MIT Press Direct is a distinctive collection of influential MIT Press books curated for scholars and libraries worldwide.
+  </p>
+</article>
+
+      <article class="teaser teaser--product matchheight paragraph paragraph--type--link-carousel-ext paragraph--view-mode--default" data-mh="product-small">
+          
+  <a href="https://kfg.mit.edu" class="teaser__img-link" tabindex="0">        <img class="teaser__img" src="/sites/default/files/2019-05/kfg-slug-may2019.png" alt="" />
+
+
+  </a>
+
+  <h3 class="teaser__title">
+    <a href="https://kfg.mit.edu" tabindex="0">      Knowledge Futures Group
+  </a>
+  </h3>
+
+  <p class="teaser__lede">      The Knowledge Futures Group builds tools and networks that put knowledge creators in control.  It serves as an incubator, a knowledge transfer agency, and a staging platform for the development of open access business models and open source publishing technologies.
+  </p>
+</article>
+
+  
+      </div>
+    </div>
+  </section>
+</div>
+
+      
+
+
+<div class="container paragraph paragraph--type--news paragraph--view-mode--default">
+  <section class="landing-page-section">
+    <div class="l-1up">
+      <h2 class="section-title">      News Section
+  </h2>
+    </div>
+    <div class="l-4col">
+        <h3 class="section-title--small">Newsfeed</h3>
+        <div class="matchheight-news">
+          <div class="views-element-container">
+    <article data-mh="news-small" class="teaser feature-teaser matchheight">
+
+    <a class="teaser__img-link" href="/blog/congratulations-our-publishing-partners">
+            <img src="/sites/default/files/styles/full_text_column/public/2019-10/arcadia.jpg?itok=MLTBrKUm" alt="Woman Reading on a Tablet" />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/congratulations-our-publishing-partners">Congratulations to Our Publishing Partners</a></h3>
+
+      <p class="teaser__lede">      Congratulations to our journals! The strong results announced in this year’s Clarivate Analytics Journal Citation Reports are a tribute to the great work of our authors, editors, reviewers, and publishing team.
+  </p>
+  
+  
+      <span class="teaser__date">      <time datetime="2020-07-01T15:00:00Z">Wednesday, 1 July, 2020</time>
+
+  </span>
+  
+</article>
+
+
+</div>
+
+        </div>
+    </div>
+
+    <div class="l-3col">
+      <h3 class="section-title--small">Twitter</h3>
+      <div class="twitter-carousel twitter-carousel--desktop matchheight-news">
+        <a class="twitter-timeline" data-lang="en" data-height="400" data-theme="light" data-link-color="#0aeba5" data-chrome="nofooter noborders noheader transparent" href="https://twitter.com/mitpress"></a>
+      </div>
+      <div class="twitter-carousel twitter-carousel--mobile">
+        <a class="twitter-timeline" data-lang="en" data-theme="light" data-link-color="#0aeba5" data-chrome="nofooter noborders noheader transparent" data-tweet-limit="1" href="https://twitter.com/mitpress"></a>
+      </div>
+    </div>
+
+    <div class="l-1up">
+      <div class="landing-carousel news-carousel">
+        <div class="views-element-container">
+    <article data-mh="news-small" class="teaser  matchheight">
+
+    <a class="teaser__img-link" href="/blog/world-social-media-day">
+            <img src="/sites/default/files/styles/teaser_image/public/2020-06/social.media_.photo__1.jpg?itok=hwiRnfnb" alt="World Social Media Day" />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/world-social-media-day">World Social Media Day</a></h3>
+
+  
+  
+      <span class="teaser__date">      <time datetime="2020-06-30T13:43:51Z">Tuesday, 30 June, 2020</time>
+
+  </span>
+  
+</article>
+
+    <article data-mh="news-small" class="teaser  matchheight">
+
+    <a class="teaser__img-link" href="/blog/mit-press-and-uc-berkeley-launch-rapid-reviews-covid-19">
+            <img src="/sites/default/files/styles/teaser_image/public/2020-06/RR_logo1.png?itok=8pCsmQAM" alt="RR:C19" />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/mit-press-and-uc-berkeley-launch-rapid-reviews-covid-19">The MIT Press and UC Berkeley Launch Rapid Reviews: COVID-19</a></h3>
+
+  
+  
+      <span class="teaser__date">      <time datetime="2020-06-29T13:50:00Z">Monday, 29 June, 2020</time>
+
+  </span>
+  
+</article>
+
+    <article data-mh="news-small" class="teaser  matchheight">
+
+    <a class="teaser__img-link" href="/blog/discover-books-politics-and-economics">
+            <img src="/sites/default/files/styles/teaser_image/public/2020-06/blog%20image.jpg?itok=2CTeoF8l" alt="Discover Books on Politics and Economics " />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/discover-books-politics-and-economics">Discover Books on Politics and Economics </a></h3>
+
+  
+  
+      <span class="teaser__date">      <time datetime="2020-06-24T13:51:49Z">Wednesday, 24 June, 2020</time>
+
+  </span>
+  
+</article>
+
+    <article data-mh="news-small" class="teaser  matchheight">
+
+    <a class="teaser__img-link" href="/blog/author-talk-when-blood-breaks-down-mikkael-sekeres">
+            <img src="/sites/default/files/styles/teaser_image/public/2020-06/MITP.live_.banner.2200.1600.sekeres%20%281%29.jpg?itok=Er9PHmRZ" alt="When Blood Breaks Down" />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/author-talk-when-blood-breaks-down-mikkael-sekeres">Author Talk: When Blood Breaks Down, by Mikkael Sekeres</a></h3>
+
+  
+  
+      <span class="teaser__date">      <time datetime="2020-06-19T16:01:45Z">Friday, 19 June, 2020</time>
+
+  </span>
+  
+</article>
+
+    <article data-mh="news-small" class="teaser  matchheight">
+
+    <a class="teaser__img-link" href="/blog/peer-crystal-ball-finding-place-open-access-monographs">
+            <img src="/sites/default/files/styles/teaser_image/public/2018-10/OA%20week%20blog%20image.jpg?itok=I-YpMplG" alt="Peer into the Crystal Ball: Finding a Place for Open Access Monographs" />
+
+
+
+  
+  </a>
+  
+  
+  <h3 class="teaser__title"><a href="/blog/peer-crystal-ball-finding-place-open-access-monographs">Peer into the Crystal Ball: Finding a Place for Open Access Monographs</a></h3>
+
+  
+  
+      <span class="teaser__date">      <time datetime="2020-06-18T15:00:00Z">Thursday, 18 June, 2020</time>
+
+  </span>
+  
+</article>
+
+
+</div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+      <section class="container">
+  <div class="l-5col-fixed-middle">
+    <div class="rich-text">
+            <a href="/mit-press-live" title="MIT Press Live">
+<div data-embed-button="file_browser" data-entity-embed-display="image:image" data-entity-type="file" data-entity-uuid="6188bbfa-3e28-4ff9-b24b-a8e6d657e004" data-langcode="en" class="embedded-entity">  <img src="/sites/default/files/MITP.live_.banner.general.2160.1080%20%281%29_5.jpg" /></div>
+</a>
+
+<h3>Stuck at home? Join us for MIT Press Live!, our new virtual author talk series.</h3>
+
+<p><a class="button button--gray button--large button--has-arrow" href="/mit-press-live">Learn more</a></p>
+  
+    </div>
+  </div>
+</section>
+
+      
+<section class="newsletter-section paragraph paragraph--type--newsletter paragraph--view-mode--default">
+    <div class="container">
+        <div class="l-1up">
+            <h2 class="section-title">      Newsletter
+  </h2>
+                            <p class="newsletter-subtitle">      Sign up to receive exclusive discounts, content and notifications about new books.
+  </p>
+                    </div>
+    </div>
+    <form class="newsletter" action="https://mit.us2.list-manage.com/subscribe" method="get" target="_blank">
+        <input type="hidden" name="u" value="7caff40e82d72e9429c33df2a">
+        <input type="hidden" name="id" value="4f766e83e7">
+        <div class="container newsletter-form">
+            <div class="l-4up">
+                <input type="text" name="FNAME" id="firstName" placeholder="Muriel" required>
+                <label for="firstName">First Name</label>
+            </div>
+            <div class="l-4up">
+                <input type="text" name="LNAME" id="lastName" placeholder="Cooper" required>
+                <label for="lastName">Last Name</label>
+            </div>
+            <div class="l-4up">
+                <input type="text" name="EMAIL" id="email" placeholder="murielc@mit.edu" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+                <label for="email">Email Address</label>
+            </div>
+            <div class="l-1halfcol-fixed-seven">
+                <input id='newsletter-submit' class="button--primary button--medium button--has-arrow" type="submit" name="submit" value="Sign Up">
+            </div>
+        </div>
+        <div class="container newsletter-message">
+            <div class="l-5col">
+                <h3 class="newsletter-message__title">Thank you for signing up.</h3>
+            </div>
+        </div>
+    </form>
+</section>
+
+  
+</div>
+
+
+
+    
+          </main>
+
+  <footer class="footer col-xs-12">
+    <div class="container">
+        <div class="l-footer-container--upper">
+            <div class="l-footer-2col">
+                <h4 class="footer__brand">
+                    <a href="/">
+                        <?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 148.5 237.7" style="enable-background:new 0 0 148.5 237.7;" xml:space="preserve">
+<path d="M126.2,237.7c-4.9,0-9.7,0-14.6,0c0-64.3,0-128.6,0-193c4.8,0,9.6,0,14.6,0C126.2,108.9,126.2,173.2,126.2,237.7z"/>
+<path d="M89.2,0c4.9,0,9.7,0,14.6,0c0,61.8,0,123.6,0,185.6c-4.9,0-9.7,0-14.6,0C89.2,123.7,89.2,62,89.2,0z"/>
+<path d="M14.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C14.6,91.6,14.6,138.5,14.6,185.6z"/>
+<path d="M22.3,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C22.3,138.6,22.3,91.7,22.3,44.6z"/>
+<path d="M44.6,44.6c5,0,9.7,0,14.6,0c0,47,0,93.9,0,141c-4.9,0-9.7,0-14.6,0C44.6,138.6,44.6,91.7,44.6,44.6z"/>
+<path d="M81.6,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C81.6,91.6,81.6,138.5,81.6,185.6z"/>
+<path d="M148.5,185.6c-4.9,0-9.7,0-14.6,0c0-47,0-93.9,0-140.9c4.9,0,9.7,0,14.6,0C148.5,91.6,148.5,138.5,148.5,185.6z"/>
+</svg>
+
+                        <span class="element-invisible">MIT Press</span></a>
+                </h4>
+            </div>
+            
+<nav role="navigation" aria-labelledby="block-footer-menu" id="block-footer">
+            
+  <h2 class="visually-hidden" id="block-footer-menu">Footer</h2>
+  
+
+        
+                                            <div class="l-footer-2col">
+                              <h5 class="footer__title">
+            <a class="footer__title-link" href="/topics">Books</a>
+          </h5>
+                                <h5 class="footer__title">
+            <a class="footer__title-link" href="http://www.mitpressjournals.org/">Journals</a>
+          </h5>
+                                <h5 class="footer__title">
+            <a class="footer__title-link" href="https://thereader.mitpress.mit.edu/">The MIT Press Reader</a>
+          </h5>
+                                <h5 class="footer__title">
+            <a class="footer__title-link" href="/podcasts">Podcasts</a>
+          </h5>
+                    </div>
+      
+                                    <div class="l-footer-1col">
+                              <h5 class="footer__title has-children">
+            <a class="footer__title-link" href="/about">The MIT Press</a>
+            <a class="footer-list--trigger" href="#footerList-1" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Small Arrow</title><polygon points="24.23 43.3 38.52 29.02 24.2 14.7 21.37 17.52 32.86 29.02 21.4 40.48 24.23 43.3"/></svg>
+
+              <span class="element-invisible">Toggle Dropdown</span>
+            </a>
+          </h5>
+          <ul class="footer__sub" id="footerList-1">
+                                  <li class="footer__list-item">
+          <a href="/about" data-drupal-link-system-path="node/116">About</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="http://mitpressbookstore.mit.edu/">Bookstore</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/catalogs" data-drupal-link-system-path="node/221">Catalogs</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/conferences" title="Conferences" data-drupal-link-system-path="node/136">Conferences</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/mit-press-editorial-board" title="MIT Press Editorial Board" data-drupal-link-system-path="node/82556">Press Editorial Board</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/internships" title="Internships" data-drupal-link-system-path="node/76">Internships</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/jobs" title="Jobs" data-drupal-link-system-path="node/81">Jobs</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/location" title="Location" data-drupal-link-system-path="node/81876">Location</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="http://eepurl.com/kBC-1" title="Subscribe to the MIT Press Newsletter">Newsletter</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/mit-press-management-board" title="MIT Press Management Board" data-drupal-link-system-path="node/82551">Press Management Board</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/press-news" title="MIT Press News" data-drupal-link-system-path="node/82421">Press News</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/staff" title="Staff Listing" data-drupal-link-system-path="node/86">Staff</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="https://mitpress.mit.edu/give-mit-press" title="Give to the MIT Press">Give</a>
+                  </li>
+            
+          </ul>
+                    </div>
+      
+                                    <div class="l-footer-1col">
+                              <h5 class="footer__title has-children">
+            <a class="footer__title-link" href="/faq">Site Help</a>
+            <a class="footer-list--trigger" href="#footerList-1" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Small Arrow</title><polygon points="24.23 43.3 38.52 29.02 24.2 14.7 21.37 17.52 32.86 29.02 21.4 40.48 24.23 43.3"/></svg>
+
+              <span class="element-invisible">Toggle Dropdown</span>
+            </a>
+          </h5>
+          <ul class="footer__sub" id="footerList-1">
+                                  <li class="footer__list-item">
+          <a href="/accessibility" title="Accessibility" data-drupal-link-system-path="node/91">Accessibility</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/faq" title="Frequently Asked Questions" data-drupal-link-system-path="node/111">FAQ</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/how-order" data-drupal-link-system-path="node/226">How to Order</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/our-ebooks" title="Our eBooks" data-drupal-link-system-path="node/1801">Our eBooks</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/privacy" data-drupal-link-system-path="node/96">Privacy Policy</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/terms-use" data-drupal-link-system-path="node/101">Terms of Use</a>
+                  </li>
+            
+          </ul>
+                    </div>
+      
+                                    <div class="l-footer-1col">
+                              <h5 class="footer__title has-children">
+            <a class="footer__title-link" href="/for-authors">Resources</a>
+            <a class="footer-list--trigger" href="#footerList-1" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Small Arrow</title><polygon points="24.23 43.3 38.52 29.02 24.2 14.7 21.37 17.52 32.86 29.02 21.4 40.48 24.23 43.3"/></svg>
+
+              <span class="element-invisible">Toggle Dropdown</span>
+            </a>
+          </h5>
+          <ul class="footer__sub" id="footerList-1">
+                                  <li class="footer__list-item">
+          <a href="/for-authors" data-drupal-link-system-path="node/296">Current Authors</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/prospective-authors" data-drupal-link-system-path="node/276">Prospective Authors</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/booksellers" data-drupal-link-system-path="node/236">Booksellers</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/instructors" data-drupal-link-system-path="node/231">Instructors</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/media-inquiries" data-drupal-link-system-path="node/246">Media Inquiries</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/mit-discounts" data-drupal-link-system-path="node/316">MIT Discounts</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/Rights-Permissions" data-drupal-link-system-path="node/241">Rights &amp; Permissions</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/sales-representation-and-distribution" data-drupal-link-system-path="node/82016">Sales Reps</a>
+                  </li>
+            
+          </ul>
+                    </div>
+      
+                                    <div class="l-footer-1col">
+                              <h5 class="footer__title has-children">
+            <a class="footer__title-link" href="/">Digital</a>
+            <a class="footer-list--trigger" href="#footerList-1" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58"><title>Small Arrow</title><polygon points="24.23 43.3 38.52 29.02 24.2 14.7 21.37 17.52 32.86 29.02 21.4 40.48 24.23 43.3"/></svg>
+
+              <span class="element-invisible">Toggle Dropdown</span>
+            </a>
+          </h5>
+          <ul class="footer__sub" id="footerList-1">
+                                  <li class="footer__list-item">
+          <a href="http://cognet.mit.edu" title="CogNet">CogNet</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/digital-partners-and-products" title="Digital Partners" data-drupal-link-system-path="node/256">Digital Partners and Products</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="https://kfg.mit.edu">Knowledge Futures Group</a>
+                  </li>
+              <li class="footer__list-item">
+          <a href="/mit-press-direct" title="MIT Press Direct" data-drupal-link-system-path="node/4006">MIT Press Direct</a>
+                  </li>
+            
+          </ul>
+                    </div>
+      
+            
+
+
+  </nav>
+
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="l-footer-container--lower">
+            <div class="l-footer--2col-5">
+                                    <h5 class="footer__title">US</h5>
+                    <div class="footer__address">One Rogers Street<br />Cambridge, MA 02142-1209</div>
+                            </div>
+            <div class="l-footer--2col-5">
+                                    <h5 class="footer__title">UK</h5>
+                    <div class="footer__address">Suite 2, 1 Duchess Street<br />London, W1W 6 AN, UK</div>
+                            </div>
+            <div class="l-footer--2col-5">
+                                    <h5 class="footer__title"><a href="/forms/contact">Contact Us</a></h5>
+                            </div>
+            <div class="l-footer--2col-5">
+                <h5 class="footer__title">Connect</h5>
+                <ul class="social">
+                                            <li class="social__list-item">
+                            <a href="https://www.facebook.com/mitpress" property="sameAs">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>facebook</title><g><g><path d="M17,0H1A1,1,0,0,0,0,1V17a1,1,0,0,0,1,1H9.61V11H7.27V8.31H9.61v-2a3.27,3.27,0,0,1,3.49-3.59,19.25,19.25,0,0,1,2.1.11V5.26H13.77c-1.13,0-1.35.54-1.35,1.32V8.31h2.69L14.76,11H12.42v7H17a1,1,0,0,0,1-1V1A1,1,0,0,0,17,0Z"/></g></g></svg>
+ <span class="element-invisible">Facebook</span>
+                            </a>
+                        </li>
+                                                                <li class="social__list-item">
+                            <a href="https://twitter.com/mitpress" property="sameAs">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 14.63"><title>twitter</title><g><g><path d="M18,1.73a7.38,7.38,0,0,1-2.12.58,3.7,3.7,0,0,0,1.62-2,7.39,7.39,0,0,1-2.35.9A3.7,3.7,0,0,0,8.86,4.53,10.48,10.48,0,0,1,1.25.68,3.7,3.7,0,0,0,2.4,5.61,3.68,3.68,0,0,1,.72,5.14v0a3.7,3.7,0,0,0,3,3.62A3.7,3.7,0,0,1,2,8.88a3.7,3.7,0,0,0,3.45,2.56A7.41,7.41,0,0,1,.88,13,7.52,7.52,0,0,1,0,13a10.45,10.45,0,0,0,5.66,1.66A10.44,10.44,0,0,0,16.17,4.12q0-.24,0-.48A7.51,7.51,0,0,0,18,1.73Z"/></g></g></svg>
+ <span class="element-invisible">Twitter</span>
+                            </a>
+                        </li>
+                                                                <li class="social__list-item">
+                            <a href="https://www.linkedin.com/company/11587565/" property="sameAs">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>linkedin</title><g><g><path d="M16.67,0H1.33A1.31,1.31,0,0,0,0,1.3V16.7A1.31,1.31,0,0,0,1.33,18H16.67A1.32,1.32,0,0,0,18,16.7V1.3A1.32,1.32,0,0,0,16.67,0ZM5.34,15.34H2.67V6.75H5.34ZM4,5.57A1.55,1.55,0,1,1,5.55,4,1.55,1.55,0,0,1,4,5.57Zm11.33,9.76H12.67V11.16c0-1,0-2.28-1.39-2.28S9.68,10,9.68,11.09v4.25H7V6.75H9.57V7.92h0a2.8,2.8,0,0,1,2.53-1.39c2.7,0,3.2,1.78,3.2,4.09Z"/></g></g></svg>
+ <span class="element-invisible">LinkedIn</span>
+                            </a>
+                        </li>
+                                                                <li class="social__list-item">
+                            <a href="https://www.pinterest.com/mitpress/" property="sameAs">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><title>pinterest</title><g><g><path d="M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0ZM9,17.16a8.15,8.15,0,0,1-2.41-.36,9.12,9.12,0,0,0,1-2.14l.51-1.94a2.18,2.18,0,0,0,1.87.94c2.46,0,4.23-2.26,4.23-5.07a4.79,4.79,0,0,0-5-4.71c-3.52,0-5.39,2.36-5.39,4.93A3.66,3.66,0,0,0,5.44,12c.15.07.24,0,.27-.11l.23-.92a.24.24,0,0,0-.06-.23,3.17,3.17,0,0,1-.61-1.86A3.53,3.53,0,0,1,9,5.3a3.22,3.22,0,0,1,3.41,3.32c0,2.21-1.11,3.73-2.56,3.73a1.18,1.18,0,0,1-1.21-1.47,16.43,16.43,0,0,0,.68-2.72A1,1,0,0,0,8.23,7c-.82,0-1.48.85-1.48,2A2.94,2.94,0,0,0,7,10.2L6,14.25a7.82,7.82,0,0,0,0,2.34,8.15,8.15,0,1,1,3,.56Z"/></g></g></svg>
+ <span class="element-invisible">Pinterest</span>
+                            </a>
+                        </li>
+                                                                <li class="social__list-item">
+                            <a href="https://www.instagram.com/mitpress/" property="sameAs">
+                                <svg id="Logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 503.84 503.84"><title>glyph-logo_May2016</title><path d="M256,49.47c67.27,0,75.23.26,101.8,1.47,24.56,1.12,37.9,5.22,46.78,8.67a78.05,78.05,0,0,1,29,18.84,78.05,78.05,0,0,1,18.84,29c3.45,8.88,7.55,22.22,8.67,46.78,1.21,26.56,1.47,34.53,1.47,101.8s-.26,75.23-1.47,101.8c-1.12,24.56-5.22,37.9-8.67,46.78a83.43,83.43,0,0,1-47.81,47.81c-8.88,3.45-22.22,7.55-46.78,8.67-26.56,1.21-34.53,1.47-101.8,1.47s-75.24-.26-101.8-1.47c-24.56-1.12-37.9-5.22-46.78-8.67a78.05,78.05,0,0,1-29-18.84,78.05,78.05,0,0,1-18.84-29c-3.45-8.88-7.55-22.22-8.67-46.78-1.21-26.56-1.47-34.53-1.47-101.8s.26-75.23,1.47-101.8c1.12-24.56,5.22-37.9,8.67-46.78a78.05,78.05,0,0,1,18.84-29,78.05,78.05,0,0,1,29-18.84c8.88-3.45,22.22-7.55,46.78-8.67,26.56-1.21,34.53-1.47,101.8-1.47m0-45.39c-68.42,0-77,.29-103.87,1.52S107,11.08,91,17.3A123.49,123.49,0,0,0,46.36,46.36,123.49,123.49,0,0,0,17.3,91C11.08,107,6.82,125.32,5.6,152.13S4.08,187.58,4.08,256s.29,77,1.52,103.87S11.08,405,17.3,421a123.49,123.49,0,0,0,29.06,44.62A123.49,123.49,0,0,0,91,494.69c16,6.23,34.34,10.49,61.15,11.71s35.45,1.52,103.87,1.52,77-.29,103.87-1.52S405,500.92,421,494.69A128.82,128.82,0,0,0,494.69,421c6.23-16,10.49-34.34,11.71-61.15s1.52-35.45,1.52-103.87-.29-77-1.52-103.87S500.92,107,494.69,91a123.49,123.49,0,0,0-29.06-44.62A123.49,123.49,0,0,0,421,17.3C405,11.08,386.68,6.82,359.87,5.6S324.42,4.08,256,4.08Z" transform="translate(-4.08 -4.08)"/><path d="M256,126.64A129.36,129.36,0,1,0,385.36,256,129.36,129.36,0,0,0,256,126.64ZM256,340a84,84,0,1,1,84-84A84,84,0,0,1,256,340Z" transform="translate(-4.08 -4.08)"/><circle cx="386.4" cy="117.44" r="30.23"/></svg> <span class="element-invisible">Instagram</span>
+                            </a>
+                        </li>
+                                                              <li class="social__list-item">
+                        <a href="https://www.youtube.com/c/TheMITPress" property="sameAs">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18"><path d="M17.1 4.8c-.2-.7-.8-1.3-1.5-1.5-1.3-.4-6.6-.4-6.6-.4s-5.3 0-6.6.4c-.8.2-1.3.7-1.5 1.5C.5 6.1.5 8.9.5 8.9s0 2.8.4 4.1c.2.7.8 1.3 1.5 1.5 1.3.4 6.6.4 6.6.4s5.3 0 6.6-.4c.7-.2 1.3-.8 1.5-1.5.4-1.3.4-4.1.4-4.1s0-2.8-.4-4.1z" fill="#282828"/><path fill="#fff" d="M7.3 11.4l4.4-2.5-4.4-2.5z"/></svg> <span class="element-invisible">YouTube</span>
+                        </a>
+                      </li>
+                                    </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="l-footer-container--lower">
+            <div class="copyright">
+                <p>© 2020 The MIT Press</p>
+            </div>
+        </div>
+    </div>
+    
+</footer>
+</div>
+
+  </div>
+
+    
+          <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4f69139141a1f637"></script>
+        <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/51","currentPathIsAdmin":false,"isFront":true,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"dataLayer":{"defaultLang":"en","languages":{"en":{"id":"en","name":"English","direction":"ltr","weight":0}}},"user":{"uid":0,"permissionsHash":"02f94e0605241eb88f99ad2279497d4d7a04dc12259754656e0423f9ee091f3d"}}</script>
+<script src="/sites/default/files/js/js_QR62xx_JQV6iUgkllPUU5d_eMyH-8Q5v-61eir9yOOw.js"></script>
+<script src="/themes/custom/mitpress_theme/js/mtiFontTrackingCode.js?v=1.x" async></script>
+<script src="/sites/default/files/js/js_-Ylna23iB3CaNwnlH-XWzcFmqxfrkyrxqd6hR9V4rXo.js"></script>
+<script src="//platform.twitter.com/widgets.js"></script>
+<script src="/sites/default/files/js/js_T7aRrhgw8-l30k-lCqNGPUqZ7AhPiWljisT4MWoBanw.js"></script>
+<script src="//cloud.firebrandtech.com/widgets/scripts/fcw.js"></script>
+<script src="/sites/default/files/js/js_03iL2M91tiFlJfiY_kJUj5aJcISCBZ_22G8f9Qmn1Fk.js"></script>
+
+  <script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"2c8dc08a62","applicationID":"55452149","transactionName":"YwdXbBMDVkVVW0FZWlpNdFsVC1dYG3xHRUVVDmlWDgZdandXW0RHWw5ZXRM+dllQXWNZUEMhWlYVEFdaWF1HHQtCC1BP","queueTime":0,"applicationTime":740,"atts":"T0BUGlsZRUs=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

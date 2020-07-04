@@ -1,0 +1,1135 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-7.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-6.html">previous</a></span><span>, <a href="curriculum-Z-H-8.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_4"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_4">Section  4</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_4">Conditional Expressions and Functions</a></h1>
+<p> 
+</p>
+<p>
+For many problems, computer programs must deal with different situations in
+different ways. A game program may have to determine whether an object's
+speed is in some range or whether it is located in some specific area of
+the screen. For an engine control program, a condition may describe
+whether or when a valve is to be opened. To deal with conditions, we need
+to have a way of saying a condition is true or false; we need a new class
+of values, which, by convention, are called <small>B</small><small>O</small><small>O</small><small>L</small><small>E</small><small>A</small><small>N</small> 
+<a name="node_idx_252"></a>(or truth)
+values. This section introduces booleans, expressions that evaluate to
+Booleans, and expressions that compute values depending on the boolean
+result of some evaluation.</p>
+<p>
+</p>
+<a name="node_sec_4.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_4.1">4.1&nbsp;&nbsp;Booleans and Relations</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-8.html#node_sec_4.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Boolean <br>
+Operations</a>
+</td></tr></table><p></p>
+<p>
+Consider the following problem statement: 
+</p>
+<blockquote>
+Company XYZ &amp; Co. pays all its employees $12 per hour. A typical
+employee works between 20 and 65 hours per week. Develop a program that
+determines the wage of an employee from the number of hours of work, <em>if the number is within the proper range</em>.
+</blockquote>
+The italic words highlight the new part (compared to
+section&nbsp;<a href="curriculum-Z-H-5.html#node_sec_2.3">2.3</a>). They imply that the program must deal
+with its input in one way if it is in the legitimate range, and in a
+different way if it is not. In short, just as people need to reason about
+conditions, programs must compute in a conditional manner.<p>
+Conditions are nothing new. In mathematics we talk of true and false
+claims, which are conditions.  For example, a number may be equal to, less
+than, or greater than some other number. If <em>x</em> and <em>y</em> are numbers, we
+state these three claims about <em>x</em> and <em>y</em> with
+</p>
+<ol>
+<li><p><em>x</em>  =  <em>y</em>: ``<em>x</em> is equal to <em>y</em>'';
+</p>
+<li><p><em>x</em> &lt; <em>y</em>: ``<em>x</em> is strictly less than <em>y</em>'';
+</p>
+<li><p><em>x</em> &gt; <em>y</em>: ``<em>x</em> is strictly greater than <em>y</em>''.
+</p>
+</li></ol><p>
+For any specific pair of (real) numbers, exactly one of these claims
+holds. If <em>x</em> = 4 and <em>y</em> = 5, the second claim is a true statement, and the
+others are false. If <em>x</em> = 5 and <em>y</em> = 4, however, the third claim is true, and
+the others are false. In general, a claim is true for some values of the
+variables and false for others.</p>
+<p>
+In addition to determining whether an atomic claim holds in a given
+situation, it is sometimes important to determine whether combinations of
+claims hold. Consider the three claims above, which we can combine in
+several ways:
+</p>
+<ol>
+<li><p><em>x</em>  =  <em>y</em> &nbsp;&nbsp;&nbsp;&nbsp; and  &nbsp;&nbsp;&nbsp;&nbsp;<em>x</em> &lt; <em>y</em> &nbsp;&nbsp;&nbsp;&nbsp; and  &nbsp;&nbsp;&nbsp;&nbsp;<em>x</em> &gt; <em>y</em>
+</p>
+<li><p><em>x</em>  =  <em>y</em> &nbsp;&nbsp;&nbsp;&nbsp; or  &nbsp;&nbsp;&nbsp;&nbsp;<em>x</em> &lt; <em>y</em> &nbsp;&nbsp;&nbsp;&nbsp; or  &nbsp;&nbsp;&nbsp;&nbsp;<em>x</em> &gt; <em>y</em>
+</p>
+<li><p><em>x</em>  =  <em>y</em> &nbsp;&nbsp;&nbsp;&nbsp; or  &nbsp;&nbsp;&nbsp;&nbsp;<em>x</em> &lt; <em>y</em>  . 
+</p>
+</li></ol><p>
+The first compound claim is false because no matter what numbers we pick
+for <em>x</em> and <em>y</em>, two of the three claims are false.  The second
+compound claim, however, always holds no matter what numbers we pick for
+<em>x</em> and&nbsp;<em>y</em>. Finally, the third kind of compound claim is the most
+important of all, because it is true in some cases and false in others. For
+example, it holds when <em>x</em>  =  4, <em>y</em>  =  4 and <em>x</em>  =  4, <em>y</em>  =  5, but it is false
+if <em>x</em>  =  5 and <em>y</em>  =  3.</p>
+<p>
+Like mathematics, Scheme has ``words'' for expressing truth and falsity,
+for stating atomic claims, for combining claims into compound claims,
+and for expressing that a claim is true or false. The ``word'' for true is
+<code class="scheme">true</code> and the ``word'' for false is <code class="scheme">false</code>. If a claim concerns
+the relationship between two numbers, it can typically be expressed with a
+<small>R</small><small>E</small><small>L</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small> <small>O</small><small>P</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small>,
+<a name="node_idx_254"></a><a name="node_idx_256"></a>for example, <code class="scheme"><span class="builtin">=</span></code>, <code class="scheme"><span class="builtin">&lt;</span></code>, and
+<code class="scheme"><span class="builtin">&gt;</span></code>. </p>
+<p>
+Translating the three mathematical claims 
+<a name="node_idx_258"></a><a name="node_idx_260"></a>from above follows our well-known
+pattern of writing a left parenthesis, followed by the operator, its
+arguments, and a right parenthesis:
+<a name="node_idx_262"></a>
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">=</span> <span class="variable">x</span> <span class="variable">y</span>)</code>: ``<em>x</em> is equal to <em>y</em>'';
+</p>
+<li><p><code class="scheme">(<span class="builtin">&lt;</span> <span class="variable">x</span> <span class="variable">y</span>)</code>: ``<em>x</em> is strictly less than <em>y</em>''; and 
+</p>
+<li><p><code class="scheme">(<span class="builtin">&gt;</span> <span class="variable">x</span> <span class="variable">y</span>)</code>: ``<em>x</em> is strictly greater than <em>y</em>''. 
+</p>
+</li></ol><p>
+We will also encounter <code class="scheme"><span class="builtin">&lt;=</span></code> and <code class="scheme"><span class="builtin">&gt;=</span></code> as relational operators.</p>
+<p>
+A Scheme expression that compares numbers has a result just like any other
+Scheme expression. The result, however, is <code class="scheme">true</code> or <code class="scheme">false</code>, not
+a number.  That is, when an atomic Scheme claim about two numbers is
+true, it evaluates to <code class="scheme">true</code>. For example,
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">&lt;</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) 
+<span class="builtin">=</span> true
+</pre></div><p>
+Similarly, a false claim evaluates to <code class="scheme">false</code>: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">=</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) 
+<span class="builtin">=</span> false
+</pre></div><p>
+</p>
+<p>
+Expressing compound conditions in Scheme is equally natural. Suppose we want to
+combine <code class="scheme">(<span class="builtin">=</span> <span class="variable">x</span> <span class="variable">y</span>)</code> and <code class="scheme">(<span class="builtin">&lt;</span> <span class="variable">y</span> <span class="variable">z</span>)</code> so that the compound claim
+holds if both conditions are true. In Scheme we would write
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">=</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">&lt;</span> <span class="variable">y</span> <span class="variable">z</span>))
+</pre></div><p>
+to express this relationship. Similarly, if we want to formulate a
+compound claim 
+<a name="node_idx_264"></a>
+<a name="node_idx_266"></a>
+that is true if (at least) one of two claim holds, we write
+<a name="node_idx_268"></a><a name="node_idx_270"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> (<span class="builtin">=</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">&lt;</span> <span class="variable">y</span> <span class="variable">z</span>))
+</pre></div><p>
+Finally, when we write something such as 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">not</span> (<span class="builtin">=</span> <span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p>
+we state that we wish the negation of a claim to be true.<a name="call_footnote_Temp_25"></a><a href="#footnote_Temp_25"><sup><small>13</small></sup></a></p>
+<p>
+Compound conditions, like atomic conditions, evaluate to <code class="scheme">true</code> or
+<code class="scheme">false</code>. Consider the following compound condition:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">=</span> <span class="selfeval">5</span> <span class="selfeval">5</span>) (<span class="builtin">&lt;</span> <span class="selfeval">5</span> <span class="selfeval">6</span>))
+</pre></div><p>
+It consists of two atomic claims: <code class="scheme">(<span class="builtin">=</span> <span class="selfeval">5</span> <span class="selfeval">5</span>)</code> and <code class="scheme">(<span class="builtin">&lt;</span> <span class="selfeval">5</span> <span class="selfeval">6</span>)</code>.
+Both evaluate to <code class="scheme">true</code>, and therefore the evaluation
+<a name="node_idx_272"></a>of the <strong>and</strong>-expression
+<a name="node_idx_274"></a><a name="node_idx_276"></a>continues as follows:
+</p>
+<div align="left"><pre class="scheme">  ... 
+<span class="builtin">=</span> (<span class="keyword">and</span> true true)
+<span class="builtin">=</span> true
+</pre></div><p>
+The last step follows because, if both parts of an <strong>and</strong>-expression are
+<code class="scheme">true</code>, the entire expression evaluates to <code class="scheme">true</code>. 
+In contrast, if one of the two claims in an <strong>and</strong>-expression evaluates to 
+<code class="scheme">false</code>, the <strong>and</strong>-expression evaluates to <code class="scheme">false</code>:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">and</span> (<span class="builtin">=</span> <span class="selfeval">5</span> <span class="selfeval">5</span>) (<span class="builtin">&lt;</span> <span class="selfeval">5</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="keyword">and</span> true false)
+<span class="builtin">=</span> false
+</pre></div><p>
+The evaluation rules for <code class="scheme"><span class="keyword">or</span></code> and <code class="scheme"><span class="builtin">not</span></code> are similarly
+intuitive.
+<a name="node_idx_278"></a><a name="node_idx_280"></a><a name="node_idx_282"></a></p>
+<p>
+The next few sections will explain why programming requires formulating
+conditions and reasoning about them. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_4.1.1"></a>
+<b>Exercise 4.1.1.</b>&nbsp;&nbsp; 
+What are the results of the following Scheme conditions?
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">and</span> (<span class="builtin">&gt;</span> <span class="selfeval">4</span> <span class="selfeval">3</span>) (<span class="builtin">&lt;=</span> <span class="selfeval">10</span> <span class="selfeval">100</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">or</span> (<span class="builtin">&gt;</span> <span class="selfeval">4</span> <span class="selfeval">3</span>) (<span class="builtin">=</span> <span class="selfeval">10</span> <span class="selfeval">100</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">not</span> (<span class="builtin">=</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/boolean1.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.1.2"></a>
+<b>Exercise 4.1.2.</b>&nbsp;&nbsp; 
+What are the results of 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">&gt;</span> <span class="variable">x</span> <span class="selfeval">3</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">and</span> (<span class="builtin">&gt;</span> <span class="selfeval">4</span> <span class="variable">x</span>) (<span class="builtin">&gt;</span> <span class="variable">x</span> <span class="selfeval">3</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="builtin">=</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) <span class="variable">x</span>)</code>
+</p>
+</li></ol><p>
+for (a) <code class="scheme"><span class="variable">x</span> <span class="builtin">=</span> <span class="selfeval">4</span></code>, (b) <code class="scheme"><span class="variable">x</span> <span class="builtin">=</span> <span class="selfeval">2</span></code>, and (c) <code class="scheme"><span class="variable">x</span> <span class="builtin">=</span> <span class="selfeval">7/2</span></code>  ? &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/boolean1a.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_4.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_4.2">4.2&nbsp;&nbsp;Functions that Test Conditions</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-8.html#node_sec_4.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Testing</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p>
+Here is a simple function that tests some condition about a number:
+<a name="node_idx_284"></a><a name="node_idx_286"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">is-5?</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">n</span></code> is equal to <code class="scheme"><span class="selfeval">5</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">is-5?</span> <span class="variable">n</span>)
+  (<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">5</span>))
+</pre></div><p>
+The function produces <code class="scheme">true</code> if, and only if, its input is equal to
+<code class="scheme"><span class="selfeval">5</span></code>.  Its contract contains one novel element: the word
+<code class="scheme"><span class="variable">boolean</span></code>. Just like <code class="scheme"><span class="variable">number</span></code>, <code class="scheme"><span class="variable">boolean</span></code> represents a
+class of values that is built into Scheme. Unlike <code class="scheme"><span class="variable">number</span></code>,
+<code class="scheme"><span class="variable">boolean</span></code> consists of just two values: <code class="scheme">true</code> and <code class="scheme">false</code>.</p>
+<p>
+Here is a slightly more interesting function with a boolean output: 
+<a name="node_idx_288"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">is-between-5-6?</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">n</span></code> is between 5 and 6 (exclusive)</span>
+(<span class="keyword">define</span> (<span class="variable">is-between-5-6?</span> <span class="variable">n</span>)
+  (<span class="keyword">and</span> (<span class="builtin">&lt;</span> <span class="selfeval">5</span> <span class="variable">n</span>) (<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">6</span>)))
+</pre></div><p>
+It consumes a number and produces <code class="scheme">true</code> if the number is between, but
+does not include, <code class="scheme"><span class="selfeval">5</span></code> and <code class="scheme"><span class="selfeval">6</span></code>. One good way to understand the
+function is to say that it describes the following interval on the number
+line:</p>
+<p>
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-1.gif" border="0" alt="[curriculum1aa-Z-G-1.gif]"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_290"></a></p>
+<p></p>
+<p><strong>Interval Boundaries</strong>:  An interval boundary marked with ``('' or ``)''
+is excluded from the interval; an interval boundary marked with ``['' or
+``]'' is included.&nbsp;</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The following third function from numbers to boolean values represents the
+most complicated form of interval: 
+<a name="node_idx_292"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">is-between-5-6-or-over-10?</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">n</span></code> is between 5 and 6 (exclusive) </span>
+<span class="comment">;; or larger than or equal to <code class="scheme"><span class="selfeval">10</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">is-between-5-6-or-over-10?</span> <span class="variable">n</span>)
+  (<span class="keyword">or</span> (<span class="variable">is-between-5-6?</span> <span class="variable">n</span>) (<span class="builtin">&gt;=</span> <span class="variable">n</span> <span class="selfeval">10</span>)))
+</pre></div><p>
+The function returns <code class="scheme">true</code> for two portions of the number line: 
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-2.gif" border="0" alt="[curriculum1aa-Z-G-2.gif]"><p>
+The left part of the interval is the portion between, but not
+including, <code class="scheme"><span class="selfeval">5</span></code> and <code class="scheme"><span class="selfeval">6</span></code>; the right one is the infinite line
+starting at, and including, <code class="scheme"><span class="selfeval">10</span></code>. Any point on those two portions of
+the line satisfies the condition expressed in the function
+<code class="scheme"><span class="variable">is-between-5-6-or-over-10?</span></code>.</p>
+<p>
+All three functions test numeric conditions. To design or to comprehend
+such functions, we must understand intervals and combinations (also known
+as unions) of intervals. The following exercises practice this important
+skill.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_4.2.1"></a>
+<b>Exercise 4.2.1.</b>&nbsp;&nbsp;  
+Translate the following five intervals on the real line into Scheme
+functions that accept a number and return <code class="scheme">true</code> if the number is in
+the interval and <code class="scheme">false</code> if it is outside:
+</p>
+<ol>
+<li><p>the interval (3,7]:
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-3.gif" border="0" alt="[curriculum1aa-Z-G-3.gif]"><p>
+</p>
+<li><p>the interval [3,7]:
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-4.gif" border="0" alt="[curriculum1aa-Z-G-4.gif]"><p>
+</p>
+<li><p>the interval [3,9):
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-5.gif" border="0" alt="[curriculum1aa-Z-G-5.gif]"><p>
+</p>
+<li><p>the union of (1,3) and (9,11):
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-6.gif" border="0" alt="[curriculum1aa-Z-G-6.gif]"><p>
+</p>
+<li><p>and the range of numbers <em>outside</em> of [1,3]. 
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-7.gif" border="0" alt="[curriculum1aa-Z-G-7.gif]"><p>
+</p>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/interval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.2.2"></a>
+<b>Exercise 4.2.2.</b>&nbsp;&nbsp;  
+Translate the following three Scheme functions into intervals on the line of
+reals: 
+<a name="node_idx_294"></a><a name="node_idx_296"></a><a name="node_idx_298"></a></p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> (<span class="variable">in-interval-1?</span> <span class="variable">x</span>)
+       (<span class="keyword">and</span> (<span class="builtin">&lt;</span> <span class="selfeval">-3</span> <span class="variable">x</span>) (<span class="builtin">&lt;</span> <span class="variable">x</span> <span class="selfeval">0</span>)))
+
+<span class="variable">2.</span> (<span class="keyword">define</span> (<span class="variable">in-interval-2?</span> <span class="variable">x</span>)
+       (<span class="keyword">or</span> (<span class="builtin">&lt;</span> <span class="variable">x</span> <span class="selfeval">1</span>) (<span class="builtin">&gt;</span> <span class="variable">x</span> <span class="selfeval">2</span>)))
+
+<span class="variable">3.</span> (<span class="keyword">define</span> (<span class="variable">in-interval-3?</span> <span class="variable">x</span>)
+       (<span class="builtin">not</span> (<span class="keyword">and</span> (<span class="builtin">&lt;=</span> <span class="selfeval">1</span> <span class="variable">x</span>) (<span class="builtin">&lt;=</span> <span class="variable">x</span> <span class="selfeval">5</span>))))
+</pre></div><p>
+Also formulate contracts and purpose statements for the three functions. </p>
+<p>
+Evaluate the following expressions by hand: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">in-interval-1?</span> <span class="selfeval">-2</span>)</code></p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">in-interval-2?</span> <span class="selfeval">-2</span>)</code></p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">in-interval-3?</span> <span class="selfeval">-2</span>)</code>
+</p>
+</li></ol><p>
+Show the important steps. Use the pictures to check your
+results.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/cond-interval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.2.3"></a>
+<b>Exercise 4.2.3.</b>&nbsp;&nbsp; 
+Mathematical equations in one variable are claims about an unknown
+number. For example, the quadratic equation 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-8.gif" border="0" alt="[curriculum1aa-Z-G-8.gif]"></div><p>
+is a claim concerning some unknown number <em>x</em>. For <em>x</em>  =   <tt>-</tt> 1, the claim holds: 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-9.gif" border="0" alt="[curriculum1aa-Z-G-9.gif]"></div><p>
+For <em>x</em>  =  1, it doesn't, because 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-10.gif" border="0" alt="[curriculum1aa-Z-G-10.gif]"></div><p>
+and 4 is <em>not</em> equal to 0. A number for which the claim holds is
+called a <i>solution</i> 
+<a name="node_idx_300"></a>to the equation.</p>
+<p>
+We can use Scheme to formulate equational conditions as a function. If someone
+then claims to have a solution, we can use the function to test whether the 
+proposed solution is, in fact, a solution.  Our running example corresponds
+to the function  
+<a name="node_idx_302"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">equation1</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">x</span></code> is a solution for <em>x</em><sup>2</sup>  +  2  &middot;  <em>x</em>  +  1  =  0</span>
+(<span class="keyword">define</span> (<span class="variable">equation1</span> <span class="variable">x</span>)
+  (<span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">x</span>) <span class="selfeval">1</span>)) <span class="selfeval">0</span>))
+</pre></div><p>
+When we apply <code class="scheme"><span class="variable">equation1</span></code> to some number, we get <code class="scheme">true</code> or
+<code class="scheme">false</code>: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">equation1</span> <span class="selfeval">-1</span>)
+<span class="builtin">=</span> true
+</pre></div><p>
+and
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">equation1</span> <span class="selfeval">+1</span>)
+<span class="builtin">=</span> false
+</pre></div><p></p>
+<p>
+Translate the following equations into Scheme functions: 
+</p>
+<ol>
+<li><p>4  &middot;  <em>n</em>  +  2  =  62
+</p>
+<li><p>2  &middot;  <em>n</em><sup>2</sup>    =  102
+</p>
+<li><p>4  &middot;  <em>n</em><sup>2</sup>  +  6  &middot;  <em>n</em>  +  2  =  462
+</p>
+</li></ol><p>
+Determine whether <code class="scheme"><span class="selfeval">10</span></code>, <code class="scheme"><span class="selfeval">12</span></code>, or <code class="scheme"><span class="selfeval">14</span></code> are solutions of
+these equations. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eqs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.2.4"></a>
+<b>Exercise 4.2.4.</b>&nbsp;&nbsp;  
+<a name="node_idx_304"></a>
+<a name="node_idx_306"></a>Equations are not only ubiquitous in mathematics, they are also heavily
+used in programming. We have used equations to state what a function should
+do with examples, we have used them to evaluate expressions by hand, and we 
+have added them as test cases to the <tt>Definitions</tt>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-8.html#node_sec_4.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Testing</a>
+</td></tr></table><p><a name="node_idx_308"></a>window. For example, 
+if our goal is to define <code class="scheme"><i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i></code>, we might have
+added our examples as test cases as follows: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; test expression:</span>
+(<i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="selfeval">32</span>)
+<span class="comment">;; expected result:</span>
+<span class="selfeval">0</span>
+</pre></div><p>
+and 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; test expression:</span>
+(<i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="selfeval">212</span>)
+<span class="comment">;; expected result: </span>
+<span class="selfeval">100</span>
+</pre></div><p>
+After clicking the <tt>Execute</tt> button we can compare the two
+numbers. If they are equal, we know our function works. </p>
+<p>
+As our results become more and more complex, comparing values becomes more
+and more tedious. Using <code class="scheme"><span class="builtin">=</span></code>, we can instead translate these
+equations into claims:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="selfeval">32</span>)
+   <span class="selfeval">0</span>)
+</pre></div><p>
+and 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="selfeval">212</span>)
+   <span class="selfeval">100</span>)
+</pre></div><p>
+Now, if all claims evaluate to <code class="scheme"><span class="builtin">true</span></code>, we know that our function
+works for the specified examples. If we see a <code class="scheme"><span class="builtin">false</span></code> anywhere, 
+something is still wrong. </p>
+<p>
+Reformulate the test cases for exercises&nbsp;<a href="curriculum-Z-H-5.html#node_thm_2.2.1">2.2.1</a>, <a href="curriculum-Z-H-5.html#node_thm_2.2.2">2.2.2</a>,
+<a href="curriculum-Z-H-5.html#node_thm_2.2.3">2.2.3</a>, and&nbsp;<a href="curriculum-Z-H-5.html#node_thm_2.2.4">2.2.4</a> as claims. </p>
+<p>
+<a name="node_idx_310"></a></p>
+<p></p>
+<p><strong>Testing</strong>:  Writing tests as claims is good practice, though we need
+to know more about equality to develop good automatic tests. To do so, we
+resume the discussion of equality and testing in
+section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/test0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_4.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_4.3">4.3&nbsp;&nbsp;Conditionals and Conditional Functions</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-8.html#node_sec_4.3"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Conditionals</a>
+</td></tr></table><p>
+<a name="node_idx_312"></a></p>
+<p>
+Some banks pay different levels of interest for saving accounts. The more a
+customer deposits, the more the bank pays. In such arrangements, the
+interest rate depends on the <i>interval</i> into which the savings amount
+falls.  To assist their bank clerks, banks use interest-rate functions. An
+interest function consumes the amount that a customer wishes to deposit and
+responds with the interest that the customer receives for this amount of
+money.</p>
+<p>
+Our interest rate function must determine which of several conditions holds
+for the input. We say that the function is a <small>C</small><small>O</small><small>N</small><small>D</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small>
+<small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small>,
+<a name="node_idx_314"></a>and we formulate the definition of such functions using
+<small>C</small><small>O</small><small>N</small><small>D</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small> <small>E</small><small>X</small><small>P</small><small>R</small><small>E</small><small>S</small><small>S</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_316"></a>The general shape of a conditional expression is
+<a name="node_idx_318"></a><a name="node_idx_320"></a><a name="node_idx_322"></a><a name="node_idx_324"></a><a name="node_idx_326"></a><a name="node_idx_328"></a><a name="node_idx_330"></a></p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="variable">question</span> <span class="variable">answer</span>]
+  ...
+  [<span class="variable">question</span> <span class="variable">answer</span>])
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="variable">question</span> <span class="variable">answer</span>]
+  ...
+  [<span class="keyword">else</span> <span class="variable">answer</span>])
+</pre></div></td><td>
+</td></tr></table></div>
+
+The dots indicate that a <strong>cond</strong>-expression may contain an arbitrary
+number of <code class="scheme"><span class="keyword">cond</span></code>-lines. Each <code class="scheme"><span class="keyword">cond</span></code>-line, also called a
+<code class="scheme"><span class="keyword">cond</span></code>-clause, contains two expressions, called <small>C</small><small>O</small><small>N</small><small>D</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>
+and <small>A</small><small>N</small><small>S</small><small>W</small><small>E</small><small>R</small>. A condition is a conditional expression that
+involves the parameters; the answer is a Scheme expression that computes
+the result from the parameters and other data if the conditional expression
+holds.<a name="call_footnote_Temp_26"></a><a href="#footnote_Temp_26"><sup><small>14</small></sup></a><p>
+Conditional expressions are the most complicated form of expressions we
+have encountered and will encounter. It is therefore easy to make mistakes
+when we write them down. Compare the following two parenthesized expressions:
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">10</span>) <span class="selfeval">5.0</span>]
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">20</span>) <span class="selfeval">5</span>]
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">30</span>) true])
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">10</span>) <span class="selfeval">30</span> <span class="selfeval">12</span>]
+  [(<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">25</span>) false]
+  [(<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">20</span>) <span class="selfeval">0</span>])
+</pre></div></td><td>
+</td></tr></table></div>
+
+The left one is a valid <strong>cond</strong>-expression because each
+<code class="scheme"><span class="keyword">cond</span></code>-line contains two expressions. In contrast, the right one is
+<em>not</em> a valid <strong>cond</strong>-expression. Its first line contains three
+expressions instead of two.<p>
+When Scheme evaluates a <strong>cond</strong>-expression, it determines the value
+of each condition, one by one. A condition must evaluate to <code class="scheme">true</code> or
+<code class="scheme">false</code>.  For the first condition that evaluates to <code class="scheme">true</code>, Scheme
+evaluates the corresponding answer, and the value of the answer is the
+value of the entire <strong>cond</strong>-expression. If the last condition is
+<code class="scheme"><span class="keyword">else</span></code> and all other conditions fail, the answer for the
+<code class="scheme"><span class="keyword">cond</span></code> is the value of the last answer expression.<a name="call_footnote_Temp_27"></a><a href="#footnote_Temp_27"><sup><small>15</small></sup></a></p>
+<p>
+Here are two simple examples:
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">1000</span>) <span class="selfeval">.040</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">5000</span>) <span class="selfeval">.045</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.055</span>]
+  [(<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.060</span>])
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">1000</span>) <span class="selfeval">.040</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">5000</span>) <span class="selfeval">.045</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.055</span>]
+  [<span class="keyword">else</span> <span class="selfeval">.060</span>])
+</pre></div></td><td>
+</td></tr></table></div>
+
+If we replace <code class="scheme"><span class="variable">n</span></code> with <code class="scheme"><span class="selfeval">20000</span></code>, the first three conditions
+evaluate to <code class="scheme">false</code> in both expressions. For the expression on the left
+the fourth condition, <code class="scheme">(<span class="builtin">&gt;</span> <span class="selfeval">20000</span> <span class="selfeval">10000</span>)</code>, evaluates to <code class="scheme">true</code>
+and therefore the answer is <code class="scheme"><span class="selfeval">0.60</span></code>. For the expression on the right,
+the <code class="scheme"><span class="keyword">else</span></code> clause specifies what the result of the entire expression
+is. In contrast, if <code class="scheme"><span class="variable">n</span></code> is <code class="scheme"><span class="selfeval">10000</span></code>, the value is
+<code class="scheme"><span class="selfeval">.055</span></code> because for both expressions, <code class="scheme">(<span class="builtin">&lt;=</span> <span class="selfeval">10000</span> <span class="selfeval">1000</span>)</code> and
+<code class="scheme">(<span class="builtin">&lt;=</span> <span class="selfeval">10000</span> <span class="selfeval">5000</span>)</code> evaluate to <code class="scheme">false</code> and <code class="scheme">(<span class="builtin">&lt;=</span> <span class="selfeval">10000</span> <span class="selfeval">10000</span>)</code> evaluates to <code class="scheme">true</code>.<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_4.3.1"></a>
+<b>Exercise 4.3.1.</b>&nbsp;&nbsp; 
+Decide which of the following two <strong>cond</strong>-expressions is legal: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">10</span>) <span class="selfeval">20</span>]
+  [(<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">20</span>) <span class="selfeval">0</span>]
+  [<span class="keyword">else</span> <span class="selfeval">1</span>])
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">10</span>) <span class="selfeval">20</span>]
+  [(<span class="keyword">and</span> (<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">20</span>) (<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">30</span>))]
+  [<span class="keyword">else</span> <span class="selfeval">1</span>])
+</pre></div></td><td>
+</td></tr></table></div>
+
+Explain why the other one is not. Why is the following illegal? 
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span> [(<span class="builtin">&lt;</span> <span class="variable">n</span> <span class="selfeval">10</span>) <span class="selfeval">20</span>]
+      [<span class="builtin">*</span> <span class="selfeval">10</span> <span class="variable">n</span>]
+      [<span class="keyword">else</span> <span class="selfeval">555</span>]) <span class="comment">; &nbsp;&nbsp;&nbsp;&nbsp;
+<img src="../icons/hand.right.gif">
+
+&nbsp;<a href="../Solutions/cond-syntax.html">Solution</a></span>
+</pre></div><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.3.2"></a>
+<b>Exercise 4.3.2.</b>&nbsp;&nbsp; 
+What is the value of
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">1000</span>) <span class="selfeval">.040</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">5000</span>) <span class="selfeval">.045</span>]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.055</span>]
+  [(<span class="builtin">&gt;</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.060</span>])
+</pre></div><p>
+when <code class="scheme"><span class="variable">n</span></code> is (a) <code class="scheme"><span class="selfeval">500</span></code>, (b) <code class="scheme"><span class="selfeval">2800</span></code>, and (c)
+<code class="scheme"><span class="selfeval">15000</span></code>?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/boolean2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.3.3"></a>
+<b>Exercise 4.3.3.</b>&nbsp;&nbsp; 
+What is the value of
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">1000</span>) (<span class="builtin">*</span> <span class="selfeval">.040</span> <span class="selfeval">1000</span>)]
+  [(<span class="builtin">&lt;=</span> <span class="variable">n</span> <span class="selfeval">5000</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">1000</span> <span class="selfeval">.040</span>) 
+		  (<span class="builtin">*</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1000</span>) <span class="selfeval">.045</span>))]
+  [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">1000</span> <span class="selfeval">.040</span>) 
+	   (<span class="builtin">*</span> <span class="selfeval">4000</span> <span class="selfeval">.045</span>)
+	   (<span class="builtin">*</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">10000</span>) <span class="selfeval">.055</span>))])
+</pre></div><p>
+when <code class="scheme"><span class="variable">n</span></code> is (a) <code class="scheme"><span class="selfeval">500</span></code>, (b) <code class="scheme"><span class="selfeval">2800</span></code>, and (c)
+<code class="scheme"><span class="selfeval">15000</span></code>?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/cond1.html">Solution</a></p>
+<p></p>
+<p>
+With the help of <strong>cond</strong>-expressions, we can now define the interest
+rate function that we mentioned at the beginning of this section. Suppose
+the bank pays 4% for deposits of up to $1,000 (inclusive), 4.5% for
+deposits of up to $5,000 (inclusive), and 5% for deposits of more than
+$5,000. Clearly, the function consumes one number and produces one:
+<a name="node_idx_332"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">interest-rate</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the interest rate for the given <code class="scheme"><span class="variable">amount</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>) ...)
+</pre></div><p>
+Furthermore, the problem statement provides three examples: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">=</span> (<span class="variable">interest-rate</span> <span class="selfeval">1000</span>) <span class="selfeval">.040</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">=</span> (<span class="variable">interest-rate</span> <span class="selfeval">5000</span>) <span class="selfeval">.045</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">=</span> (<span class="variable">interest-rate</span> <span class="selfeval">8000</span>) <span class="selfeval">.050</span>)</code>
+</p>
+</li></ol><p>
+Recall that examples are now formulated as boolean expressions when possible.</p>
+<p>
+The body of the function must be a <strong>cond</strong>-expression that
+distinguishes the three cases mentioned in the problem statement. Here is a
+sketch: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>) ...]
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) ...]
+    [(<span class="builtin">&gt;</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) ...])
+</pre></div><p>
+Using the examples and the outline of the <strong>cond</strong>-expression, the answers
+are easy:
+<a name="node_idx_334"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>) <span class="selfeval">0.040</span>]
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) <span class="selfeval">0.045</span>]
+    [(<span class="builtin">&gt;</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) <span class="selfeval">0.050</span>]))
+</pre></div><p>
+Since we know that the function requires only three cases, we can also replace
+the last condition with <code class="scheme"><span class="keyword">else</span></code>: 
+<a name="node_idx_336"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>) <span class="selfeval">0.040</span>]
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) <span class="selfeval">0.045</span>]
+    [<span class="keyword">else</span> <span class="selfeval">0.050</span>]))
+</pre></div><p>
+</p>
+<p>
+When we apply <code class="scheme"><span class="variable">interest-rate</span></code> to an amount, say, <code class="scheme"><span class="selfeval">4000</span></code>, the
+calculation proceeds as usual. Scheme first copies the body of the
+function and replaces <code class="scheme"><span class="variable">amount</span></code> by <code class="scheme"><span class="selfeval">4000</span></code>:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">interest-rate</span> <span class="selfeval">4000</span>)
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> <span class="selfeval">4000</span> <span class="selfeval">1000</span>) <span class="selfeval">0.040</span>]
+    [(<span class="builtin">&lt;=</span> <span class="selfeval">4000</span> <span class="selfeval">5000</span>) <span class="selfeval">0.045</span>]
+    [<span class="keyword">else</span> <span class="selfeval">0.050</span>])
+<span class="builtin">=</span> <span class="selfeval">0.045</span> 
+</pre></div><p>
+The first condition is <code class="scheme">false</code> but the second one is <code class="scheme">true</code>, so
+the result is <code class="scheme"><span class="selfeval">0.045</span></code> or 4.5%. The evaluation would proceed in the
+same manner if we had used the variant of the function with <code class="scheme">(<span class="builtin">&gt;</span> <span class="variable">amount</span>
+<span class="selfeval">5000</span>)</code> instead of <code class="scheme"><span class="keyword">else</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_4.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_4.4">4.4&nbsp;&nbsp;Designing Conditional Functions</a></h2>
+<p> 
+<a name="node_idx_338"></a></p>
+<p>
+Developing conditional functions is more difficult than designing a plain function.
+The key is to recognize that the problem statement lists cases and to identify the
+different cases. To emphasize the importance of this idea, we introduce and
+discuss a design recipe for designing conditional functions. The new recipe
+introduces a new step, <small>D</small><small>A</small><small>T</small><small>A</small> <small>A</small><small>N</small><small>A</small><small>L</small><small>Y</small><small>S</small><small>I</small><small>S</small>,
+<a name="node_idx_340"></a>which requires a programmer to understand the different situations that the
+problem statement discusses. It also modifies the Examples and the Body
+steps of the design recipe in section&nbsp;<a href="curriculum-Z-H-5.html#node_sec_2.5">2.5</a>:</p>
+<p>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Data Analysis and Definition:</b></dt><dd> After we determine that a problem
+statement deals with distinct situations, we must identify all of them. The
+second step is a <small>D</small><small>A</small><small>T</small><small>A</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>, an idea that we will explore a
+lot more.<a name="node_idx_342"></a><p>
+For numeric functions, a good strategy is to draw a number line and to
+identify the intervals that correspond to a specific situation. Consider
+the contract for the <code class="scheme"><span class="variable">interest-rate</span></code> function:
+<a name="node_idx_344"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">  <span class="comment">;; <code class="scheme"><span class="variable">interest-rate</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+  <span class="comment">;; to determine the interest rate for the given <code class="scheme"><span class="variable">amount</span> <span class="builtin">&gt;=</span> <span class="selfeval">0</span></code></span>
+  (<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>) ...)
+</pre></div><p>
+It inputs non-negative numbers and produces answers for three distinct situations: </p>
+<p>
+
+</p>
+<p></p>
+<p></p>
+<p>&nbsp;&nbsp;&nbsp;
+</p>
+<img src="curriculum1aa-Z-G-11.gif" border="0" alt="[curriculum1aa-Z-G-11.gif]"><p>
+For functions that process booleans, the <strong>cond</strong>-expression must
+distinguish between exactly two situations: <code class="scheme">true</code> and <code class="scheme">false</code>.
+We will soon encounter other forms of data that require case-based
+reasoning.</p>
+<p>
+</p>
+</dd><dt><b>Function Examples:</b></dt><dd> Our choice of examples accounts for the distinct
+situations. At a minimum, we must develop one function example per
+situation.  If we characterized the situations as numeric intervals, the
+examples should also include all borderline cases.<p>
+For our <code class="scheme"><span class="variable">interest-rate</span></code> function, we should use <code class="scheme"><span class="selfeval">0</span></code>,
+<code class="scheme"><span class="selfeval">1000</span></code>, and <code class="scheme"><span class="selfeval">5000</span></code> as borderline cases. In addition, we
+should pick numbers like <code class="scheme"><span class="selfeval">500</span></code>, <code class="scheme"><span class="selfeval">2000</span></code>, and <code class="scheme"><span class="selfeval">7000</span></code> to
+test the interiors of the three intervals.</p>
+<p>
+</p>
+</dd><dt><b>The Function Body -- Conditions:</b></dt><dd> The function's body must consist of a
+<strong>cond</strong>-expression that has as many clauses as there are distinct
+situations. This requirement immediately suggests the following body of our
+solution: 
+<a name="node_idx_346"></a><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>)
+  (<span class="keyword">cond</span>
+    [... ...]
+    [... ...]
+    [... ...]))
+</pre></div><p></p>
+<p>
+Next we must formulate the conditions that characterize each situation. The
+conditions are claims about the function's parameters, expressed with Scheme's 
+relational operators or with our own functions. </p>
+<p>
+The number line from our example translates into the following three
+conditions:  
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">and</span> (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> <span class="variable">amount</span>) (<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">and</span> (<span class="builtin">&lt;</span> <span class="selfeval">1000</span> <span class="variable">amount</span>) (<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">&lt;</span> <span class="selfeval">5000</span> <span class="variable">amount</span>)</code>
+</p>
+</li></ol><p>
+Adding these conditions to the function produces a better approximation of
+the final definition:
+<a name="node_idx_348"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="keyword">and</span> (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> <span class="variable">amount</span>) (<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>)) ...]
+    [(<span class="keyword">and</span> (<span class="builtin">&lt;</span> <span class="selfeval">1000</span> <span class="variable">amount</span>) (<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>)) ...]
+    [(<span class="builtin">&gt;</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) ...]))
+</pre></div><p></p>
+<p>
+At this stage, a programmer should check that the chosen conditions
+distinguish inputs in an appropriate manner. Specifically, if some input
+belongs to a particular situation and <code class="scheme"><span class="keyword">cond</span></code>-line, the preceding
+conditions should evaluate to <code class="scheme">false</code> and the condition of the line
+should evaluate to <code class="scheme">true</code>. </p>
+<p>
+</p>
+<p>
+</p>
+</dd><dt><b>The Function Body -- Answers:</b></dt><dd> Finally, it is time to determine what the
+function should produce for each <code class="scheme"><span class="keyword">cond</span></code>-clause. More concretely, we
+consider each line in the <strong>cond</strong>-expression separately, assuming
+that the condition holds.<p>
+In our example, the results are directly specified by the problem
+statement. They are <code class="scheme"><span class="selfeval">4.0</span></code>, <code class="scheme"><span class="selfeval">4.5</span></code>, and <code class="scheme"><span class="selfeval">5.0</span></code>.  In more
+complicated examples, we may have to determine an expression for each
+<code class="scheme"><span class="keyword">cond</span></code>-answer following the suggestion of our first design recipe.</p>
+<p>
+<strong>Hint:</strong>  If the answers for each <code class="scheme"><span class="keyword">cond</span></code>-clause are complex, it is good
+practice to develop one answer at a time. Assume that the condition
+evaluates to <code class="scheme">true</code>, and develop an answer using the parameters,
+primitives, and other functions. Then apply the function to inputs that force
+the evaluation of this new answer. It is legitimate to leave ``<tt>...</tt>'' in
+place of the remaining answers.</p>
+<p>
+</p>
+</dd><dt><b>Simplification:</b></dt><dd><p>
+When the definition is complete and tested, a programmer might wish to
+check whether the conditions can be simplified. In our example, we know
+that <code class="scheme"><span class="variable">amount</span></code> is always greater than or equal to <code class="scheme"><span class="selfeval">0</span></code>, so the
+first condition could be formulated as 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>)
+</pre></div><p></p>
+<p>
+Furthermore, we know that <strong>cond</strong>-expressions are evaluated
+sequentially. That is, by the time the second condition is evaluated the
+first one must have produced <code class="scheme">false</code>. Hence we know that the amount is
+<em>not</em> less than or equal to <code class="scheme"><span class="selfeval">1000</span></code>, which makes the left
+component of the second condition superfluous. The appropriately simplified
+sketch of <code class="scheme"><span class="variable">interest-rate</span></code> is as follows:
+<a name="node_idx_350"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">interest-rate</span> <span class="variable">amount</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">1000</span>) ...]
+    [(<span class="builtin">&lt;=</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) ...]
+    [(<span class="builtin">&gt;</span> <span class="variable">amount</span> <span class="selfeval">5000</span>) ...]))
+</pre></div><p></p>
+<p>
+</p>
+</dd></dl><p>
+Figure&nbsp;<a href="#node_fig_Temp_28">6</a> summarizes these suggestions on the design of conditional
+functions. Read it in conjunction with figure&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> and compare the two
+rows for ``Body.'' Reread the table when designing a conditional function! 
+</p>
+<p>
+<a name="node_idx_352"></a>
+<a name="node_idx_354"></a>
+<a name="node_idx_356"></a>
+<a name="node_idx_358"></a>
+<a name="node_idx_360"></a>
+<a name="node_idx_362"></a>
+<a name="node_idx_364"></a></p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_28"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Data <br>
+Analysis 
+</div><p>  </p>
+</td><td valign="top"><p></p>
+<div align="left">to determine the distinct situations a function deals with </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">inspect the problem statement for distinct
+situations <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> enumerate all possible situations</div><p></p></td></tr>
+<tr><td valign="top">Examples &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to provide an example per situation </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">choose at least one example per situation
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> for intervals or enumerations, the examples must include borderline cases</div><p></p></td></tr>
+<tr><td valign="top">
+<p></p>
+<div align="left">
+Body (1) <br>
+Conditions
+</div><p> </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate a conditional expression </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">write down the skeleton of a <strong>cond</strong> expression, with one clause per
+situation 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> formulate one condition per situation, using the parameters
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> ensure that the conditions distinguish the examples appropriately</div><p></p></td></tr>
+<tr><td valign="top">
+<p></p>
+<div align="left">
+Body (2) <br>
+Answers
+</div><p> </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate the answers for the <strong>cond</strong>-clauses </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">deal with each <strong>cond</strong>-line <em>separately</em>
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> assume the condition holds and develop a Scheme expression that
+computes the appropriate answer for this case</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 6:</b>&nbsp;&nbsp;Designing the body of a conditional function</td></tr>
+<tr><td> 
+<div align="center">&nbsp;(Use with the recipe in figure&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> (pg.&nbsp;<a href="curriculum-Z-H-5.html">5</a>))&nbsp;</div>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_4.4.1"></a>
+<b>Exercise 4.4.1.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">interest</span></code>. Like <code class="scheme"><span class="variable">interest-rate</span></code>, it
+consumes a deposit amount. Instead of the rate, it produces the actual
+amount of interest that the money earns in a year. The bank pays a flat 4%
+for deposits of up to $1,000, a flat 4.5% per year for deposits of up to
+$5,000, and a flat 5% for deposits of more than
+$5,000.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/interest.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.4.2"></a>
+<b>Exercise 4.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">tax</span></code>, which consumes the gross pay and produces
+the amount of tax owed. For a gross pay of $240 or less, the tax is 0%; for
+over $240 and $480 or less, the tax rate is 15%; and for any pay over
+$480, the tax rate is 28%.</p>
+<p>
+Also develop <code class="scheme"><span class="variable">netpay</span></code>. The function determines the net pay of an
+employee from the number of hours worked.  The <i>net pay</i> 
+<a name="node_idx_366"></a>is the gross
+pay minus the tax. Assume the hourly pay rate is $12.</p>
+<p>
+<strong>Hint:</strong>  Remember to develop auxiliary functions when a definition becomes too
+large or too complex to manage.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tax.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.4.3"></a>
+<b>Exercise 4.4.3.</b>&nbsp;&nbsp; 
+Some credit card companies pay back a small portion of the charges a customer
+makes over a year. One company returns
+</p>
+<ol>
+<li><p>.25% for the first $500 of charges, 
+</p>
+<li><p>.50% for the next $1000 (that is, the portion between $500 and $1500),
+</p>
+<li><p>.75% for the next $1000 (that is, the portion between $1500 and $2500), 
+</p>
+<li><p>and 1.0% for everything above $2500.
+</p>
+</li></ol><p>
+Thus, a customer who charges $400 a year receives $1.00, which is 0.25
+ &middot;  1/100  &middot;  400, and one who charges $1,400 a year receives $5.75,
+which is 1.25  =  0.25  &middot;  1/100  &middot;  500 for the first $500 and 0.50
+ &middot;  1/100  &middot;  900  =  4.50 for the next $900.</p>
+<p>
+Determine by hand the pay-backs for a customer who charged $2000 and one
+who charged $2600.</p>
+<p>
+Define the function <code class="scheme"><span class="variable">pay-back</span></code>, which consumes a charge amount
+and computes the corresponding pay-back amount.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/credit.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_4.4.4"></a>
+<b>Exercise 4.4.4.</b>&nbsp;&nbsp; 
+An equation is a claim about numbers; a quadratic equation is a special
+kind of equation. All quadratic equations (in one variable) have the
+following general shape: 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-12.gif" border="0" alt="[curriculum1aa-Z-G-12.gif]"></div><p>
+In a specific equation, <em>a</em>, <em>b</em> and <em>c</em> are replaced by numbers, as in 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-13.gif" border="0" alt="[curriculum1aa-Z-G-13.gif]"></div><p>
+or 
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-14.gif" border="0" alt="[curriculum1aa-Z-G-14.gif]"></div><p>
+The variable <em>x</em> represents the unknown. </p>
+<p>
+Depending on the value of <code class="scheme"><span class="variable">x</span></code>, the two sides of the equation
+evaluate to the same value (see exercise&nbsp;<a href="#node_thm_4.2.3">4.2.3</a>).  If the two sides
+are equal, the claim is true; otherwise it is false.  A number that makes
+the claim true is a <i>solution</i>.
+<a name="node_idx_368"></a>The first equation has one solution,
+ <tt>-</tt> 1, as we can easily check:
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-15.gif" border="0" alt="[curriculum1aa-Z-G-15.gif]"></div><p>
+The second equation has two solutions:  + 1 and  <tt>-</tt> 1.</p>
+<p>
+The number of solutions for a quadratic equation depends on the values of <em>a</em>,
+<em>b</em>, and <em>c</em>. If the coefficient <em>a</em> is 0, we say the equation is <i>degenerate</i> 
+<a name="node_idx_370"></a>and do not consider how many solutions it has. Assuming <em>a</em> is not
+0, the equation has 
+</p>
+<ol>
+<li><p>two solutions if <em>b</em><sup>2</sup> &gt; 4  &middot;  <em>a</em>  &middot;  <em>c</em>, 
+</p>
+<li><p>one solution if <em>b</em><sup>2</sup>  =  4  &middot;  <em>a</em>  &middot;  <em>c</em>, and
+</p>
+<li><p>no solution if <em>b</em><sup>2</sup> &lt; 4  &middot;  <em>a</em>  &middot;  <em>c</em>.
+</p>
+</li></ol><p>
+To distinguish this case from the degenerate one, we sometimes use the phrase
+<i>proper</i> 
+<a name="node_idx_372"></a>quadratic equation.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">how-many</span></code>, which consumes the coefficients
+<code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code> of a proper quadratic equation and
+determines how many solutions the equation has:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">how-many</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">-1</span>) <span class="builtin">=</span> <span class="selfeval">2</span>
+(<span class="variable">how-many</span> <span class="selfeval">2</span> <span class="selfeval">4</span> <span class="selfeval">2</span>) <span class="builtin">=</span> <span class="selfeval">1</span>
+</pre></div><p> 
+Make up additional examples. First determine the number of solutions by
+hand, then with DrScheme.</p>
+<p>
+How would the function change if we didn't assume the equation was
+proper?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quad1.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_25"></a><a href="#call_footnote_Temp_25"><sup><small>13</small></sup></a> In truth, the
+operations <code class="scheme"><span class="keyword">and</span></code> and <code class="scheme"><span class="keyword">or</span></code> are different from <code class="scheme"><span class="builtin">not</span></code>,
+which is why they are typeset in different fonts. We ignore this minor
+difference for now.</p>
+<p><a name="footnote_Temp_26"></a><a href="#call_footnote_Temp_26"><sup><small>14</small></sup></a> The use of brackets, that is, <code class="scheme">[</code> and <code class="scheme">]</code>, in
+place of parentheses is optional, but it sets apart the conditional clauses
+from other expressions and helps people read functions.</p>
+<p><a name="footnote_Temp_27"></a><a href="#call_footnote_Temp_27"><sup><small>15</small></sup></a> If the
+<strong>cond</strong>-expression has no <code class="scheme"><span class="keyword">else</span></code> clause and all conditions
+evaluate to <code class="scheme">false</code>, an error is signaled in <tt>Beginning Student</tt> Scheme.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-6.html">previous</a></span><span>, <a href="curriculum-Z-H-8.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-7.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,45 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/12.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 12</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+<p>
+Develop the function <em>sort-auction-records-by-bid</em>.  The function
+consumes a list of auction records and returns a list of auction records
+sorted in decreasing order by bid amount.
+</p>
+An <em>auction record</em> is defined as follows:
+<br>
+<br>
+<code>(define-struct auction (item id bid))</code>
+<br>
+<br>
+An auction record is a structure <br>
+<pre>   (make-auction String Number Number)</pre>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol12.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Develop the function <em>cancel-sum </em>.
+The function consumes a list of numbers.
+The function should produce a new list of numbers
+one longer in length than the original list.
+The new list should be the same as the old with with
+an additional number at the end that will cause the
+sum of the numbers in the new list to be zero.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol12.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+Develop the function <em>search-lolos</em>.
+The function consumes a symbol and a list of list of symbols
+and returns true if the symbol is found anywhere in the 
+original list of lists; otherwise, it returns false.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol12.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+Develop the function <em>expand-lon</em>.
+The function consumes a list of natural numbers
+and returns a new list of natural numbers with each number in the
+original list replaced by a number of copies of that number 
+equal to its value.
+For example, the function called with the list
+containing one and two would produce the list containing one, two,
+and two.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol12.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+Develop the function <em>complete-polygon</em>.
+The function consumes a list of posns and a symbol
+representing a color and draws lines from every posn to every
+other posn.
+Be sure to load the draw teachpack before testing.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol12.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#ec9e8d9581838288ac8f8f9fc2828999c2898899">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/12.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

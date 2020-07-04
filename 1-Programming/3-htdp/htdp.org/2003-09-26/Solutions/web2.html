@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="web1.html">14.3.1</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web3.html">14.3.3</a><pre>; DATA DEFINITIONS
+; a web-page is either: 
+;   1. empty
+;   2. (cons S WP) where S is a symbol and WP is a web-page
+;   3. (cons EWP WP) where EWP and WP are web-pages
+
+; TEMPLATE
+;(define (fun-for-webpage wp)
+;  (cond
+;    [(empty? wp) ...]
+;    [(symbol? (first wp)) 
+;     (... (first wp) ... (fun-for-webpage (rest wp)) ...)]
+;    [else
+;     (... (fun-for-webpage (first wp)) ...
+;          (fun-for-webpage (rest wep)) ...)]))
+
+; EXAMPLES
+; (occurs1 empty 'a) =&gt; 0
+; (occurs1 '(a b a) 'a) =&gt; 2
+; (occurs1 '((a b c) b (a a a) a) 'a) =&gt; 1
+
+; Contract/purpose/header:
+; occurs1: web-page symbol -&gt; number
+; to count the occurences of the given symbol in the given web-page, ignoring
+; embedded web pages
+(define (occurs1 wp s)
+  (cond
+    [(empty? wp) 0]
+    [(symbol? (first wp))
+     (cond
+       [(symbol=? (first wp) s) (+ 1 (occurs1 (rest wp) s))]
+       [else (occurs1 (rest wp) s)])]
+    [else (occurs1 (rest wp) s)]))
+
+"occurs1 tests"
+(= (occurs1 empty 'a) 0)
+(= (occurs1 '(a b a) 'a) 2)
+(= (occurs1 '((a b c) b (a a a) a) 'a) 1)
+
+
+; occurs2: web-page symbol -&gt; number
+; to count the occurences of the given symbol in the given web page, including
+; embedded web pages
+
+; examples:
+; (occurs1 empty 'a) =&gt; 0
+; (occurs1 '(a b a) 'a) =&gt; 2
+; (occurs1 '((a b c) b (a a a) a) 'a) =&gt; 5
+(define (occurs2 wp s)
+  (cond
+    [(empty? wp) 0]
+    [(symbol? (first wp))
+     (cond
+       [(symbol=? (first wp) s) (+ 1 (occurs2 (rest wp) s))]
+       [else (occurs2 (rest wp) s)])]
+    [else (+ (occurs2 (first wp) s) (occurs2 (rest wp) s))]))
+
+"occurs2 tests"
+(= (occurs2 empty 'a) 0)
+(= (occurs2 '(a b a) 'a) 2)
+(= (occurs2 '((a b c) b (a a a) a) 'a) 5)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

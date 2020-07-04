@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/syn-local1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="syn-local2.html">18.1.2</a><pre>#|
+
+;; 1.
+(local ((define x (* y 3)))
+  (* x x)) 
+
+;; RED: x is the only locally defined variable
+;; GREEN : (* y 3) is the right hand side for `x'
+;; BLUE: (* x x) is the body of the local expression
+
+;; 2.
+(local ((define (odd an)
+          (cond 
+            [(zero? an) false] 
+            [else (even (sub1 an))])) 
+        (define (even an) 
+          (cond 
+            [(zero? an) true] 
+            [else (odd (sub1 an))]))) 
+  (even a-nat-num)) 
+
+;;   RED: odd and even are the locally defined variables
+;; GREEN: these are the right-hand sides:
+   (cond 
+     [(zero? an) false] 
+     [else (even (sub1 an))])
+
+and
+   
+   (cond 
+     [(zero? an) true] 
+     [else (odd (sub1 an))])
+   
+;;  BLUE: (even a-nat-num) is the body of the local expression
+
+;; 3.
+(local ((define (f x) (g x (+ x 1)))
+        (define (g x y) (f (+ x y)))) 
+  (+ (f 10) (g 10 20))) 
+
+;;   RED: f and g are the locall defined variables
+;; GREEN: (g x (+ x 1)) is the rhs of f and
+;;        (f (+ x y)) is the rhs of g.
+;;  BLUE: (+ (f 10) (g 10 20)) is the body of the local expression
+
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/syn-local1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

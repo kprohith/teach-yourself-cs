@@ -1,0 +1,1184 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-10.html">previous</a></span><span>, <a href="curriculum-Z-H-12.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_8"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_8">Section  8</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_8">Intermezzo 1: Syntax and Semantics</a></h1>
+<p> 
+</p>
+<p>
+</p>
+<p>
+Thus far we have approached Scheme as if it were a spoken language. 
+<a name="node_idx_698"></a>Like toddlers, we learned the vocabulary of the language, we acquired an
+intuitive understanding of its meaning, and we figured out some basic rules
+of how to compose and not to compose sentences. Truly effective
+communication, however, in any language -- be it natural like English or
+artificial like Scheme -- eventually requires a formal study of its
+vocabulary, its grammar, and the meaning of sentences.</p>
+<p>
+A programming language  
+<a name="node_idx_700"></a>is in many ways like a spoken language. It has a
+vocabulary and a grammar. The vocabulary is the collection of those ``basic
+words'' from which we can compose ``sentences'' in our language. A sentence
+in a programming language is an expression or a function; the language's
+grammar dictates how to form complete sentences from words. Programmers use
+the terminology <small>S</small><small>Y</small><small>N</small><small>T</small><small>A</small><small>X</small> 
+<a name="node_idx_702"></a>to refer to the vocabularies and grammars
+of programming languages.</p>
+<p>
+Not all grammatical sentences are meaningful -- neither in English nor in a
+programming language. For example, the English sentence ``the cat is
+round'' is a meaningful sentence, but ``the brick is a car'' makes no
+sense, even though it is completely grammatical. To determine whether or
+not a sentence is meaningful, we must study the <small>M</small><small>E</small><small>A</small><small>N</small><small>I</small><small>N</small><small>G</small>,
+<a name="node_idx_704"></a>or <small>S</small><small>E</small><small>M</small><small>A</small><small>N</small><small>T</small><small>I</small><small>C</small><small>S</small>,
+<a name="node_idx_706"></a>of words and sentences. For spoken languages, we
+typically explain the meaning of words with sentences that use simpler
+words; in the case of a foreign language, we sometimes explain a word with
+simple sentences in the foreign language or we translate words to a known
+language. For programming languages, there are also several ways to explain
+the meaning of individual sentences.  In this book, we discuss the meaning
+of Scheme programs through an extension of the familiar laws of arithmetic
+and algebra.
+<a name="node_idx_708"></a><a name="node_idx_710"></a>After all, computation starts with this form of simple
+mathematics, and we should understand the connection between this
+mathematics and computing. </p>
+<p>
+The first three sections present the vocabulary, grammar, and meaning of a
+small, but powerful subset of Scheme. The fourth one resumes our discussion
+of run-time errors in Scheme, based on our new understanding of its
+meaning. The remaining three sections revisit <code class="scheme"><span class="keyword">and</span></code> and <code class="scheme"><span class="keyword">or</span></code>
+expressions, variable definitions, and structures.</p>
+<p>
+</p>
+<p>
+
+</p>
+<a name="node_sec_8.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.1">8.1&nbsp;&nbsp;The Scheme Vocabulary</a></h2>
+<p> 
+</p>
+<p>
+Scheme's basic vocabulary consists of five categories of words. The five
+lines in figure&nbsp;<a href="#node_fig_Temp_54">20</a> show how computer scientists discuss
+the vocabulary of a language.<a name="call_footnote_Temp_53"></a><a href="#footnote_Temp_53"><sup><small>27</small></sup></a>  All lines employ the same notation. They
+enumerate some simple examples separated by a bar (`` | ''). Dots
+indicate that there are more things of the same kind in some category.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_54"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;var&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="variable">x</span></code>  |   <code class="scheme"><span class="variable">area-of-disk</span></code>  |  <code class="scheme"><span class="variable">perimeter</span></code>  | <tt>...</tt></td></tr>
+<tr><td valign="top"><tt>&lt;con&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme">true</code>  |  <code class="scheme">false</code> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code>  |  <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>  |  <code class="scheme"><span class="keyword">'</span><span class="variable">sum</span></code>  |  <tt>...</tt></td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="selfeval">1</span></code>  |  <code class="scheme"><span class="selfeval">-1</span></code>  |  <code class="scheme"><span class="selfeval">3/5</span></code>  |  
+<code class="scheme"><span class="selfeval">1.22</span></code>  |  <tt>...</tt></td></tr>
+<tr><td valign="top"><tt>&lt;prm&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp; 
+<code class="scheme"><span class="builtin">+</span></code>  |  <code class="scheme"><span class="builtin">-</span></code>  |  <tt>...</tt></td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 20:</b>&nbsp;&nbsp;<tt>Beginning Student</tt> Scheme: The core vocabulary</td></tr>
+<tr><td>
+ 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The first category is that of variables, which are the names of functions
+and values. The second introduces constants: boolean, symbolic, and numeric
+constants. As indicated before, Scheme has a powerful number system, which
+is best introduced gradually by examples. The final category is that of
+primitive operations,
+<a name="node_idx_716"></a>which are those basic functions that Scheme provides
+from the very beginning. While it is possible to specify this collection in
+its entirety, it is best introduced in pieces, as the need arises.</p>
+<p>
+For the classification of Scheme sentences, we also need three
+<code class="scheme"><span class="variable">keywords</span></code>: <code class="scheme"><span class="keyword">define</span></code>, <code class="scheme"><span class="keyword">cond</span></code>, and <code class="scheme"><span class="keyword">else</span></code>.
+These keywords have no meaning. Their role resembles that of punctuation
+marks, especially that of commas and semicolons, in English writing; they
+help programmers distinguish one sentence from another. No keyword may be
+used as a variable.</p>
+<p>
+</p>
+<p>
+
+</p>
+<a name="node_sec_8.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.2">8.2&nbsp;&nbsp;The Scheme Grammar</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-12.html#node_chap_7"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Grammar,<br>
+Layout, and Editing</a>
+</td></tr></table><p></p>
+<p>
+In contrast to many other programming languages, Scheme has a simple
+grammar. It is shown in its entirety in
+figure&nbsp;<a href="#node_fig_Temp_56">21</a>.<a name="call_footnote_Temp_55"></a><a href="#footnote_Temp_55"><sup><small>28</small></sup></a> The grammar defines two categories of
+sentences: Scheme definitions, <tt>&lt;def&gt;</tt>, and expressions, <tt>&lt;exp&gt;</tt>. While
+the grammar does not dictate the use of white space between the items of
+sentences, we follow the convention to put at least one blank space behind
+each item unless an item is followed by a right parenthesis ``)''. Scheme is
+flexible concerning blank space, and we can replace a single blank space by
+many spaces, line breaks, and page breaks.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_56"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<code class="scheme"><span class="keyword">define</span></code> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  <tt>&lt;var&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;con&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;prm&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">cond</span></code> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">cond</span></code> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<code class="scheme"><span class="keyword">else</span></code> <tt>&lt;exp&gt;</tt>))
+</td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 21:</b>&nbsp;&nbsp;<tt>Beginning Student</tt> Scheme: The core grammar</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The two grammar definitions describe how to form atomic sentences and
+compound sentences, which are sentences built from other sentences. For
+example, a function definition 
+<a name="node_idx_718"></a><a name="node_idx_720"></a>is formed by using ``('', followed by the
+keyword <code class="scheme"><span class="keyword">define</span></code>, followed by another ``('', followed by a non-empty
+sequence of variables, followed by ``)'', followed by an expression, and
+closed by a right parenthesis ``)'' that matches the very first one.  The
+keyword <code class="scheme"><span class="keyword">define</span></code> distinguishes definitions from expressions.</p>
+<p>
+The category of expressions consists of six alternatives: variables,
+constants, primitive applications,
+<a name="node_idx_722"></a>(function) applications,
+<a name="node_idx_724"></a>and two varieties of <code class="scheme"><span class="keyword">cond</span></code>itionals.  The last four are again composed of
+other expressions.  The keyword <code class="scheme"><span class="keyword">cond</span></code> distinguishes conditional
+<a name="node_idx_726"></a>expressions from primitive and function applications.</p>
+<p>
+</p>
+<p>
+Here are three examples of expressions: <code class="scheme"><span class="keyword">'</span><span class="variable">all</span></code>, <code class="scheme"><span class="variable">x</span></code>, and
+<code class="scheme">(<span class="variable">x</span> <span class="variable">x</span>)</code>. The first one belongs to the class of symbols and is
+therefore an expression. The second is a variable, and every variable is an
+expression. Finally, the third is a function application, because <code class="scheme"><span class="variable">x</span></code>
+is a variable.</p>
+<p>
+In contrast, the following parenthesized sentences are not expressions:
+<code class="scheme">(<span class="variable">f</span> <span class="keyword">define</span>)</code>, <code class="scheme">(<span class="keyword">cond</span> <span class="variable">x</span>)</code>, and <code class="scheme">()</code>.  The first one
+partially matches the shape of a function application but it uses
+<code class="scheme"><span class="keyword">define</span></code> as if it were a variable. The second one fails to be a
+correct <strong>cond</strong>-expression because it contains a variable as the
+second item and not a pair of expressions surrounded by parentheses. The
+last one is just a pair of parentheses, but the grammar requires that every
+left parenthesis is followed by something other than a right parenthesis. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_8.2.1"></a>
+<b>Exercise 8.2.1.</b>&nbsp;&nbsp; 
+Why are the sentences
+<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme"><span class="variable">x</span></code> </td><td valign="top">2. <code class="scheme">(<span class="builtin">=</span> <span class="variable">y</span> <span class="variable">z</span>)</code> </td><td valign="top">3. <code class="scheme">(<span class="builtin">=</span> (<span class="builtin">=</span> <span class="variable">y</span> <span class="variable">z</span>) <span class="selfeval">0</span>)</code> 
+</td></tr></table><br>
+syntactically legal expressions? <p>
+Explain why the following sentences are illegal expressions: 
+<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme">(<span class="selfeval">3</span> <span class="builtin">+</span> <span class="selfeval">4</span>)</code> </td><td valign="top">2. <code class="scheme"><span class="builtin">empty?</span>(<span class="variable">l</span>)</code> </td><td valign="top">3. <code class="scheme">(<span class="variable">x</span>)</code> &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/legal-ex1.html">Solution</a></td></tr></table>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.2.2"></a>
+<b>Exercise 8.2.2.</b>&nbsp;&nbsp; 
+Why are the sentences
+<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)</code> </td><td valign="top">2. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">y</span>)</code> </td><td valign="top">3. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span>) <span class="selfeval">3</span>)</code> 
+</td></tr></table><br>
+syntactically legal definitions? <p>
+Explain why the following sentences are illegal definitions: 
+<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>)</code> </td><td valign="top">2. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>) (<span class="variable">x</span>))</code> </td><td valign="top">3. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span>) <span class="selfeval">10</span>)</code> &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/legal-def1.html">Solution</a></td></tr></table>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.2.3"></a>
+<b>Exercise 8.2.3.</b>&nbsp;&nbsp; 
+Distinguish syntactically legal from illegal sentences:
+<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme">(<span class="variable">x</span>)</code> </td><td valign="top">2. <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">not</span> <span class="variable">x</span>))</code> </td><td valign="top">3. <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> 
+</td></tr></table><br>
+Explain why the sentences are legal or illegal.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/illegal-exp1.html">Solution</a><p></p>
+<p>
+</p>
+<p><a name="node_thm_8.2.4"></a>
+<b>Exercise 8.2.4.</b>&nbsp;&nbsp; 
+Distinguish syntactically legal from illegal sentences:<br>
+</p>
+<table border="0"><tr><td valign="top">1. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">x</span>)</code> </td><td valign="top">2. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>)</code> </td><td valign="top">3. <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="keyword">'</span><span class="variable">y</span> (<span class="builtin">not</span> <span class="variable">x</span>)))</code> 
+</td></tr></table><br>
+Explain why the sentences are legal definitions or why they 
+fail to be legal definitions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/illegal-def1.html">Solution</a><p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<p><strong>Grammatical Terminology</strong>:  The components of compound sentences have names. We have introduced some of
+these names on an informal basis; for better communication, we introduce
+all useful ones here. The second component of a definition, that is, the
+non-empty sequence of variables, is a <small>H</small><small>E</small><small>A</small><small>D</small><small>E</small><small>R</small>.
+<a name="node_idx_728"></a>Accordingly, the expression component of a definition is called
+<small>B</small><small>O</small><small>D</small><small>Y</small>.
+<a name="node_idx_730"></a>The variables that follow the first variable in a header are the
+<small>P</small><small>A</small><small>R</small><small>A</small><small>M</small><small>E</small><small>T</small><small>E</small><small>R</small><small>S</small> 
+<a name="node_idx_732"></a>of a function.&nbsp;</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_57"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><blockquote>
+(<code class="scheme"><span class="keyword">define</span></code> (<tt>&lt;function-name&gt;</tt> <tt>&lt;parameter&gt;</tt> <tt>...</tt><tt>&lt;parameter&gt;</tt>) <tt>&lt;body&gt;</tt>)<br>
+
+(<tt>&lt;function&gt;</tt> <tt>&lt;argument&gt;</tt> <tt>...</tt><tt>&lt;argument&gt;</tt>)<br>
+
+(<code class="scheme"><span class="keyword">cond</span></code> (<tt>&lt;question&gt;</tt> <tt>&lt;answer&gt;</tt>) <tt>&lt;<code class="scheme"><span class="keyword">cond</span></code>-clause&gt;</tt> <tt>...</tt>)
+</blockquote><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 22:</b>&nbsp;&nbsp;Syntactic naming conventions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+People who think of definition as the definition of a mathematical function
+also use the terminology <small>L</small><small>E</small><small>F</small><small>T</small>-<small>H</small><small>A</small><small>N</small><small>D</small> <small>S</small><small>I</small><small>D</small><small>E</small> 
+<a name="node_idx_734"></a>for a definition's header
+and <small>R</small><small>I</small><small>G</small><small>H</small><small>T</small>-<small>H</small><small>A</small><small>N</small><small>D</small> <small>S</small><small>I</small><small>D</small><small>E</small> 
+<a name="node_idx_736"></a>for the body. For the same reason, the first
+component in an application
+<a name="node_idx_738"></a>is called <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_740"></a>and the remaining
+components are referred to as <small>A</small><small>R</small><small>G</small><small>U</small><small>M</small><small>E</small><small>N</small><small>T</small><small>S</small>.
+<a name="node_idx_742"></a>Occasionally, we also use <small>A</small><small>C</small><small>T</small><small>U</small><small>A</small><small>L</small> <small>A</small><small>R</small><small>G</small><small>U</small><small>M</small><small>E</small><small>N</small><small>T</small><small>S</small>.</p>
+<p>
+Finally, a <strong>cond</strong>-expression
+<a name="node_idx_744"></a>consists of <code class="scheme"><span class="keyword">cond</span></code>-lines or
+<code class="scheme"><span class="keyword">cond</span></code>-clauses. Each line consists of two expressions: the
+<small>Q</small><small>U</small><small>E</small><small>S</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_746"></a>and the <small>A</small><small>N</small><small>S</small><small>W</small><small>E</small><small>R</small>.
+<a name="node_idx_748"></a>
+<a name="node_idx_750"></a>A question is also called a <small>C</small><small>O</small><small>N</small><small>D</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>.
+<a name="node_idx_752"></a></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_57">22</a> provides a summary of the conventions.</p>
+<p>
+
+</p>
+<a name="node_sec_8.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.3">8.3&nbsp;&nbsp;The Meaning of Scheme</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-12.html#node_chap_7"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Stepper</a>
+</td></tr></table><p></p>
+<p>
+A legal DrScheme program consists of two items: a sequence of function
+definitions (in the <tt>Definitions</tt>
+<a name="node_idx_754"></a>window) and a sequence of
+interactions (in the <tt>Interactions</tt>
+<a name="node_idx_756"></a>window). Each interaction is a
+demand for the evaluation
+<a name="node_idx_758"></a>of one Scheme expression, which typically refers
+to the functions defined in the upper part of DrScheme.</p>
+<p>
+When DrScheme evaluates an expression, it uses nothing but the laws of
+arithmetic and algebra to convert an expression into a value. In ordinary
+mathematics courses, values are just numbers. We also include symbols,
+booleans, and indeed all constants: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;val&gt;</tt> </td><td valign="top">= </td><td valign="top"><tt>&lt;con&gt;</tt> 
+</td></tr></table>
+</td></tr></table></div>
+
+The collection of values is thus just a subset of the collection of
+expressions. <p>
+Now that we have defined the set of values, it is easy to introduce and to
+explain the evaluation
+<a name="node_idx_760"></a>rules. The rules come in two categories: those that
+appeal to arithmetic knowledge and those that rely on a small amount of
+algebra.
+<a name="node_idx_762"></a><a name="node_idx_764"></a>
+First, we need an infinite number of rules like those of
+arithmetic to evaluate applications of primitives:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>) <span class="builtin">=</span> <span class="selfeval">2</span>
+(<span class="builtin">-</span> <span class="selfeval">2</span> <span class="selfeval">1</span>) <span class="builtin">=</span> <span class="selfeval">1</span> 
+</pre></div><p>
+But Scheme ``arithmetic'' is more general than just number crunching. It
+also includes rules for dealing with boolean values, symbols, and
+lists like these: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">not</span> true) <span class="builtin">=</span> false
+(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span>) <span class="builtin">=</span> false
+(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">a</span>) <span class="builtin">=</span> true
+</pre></div><p></p>
+<p>
+Second, we need one rule from algebra to understand how the application of
+a user-defined function advances computation.
+<a name="node_idx_766"></a>Suppose the <tt>Definitions</tt>
+<a name="node_idx_768"></a>window contains the definition
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>) 
+  <span class="builtin">exp</span>)
+</pre></div><p>
+and <code class="scheme"><span class="variable">f</span><span class="keyword">,</span> <span class="variable">x-1</span><span class="keyword">,</span> ...<span class="keyword">,</span> <span class="variable">x-n</span></code> are variables and <code class="scheme"><span class="builtin">exp</span></code> is some
+(legal) expression. Then an application of a function is governed by the
+law: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><code class="scheme">(<span class="variable">f</span> <span class="variable">v-1</span> ... <span class="variable">v-n</span>)</code>
+</td><td valign="top">= </td><td valign="top"><code class="scheme"><span class="builtin">exp</span></code> 
+ with all  <code class="scheme"><span class="variable">x-1</span> ... <span class="variable">x-n</span></code> 
+ replaced by  <code class="scheme"><span class="variable">v-1</span> ... <span class="variable">v-n</span></code>
+</td></tr></table>
+</td></tr></table></div>
+
+where <code class="scheme"><span class="variable">v-1</span> ... <span class="variable">v-n</span></code> is a sequence of values that is as long as 
+<code class="scheme"><span class="variable">x-1</span> ... <span class="variable">x-n</span></code>.<p>
+This rule is as general as possible, so it is best to look at a concrete
+example. Say the definition is
+<a name="node_idx_770"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">poly</span> <span class="variable">x</span> <span class="variable">y</span>) 
+  (<span class="builtin">+</span> (<span class="builtin">expt</span> <span class="selfeval">2</span> <span class="variable">x</span>) <span class="variable">y</span>))
+</pre></div><p>
+Then the application <code class="scheme">(<span class="variable">poly</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)</code> can be evaluated as follows:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">poly</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)
+<span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">expt</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) <span class="selfeval">5</span>))
+  <span class="comment">;; This line is <code class="scheme">(<span class="builtin">+</span> (<span class="builtin">expt</span> <span class="selfeval">2</span> <span class="variable">x</span>) <span class="variable">y</span>)</code> where <code class="scheme"><span class="variable">x</span></code> was replaced by <code class="scheme"><span class="selfeval">3</span></code> and <code class="scheme"><span class="variable">y</span></code> by <code class="scheme"><span class="selfeval">5</span></code> .</span>
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">8</span> <span class="selfeval">5</span>)
+<span class="builtin">=</span> <span class="selfeval">13</span>
+</pre></div><p>
+These last two steps follow from plain arithmetic. </p>
+<p>
+Third and finally, we need some rules that help us determine the value of
+<strong>cond</strong>-expressions.
+<a name="node_idx_772"></a>These rules are algebraic rules but are not a
+part of the standard algebra curriculum:</p>
+<p>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>cond_false:</b></dt><dd> when the first condition is <code class="scheme">false</code>: <p>
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span> 
+    [false ...]
+    [<span class="variable">exp1</span> <span class="variable">exp2</span>]
+    ...)
+</pre></div><div align="left"><pre class="scheme">  <span class="builtin">=</span> (<span class="keyword">cond</span>
+      <span class="comment">; The first line disappeared.</span>
+      [<span class="variable">exp1</span> <span class="variable">exp2</span>]
+      ...)
+</pre></div><p>
+then the first <code class="scheme"><span class="keyword">cond</span></code>-line disappears; </p>
+<p>
+</p>
+</dd><dt><b>cond_true:</b></dt><dd> when the first condition is <code class="scheme">true</code>: <p>
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span> 
+    [true <span class="builtin">exp</span>] 
+    ...) 
+</pre></div><div align="left"><pre class="scheme">  <span class="builtin">=</span> <span class="builtin">exp</span>
+
+
+</pre></div><p>
+the entire <strong>cond</strong>-expressions is replaced by the first answer; </p>
+<p>
+</p>
+</dd><dt><b>cond_else:</b></dt><dd> when the only line left is the <code class="scheme"><span class="keyword">else</span></code>-line:<p>
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span> 
+    [<span class="keyword">else</span> <span class="builtin">exp</span>])
+</pre></div><div align="left"><pre class="scheme">  <span class="builtin">=</span> <span class="builtin">exp</span>
+
+</pre></div><p>
+the <strong>cond</strong>-expressions is replaced by the answer in the
+<code class="scheme"><span class="keyword">else</span></code>-clause. </p>
+<p>
+</p>
+</dd></dl><p>
+No other rules are needed to understand <code class="scheme"><span class="keyword">cond</span></code>.</p>
+<p>
+Consider the following evaluation: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [false <span class="selfeval">1</span>]
+  [true (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)]
+  [<span class="keyword">else</span> <span class="selfeval">3</span>])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [true (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)]
+    [<span class="keyword">else</span> <span class="selfeval">3</span>])
+
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)
+
+<span class="builtin">=</span> <span class="selfeval">2</span>
+</pre></div><p>
+It first eliminates a <code class="scheme"><span class="keyword">cond</span></code>-line and then equates the
+<strong>cond</strong>-expression with&nbsp;<code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)</code>. The rest is plain
+arithmetic again. </p>
+<p>
+The rules are equations of the form that we use in arithmetic and algebra
+on a daily basis.
+<a name="node_idx_774"></a>
+<a name="node_idx_776"></a>
+Indeed, the same laws apply to this system of equations
+as to those in mathematics. For example, if <code class="scheme"><span class="variable">a</span> <span class="builtin">=</span> <span class="variable">b</span></code> and <code class="scheme"><span class="variable">b</span> <span class="builtin">=</span> <span class="variable">c</span></code>, then we also know that <code class="scheme"><span class="variable">a</span> <span class="builtin">=</span> <span class="variable">c</span></code>. A consequence is
+that as we get better at hand-evaluations, we can skip obvious steps and
+combine several equational inferences into one. Here is one shorter version
+of the previous evaluation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span>
+    [false <span class="selfeval">1</span>]
+    [true (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)]
+    [<span class="keyword">else</span> <span class="selfeval">3</span>])
+
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)
+
+<span class="builtin">=</span> <span class="selfeval">2</span>
+</pre></div><p></p>
+<p>
+Even more importantly, we can replace any expression by its equal in every
+context -- just as in algebra.  Here is a another <strong>cond</strong>-expression
+and its evaluation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span>
+    [<span class="variable"><u><code class="scheme">(<span class="builtin">=</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code></u></span> <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)])
+  <span class="comment">;; The underlined expression is evaluated first. </span>
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [false <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)])
+  <span class="comment">;; Here <code class="scheme"><span class="keyword">cond</span></code>_<code class="scheme"><span class="builtin">false</span></code> applies. </span>
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [<span class="keyword">else</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)])
+  <span class="comment">;; Using <code class="scheme"><span class="keyword">cond</span></code>_<code class="scheme"><span class="keyword">else</span></code>, we now get an arithmetic expression. </span>
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)
+<span class="builtin">=</span> <span class="selfeval">2</span>
+</pre></div><p>
+For the first step, we evaluated the nested, underlined  expression,
+<a name="node_idx_778"></a>which is clearly essential here, because no <code class="scheme"><span class="keyword">cond</span></code> rule would apply
+otherwise. Of course, there is nothing unusual about this kind of
+computing. We have done this many times in algebra and in the first few
+sections of this book.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_8.3.1"></a>
+<b>Exercise 8.3.1.</b>&nbsp;&nbsp; 
+Evaluate the following expressions step by step: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="builtin">+</span> (<span class="builtin">*</span> (<span class="builtin">/</span> <span class="selfeval">12</span> <span class="selfeval">8</span>) <span class="selfeval">2/3</span>) 
+	(<span class="builtin">-</span> <span class="selfeval">20</span> (<span class="builtin">sqrt</span> <span class="selfeval">4</span>)))
+
+<span class="variable">2.</span> (<span class="keyword">cond</span>
+       [(<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>) false]
+       [(<span class="builtin">&gt;</span> <span class="selfeval">0</span> <span class="selfeval">1</span>) (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">a</span>)]
+       [<span class="keyword">else</span> (<span class="builtin">=</span> (<span class="builtin">/</span>  <span class="selfeval">1</span> <span class="selfeval">0</span>) <span class="selfeval">9</span>)])
+
+<span class="variable">3.</span> (<span class="keyword">cond</span>
+       [(<span class="builtin">=</span> <span class="selfeval">2</span> <span class="selfeval">0</span>) false]
+       [(<span class="builtin">&gt;</span> <span class="selfeval">2</span> <span class="selfeval">1</span>) (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">a</span>)]
+       [<span class="keyword">else</span> (<span class="builtin">=</span> (<span class="builtin">/</span>  <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">9</span>)]) <span class="comment">; &nbsp;&nbsp;&nbsp; &nbsp;
+<img src="../icons/hand.right.gif">
+
+&nbsp;<a href="../Solutions/eval1.html">Solution</a></span>
+</pre></div><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.3.2"></a>
+<b>Exercise 8.3.2.</b>&nbsp;&nbsp; 
+Suppose the <tt>Definitions</tt>
+<a name="node_idx_780"></a>window contains
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+</pre></div><p></p>
+<p>
+Show how DrScheme evaluates the following expressions, step by step:
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="builtin">+</span> (<span class="variable">f</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="variable">f</span> <span class="selfeval">2</span> <span class="selfeval">1</span>))
+
+<span class="variable">2.</span> (<span class="variable">f</span> <span class="selfeval">1</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+
+<span class="variable">3.</span> (<span class="variable">f</span> (<span class="variable">f</span> <span class="selfeval">1</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)) <span class="selfeval">19</span>) <span class="comment">; &nbsp;&nbsp;&nbsp; &nbsp;
+<img src="../icons/hand.right.gif">
+
+&nbsp;<a href="../Solutions/eval def1.html">Solution</a></span>
+</pre></div><p>
+
+</p>
+
+   <hr>
+ <p></p>
+<p>
+
+</p>
+<a name="node_sec_8.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.4">8.4&nbsp;&nbsp;Errors</a></h2>
+<p> 
+</p>
+<p>
+<a name="node_idx_782"></a></p>
+<p>
+Parenthesized sentences may or may not belong to Scheme, depending on
+whether or not they are legal according to the grammar in
+figure&nbsp;<a href="#node_fig_Temp_56">21</a>.  If DrScheme verifies that a sentence does
+not belong to the language dubbed <tt>Beginning Student</tt>, it signals a
+<small>S</small><small>Y</small><small>N</small><small>T</small><small>A</small><small>X</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small>.
+<a name="node_idx_784"></a></p>
+<p>
+The remaining expressions are syntactically legal, but some of those may
+still pose problems for our evaluation rules. We say that such legal
+expressions contain <small>L</small><small>O</small><small>G</small><small>I</small><small>C</small><small>A</small><small>L</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small><small>S</small> 
+<a name="node_idx_786"></a>or <small>R</small><small>U</small><small>N</small>-<small>T</small><small>I</small><small>M</small><small>E</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small><small>S</small>.
+<a name="node_idx_788"></a>Consider the simplest example: <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code>. We already know from
+mathematics that
+</p>
+<div align="center"><img src="curriculumAa-Z-G-1.gif" border="0" alt="[curriculumAa-Z-G-1.gif]"></div><p> does not have a value. Clearly, since Scheme's
+calculations must be consistent with mathematics, it too must not equate
+<code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code> with a value. </p>
+<p>
+In general, if an expression is not a value and if the evaluation rules
+allow no further simplification, we say that an error occurred or that the
+function raises an error signal. Pragmatically this means that the
+evaluation stops immediately with an appropriate error message, such as
+<code class="scheme"><span class="selfeval">&quot;/: divide by zero&quot;</span></code> for division by zero.  </p>
+<p>
+For an example, consider the following evaluation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">20</span> <span class="selfeval">2</span>) (<span class="builtin">/</span> <span class="selfeval">1</span> (<span class="builtin">-</span> <span class="selfeval">10</span> <span class="selfeval">10</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">40</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>))
+<span class="builtin">=</span> <span class="variable">/:</span> <span class="variable">divide</span> <span class="variable">by</span> <span class="variable">zero</span>
+</pre></div><p>
+The error eliminates the context <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">40</span> ...)</code> around <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code>, 
+which represents the remainder of the computation with respect to the division.</p>
+<p>
+To understand how run-time errors are signaled, we must inspect the
+evaluation rules again. Consider the function
+<a name="node_idx_790"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">my-divide</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">my-divide</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) <span class="keyword">'</span><span class="variable">inf</span>]
+    [<span class="keyword">else</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">n</span>)]))
+</pre></div><p>
+Now suppose we apply <code class="scheme"><span class="variable">my-divide</span></code> to <code class="scheme"><span class="selfeval">0</span></code>. Then the first step is: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">my-divide</span> <span class="selfeval">0</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>) <span class="keyword">'</span><span class="variable">inf</span>]
+    [<span class="keyword">else</span> <span class="variable"><u><code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code></u></span>])
+</pre></div><p>
+It would obviously be wrong to say that the function signals the error ``/:
+divide by zero'' now, even though an evaluation of the underlined
+subexpression would demand it. After all, <code class="scheme">(<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)</code> is
+<code class="scheme">true</code> and therefore the application has a proper result: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">my-divide</span> <span class="selfeval">0</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>) <span class="keyword">'</span><span class="variable">inf</span>]
+    [<span class="keyword">else</span> <span class="variable"><u><code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code></u></span>])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [true <span class="keyword">'</span><span class="variable">inf</span>]
+    [<span class="keyword">else</span> <span class="variable"><u><code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code></u></span>])
+
+<span class="builtin">=</span> <span class="keyword">'</span><span class="variable">inf</span>
+</pre></div><p></p>
+<p>
+Fortunately, our laws of evaluation take care of these situations
+automatically. We just need to keep in mind when the laws apply. 
+For example, in 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">20</span> <span class="selfeval">2</span>) (<span class="builtin">/</span> <span class="selfeval">20</span> <span class="selfeval">2</span>))
+</pre></div><p>
+the addition cannot take place before the multiplication or
+division. Similarly, the underlined division in 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>) <span class="keyword">'</span><span class="variable">inf</span>]
+  [<span class="keyword">else</span> <span class="variable"><u><code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code></u></span>])
+</pre></div><p>
+cannot be evaluated until the corresponding line is the first condition in
+the <strong>cond</strong>-expression.</p>
+<p>
+As a rule of thumb, it is best to keep the following in mind:</p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Expression Evaluation
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Simplify the outermost (and left-most) 
+subexpression that is ready for evaluation.
+</p></font></td></tr>
+</table>
+ <p>
+<a name="node_idx_792"></a></p>
+<p>
+While this guideline is a simplification, it always explains Scheme's
+results.</p>
+<p>
+In some cases, programmers also want to define functions that raise errors. 
+Recall the checked version of <code class="scheme"><span class="variable">area-of-disk</span></code> from
+section&nbsp;<a href="curriculum-Z-H-9.html#node_chap_6">6</a>: 
+<a name="node_idx_794"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">checked-area-of-disk</span> <span class="selfeval">:</span> <span class="variable">Scheme-value</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to compute the area of a disk with radius <code class="scheme"><span class="variable">v</span></code>, if <code class="scheme"><span class="variable">v</span></code> is a number</span>
+(<span class="keyword">define</span> (<span class="variable">checked-area-of-disk</span> <span class="variable">v</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">v</span>) (<span class="variable">area-of-disk</span> <span class="variable">v</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)]))
+</pre></div><p>
+If we were to apply <code class="scheme"><span class="variable">checked-area-of-disk</span></code> to a symbol, we would get
+the following evaluation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">-</span> (<span class="variable">checked-area-of-disk</span> <span class="keyword">'</span><span class="variable">a</span>)
+     (<span class="variable">checked-area-of-disk</span> <span class="selfeval">10</span>))
+
+<span class="builtin">=</span> (<span class="builtin">-</span> (<span class="keyword">cond</span>
+       [(<span class="builtin">number?</span> <span class="keyword">'</span><span class="variable">a</span>) (<span class="variable">area-of-disk</span> <span class="keyword">'</span><span class="variable">a</span>)]	
+       [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)])
+     (<span class="variable">checked-area-of-disk</span> <span class="selfeval">10</span>))
+
+<span class="builtin">=</span> (<span class="builtin">-</span> (<span class="keyword">cond</span>
+       [false (<span class="variable">area-of-disk</span> <span class="keyword">'</span><span class="variable">a</span>)]	
+       [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)])
+     (<span class="variable">checked-area-of-disk</span> <span class="selfeval">10</span>))
+
+<span class="builtin">=</span> (<span class="builtin">-</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)
+     (<span class="variable">checked-area-of-disk</span> <span class="selfeval">10</span>))
+
+<span class="builtin">=</span> <span class="variable">checked-area-of-disk</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">expected</span>
+</pre></div><p>
+In other words, when we evaluate the <code class="scheme"><span class="builtin">error</span></code> expression, we
+proceed as if we had encountered a division by zero.</p>
+<p>
+</p>
+<p>
+
+</p>
+<a name="node_sec_8.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.5">8.5&nbsp;&nbsp;Boolean Expressions</a></h2>
+<p> </p>
+<p>
+Our current definition of the Beginning Student Scheme language omits two
+forms of expressions: <code class="scheme"><span class="keyword">and</span></code>
+<a name="node_idx_796"></a><a name="node_idx_798"></a>and <code class="scheme"><span class="keyword">or</span></code> expressions.
+<a name="node_idx_800"></a><a name="node_idx_802"></a>Adding them
+provides a case study of how to study new language construct.  We must
+first understand their syntax, then their semantics, and finally their
+pragmatics.</p>
+<p>
+Here is the revised grammar:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<code class="scheme"><span class="keyword">and</span></code> <tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">or</span></code> <tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+The grammar says that <code class="scheme"><span class="keyword">and</span></code> and <code class="scheme"><span class="keyword">or</span></code> are keywords, each
+followed by two expressions. At first glance, the two look like
+(primitive or function) applications. To understand why they are not, we
+must look at the pragmatics of these expressions first. <p>
+Suppose we need to formulate a condition that determines whether the
+<code class="scheme"><span class="variable">n</span></code>-th fraction of <code class="scheme"><span class="selfeval">1</span></code> is <code class="scheme"><span class="variable">m</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">not</span> (<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>)) 
+     (<span class="builtin">=</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">n</span>) <span class="variable">m</span>))
+</pre></div><p>
+We formulate the condition as an <code class="scheme"><span class="keyword">and</span></code> combination of two boolean
+expressions, because we don't wish to divide by <code class="scheme"><span class="selfeval">0</span></code> accidentally.
+Next, assume <code class="scheme"><span class="variable">n</span></code> becomes <code class="scheme"><span class="selfeval">0</span></code> during the course of the
+evaluation. Then the expression becomes 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">not</span> (<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)) 
+     (<span class="builtin">=</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>) <span class="variable">m</span>))
+</pre></div><p>
+Now, if <code class="scheme"><span class="keyword">and</span></code> were an ordinary operation, we would have to evaluate
+both subexpressions, which would trigger an error in the second one. For
+this reason, <code class="scheme"><span class="keyword">and</span></code> is not a primitive operation,
+<a name="node_idx_804"></a>but a special
+expression. In short, we use <code class="scheme"><span class="keyword">and</span></code> and <code class="scheme"><span class="keyword">or</span></code> expressions to
+combine boolean computations that may have to short-cut an evaluation.</p>
+<p>
+Once we understand how <code class="scheme"><span class="keyword">and</span></code> and <code class="scheme"><span class="keyword">or</span></code> expressions should be
+evaluated, it is easy to formulate matching rules. Better still, we can 
+formulate expressions in our first language that are equivalent to these
+expressions: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> <span class="variable"><tt>&lt;exp-1&gt;</tt></span> <span class="variable"><tt>&lt;exp-2&gt;</tt></span>)
+<span class="variable"><u>=</u></span>
+(<span class="keyword">cond</span>
+  [<span class="variable"><tt>&lt;exp-1&gt;</tt></span> <span class="variable"><tt>&lt;exp-2&gt;</tt></span>]
+  [<span class="keyword">else</span> <span class="builtin">false</span>])
+</pre></div><p>
+and
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> <span class="variable"><tt>&lt;exp-1&gt;</tt></span> <span class="variable"><tt>&lt;exp-2&gt;</tt></span>)
+<span class="variable"><u>=</u></span>
+(<span class="keyword">cond</span>
+  [<span class="variable"><tt>&lt;exp-1&gt;</tt></span> <span class="builtin">true</span>]
+  [<span class="keyword">else</span> <span class="variable"><tt>&lt;exp-2&gt;</tt></span>])
+</pre></div><p>
+These equivalences simplify what actually takes place in DrScheme but they
+are a perfectly appropriate model for now. </p>
+<p>
+
+</p>
+<a name="node_sec_8.6"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.6">8.6&nbsp;&nbsp;Variable Definitions</a></h2>
+<p> 
+<a name="node_idx_806"></a><a name="node_idx_808"></a></p>
+<p>
+Programs consist not only of function definitions but also variable
+definitions, but these weren't included in our first grammar. </p>
+<p>
+Here is the grammar rule for variable definitions:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<code class="scheme"><span class="keyword">define</span></code> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+The shape of a variable definition is similar to that of a function
+definition.  It starts with a ``('', followed by the keyword
+<code class="scheme"><span class="keyword">define</span></code>, followed by a variable, followed by an expression, and
+closed by a right parenthesis ``)'' that matches the very first one.  The
+keyword <code class="scheme"><span class="keyword">define</span></code> distinguishes variable definitions from
+expressions, but not from function definitions. For that, a reader must look
+at the second component of the definition.<p>
+Next we must understand what a variable definition means. A variable
+definition like
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">RADIUS</span> <span class="selfeval">5</span>)
+</pre></div><p>
+has a plain meaning. It says that wherever we encounter <code class="scheme"><span class="variable">RADIUS</span></code>
+during an evaluation, we may replace it with <code class="scheme"><span class="selfeval">5</span></code>. </p>
+<p>
+When DrScheme encounters a definition with a proper expression on the
+right-hand side, it must evaluate that expression immediately. For example,
+the right-hand side of the definition
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">DIAMETER</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>))
+</pre></div><p>
+is the expression <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>)</code>. Its value is <code class="scheme"><span class="selfeval">10</span></code> because
+<code class="scheme"><span class="variable">RADIUS</span></code> stands for <code class="scheme"><span class="selfeval">5</span></code>. Hence we can act as if we had written
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">DIAMETER</span> <span class="selfeval">10</span>)
+</pre></div><p></p>
+<p>
+In short, when DrScheme encounters a variable definition, it determines the
+value of the right-hand side. For that step, it uses all those definitions
+that <em>precede</em> the current definition but not those that follow. Once
+DrScheme has a value for the right-hand side, it remembers that the name on
+the left-hand side stands for this value. Whenever we evaluate an
+expression, every occurrence of the <code class="scheme"><span class="keyword">define</span></code>d variable is replaced
+by its value.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_58"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_810"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">RADIUS</span> <span class="selfeval">10</span>)
+
+(<span class="keyword">define</span> <span class="variable">DIAMETER</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">area</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the area of a disk with radius <code class="scheme"><span class="variable">r</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">area</span> <span class="variable">r</span>)
+  (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>)))
+
+(<span class="keyword">define</span> <span class="variable">AREA-OF-RADIUS</span> (<span class="variable">area</span> <span class="variable">RADIUS</span>))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 23:</b>&nbsp;&nbsp;An example of variable definitions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Consider the sequence of definitions in figure&nbsp;<a href="#node_fig_Temp_58">23</a>.
+As DrScheme steps through this sequence of definitions, it first determines
+that <code class="scheme"><span class="variable">RADIUS</span></code> stands for <code class="scheme"><span class="selfeval">10</span></code>, <code class="scheme"><span class="variable">DIAMETER</span></code> for
+<code class="scheme"><span class="selfeval">20</span></code>, and area is the name of a function. Finally, it evaluates
+<code class="scheme">(<span class="variable">area</span> <span class="variable">RADIUS</span>)</code> to <code class="scheme"><span class="selfeval">314.0</span></code> and associates
+<code class="scheme"><span class="variable">AREA-OF-RADIUS</span></code> with that value.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_8.6.1"></a>
+<b>Exercise 8.6.1.</b>&nbsp;&nbsp; 
+Make up five examples of variable definitions. Use constants and
+expressions on the right-hand side. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/def-var-syn.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.6.2"></a>
+<b>Exercise 8.6.2.</b>&nbsp;&nbsp; 
+Evaluate the following sequence of definitions
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">RADIUS</span> <span class="selfeval">10</span>)
+
+(<span class="keyword">define</span> <span class="variable">DIAMETER</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>))
+
+(<span class="keyword">define</span> <span class="variable">CIRCUMFERENCE</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> <span class="variable">DIAMETER</span>))
+</pre></div><p>
+by hand.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/def-var-sem2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.6.3"></a>
+<b>Exercise 8.6.3.</b>&nbsp;&nbsp; 
+Evaluate the following sequence of definitions
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">PRICE</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> <span class="variable">SALES-TAX</span> (<span class="builtin">*</span> <span class="selfeval">.08</span> <span class="variable">PRICE</span>))
+
+(<span class="keyword">define</span> <span class="variable">TOTAL</span> (<span class="builtin">+</span> <span class="variable">PRICE</span> <span class="variable">SALES-TAX</span>))
+</pre></div><p>
+by hand.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/def-var-sem3.html">Solution</a></p>
+<p>
+</p>
+<p>
+
+</p>
+<a name="node_sec_8.7"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_8.7">8.7&nbsp;&nbsp;Structure Definitions</a></h2>
+<p> 
+<a name="node_idx_812"></a><a name="node_idx_814"></a></p>
+<p>
+We still have to understand the syntax and semantics of one more Scheme
+construct: <code class="scheme"><span class="keyword">define-struct</span></code>. When we define a structure, we really
+define several primitive operations: a constructor,
+<a name="node_idx_816"></a><a name="node_idx_818"></a>several selectors, and
+<a name="node_idx_820"></a><a name="node_idx_822"></a>a predicate.
+<a name="node_idx_824"></a><a name="node_idx_826"></a>Hence, <code class="scheme"><span class="keyword">define-struct</span></code> is by far the most complex
+Scheme construct we use. </p>
+<p>
+A structure definition is a third form of
+definition. The keyword <code class="scheme"><span class="keyword">define-struct</span></code> distinguishes this form of
+definition from function and variable definitions. The keyword is followed
+by a name and a sequence of names enclosed in parentheses:</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<tt>&lt;def&gt;</tt> = 
+(<code class="scheme"><span class="keyword">define-struct</span></code> <tt>&lt;var0&gt;</tt> (<tt>&lt;var-1&gt;</tt> <tt>...</tt> <tt>&lt;var-n&gt;</tt>)) .
+</td></tr></table></div>
+
+The names in a <code class="scheme"><span class="keyword">define-struct</span></code> definition must be chosen as if they
+were function names, though none of them is used as a
+function (or variable) name.<p>
+Here is a simple example: 
+<a name="node_idx_828"></a></p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define-struct</span> <span class="variable">point</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)) . 
+</pre></div><p>
+Since <code class="scheme"><span class="variable">point</span></code>, <code class="scheme"><span class="variable">x</span></code>, <code class="scheme"><span class="variable">y</span></code>, and <code class="scheme"><span class="variable">z</span></code> are variables and
+the parentheses are placed according to the grammatical pattern, it is a
+proper definition of a structure. In contrast, these two parenthesized sentences
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define-struct</span> (<span class="variable">point</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>))
+
+  (<span class="keyword">define-struct</span> <span class="variable">point</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)
+</pre></div><p>
+are improper definitions, because <code class="scheme"><span class="keyword">define-struct</span></code> is not followed
+by a single variable name and a sequence of variables in parentheses. </p>
+<p>
+
+</p>
+<p>
+A <code class="scheme"><span class="keyword">define-struct</span></code> definition introduces new primitive
+operations.
+<a name="node_idx_830"></a>The names of these operations are formed from those that occur
+in the definition.  Suppose a data structure definition has the following
+shape:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define-struct</span> <span class="variable">c</span> (<span class="variable">s-1</span> ... <span class="variable">s-n</span>))
+</pre></div><p>
+Then Scheme introduces the following primitive operations:  
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">make-c</span></code>: a <small>C</small><small>O</small><small>N</small><small>S</small><small>T</small><small>R</small><small>U</small><small>C</small><small>T</small><small>O</small><small>R</small>;
+<a name="node_idx_832"></a><a name="node_idx_834"></a></p>
+<li><p><code class="scheme"><span class="builtin">c-s-1</span> ... <span class="builtin">c-s-n</span></code>: a series of <small>S</small><small>E</small><small>L</small><small>E</small><small>C</small><small>T</small><small>O</small><small>R</small><small>S</small>;
+<a name="node_idx_836"></a><a name="node_idx_838"></a>and
+</p>
+<li><p><code class="scheme"><span class="builtin">c?</span></code>: a <small>P</small><small>R</small><small>E</small><small>D</small><small>I</small><small>C</small><small>A</small><small>T</small><small>E</small>. 
+<a name="node_idx_840"></a><a name="node_idx_842"></a></p>
+</li></ol><p>
+These primitives have the same status as <code class="scheme"><span class="builtin">+</span></code>, <code class="scheme"><span class="builtin">-</span></code>, or
+<code class="scheme"><span class="builtin">*</span></code>. Before we can understand the rules that govern these new
+primitives, however, we must return to the definition of values. After
+all, the purpose of <code class="scheme"><span class="keyword">define-struct</span></code> is to introduce a new class of
+values: structures. </p>
+<p>
+Simply put, the set of values no longer consists of just constants, but
+also of structures, which compound several values into one.  In terms of
+our grammar of values, we must add one clause per <code class="scheme"><span class="keyword">define-struct</span></code>: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;val&gt;</tt> </td><td valign="top">= </td><td valign="top">(make-c <tt>&lt;val&gt;</tt> ... <tt>&lt;val&gt;</tt>)</td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+Let us return to the <code class="scheme"><span class="variable">points</span></code> structures.  Since the list of fields
+contains three names, <code class="scheme">(<span class="builtin">make-point</span> <span class="variable">u</span> <span class="variable">v</span> <span class="variable">w</span>)</code> is a value if
+<code class="scheme"><span class="variable">u</span></code>, <code class="scheme"><span class="variable">v</span></code>, and <code class="scheme"><span class="variable">w</span></code> are values. <p>
+Now we are in a position to understand the evaluation rules of the new
+primitives. If <code class="scheme"><span class="builtin">c-s-1</span></code> is applied to a <code class="scheme"><span class="variable">c</span></code> structure, it
+returns the first component of the value. Similarly, the second selector
+extracts the second component, the third selector the third component, and
+so on. The relationship between the new data constructor and the selectors
+is best characterized with <em>n</em> equations:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">c-s-1</span> (<span class="builtin">make-c</span> <span class="variable">V-1</span> ... <span class="variable">V-n</span>)) <span class="builtin">=</span> <span class="variable">V-1</span>
+                  <span class="variable"><img src="curriculum-Z-G-D-5.gif" border="0" alt="[curriculum-Z-G-D-5.gif]"></span>
+(<span class="builtin">c-s-n</span> (<span class="builtin">make-c</span> <span class="variable">V-1</span> ... <span class="variable">V-n</span>)) <span class="builtin">=</span> <span class="variable">V-n</span>
+</pre></div><p>
+where <code class="scheme"><span class="variable">V-1</span> ... <span class="variable">V-n</span></code> is a sequence of values that is as long
+as <code class="scheme"><span class="variable">s-1</span> ... <span class="variable">s-n</span></code>. </p>
+<p>
+For our running example, we get the equations 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">point-x</span> (<span class="builtin">make-point</span> <span class="variable">V</span> <span class="variable">U</span> <span class="variable">W</span>)) <span class="builtin">=</span> <span class="variable">V</span>
+(<span class="builtin">point-y</span> (<span class="builtin">make-point</span> <span class="variable">V</span> <span class="variable">U</span> <span class="variable">W</span>)) <span class="builtin">=</span> <span class="variable">U</span>
+(<span class="builtin">point-z</span> (<span class="builtin">make-point</span> <span class="variable">V</span> <span class="variable">U</span> <span class="variable">W</span>)) <span class="builtin">=</span> <span class="variable">W</span>
+</pre></div><p>
+In particular, <code class="scheme">(<span class="builtin">point-y</span> (<span class="builtin">make-point</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>))</code> is equal to
+<code class="scheme"><span class="selfeval">4</span></code>, and <code class="scheme">(<span class="builtin">point-x</span> (<span class="builtin">make-point</span> (<span class="builtin">make-point</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) <span class="selfeval">4</span> <span class="selfeval">5</span>))</code>
+evaluates to <code class="scheme">(<span class="builtin">make-point</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> because the latter is also a value. </p>
+<p>
+The predicate <code class="scheme"><span class="builtin">c?</span></code> can be applied to any value. It returns
+<code class="scheme">true</code> if the value is of kind <code class="scheme"><span class="variable">c</span></code> and <code class="scheme">false</code> otherwise.
+We can translate both parts into equations. The first one,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">c?</span> (<span class="builtin">make-c</span> <span class="variable">V-1</span> ... <span class="variable">V-n</span>)) <span class="builtin">=</span> true <span class="keyword">,</span> 
+</pre></div><p>
+relates <code class="scheme"><span class="builtin">c?</span></code> and values constructed with <code class="scheme"><span class="builtin">make-c</span></code>; the second one, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">c?</span> <span class="variable">V</span>) <span class="builtin">=</span> false<span class="comment">; if <code class="scheme"><span class="variable">V</span></code> is a value not constructed with <code class="scheme"><span class="builtin">make-c</span></code> , </span>
+</pre></div><p>
+relates <code class="scheme"><span class="builtin">c?</span></code> to all other values. </p>
+<p>
+Again, the equations are best understood in terms of our example. Here are
+the general equations:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">point?</span> (<span class="builtin">make-point</span> <span class="variable">V</span> <span class="variable">U</span> <span class="variable">W</span>)) <span class="builtin">=</span> true
+(<span class="builtin">point?</span> <span class="variable">U</span>) <span class="builtin">=</span> false <span class="comment">; if <code class="scheme"><span class="variable">U</span></code> is value, but not a <code class="scheme"><span class="variable">point</span></code> structure.</span>
+</pre></div><p>
+Thus, <code class="scheme">(<span class="builtin">point?</span> (<span class="builtin">make-point</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>))</code> is <code class="scheme">true</code> and
+<code class="scheme">(<span class="builtin">point?</span> <span class="selfeval">3</span>)</code> is <code class="scheme">false</code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_8.7.1"></a>
+<b>Exercise 8.7.1.</b>&nbsp;&nbsp; 
+Distinguish legal from illegal sentences: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">personnel-record</span> (<span class="variable">name</span> <span class="variable">salary</span> <span class="variable">dob</span> <span class="variable">ssn</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">oops</span> ())</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">child</span> (<span class="variable">dob</span> <span class="variable">date</span> (<span class="builtin">-</span> <span class="variable">date</span> <span class="variable">dob</span>)))</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> (<span class="variable">child</span> <span class="variable">person</span>) (<span class="variable">dob</span> <span class="variable">date</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">child</span> (<span class="variable">parents</span> <span class="variable">dob</span> <span class="variable">date</span>))</code>
+</p>
+</li></ol><p></p>
+<p>
+Explain why the sentences are legal <code class="scheme"><span class="keyword">define-struct</span></code>
+definitions or how they fail to be legal <code class="scheme"><span class="keyword">define-struct</span></code>
+definitions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/define-struct-syn.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_8.7.2"></a>
+<b>Exercise 8.7.2.</b>&nbsp;&nbsp; 
+Which of the following are values? 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">make-point</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-point</span> (<span class="builtin">make-point</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) <span class="selfeval">4</span> <span class="selfeval">5</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-point</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">3</span> <span class="selfeval">4</span>)</code> 
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/define-struct-value.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_8.7.3"></a>
+<b>Exercise 8.7.3.</b>&nbsp;&nbsp;  
+Suppose the <tt>Definitions</tt>
+<a name="node_idx_844"></a>window contains 
+<a name="node_idx_846"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">ball</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">speed-x</span> <span class="variable">speed-y</span>))
+</pre></div><p>
+Determine the results of the following expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">number?</span> (<span class="builtin">make-ball</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">ball-speed-y</span> (<span class="builtin">make-ball</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">+</span> <span class="selfeval">3</span> <span class="selfeval">3</span>) <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">ball-y</span> (<span class="builtin">make-ball</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">+</span> <span class="selfeval">3</span> <span class="selfeval">3</span>) <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>
+</p>
+</li></ol><p> </p>
+<p>
+Also check how DrScheme deals with the following expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">number?</span> (<span class="builtin">make-ball</span> <span class="selfeval">1</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">ball-x</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">ball-speed-y</span> <span class="selfeval">5</span>)</code>
+</p>
+</li></ol><p> 
+Verify your solutions with DrScheme.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/define-struct2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_59"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<code class="scheme"><span class="keyword">define</span></code> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">define</span></code> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">define-struct</span></code> <tt>&lt;var0&gt;</tt> (<tt>&lt;var-1&gt;</tt> <tt>...</tt><tt>&lt;var-n&gt;</tt>))</td></tr>
+<tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  <tt>&lt;var&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;con&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;prm&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">cond</span></code> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">cond</span></code> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<code class="scheme"><span class="keyword">else</span></code> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">and</span></code> <tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<code class="scheme"><span class="keyword">or</span></code> <tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 24:</b>&nbsp;&nbsp;<tt>Beginning Student</tt> Scheme: The full grammar</td></tr>
+<tr><td>
+ 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_53"></a><a href="#call_footnote_Temp_53"><sup><small>27</small></sup></a> We use different fonts to
+distinguish the words of different categories. Constants and primitive
+operations
+<a name="node_idx_712"></a><a name="node_idx_714"></a>are type set in sans serif, variables in <i>italics</i>,
+and keywords in <strong>boldface</strong>.</p>
+<p><a name="footnote_Temp_55"></a><a href="#call_footnote_Temp_55"><sup><small>28</small></sup></a> This grammar describes only that
+portion of Scheme we have used so far (minus variable and structure
+definitions), which still covers a large subset of the full
+language. Scheme is a bit larger, and we will get to know more of it in the
+remaining parts of the book.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-10.html">previous</a></span><span>, <a href="curriculum-Z-H-12.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

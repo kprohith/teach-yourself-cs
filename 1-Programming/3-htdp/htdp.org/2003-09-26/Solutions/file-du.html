@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/file-du.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 16.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="dir-how-many3.html">16.3.2</a> | <a href="../Book/curriculum-Z-H-21.html#node_thm_16.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Beginning Student with List Abbreviations
+
+
+
+;; credit to Daniel Bastos
+
+;; model 3 structure definitions [also available from teachpack]
+;; (define-struct file (name size content))
+;; (define-struct dir (name dirs files))
+;; data definitions as in book
+
+(require htdp/dir)
+
+;; data examples
+(define hang (make-file 'hang 8 empty))
+(define draw (make-file 'draw 2 empty))
+(define read (make-file 'read! 19 empty))
+(define one  (make-file 'part1 99 empty))
+(define two  (make-file 'part2 52 empty))
+(define thre (make-file 'part3 17 empty))
+(define rdme (make-file 'read 10 empty))
+
+(define Code (make-dir 'Code '() (list hang draw)))
+(define Docs (make-dir 'Docs '() (list read)))
+(define Libs (make-dir 'Libs (list Code Docs) '()))
+(define Text (make-dir 'Text '() (list one two thre)))
+(define Top  (make-dir 'TS (list Text Libs) (list rdme)))
+
+;; dir -&gt; number
+;; determine the total size of the files in this directory
+;; (we're assuming each directory is of size 1.)
+(define (du-dir d)
+  (+ 1 (sum-files (dir-files d)) (du-dir-subdir (dir-dirs d))))
+
+;; list-of-directories -&gt; number
+;; determine the total size of the files in a list of directories
+(define (du-dir-subdir ls)
+  (cond
+    [(empty? ls) 0]
+    [(dir? (first ls)) (+ (du-dir (first ls)) (du-dir-subdir (rest ls)))]))
+
+;; sum-files :: list-of-files -&gt; number
+;; produces the sum of the file's sizes
+
+
+(define (sum-files ls)
+  (cond
+    [(empty? ls) 0]
+    [else (+ (file-size (first ls)) (sum-files (rest ls)))]))
+
+;; tests
+(check-expect (sum-files (list hang draw)) 10)
+(check-expect (sum-files empty) 0)
+(check-expect (du-dir Libs) (+ 8 2 19 1 1 1))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/file-du.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

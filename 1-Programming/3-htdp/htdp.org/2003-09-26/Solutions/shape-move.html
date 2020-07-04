@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/shape-move.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.4.6; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-10.html#node_thm_7.4.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="checked2.html">7.5.1</a><pre>;; a shape is either:
+;;   - (make-circle C P N)
+;;   - (make-rectangle C P N N)
+;; where C is a color,
+;;       P is a posn, and
+;;       N is a number.
+
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+#|
+;; TEMPLATE
+(define (prog-for-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (circle-color a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]
+    [(rectangle? a-shape)
+     (rectangle-color a-shape) ...
+     (rectangle-nw-corner a-shape) ...
+     (rectangle-width a-shape) ...
+     (rectangle-height a-shape) ...]))
+|#
+
+; -------------------------------------------------------------------------
+
+;; draw-shape : shape -&gt; true
+;; draws a-shape
+(define (draw-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      (circle-color a-shape))]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      (rectangle-color a-shape))]))
+
+;; EXAMPLES AS TESTS
+(start 200 200)
+(draw-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+
+; -------------------------------------------------------------------------
+
+;; translate-shape : shape number -&gt; true
+;; translates a-shape by delta pixels in the X directions
+(define (translate-shape a-shape delta)
+  (cond
+    [(circle? a-shape) 
+     (make-circle      
+      (circle-color a-shape)
+      (make-posn (+ delta (posn-x (circle-center a-shape)))
+                 (posn-y (circle-center a-shape)))
+      (circle-radius a-shape))]
+    [(rectangle? a-shape)
+     (make-rectangle
+      (rectangle-color a-shape)
+      (make-posn (+ delta (posn-x (rectangle-nw-corner a-shape)))
+                 (posn-y (rectangle-nw-corner a-shape)))
+      (rectangle-width a-shape)
+      (rectangle-height a-shape))]))
+
+;; EXAMPLES AS TESTS
+(translate-shape (make-circle 'red (make-posn 30 30) 20) 10) "should be" 
+(make-circle 'red (make-posn 40 30) 20)
+(translate-shape (make-rectangle 'blue (make-posn 30 60) 20 50) 20) "should be" 
+(make-rectangle 'blue (make-posn 50 60) 20 50)
+
+; -------------------------------------------------------------------------
+
+;; clear-shape : shape -&gt; true
+;; erases a-shape
+(define (clear-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      'white)]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      'white)]))
+
+;; EXAMPLES AS TESTS
+(start 200 200)
+(draw-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+(clear-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(clear-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+
+; -------------------------------------------------------------------------
+
+;; move-shape : shape number -&gt; shape
+;; draws a-shape, waits one second, clears a-shape,
+;; returns a-shape translated by delta pixels.
+
+(define (move-shape a-shape delta)
+  (cond
+    [(and (draw-shape a-shape)
+          (sleep-for-a-while 1)
+          (clear-shape a-shape))
+     (translate-shape a-shape delta)]
+    [else 
+     (translate-shape a-shape delta)]))
+
+;; EXAMPLES AS TESTS
+
+(define my-shape (make-circle 'red (make-posn 30 30) 20))
+(start 100 100)
+(move-shape
+ (move-shape
+  (move-shape (move-shape my-shape 10) 10)
+  10)
+ 10)
+"should be"
+(make-circle 'red (make-posn 70 30) 20)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/shape-move.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

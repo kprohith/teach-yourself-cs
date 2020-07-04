@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/f2c.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="discover1.html">2.1.2</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="us-dm.html">2.2.2</a><pre>;; fahrenheit-&gt;celsius : number -&gt; number
+;; computes the celsius equivalent of t
+
+;; EXAMPLES
+;; 32 degrees fahrenheit is 0 degrees celsius
+;; 212 degrees fahrenheit is 100 degrees celsius
+;; -40 degrees fahrenheit is -40 degrees celsuis
+
+(define (fahrenheit-&gt;celsius t)
+  (* 5/9 (- t 32)))
+
+;; EXAMPLES TURNED INTO TESTS
+(fahrenheit-&gt;celsius 32) "should be" 0
+(fahrenheit-&gt;celsius 212) "should be" 100
+(fahrenheit-&gt;celsius -40) "should be" -40
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/f2c.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

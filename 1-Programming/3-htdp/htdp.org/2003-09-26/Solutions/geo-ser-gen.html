@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/geo-ser-gen.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 23.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-29.html#node_thm_23.3.4">Problem Statement</a>
+<pre>#| ---------------------------------------------------------------------------
+   geometric-series : number number (N -&gt; number)
+   to produce a function that computes the n-the term in the geometric series
+    
+   Example:
+    (geometric-series 3 5) is equivalent to g-fives (or g-fives-closed)
+|#
+
+(define (geometric-series start factor)
+  (local ((define (geo-closed n)
+	    (* start (expt factor n))))
+    geo-closed))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/geo-ser-gen.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

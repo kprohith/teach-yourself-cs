@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/price-of.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="show-picture.html">10.2.2</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="phone-directory.html">10.2.4</a><pre>(define-struct ir (name price))
+
+;; price-of : symbol inventory -&gt; number or 'not-in-inventory
+;; determines the price of sym in inv
+
+#|
+;; Template
+(define (price-of sym inv)
+  (cond
+    [(empty? inv) ...]
+    [else (ir-name (first inv))
+          (ir-price (first inv))
+          (price-of sym (rest inv))]))
+|#
+
+(define (price-of sym inv)
+  (cond
+    [(empty? inv) 'not-in-inventory]
+    [else (cond
+            [(eq? (ir-name (first inv)) sym)
+             (ir-price (first inv))]
+            [else
+             (price-of sym (rest inv))])]))
+
+;; Examples
+(price-of 'rocket empty) "should be" 'not-in-inventory
+(price-of 'rocket (cons (make-ir 'rocket 3.22) empty)) "should be" 3.22
+(price-of 'rocket (cons (make-ir 'doll 1.21)
+                        (cons (make-ir 'rocket 3.22)
+                              empty)))
+"should be" 
+3.22
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/price-of.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,717 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-32.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-31.html">previous</a></span><span>, <a href="curriculum-Z-H-33.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_25"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_25">Section  25</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_25">A New Form of Recursion</a></h1>
+<p></p>
+<p>
+The functions we have developed so far fall into two broad categories. On one
+hand, we have the category of functions that encapsulate domain knowledge.
+On the other hand, we have functions that consume structured data. These
+functions typically decompose their arguments into their immediate
+structural components and then process those components.  If one of the
+immediate components belongs to the same class of data as the input, the
+function is recursive. For that reason, we refer to these functions as
+(<small>S</small><small>T</small><small>R</small><small>U</small><small>C</small><small>T</small><small>U</small><small>R</small><small>A</small><small>L</small><small>L</small><small>Y</small>) <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>V</small><small>E</small> <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_1648"></a>In some cases, however, we
+also need functions based on a different form of recursion, namely,
+generative recursion. 
+<a name="node_idx_1650"></a>The study of this form of recursion is as old as mathematics and is often
+called the study of <small>A</small><small>L</small><small>G</small><small>O</small><small>R</small><small>I</small><small>T</small><small>H</small><small>M</small><small>S</small>.
+<a name="node_idx_1652"></a></p>
+<p>
+The inputs of an algorithm represent a problem.  Except for rare
+occasions, the problem is an instance of a large class of problems and the
+algorithm works for all of these problems. In general, an algorithm
+partitions a problem into other, smaller problems and solves those. For
+example, an algorithm for planning a vacation trip requires arrangements
+for a trip from our home to a nearby airport, a flight to an airport near
+our vacation spot, and a trip from that airport to our vacation hotel. The
+entire problem is solved by combining the solutions for these problems.</p>
+<p>
+Designing an algorithm distinguishes two kinds of problems: those that are
+<small>T</small><small>R</small><small>I</small><small>V</small><small>I</small><small>A</small><small>L</small><small>L</small><small>Y</small> <small>S</small><small>O</small><small>L</small><small>V</small><small>A</small><small>B</small><small>L</small><small>E</small><a name="call_footnote_Temp_135"></a><a href="#footnote_Temp_135"><sup><small>54</small></sup></a>
+<a name="node_idx_1658"></a>and those that are not. If a given problem is trivially solvable, an
+algorithm produces the matching solution. For example, the problem of
+getting from our home to a nearby airport might be trivially solvable. We
+can drive there, take a cab, or ask a friend to drop us off.  If not, the
+algorithm generates a new problem and solves those new problems. A
+multistage trip is an example of a problem that is non-trivial and can be
+solved by generating new, smaller problems.  In a computational setting
+one of the smaller problems often belongs to the same class of problems as
+the original one, and it is for this reason that we call the approach
+<small>G</small><small>E</small><small>N</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>V</small><small>E</small> <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>O</small><small>N</small>.
+<a name="node_idx_1660"></a></p>
+<p>
+In this part of the book, we study the design of algorithms, that is,
+functions based on generative recursion. From the description of the idea,
+we know that this process is much more of an ad hoc activity than
+the data-driven design of structurally recursive functions.
+<a name="node_idx_1662"></a>Indeed, it is almost better to call it inventing an algorithm than designing
+one. Inventing an algorithm requires a new insight -- a ``eureka.'' Sometimes
+very little insight is required. For example, solving a ``problem'' might
+just require the enumeration of a series of numbers. At other times,
+however, it may rely on a mathematical theorem concerning numbers. Or, it
+may exploit a series of mathematical results on systems of equations.  To
+acquire a good understanding of the design process, it is necessary to study
+examples and to develop a sense for the various classes of examples. In
+practice, new complex algorithms are often developed by mathematicians and
+mathematical computer scientists; programmers, though, must throughly
+understand the underlying ideas so that they can invent the simple
+algorithms on their own and communicate with scientists about the others.</p>
+<p>
+The two subsections illustrate two vastly different algorithms. The first one
+is an example of something programmers invent on a daily basis. The second
+one describes a fast sorting algorithm, one of the first applications of
+generative recursion in computing.
+<a name="node_idx_1664"></a></p>
+<p>
+<a name="node_idx_1666"></a><a name="node_idx_1668"></a><a name="node_idx_1670"></a><a name="node_idx_1672"></a></p>
+<p>
+</p>
+<p></p>
+<p><strong>Terminology</strong>:  Mathematical computer scientists often do not
+distinguish between structural recursion and generative recursion and
+refer to both kinds of functions as algorithms. Instead they use the
+terminology of <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>V</small><small>E</small> and <small>I</small><small>T</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>V</small><small>E</small> methods. The
+latter refers to a subclass of function definitions whose recursive
+function applications are in a particular position in the definition. We
+will strictly adhere to the terminology of algorithm and generative
+recursion when we work with this class of functions because this
+classification matches our thinking of design recipes better than the
+purely syntactic classification of applied mathematicians.&nbsp;</p>
+<p>
+</p>
+<a name="node_sec_25.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_25.1">25.1&nbsp;&nbsp;Modeling a Ball on a Table</a></h2>
+<p></p>
+<p>
+Let's consider the simple-looking problem of modeling the moves of a ball
+across a table.  Assume the ball rolls at a constant speed until it drops
+off the table. We
+can model the table with a canvas of some fixed width and height. The ball
+is a disk that moves across the canvas, which we express with drawing the
+disk, waiting, and clearing it, until it is out of bounds. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_136"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1674"></a><a name="node_idx_1676"></a><a name="node_idx_1678"></a><div align="left"><pre class="scheme"><span class="comment">;; TeachPack: draw.ss </span>
+
+(<span class="keyword">define-struct</span> <span class="variable">ball</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">delta-x</span> <span class="variable">delta-y</span>))
+<span class="comment">;; A <i>ball</i> is a structure: </span>
+<span class="comment">;;   (make-ball number number number number)</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">draw-and-clear</span> <span class="selfeval">:</span> <span class="variable">a-ball</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; draw, sleep, clear a disk from the canvas </span>
+<span class="comment">;; structural design, Scheme knowledge</span>
+(<span class="keyword">define</span> (<span class="variable">draw-and-clear</span> <span class="variable">a-ball</span>)
+  (<span class="keyword">and</span>
+   (<span class="variable">draw-solid-disk</span> (<span class="builtin">make-posn</span> (<span class="builtin">ball-x</span> <span class="variable">a-ball</span>) (<span class="builtin">ball-y</span> <span class="variable">a-ball</span>)) <span class="selfeval">5</span> <span class="keyword">'</span><span class="variable">red</span>)
+   (<span class="variable">sleep-for-a-while</span> <span class="keyword">DELAY</span>)
+   (<span class="variable">clear-solid-disk</span> (<span class="builtin">make-posn</span> (<span class="builtin">ball-x</span> <span class="variable">a-ball</span>) (<span class="builtin">ball-y</span> <span class="variable">a-ball</span>)) <span class="selfeval">5</span> <span class="keyword">'</span><span class="variable">red</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">move-ball</span> <span class="selfeval">:</span> <span class="variable">ball</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">ball</span></code></span>
+<span class="comment">;; to create a new ball, modeling a move by <code class="scheme"><span class="variable">a-ball</span></code></span>
+<span class="comment">;; structural design, physics knowledge</span>
+(<span class="keyword">define</span> (<span class="variable">move-ball</span> <span class="variable">a-ball</span>) 
+  (<span class="builtin">make-ball</span> (<span class="builtin">+</span> (<span class="builtin">ball-x</span> <span class="variable">a-ball</span>) (<span class="builtin">ball-delta-x</span> <span class="variable">a-ball</span>))
+             (<span class="builtin">+</span> (<span class="builtin">ball-y</span> <span class="variable">a-ball</span>) (<span class="builtin">ball-delta-y</span> <span class="variable">a-ball</span>))
+             (<span class="builtin">ball-delta-x</span> <span class="variable">a-ball</span>)
+             (<span class="builtin">ball-delta-y</span> <span class="variable">a-ball</span>)))
+
+<span class="comment">;; Dimension of canvas </span>
+(<span class="keyword">define</span> <span class="variable">WIDTH</span> <span class="selfeval">100</span>)
+(<span class="keyword">define</span> <span class="variable">HEIGHT</span> <span class="selfeval">100</span>)
+(<span class="keyword">define</span> <span class="keyword">DELAY</span> <span class="selfeval">.1</span>)
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 66:</b>&nbsp;&nbsp;Auxiliaries for <i>move-until-out</i></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_136">66</a> collects the function, structure, data, and
+variable definitions that model the ball:
+</p>
+<ol>
+<li><p>A ball is a structure with four fields: the current position and the
+velocity in each direction. That is, the first two numbers in a
+<code class="scheme"><span class="variable">ball</span></code> structure are the current position on the canvas, and the
+next two numbers describe how far the ball moves in the two directions per
+step.</p>
+<p>
+</p>
+<li><p>The function <code class="scheme"><span class="variable">move-ball</span></code> models the physical movement of the
+ball. It consumes a ball and creates a new one, modeling one step.</p>
+<p>
+</p>
+<li><p>The function <code class="scheme"><span class="variable">draw-and-clear</span></code> draws the ball at its current
+position, then waits for a short time, and clears it again.
+</p>
+</li></ol><p>
+The variable definitions specify the dimensions of the canvas and the delay
+time.</p>
+<p>
+To move the ball a few times we can write 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-ball</span> (<span class="builtin">make-ball</span> <span class="selfeval">10</span> <span class="selfeval">20</span> <span class="selfeval">-5</span> <span class="selfeval">+17</span>))
+
+(<span class="keyword">and</span>
+ (<span class="variable">draw-and-clear</span> <span class="variable">the-ball</span>)
+ (<span class="keyword">and</span> 
+   (<span class="variable">draw-and-clear</span> (<span class="variable">move-ball</span> <span class="variable">the-ball</span>))
+   ...))
+</pre></div><p>
+though this gets tedious after a while. We should instead develop a
+function that moves the ball until it is out of bounds.</p>
+<p>
+The easy part is to define <code class="scheme"><span class="variable">out-of-bounds?</span></code>, a function that
+determines whether a given ball is still visible on the canvas:
+<a name="node_idx_1680"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">out-of-bounds?</span> <span class="selfeval">:</span> <span class="variable">a-ball</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-ball</span></code> is outside of the bounds</span>
+<span class="comment">;; domain knowledge, geometry</span>
+(<span class="keyword">define</span> (<span class="variable">out-of-bounds?</span> <span class="variable">a-ball</span>)
+  (<span class="builtin">not</span>
+   (<span class="keyword">and</span>
+     (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> (<span class="builtin">ball-x</span> <span class="variable">a-ball</span>) <span class="variable">WIDTH</span>)
+     (<span class="builtin">&lt;=</span> <span class="selfeval">0</span> (<span class="builtin">ball-y</span> <span class="variable">a-ball</span>) <span class="variable">HEIGHT</span>))))
+</pre></div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+We have defined numerous functions like <code class="scheme"><span class="variable">out-of-bounds?</span></code> in the
+first few sections of the book. </p>
+<p>
+In contrast, writing a function that draws the ball on the canvas until it
+is out of bounds belongs to a group of programs that we haven't encountered
+thus far. Let's start with the basics of the function:
+<a name="node_idx_1682"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move-until-out</span> <span class="selfeval">:</span> <span class="variable">a-ball</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to model the movement of a ball until it goes out of bounds</span>
+(<span class="keyword">define</span> (<span class="variable">move-until-out</span> <span class="variable">a-ball</span>) ...)
+</pre></div><p>
+Because the function consumes a ball and draws its movement on a canvas, it
+produces <code class="scheme"><span class="builtin">true</span></code> like all other functions that draw onto a canvas.
+Designing it with the recipe for structures makes no sense, however. After
+all, it is already clear how to <code class="scheme"><span class="variable">draw-and-clear</span></code> the ball and how to
+move it, too. What is needed instead is a case distinction that checks
+whether the ball is out of bounds or not. </p>
+<p>
+</p>
+<p>
+Let us refine the function header with an appropriate <strong>cond</strong>-expression: 
+<a name="node_idx_1684"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">move-until-out</span> <span class="variable">a-ball</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">out-of-bounds?</span> <span class="variable">a-ball</span>) ...]
+    [<span class="keyword">else</span> ...]))
+</pre></div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+We have already defined the function <code class="scheme"><span class="variable">out-of-bounds?</span></code> because it was
+clear from the problem description that ``being out of bounds'' was a
+separate concept. </p>
+<p>
+If the ball consumed by <code class="scheme"><span class="variable">move-until-out</span></code> is outside of the canvas's
+boundaries, the function can produce <code class="scheme"><span class="builtin">true</span></code>, following the
+contract. If the ball is still inside the boundaries, two things must
+happen. First, the ball must be drawn and cleared from the canvas. Second,
+the ball must be moved, and then we must do things all over again. This
+implies that after moving the ball, we apply <code class="scheme"><span class="variable">move-until-out</span></code> again,
+which means the function is recursive: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move-until-out</span> <span class="selfeval">:</span> <span class="variable">a-ball</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to model the movement of a ball until it goes out of bounds</span>
+(<span class="keyword">define</span> (<span class="variable">move-until-out</span> <span class="variable">a-ball</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">out-of-bounds?</span> <span class="variable">a-ball</span>) <span class="builtin">true</span>]
+    [<span class="keyword">else</span> (<span class="keyword">and</span> (<span class="variable">draw-and-clear</span> <span class="variable">a-ball</span>)
+               (<span class="variable">move-until-out</span> (<span class="variable">move-ball</span> <span class="variable">a-ball</span>)))]))
+</pre></div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Both <code class="scheme">(<span class="variable">draw-and-clear</span> <span class="variable">a-ball</span>)</code> and <code class="scheme">(<span class="variable">move-until-out</span>
+(<span class="variable">move-ball</span> <span class="variable">a-ball</span>))</code> produce true, and both expressions must be
+evaluated. So we combine them with an <strong>and</strong>-expression. </p>
+<p>
+We can now test the function as follows: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="variable">WIDTH</span> <span class="variable">HEIGHT</span>)
+(<span class="variable">move-until-out</span> (<span class="builtin">make-ball</span> <span class="selfeval">10</span> <span class="selfeval">20</span> <span class="selfeval">-5</span> <span class="selfeval">+17</span>))
+(<span class="variable">stop</span>)
+</pre></div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+This creates a canvas of proper size and a ball that moves left and down.</p>
+<p>
+A close look at the function definition reveals two peculiarities. First,
+although the function is recursive, its body consists of a
+<strong>cond</strong>-expression whose conditions have nothing to do with the input
+data. Second, the recursive application in the body does not consume a part
+of the input. Instead, <code class="scheme"><span class="variable">move-until-out</span></code> generates an entirely new
+and different <code class="scheme"><span class="variable">ball</span></code> structure, which represents the original ball
+after one step, and uses it for the recursion. Clearly, none of our design
+recipes could possibly produce such a definition. We have encountered a new
+way of programming.</p>
+<p>
+</p>
+<p><a name="node_thm_25.1.1"></a>
+<b>Exercise 25.1.1.</b>&nbsp;&nbsp; 
+What happens if we place the following three expressions 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="variable">WIDTH</span> <span class="variable">HEIGHT</span>)
+(<span class="variable">move-until-out</span> (<span class="builtin">make-ball</span> <span class="selfeval">10</span> <span class="selfeval">20</span> <span class="selfeval">0</span> <span class="selfeval">0</span>))
+(<span class="variable">stop</span>)
+</pre></div><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+at the bottom of the <tt>Definitions</tt>
+<a name="node_idx_1686"></a>window and click <tt>Execute</tt>? Does the second expression ever produce a 
+value so that the third expression is evaluated and the canvas disappears?
+Could this happen with any of the functions designed according to our old
+recipes?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/move-until1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_25.1.2"></a>
+<b>Exercise 25.1.2.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">move-balls</span></code>.  The function consumes a list of balls and
+moves each one until all of them have moved out of bounds.</p>
+<p>
+<strong>Hint:</strong> It is best to write this function using <code class="scheme"><span class="builtin">filter</span></code>,
+<code class="scheme"><span class="builtin">andmap</span></code>, and similar abstract functions from
+part&nbsp;<a href="curriculum-Z-H-24.html#node_part_IV">IV</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/move-until2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_25.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_25.2">25.2&nbsp;&nbsp;Sorting Quickly</a></h2>
+<p></p>
+<p>
+Hoare's quicksort algorithm is the classic example of generative recursion
+<a name="node_idx_1688"></a><a name="node_idx_1690"></a>in computing. Like <code class="scheme"><span class="variable">sort</span></code> in section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.2">12.2</a>,
+<code class="scheme"><span class="variable">qsort</span></code> is a function that consumes a list of numbers and
+produces a version that contains the same numbers in ascending order.  The
+difference between the two functions is that <code class="scheme"><span class="variable">sort</span></code> is based on
+structural recursion
+<a name="node_idx_1692"></a>and <code class="scheme"><span class="variable">qsort</span></code> is based on generative
+recursion.</p>
+<p>
+The underlying idea of the generative step is a time-honored strategy:
+divide and conquer.
+<a name="node_idx_1694"></a>That is, we divide the non-trivial instances of the
+problem into two smaller, related problems, solve those smaller problems,
+and combine their solutions into a solution for the original problem. In
+the case of <code class="scheme"><span class="variable">qsort</span></code>, the intermediate goal is to divide the list
+of numbers into two lists: one that contains all the items that are
+strictly smaller than the first item, and another one with all those items
+that are strictly larger than the first item. Then the two smaller lists
+are sorted using the same procedure. Once the two lists are sorted, we
+simply juxtapose the pieces.  Owing to its special role, the first item on
+the list is often called the <i>pivot item</i>.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_137"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+ 
+
+
+</p>
+<p>
+
+</p>
+
+<center>
+<table border="" bgcolor="white">
+<tr><td align="center" colspan="3"><tt>(list 11 8 14 7)</tt> </td></tr>
+<tr>
+<td valign="top"> 
+<table border="" bgcolor="white">
+<tr><td align="center" colspan="3"><tt>(list 8 7)</tt> </td></tr>
+<tr>
+<td valign="top"> 
+<table border="" bgcolor="white">
+<tr><td align="center" colspan="3"><tt>(list 7)</tt> </td></tr>
+<tr>
+<td valign="top"> <tt>empty</tt> </td>
+<td bgcolor="orange" valign="top"><table><tt>7</tt></table></td>
+<td valign="top"> <tt>empty</tt> </td>
+</tr>
+<tr><td align="center" colspan="3"><tt>(list 7)</tt> </td></tr>
+</table>
+ </td>
+<td bgcolor="orange" valign="top"><table><tt>8</tt></table></td>
+<td valign="top"> <tt>empty</tt> </td>
+</tr>
+<tr><td align="center" colspan="3"><tt>(list 7 8)</tt> </td></tr>
+</table>
+ </td>
+<td bgcolor="orange" valign="top"><table><tt>11</tt></table></td>
+<td valign="top"> 
+<table border="" bgcolor="white">
+<tr><td align="center" colspan="3"><tt>(list 14)</tt> </td></tr>
+<tr>
+<td valign="top"> <tt>empty</tt> </td>
+<td bgcolor="orange" valign="top"><table><tt>14</tt></table></td>
+<td valign="top"> <tt>empty</tt> </td>
+</tr>
+<tr><td align="center" colspan="3"><tt>(list 14)</tt> </td></tr>
+</table>
+ </td>
+</tr>
+<tr><td align="center" colspan="3"><tt>(list 7 8 11 14)</tt> </td></tr>
+</table>
+</center>
+
+<p>
+</p>
+<div align="center">&nbsp;&nbsp;</div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 67:</b>&nbsp;&nbsp;A tabular illustration of <i>quick-sort</i></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+To develop a better understanding of the process, let's walk through one
+step of the evaluation by hand. Suppose the input is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">11</span> <span class="selfeval">8</span> <span class="selfeval">14</span> <span class="selfeval">7</span>)
+</pre></div><p>
+The pivot item is <code class="scheme"><span class="selfeval">11</span></code>. Partioning the list into items larger and
+smaller than <code class="scheme"><span class="selfeval">11</span></code> produces two lists:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">8</span> <span class="selfeval">7</span>)</pre></div><p>
+and 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">14</span>)</pre></div><p>
+The second one is already sorted in ascending order; sorting the first one
+produces <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">7</span> <span class="selfeval">8</span>)</code>. This leaves us with three pieces from the
+original list: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">7</span> <span class="selfeval">8</span>)</code>, the sorted version of the list with the smaller numbers; 
+</p>
+<li><p><code class="scheme"><span class="selfeval">11</span></code>;
+and 
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">14</span>)</code>, the sorted version of the list with the larger
+numbers. 
+</p>
+</li></ol><p>
+To produce a sorted version of the original list, we concatenate the three
+pieces, which yields the desired result: <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">11</span> <span class="selfeval">14</span>)</code>.</p>
+<p>
+Our illustration leaves open how <code class="scheme"><span class="variable">qsort</span></code> knows when to
+stop. Since it is a function based on generative recursion, the general
+answer is that it stops when the sorting problem has become
+trivial. Clearly, <code class="scheme"><span class="builtin">empty</span></code> is one trivial input for
+<code class="scheme"><span class="variable">qsort</span></code>, because the only sorted version of it is
+<code class="scheme"><span class="builtin">empty</span></code>. For now, this answer suffices; we will return to this
+question in the next section.</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_137">67</a> provides a tabular overview of the entire sorting
+process for <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">11</span> <span class="selfeval">8</span> <span class="selfeval">14</span> <span class="selfeval">7</span>)</code>. Each box has three compartments:
+</p>
+<div align="center"><table><tr><td>
+
+
+
+
+<center>
+<table border="" bgcolor="white">
+<tr><td align="center" colspan="3">
+list to be sorted
+</td></tr>
+<tr>
+<td valign="top"> 
+sort process for partition with items <em>smaller</em> than pivot
+</td>
+<td bgcolor="orange" valign="top"><table>
+pivot item
+</table></td>
+<td valign="top"> 
+sort process for partition with items <em>larger</em> than pivot 
+</td>
+</tr>
+<tr><td align="center" colspan="3">
+sorted list
+</td></tr>
+</table>
+</center>
+</td></tr><tr><td>
+<p>
+
+</p>
+</td></tr><tr><td>
+<p>
+</p>
+</td></tr></table></div>
+<p>
+The top compartment shows the list that we wish to sort, and the
+bottommost contains the result. The three columns in the middle display the
+sorting process for the two partitions and the pivot item.</p>
+<p>
+</p>
+<p><a name="node_thm_25.2.1"></a>
+<b>Exercise 25.2.1.</b>&nbsp;&nbsp; 
+Simulate all <code class="scheme"><span class="variable">qsort</span></code> steps for <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">11</span> <span class="selfeval">9</span> <span class="selfeval">2</span> <span class="selfeval">18</span> <span class="selfeval">12</span> <span class="selfeval">14</span> <span class="selfeval">4</span> <span class="selfeval">1</span>)</code>.
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quicksort-hand.html">Solution</a></p>
+<p></p>
+<p>
+Now that we have a good understanding of the generative step, we can
+translate the process description into Scheme. The description suggests that
+<code class="scheme"><span class="variable">qsort</span></code> distinguishes two cases. If the input is <code class="scheme"><span class="builtin">empty</span></code>, 
+it produces <code class="scheme"><span class="builtin">empty</span></code>. Otherwise, it performs a generative recursion. 
+This case-split suggests a <strong>cond</strong>-expression: 
+<a name="node_idx_1696"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">quick-sort</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a list of numbers with the same numbers as</span>
+<span class="comment">;; <code class="scheme"><span class="variable">alon</span></code> sorted in ascending order</span>
+(<span class="keyword">define</span> (<span class="variable">quick-sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> ...]))
+</pre></div><p>
+The answer for the first case is given. For the second case, when
+<code class="scheme"><span class="variable">qsort</span></code>'s input is non-<code class="scheme"><span class="builtin">empty</span></code>, the algorithm uses the
+first item to partition the rest of the list into two sublists: a list with
+all items smaller than the pivot item and another one with those larger
+than the pivot item.</p>
+<p>
+Since the rest of the list is of unknown size, we leave the task of
+partitioning the list to two auxiliary functions: <code class="scheme"><span class="variable">smaller-items</span></code>
+and <code class="scheme"><span class="variable">larger-items</span></code>. They process the list and filter out those items
+that are smaller and larger, respectively, than the first one. Hence each
+auxiliary function accepts two arguments, namely, a list of numbers and a
+number. Developing these functions is, of course, an exercise in structural
+recursion;
+<a name="node_idx_1698"></a>their definitions are shown in figure&nbsp;<a href="#node_fig_Temp_138">68</a>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_138"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p></p>
+<p></p>
+<p>
+<a name="node_idx_1700"></a><a name="node_idx_1702"></a><a name="node_idx_1704"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">quick-sort</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a list of numbers with the same numbers as</span>
+<span class="comment">;; <code class="scheme"><span class="variable">alon</span></code> sorted in ascending order</span>
+<span class="comment">;; assume that the numbers are all distinct </span>
+(<span class="keyword">define</span> (<span class="variable">quick-sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">append</span> (<span class="variable">quick-sort</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>))) 
+	    	  (<span class="builtin">list</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) 
+		  (<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>))))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">larger-items</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a list with all those numbers on <code class="scheme"><span class="variable">alon</span></code>  </span>
+<span class="comment">;; that are larger than <code class="scheme"><span class="variable">threshold</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">larger-items</span> <span class="variable">alon</span> <span class="variable">threshold</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">if</span> (<span class="builtin">&gt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">threshold</span>) 
+	      (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">larger-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))
+	      (<span class="variable">larger-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))]))
+
+<span class="comment">;; smaller-items : <code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a list with all those numbers on <code class="scheme"><span class="variable">alon</span></code>  </span>
+<span class="comment">;; that are smaller than <code class="scheme"><span class="variable">threshold</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> <span class="variable">threshold</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">if</span> (<span class="builtin">&lt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">threshold</span>) 
+	      (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">smaller-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))
+	      (<span class="variable">smaller-items</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">threshold</span>))]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 68:</b>&nbsp;&nbsp;The quick-sort algorithm</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Each sublist is sorted separately, using <code class="scheme"><span class="variable">quick-sort</span></code>. This implies 
+the use of recursion and, more specifically, the following two expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">quick-sort</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>)))</code>,
+which sorts the list of items smaller than the pivot; and 
+</p>
+<li><p><code class="scheme">(<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>)))</code>, 
+which sorts the list of items larger than the pivot.
+</p>
+</li></ol><p></p>
+<p>
+Once we get the sorted versions of the two lists, we need a function that
+combines the two lists and the pivot item. Scheme's <code class="scheme"><span class="builtin">append</span></code>
+function accomplishes this:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">append</span> (<span class="variable">quick-sort</span> (<span class="variable">smaller-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>)))
+        (<span class="builtin">list</span> (<span class="builtin">first</span> <span class="variable">alon</span>))
+        (<span class="variable">quick-sort</span> (<span class="variable">larger-items</span> <span class="variable">alon</span> (<span class="builtin">first</span> <span class="variable">alon</span>))))
+</pre></div><p>
+Clearly, all items in list&nbsp;1 are smaller than the pivot and the pivot is
+smaller than all items in list&nbsp;2, so the result is a sorted list. 
+Figure&nbsp;<a href="#node_fig_Temp_138">68</a> contains the full function. It includes the
+definition of <code class="scheme"><span class="variable">quick-sort</span></code>, <code class="scheme"><span class="variable">smaller-items</span></code>, and
+<code class="scheme"><span class="variable">larger-items</span></code>. </p>
+<p>
+Let's take a look at the beginning of a sample hand evaluation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">11</span> <span class="selfeval">8</span> <span class="selfeval">14</span> <span class="selfeval">7</span>))
+<span class="builtin">=</span> (<span class="builtin">append</span> (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">8</span> <span class="selfeval">7</span>))
+	  (<span class="builtin">list</span> <span class="selfeval">11</span>)
+          (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">14</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">append</span> (<span class="builtin">append</span> (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">7</span>))
+	          (<span class="builtin">list</span> <span class="selfeval">8</span>)
+		  (<span class="variable">quick-sort</span> <span class="builtin">empty</span>))
+	  (<span class="builtin">list</span> <span class="selfeval">11</span>)
+          (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">14</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">append</span> (<span class="builtin">append</span> (<span class="builtin">append</span> (<span class="variable">quick-sort</span> <span class="builtin">empty</span>)
+		          (<span class="builtin">list</span> <span class="selfeval">7</span>)
+			  (<span class="variable">quick-sort</span> <span class="builtin">empty</span>))
+	          (<span class="builtin">list</span> <span class="selfeval">8</span>)
+		  (<span class="variable">quick-sort</span> <span class="builtin">empty</span>))
+	  (<span class="builtin">list</span> <span class="selfeval">11</span>)
+          (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">14</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">append</span> (<span class="builtin">append</span> (<span class="builtin">append</span> <span class="builtin">empty</span>
+		          (<span class="builtin">list</span> <span class="selfeval">7</span>)
+			  <span class="builtin">empty</span>)
+	          (<span class="builtin">list</span> <span class="selfeval">8</span>)
+		  <span class="builtin">empty</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">11</span>)
+          (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">14</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">append</span> (<span class="builtin">append</span> (<span class="builtin">list</span> <span class="selfeval">7</span>)
+	          (<span class="builtin">list</span> <span class="selfeval">8</span>)
+		  <span class="builtin">empty</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">11</span>)
+          (<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">14</span>)))
+<span class="builtin">=</span> ... 
+</pre></div><p>
+The calculation shows the essential steps of the sorting process, that is,
+the partitioning steps, the recursive sorting steps, and the concatenation
+of the three parts. From this calculation, we can see that
+<code class="scheme"><span class="variable">quick-sort</span></code> implements the process illustrated in
+figure&nbsp;<a href="#node_fig_Temp_137">67</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_25.2.2"></a>
+<b>Exercise 25.2.2.</b>&nbsp;&nbsp; 
+Complete the above hand-evaluation. </p>
+<p>
+The hand-evaluation of <code class="scheme">(<span class="variable">quick-sort</span> (<span class="builtin">list</span> <span class="selfeval">11</span> <span class="selfeval">8</span> <span class="selfeval">14</span> <span class="selfeval">7</span>))</code> suggests an
+additional trivial case for <code class="scheme"><span class="variable">quick-sort</span></code>. Every time
+<code class="scheme"><span class="variable">quick-sort</span></code> consumes a list of one item, it produces the very same
+list. After all, the sorted version of a list of one item is the list
+itself.</p>
+<p>
+Modify the definition of <code class="scheme"><span class="variable">quick-sort</span></code> to take advantage of this
+observation.</p>
+<p>
+Hand-evaluate the same example again. How many steps does the extended
+algorithm save? &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-terminal.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_25.2.3"></a>
+<b>Exercise 25.2.3.</b>&nbsp;&nbsp; 
+While <code class="scheme"><span class="variable">quick-sort</span></code> quickly reduces the size of the problem in many
+cases, it is inappropriately slow for small problems. Hence people often
+use <code class="scheme"><span class="variable">quick-sort</span></code> to reduce the size of the problem and switch to a
+different sort function when the list is small enough. </p>
+<p>
+Develop a version of <code class="scheme"><span class="variable">quick-sort</span></code> that uses <code class="scheme"><span class="variable">sort</span></code> from
+section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.2">12.2</a> if the length of the input is below some
+threshold. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-switch.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_25.2.4"></a>
+<b>Exercise 25.2.4.</b>&nbsp;&nbsp; 
+If the input to <code class="scheme"><span class="variable">quick-sort</span></code> contains the same number several times,
+the algorithm returns a list that is strictly shorter than the input. Why?
+Fix the problem so that the output is as long as the input. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-drop.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_25.2.5"></a>
+<b>Exercise 25.2.5.</b>&nbsp;&nbsp; 
+Use the <code class="scheme"><span class="builtin">filter</span></code> function to define <code class="scheme"><span class="variable">smaller-items</span></code> and
+<code class="scheme"><span class="variable">larger-items</span></code> as one-liners. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-filter.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_25.2.6"></a>
+<b>Exercise 25.2.6.</b>&nbsp;&nbsp; 
+Develop a variant of <code class="scheme"><span class="variable">quick-sort</span></code> that uses only one comparison
+function, say, <code class="scheme"><span class="builtin">&lt;</span></code>. Its partitioning step divides the given list
+<code class="scheme"><span class="variable">alon</span></code> into a list that contains the items of <code class="scheme"><span class="variable">alon</span></code> smaller
+than <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> and another one with those that are not smaller.</p>
+<p>
+Use <code class="scheme"><span class="keyword">local</span></code> to combine the functions into a single function. 
+Then abstract the new version to consume a list and a comparison function:
+<a name="node_idx_1706"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">general-quick-sort</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">bool</span>) (<span class="builtin">list</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="builtin">list</span> <span class="variable">X</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">general-quick-sort</span> <span class="variable">a-predicate</span> <span class="variable">a-list</span>) ...)
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quick-sort-abstract.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_135"></a><a href="#call_footnote_Temp_135"><sup><small>54</small></sup></a> For this part of the book, 
+<i>trivial</i> 
+<a name="node_idx_1654"></a><a name="node_idx_1656"></a>is 
+a technical term. It will be explained in section&nbsp;<a href="curriculum-Z-H-33.html#node_chap_26">26</a>.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-31.html">previous</a></span><span>, <a href="curriculum-Z-H-33.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-32.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

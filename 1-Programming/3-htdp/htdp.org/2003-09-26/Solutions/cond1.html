@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/cond1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="boolean2.html">4.3.2</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="interest.html">4.4.1</a><pre>;; (a)
+(define n1 500)
+
+(cond
+  [(&lt;= n1 1000) (* .040 1000)]
+  [(&lt;= n1 5000) (+ (* 1000 .040) 
+                  (* (- n1 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n1 10000) .055))])
+"should be"
+40
+
+;; (b)
+
+(define n2 2800)
+(cond
+  [(&lt;= n2 1000) (* .040 1000)]
+  [(&lt;= n2 5000) (+ (* 1000 .040) 
+                  (* (- n2 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n2 10000) .055))])
+"should be"
+121
+
+;; (c)
+(define n3 15000)
+(cond
+  [(&lt;= n3 1000) (* .040 1000)]
+  [(&lt;= n3 5000) (+ (* 1000 .040) 
+                  (* (- n3 1000) .045))]
+  [else (+ (* 1000 .040) 
+           (* 4000 .045)
+           (* (- n3 10000) .055))])
+"should be"
+495
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/cond1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

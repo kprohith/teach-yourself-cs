@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/queen2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 28.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="queen1.html">28.2.2</a> | <a href="../Book/curriculum-Z-H-35.html#node_thm_28.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="queen.html">28.2.4</a><pre>;; Language: Intermediate Student
+
+#| 
+  A (Chess)Board is [Listof Row]. 
+  A Row is [Listof Boolean].
+|#
+
+; -------------------------------------------------------------------------
+
+;; build-board : Nat (Nat Nat -&gt; Boolean) -&gt; Board
+;; to create a board of size n x n, 
+;; fill each position with indices i and j with (f i j)
+(define (build-board n f)
+  (build-list n (lambda (i) (build-list n (lambda (j) (f i j))))))
+   
+;; board-ref : Board Nat Nat  -&gt;  Boolean
+;; to access a position with indices i, j on a-board
+(define (board-ref a-board i j)
+  (local [;; extract-from : N [Listof X] -&gt; X
+          ;; extracts the nth element from l. l must have at least n elements.
+          (define (extract-from n l)
+            (cond
+              [(zero? n) (first l)]
+              [else (extract-from (- n 1) (rest l))]))]
+    (extract-from j (extract-from i a-board))))
+
+;; board-dim : Board -&gt; Nat
+;; to determine the size of the board
+(define (board-dim a-board) (length a-board))
+
+;; examples as tests
+(check-expect (build-board 2 (lambda (x y) (odd? (+ x y))))
+              (list (list false true)
+                    (list true false)))
+
+(check-expect (board-ref (build-board 2 (lambda (x y) (odd? x))) 0 1) false)
+
+(check-expect (board-ref (build-board 2 (lambda (x y) (odd? x))) 1 0) true)
+
+(check-expect (board-dim (build-board 3 (lambda (x y) false))) 3)
+
+; -------------------------------------------------------------------------
+
+;; threatened? : Posn Posn -&gt; Boolean
+;; to determine if, in a-board, a queen on qp and threaten p
+(define (threatened? qp p)
+  (or (= (posn-x qp) (posn-x p))
+      (= (posn-y qp) (posn-y p))
+      (= (- (posn-x qp) (posn-y qp))
+         (- (posn-x p) (posn-y p)))
+      (= (+ (posn-x qp) (posn-y qp))
+         (+ (posn-x p) (posn-y p)))))
+
+;; same position
+(check-expect (threatened? (make-posn 0 0) (make-posn 0 0)) true)
+
+;; same vertical
+(check-expect (threatened? (make-posn 0 0) (make-posn 0 1)) true)
+
+;; same horizontal
+(check-expect (threatened? (make-posn 0 0) (make-posn 1 0)) true)
+
+;; same diagonal (up and left)
+(check-expect (threatened? (make-posn 1 1) (make-posn 2 2)) true)
+(check-expect (threatened? (make-posn 2 1) (make-posn 3 2)) true)
+(check-expect (threatened? (make-posn 5 8) (make-posn 9 12)) true)
+
+;; same diagonal (down and right)
+(check-expect (threatened? (make-posn 3 3) (make-posn 4 2)) true)
+(check-expect (threatened? (make-posn 5 8) (make-posn 1 12)) true)
+
+;; failure
+(check-expect (threatened? (make-posn 0 0) (make-posn 2 3)) false)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/queen2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

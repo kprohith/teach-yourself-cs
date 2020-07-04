@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-subst.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.4.4; How to Design Programs </title>
+</head>
+<body>
+<a href="scheme-eval.html">14.4.3</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.4.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>#|
+
+A scheme-expression is either:
+
+  - number,
+  - symbol,
+  - (make-add scheme-expression scheme-expression)
+  - (make-mul scheme-expression scheme-expression)
+
+|#
+
+(define-struct add (lhs rhs))
+(define-struct mul (lhs rhs))
+
+;; EXAMPLES
+
+;; 1. (+ 10 -10) 
+(make-add 10 -10)
+
+;; 2. (+ (* 20 3) 33) 
+(make-add (make-mul 20 3) 33)
+
+;; 3. (* 3.14 (* r r)) 
+(make-mul 3.14 (make-mul 'r 'r))
+
+;; 4. (+ (* 9/5 c) 32) 
+(make-add (make-mul 9/5 'c) 32)
+
+;; 5. (+ (* 3.14 (* o o)) (* 3.14 (* i i)))���
+(make-add (make-mul 3.14 (make-mul 'o 'o))
+          (make-mul 3.14 (make-mul 'i 'i)))
+
+; -------------------------------------------------------------------------
+
+;; numeric? : scheme-expression -&gt; boolean
+;; deteremines if the expression is numeric or not
+
+(define (numeric? a-se)
+  (cond
+    [(number? a-se) true]
+    [(symbol? a-se) false]
+    [(add? a-se) (and (numeric? (add-lhs a-se))
+                      (numeric? (add-rhs a-se)))]
+    [(mul? a-se) (and (numeric? (mul-lhs a-se))
+                      (numeric? (mul-rhs a-se)))]))
+
+;; EXAMPLES AS TESTS
+
+(numeric? 1)
+"should be"
+true
+
+(numeric? 'a)
+"should be"
+false
+
+(numeric? (make-add 1 'a))
+"should be"
+false
+
+(numeric? (make-add 1 2))
+"should be"
+true
+
+(numeric? (make-mul 1 'a))
+"should be"
+false
+
+(numeric? (make-mul 1 2))
+"should be"
+true
+
+; -------------------------------------------------------------------------
+
+#|
+
+A numeric-expression is either:
+
+  - number,
+  - (make-add numeric-expression numeric-expression)
+  - (make-mul numeric-expression numeric-expression)
+
+
+|#
+
+;; evaluate : scheme-expression -&gt; number
+;; to determine the value of a scheme expression
+(define (evaluate-expression a-se)
+  (cond
+    [(number? a-se) a-se]
+    [(symbol? a-se) (error 'evaluate-expression "got a variable")]
+    [(add? a-se) (+ (evaluate-expression (add-lhs a-se))
+                    (evaluate-expression (add-rhs a-se)))]
+    [(mul? a-se) (* (evaluate-expression (mul-lhs a-se))
+                    (evaluate-expression (mul-rhs a-se)))]))
+
+;; EXAMPLES AS TESTS
+(evaluate-expression 1)
+"should be"
+1
+
+(evaluate-expression (make-add 1 2))
+"should be"
+3
+
+(evaluate-expression (make-mul 4 2))
+"should be"
+8
+
+(evaluate-expression (make-add (make-add 5 7) (make-mul 4 3)))
+"should be"
+24
+
+; (evaluate-expression 'x)
+; error!
+
+; -------------------------------------------------------------------------
+
+;; subst : scheme-expression symbol number -&gt; scheme-expression
+;; replaces all occurrences of var with num in a-se
+(define (subst a-se var num)
+  (cond
+    [(number? a-se) a-se]
+    [(symbol? a-se) (if (eq? var a-se)
+                        num
+                        a-se)]
+    [(add? a-se) (make-add (subst (add-lhs a-se) var num)
+                           (subst (add-rhs a-se) var num))]
+    [(mul? a-se) (make-mul (subst (mul-lhs a-se) var num)
+                           (subst (mul-rhs a-se) var num))]))
+
+;; EXAMPLES AS TESTS
+(subst 1 'x 2)
+"should be"
+1
+
+(subst 'x 'x 2)
+"should be"
+2
+
+(subst 'x 'y 2)
+"should be"
+'x
+
+(subst (make-mul 'x 'y) 'x 2)
+"should be"
+(make-mul 2 'y)
+
+
+(subst (make-add 'x 'y) 'x 2)
+"should be"
+(make-add 2 'y)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-subst.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

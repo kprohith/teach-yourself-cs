@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval+def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="eval1.html">8.3.1</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="def-var-syn.html">8.6.1</a><pre>(define (f x y)
+  (+ (* 3 x) (* y y)))
+
+(+ (f 1 2) (f 2 1))
+"should be"
+(+ (+ (* 3 1) (* 2 2)) (f 2 1))
+"should be"
+(+ (+ 3 (* 2 2)) (f 2 1))
+"should be"
+(+ (+ 3 4) (f 2 1))
+"should be"
+(+ 7 (f 2 1))
+"should be"
+(+ 7 (+ (* 3 2) (* 1 1)))
+"should be"
+(+ 7 (+ 6 (* 1 1)))
+"should be"
+(+ 7 (+ 6 1))
+"should be"
+(+ 7 7)
+"should be"
+14
+
+(f 1 (* 2 3))
+"should be"
+(f 1 6)
+"should be"
+(+ (* 3 1) (* 6 6))
+"should be"
+(+ 3 (* 6 6))
+"should be"
+(+ 3 36)
+"should be"
+39
+
+(f (f 1 (* 2 3)) 19)
+"should be"
+(f (f 1 6) 19)
+"should be"
+(f (+ (* 3 1) (* 6 6)) 19)
+"should be"
+(f (+ 3 (* 6 6)) 19)
+"should be"
+(f (+ 3 36) 19)
+"should be"
+(f 39 19)
+"should be"
+(+ (* 3 39) (* 19 19))
+"should be"
+(+ 117 (* 19 19))
+"should be"
+(+ 117 361)
+"should be"
+478
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval+def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

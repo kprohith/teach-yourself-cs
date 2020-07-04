@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-error.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.4.3; How to Design Programs </title>
+</head>
+<body>
+<a href="syn-error-def.html">2.4.2</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.4.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sem-error2.html">2.4.4</a><pre>;; Execute these examples one at a time in DrScheme to see ;; error messages for common mistakes.(+ 5 (/ 1 0));;1.;;error message: /: division by zero;;meaning:       rather than crashing, Scheme warns of ;;               the division by zero(sin 10 20);;2.;;error message: sin: expects 1 argument, given 2: 10 20;;meaning:       function contract was designed for one argument, ;;               but you gave two(somef 10);;3.;;error message: reference to undefined identifier: somef;;meaning:       the function someof has not previously been defined
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-error.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

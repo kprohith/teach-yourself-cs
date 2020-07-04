@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/area-pipe.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="area-cylinder.html">3.3.3</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.3.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="compose-rocket.html">3.3.5</a><pre>;; area-pipe-one-def : number number number -&gt; number
+;; to determine the area of a pipe with given inner radius, length, and thickness
+;; this version does not use any helper functions
+(define (area-pipe-one-def inner len thickness)
+  (+ (* 2 (- (* pi (+ inner thickness) (+ inner thickness))
+             (* pi inner inner)))
+     (* len (* 2 pi (+ inner thickness)))
+     (* len (* 2 pi inner))))
+
+;; area-pipe : number number number -&gt; number
+;; to determine the area of a pipe with given inner radius, length, and thickness
+(define (area-pipe inner len thickness)
+  (+ (* 2 (area-donut inner (+ inner thickness)))  ; s.a. of rings on ends
+     (* len (circumference (+ inner thickness)))   ; s.a. of outer cylinder
+     (* len (circumference inner))))               ; s.a. of inner cylinder
+
+;; area-donut : number number -&gt; number
+;; finds the area of a circle with a chunk missing
+;; the entire circle has radius outer and the missing
+;; middle portion has radius inner.
+(define (area-donut inner outer)
+  (- (area-circle outer)
+     (area-circle inner)))
+
+;; area-circle : number -&gt; number
+;; determines the area of a circle with given radius
+(define (area-circle r)
+  (* pi r r))
+
+;; circumference : number -&gt; number
+;; determines the circumference of a circle with given radius
+(define (circumference r)
+  (* 2 pi r))
+
+;; EXAMPLES AS TESTS
+(area-circle 3) "should be" (* 9 pi)
+(circumference 3) "should be" (* 6 pi)
+(area-donut 3 5) "should be" (* 16 pi)
+(area-pipe 2 3 4) "should be" (* 112 pi)
+(area-pipe-one-def 2 3 4) "should be" (* 112 pi)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/area-pipe.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

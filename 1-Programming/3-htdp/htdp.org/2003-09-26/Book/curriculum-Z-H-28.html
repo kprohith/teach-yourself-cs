@@ -1,0 +1,878 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-28.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-27.html">previous</a></span><span>, <a href="curriculum-Z-H-29.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_22"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_22">Section  22</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_22">Designing Abstractions with First-Class Functions</a></h1>
+<p></p>
+<p>
+</p>
+<p>
+We have seen that functions can consume functions and how important that is
+for creating single points of control in a function. But functions not only
+can consume functions, they can also produce them. More precisely,
+expressions in the new Scheme can evaluate to functions.  Because the body
+of a function definition is also an expression, a function can produce a
+function. In this section, we first discuss this surprising idea and then
+show how it is useful for abstracting functions and in other contexts.</p>
+<p>
+</p>
+<a name="node_sec_22.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_22.1">22.1&nbsp;&nbsp;Functions that Produce Functions</a></h2>
+<p></p>
+<p>
+While the idea of producing a function may seem strange at first, it is
+extremely useful. Before we can discuss the usefulness of the idea, though,
+we must explore how a function can produce a function. Here are three
+examples:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="builtin">first</span>)
+(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span>) <span class="variable">f</span>)
+(<span class="keyword">define</span> (<span class="variable">h</span> <span class="variable">x</span>) 
+  (<span class="keyword">cond</span>
+    ((<span class="builtin">empty?</span> <span class="variable">x</span>) <span class="variable">f</span>)
+    ((<span class="builtin">cons?</span> <span class="variable">x</span>) <span class="variable">g</span>)))
+</pre></div><p>
+The body of <code class="scheme"><span class="variable">f</span></code> is <code class="scheme"><span class="builtin">first</span></code>, a primitive operation, so
+applying <code class="scheme"><span class="variable">f</span></code> to any argument always evaluates to
+<code class="scheme"><span class="builtin">first</span></code>. Similarly, the body of <code class="scheme"><span class="variable">g</span></code> is <code class="scheme"><span class="variable">f</span></code>, so
+applying <code class="scheme"><span class="variable">g</span></code> to any argument always evaluates to <code class="scheme"><span class="variable">f</span></code>.
+Finally, depending on what kind of list we supply as an argument to
+<code class="scheme"><span class="variable">h</span></code>, it produces <code class="scheme"><span class="variable">f</span></code> or <code class="scheme"><span class="variable">g</span></code>. </p>
+<p>
+None of these examples is useful but each illustrates the basic idea. In
+the first two cases, the body of the function definition is a function. In
+the last case, it evaluates to a function.  The examples are useless
+because the results do not contain or refer to the argument. For a function
+<code class="scheme"><span class="variable">f</span></code> to produce a function that contains one of <code class="scheme"><span class="variable">f</span></code>'s
+arguments, <code class="scheme"><span class="variable">f</span></code> must define a function and return it as the
+result. That is, <code class="scheme"><span class="variable">f</span></code>'s body must be a <strong>local</strong>-expression.</p>
+<p>
+Recall that <strong>local</strong>-expressions group definitions and ask DrScheme
+to evaluate a single expression in the context of these definitions.  They
+can occur wherever an expression can occur, which means the following
+definition is legal:
+<a name="node_idx_1520"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">add</span> <span class="variable">x</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">x-adder</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>)))
+    <span class="variable">x-adder</span>))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">add</span></code> consumes a number; after all, <code class="scheme"><span class="variable">x</span></code> is added
+to <code class="scheme"><span class="variable">y</span></code>. It then defines the function <code class="scheme"><span class="variable">x-adder</span></code> with a
+<strong>local</strong>-expression. The body of the <strong>local</strong>-expression is <code class="scheme"><span class="variable">x-adder</span></code>, which means the
+result of <code class="scheme"><span class="variable">add</span></code> is <code class="scheme"><span class="variable">x-adder</span></code>.</p>
+<p>
+To understand <code class="scheme"><span class="variable">add</span></code> better, let us look at how an application of
+<code class="scheme"><span class="variable">add</span></code> to some number evaluates: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">f</span> (<span class="variable">add</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">x-adder</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="variable">y</span>)))
+	      <span class="variable">x-adder</span>))
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">x-adder5</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="variable">y</span>)))
+	      <span class="variable">x-adder5</span>))
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">x-adder5</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="variable">y</span>))
+  (<span class="keyword">define</span> <span class="variable">f</span> <span class="variable">x-adder5</span>)
+</pre></div><p></p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+The last step adds the function <code class="scheme"><span class="variable">x-adder5</span></code> to the collection of our
+definitions; the evaluation continues with the body of the <strong>local</strong>-expression,
+<code class="scheme"><span class="variable">x-adder5</span></code>, which is the name of a function and thus a value. Now
+<code class="scheme"><span class="variable">f</span></code> is defined and we can use it:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">f</span> <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="variable">x-adder5</span> <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">10</span>)
+<span class="builtin">=</span> <span class="selfeval">15</span>
+</pre></div><p>
+That is, <code class="scheme"><span class="variable">f</span></code> stands for <code class="scheme"><span class="variable">x-adder5</span></code>, a function, which adds
+<code class="scheme"><span class="selfeval">5</span></code> to its argument. </p>
+<p>
+Using this example, we can write <code class="scheme"><span class="variable">add</span></code>'s contract and a purpose
+statement:
+<a name="node_idx_1522"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>)</code></span>
+<span class="comment">;; to create a function that adds <code class="scheme"><span class="variable">x</span></code> to its input</span>
+(<span class="keyword">define</span> (<span class="variable">add</span> <span class="variable">x</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">x-adder</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>)))
+    <span class="variable">x-adder</span>))
+</pre></div><p>
+The most interesting property of <code class="scheme"><span class="variable">add</span></code> is that its result
+``remembers'' the value of <code class="scheme"><span class="variable">x</span></code>. For example, every time we use
+<code class="scheme"><span class="variable">f</span></code>, it uses <code class="scheme"><span class="selfeval">5</span></code>, the value of <code class="scheme"><span class="variable">x</span></code>, when <code class="scheme"><span class="variable">add</span></code>
+was used to define <code class="scheme"><span class="variable">f</span></code>. This form of ``memory'' is the key to our
+simple recipe for defining abstract functions, which we discuss in the next
+section.</p>
+<p>
+</p>
+<a name="node_sec_22.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_22.2">22.2&nbsp;&nbsp;Designing Abstractions with Functions-as-Values</a></h2>
+<p></p>
+<p>
+The combination of <strong>local</strong>-expressions and functions-as-values simplifies our
+recipe for creating abstract functions. Consider our very first example in
+figure&nbsp;<a href="curriculum-Z-H-25.html#node_fig_Temp_110">53</a> again.  If we replace the contents of the
+boxes with <code class="scheme"><span class="variable">rel-op</span></code>, we get a function that has a free variable. To
+avoid this, we can either add <code class="scheme"><span class="variable">rel-op</span></code> to the parameters or we can
+wrap the definition in a <code class="scheme"><span class="keyword">local</span></code> and prefix it with a function that
+consumes <code class="scheme"><span class="variable">rel-op</span></code>. Figure&nbsp;<a href="#node_fig_Temp_118">59</a> shows what
+happnes when we use this idea with <code class="scheme"><span class="builtin">filter</span></code>.  If we also make the
+<code class="scheme"><span class="keyword">local</span></code>ly defined function the result of the function, we have
+defined an abstraction of the two original functions.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_118"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1524"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">filter2</span> <span class="variable">rel-op</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">abs-fun</span> <span class="variable">alon</span> <span class="variable">t</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [<span class="keyword">else</span>
+		(<span class="keyword">cond</span>
+		  [(<font style="background-color: pink"><u>rel-op</u></font> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+		   (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+		     (<span class="variable">abs-fun</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+		  [<span class="keyword">else</span>
+		     (<span class="variable">abs-fun</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])])))
+    <span class="variable">abs-fun</span>))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 59:</b>&nbsp;&nbsp;Abstracting with <strong>local</strong></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Put differently, we follow the example of <code class="scheme"><span class="variable">add</span></code> in the preceding
+section. Like <code class="scheme"><span class="variable">add</span></code>, <code class="scheme"><span class="variable">filter2</span></code> consumes an argument, defines
+a function, and returns this function as a result. The result remembers 
+the <code class="scheme"><span class="variable">rel-op</span></code> argument for good as the following evaluation shows: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter2</span> <span class="builtin">&lt;</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">abs-fun</span> <span class="variable">alon</span> <span class="variable">t</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [<span class="keyword">else</span>
+		(<span class="keyword">cond</span>
+		  [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+		   (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+		     (<span class="variable">abs-fun</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+		  [<span class="keyword">else</span>
+		     (<span class="variable">abs-fun</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])])))
+    <span class="variable">abs-fun</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">below3</span> <span class="variable">alon</span> <span class="variable">t</span>)
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+      [<span class="keyword">else</span>
+	(<span class="keyword">cond</span>
+	  [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+	   (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">below3</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	  [<span class="keyword">else</span>
+	    (<span class="variable">below3</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+   <span class="variable">below3</span>
+</pre></div><p>
+Remember that as we lift a <code class="scheme"><span class="keyword">local</span></code> definition to the top-level
+definitions, we also rename the function in case the same <code class="scheme"><span class="keyword">local</span></code> is
+evaluated again. Here we choose the name <code class="scheme"><span class="variable">below3</span></code> to indicate what
+the function does. And indeed, a comparison between <code class="scheme"><span class="variable">below</span></code> and
+<code class="scheme"><span class="variable">below3</span></code> reveals that the only difference is the name of the
+function. </p>
+<p>
+From the calculation, it follows that we can give the result of
+<code class="scheme">(<span class="variable">filter2</span> <span class="builtin">&lt;</span>)</code> a name and use it as if it were <code class="scheme"><span class="variable">below</span></code>. More
+succinctly, 
+<a name="node_idx_1526"></a><a name="node_idx_1528"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">below2</span> (<span class="variable">filter2</span> <span class="builtin">&lt;</span>))
+</pre></div><p>
+is equivalent to
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">below3</span> <span class="variable">alon</span> <span class="variable">t</span>)
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+      [<span class="keyword">else</span>
+	(<span class="keyword">cond</span>
+	  [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+	   (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">below3</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	  [<span class="keyword">else</span>
+	    (<span class="variable">below3</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+
+(<span class="keyword">define</span> <span class="variable">below2</span> <span class="variable">below3</span>)
+</pre></div><p>
+which means <code class="scheme"><span class="variable">below2</span></code> is just another name for <code class="scheme"><span class="variable">below3</span></code> and
+which directly proves that our abstract function correctly implements <code class="scheme"><span class="variable">below</span></code>.</p>
+<p>
+The example suggests a variant of the abstraction recipe from
+section&nbsp;<a href="curriculum-Z-H-27.html#node_chap_21">21</a>: 
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>The comparison:</b></dt><dd> The new recipe still requires us to compare and to
+mark the differences. <p>
+</p>
+</dd><dt><b>The abstraction:</b></dt><dd> The new step concerns the way we define the
+abstract function. We place one of the functions into a
+<strong>local</strong>-expression and use the name of the function as the body of
+the <code class="scheme"><span class="keyword">local</span></code>:
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">concrete-fun</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)
+	  ... <font style="background-color: pink"><u>op1</u></font> ... <font style="background-color: pink"><u>op2</u></font> ...))
+  <span class="variable">concrete-fun</span>)
+</pre></div><p>
+From that, we can create the abstract function by listing the names in the
+boxes as parameters: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">abs-fun</span> <span class="variable">op1</span> <span class="variable">op2</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">concrete-fun</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)
+	    ... <font style="background-color: pink"><u>op1</u></font> ... <font style="background-color: pink"><u>op2</u></font> ...))
+    <span class="variable">concrete-fun</span>))
+</pre></div><p>
+If <code class="scheme"><span class="variable">op1</span></code> or <code class="scheme"><span class="variable">op2</span></code> is a special symbol, say <code class="scheme"><span class="builtin">&lt;</span></code>, we
+name it something that is more meaningful in the new context.</p>
+<p>
+</p>
+</dd><dt><b>The test:</b></dt><dd> To test the abstract function, we define the concrete
+functions again, as before. Consider the example of <code class="scheme"><span class="variable">below</span></code> and
+<code class="scheme"><span class="variable">above</span></code>. Obtaining <code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">above</span></code> as instances of
+<code class="scheme"><span class="variable">filter2</span></code> is now straightforward: 
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">below2</span> (<span class="variable">filter2</span> <span class="builtin">&lt;</span>))
+
+(<span class="keyword">define</span> <span class="variable">above2</span> (<span class="variable">filter2</span> <span class="builtin">&gt;</span>))
+</pre></div><p>
+We simply apply <code class="scheme"><span class="variable">filter2</span></code> to the contents of the box in the
+respective concrete function and that application produces the old
+function. </p>
+<p>
+</p>
+</dd><dt><b>The contract:</b></dt><dd> The contract of an abstract function contains two
+arrows. After all, the function produces a function, and to describe this
+relationship the type to the right of the first arrow must contain another
+arrow. <p>
+Here is the contract for <code class="scheme"><span class="variable">filter2</span></code>: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">filter2</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">Y</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) &nbsp;<tt>-&gt;</tt>&nbsp; ((<span class="keyword">listof</span> <span class="variable">X</span>) <span class="variable">Y</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>))</code></span>
+</pre></div><p>
+It consumes a comparison function and produces a concrete filter-style
+function. </p>
+<p>
+The generalization of the contract works as before. 
+</p>
+</dd></dl><p>
+Given our experience with the first design recipe, the second one is only a
+question of practice.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_22.2.1"></a>
+<b>Exercise 22.2.1.</b>&nbsp;&nbsp; 
+Define an abstraction of the functions <code class="scheme"><span class="variable">convertCF</span></code> and
+<code class="scheme"><span class="variable">names</span></code> from section&nbsp;<a href="curriculum-Z-H-27.html#node_sec_21.1">21.1</a> using the new recipe for
+abstraction.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/map-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_22.2.2"></a>
+<b>Exercise 22.2.2.</b>&nbsp;&nbsp; 
+Define an abstract version of <code class="scheme"><span class="variable">sort</span></code> (see
+exercise&nbsp;<a href="curriculum-Z-H-25.html#node_thm_19.1.6">19.1.6</a>) using the new recipe for
+abstraction.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_22.2.3"></a>
+<b>Exercise 22.2.3.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">fold</span></code> using the new recipe for abstraction. Recall that
+<code class="scheme"><span class="variable">fold</span></code> abstracts the following pair of functions:
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1530"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="node_idx_1532"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the product of <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">product</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/fold-local.html">Solution</a><p></p>
+<p>
+</p>
+<a name="node_sec_22.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_22.3">22.3&nbsp;&nbsp;A First Look at Graphical User Interfaces</a></h2>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+Functions as first-class values play a central role in the design of
+graphical user interfaces. The term ``interface'' refers to the boundary
+between the program and a user. As long as we are the only users, we can
+apply functions to data in DrScheme's <tt>Interactions</tt>
+<a name="node_idx_1534"></a>window. If we
+want others to use our programs, though, we must provide a way to interact
+with the program that does not require any programming knowledge. The
+interaction between a program and a casual user is the <small>U</small><small>S</small><small>E</small><small>R</small>
+<small>I</small><small>N</small><small>T</small><small>E</small><small>R</small><small>F</small><small>A</small><small>C</small><small>E</small>.
+<a name="node_idx_1536"></a></p>
+<p>
+A <small>G</small><small>R</small><small>A</small><small>P</small><small>H</small><small>I</small><small>C</small><small>A</small><small>L</small> <small>U</small><small>S</small><small>E</small><small>R</small> <small>I</small><small>N</small><small>T</small><small>E</small><small>R</small><small>F</small><small>A</small><small>C</small><small>E</small> (GUI)
+<a name="node_idx_1538"></a><a name="node_idx_1540"></a><a name="node_idx_1542"></a>is the most convenient interface
+for casual users.  A GUI is a window that contains GUI items. Some of
+these items permit users to enter text; others are included so that users
+can apply a specific function; and yet others exist to display a
+function's results.  Examples include <i>buttons</i>,
+<a name="node_idx_1544"></a>which the user can
+click with the mouse and which trigger a function application; <i>choice
+menus</i>,
+<a name="node_idx_1546"></a>
+from which the user can choose one of a collection of values;
+<i>text fields</i>,
+<a name="node_idx_1548"></a>into which the user can type arbitrary text; and <i>message fields</i>, into which a program can draw text.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_119"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left">  <img src="../icons/lookup-gui0.gif"></td>
+      <td align="center"><img src="../icons/lookup-gui1.gif"></td>
+      <td align="right"> <img src="../icons/lookup-gui2.gif"></td>
+ </tr>
+ </table>
+ <p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 60:</b>&nbsp;&nbsp;A simple GUI for looking up a phone number</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Take a look at the simple GUI in figure&nbsp;<a href="#node_fig_Temp_119">60</a>. The left-most
+picture shows its initial state. In that state, the GUI contains a text
+field labeled ``Name'' and a message field labeled ``Number'' plus a
+``LookUp'' button.  In the second picture, the user has entered the name
+``Sean'' but hasn't yet clicked the ``LookUp'' button.<a name="call_footnote_Temp_120"></a><a href="#footnote_Temp_120"><sup><small>48</small></sup></a> Finally, the right-most picture
+shows how the GUI displays the phone number of ``Sean'' after the user
+clicks the ``LookUp'' button.</p>
+<p>
+The core of the program is a function that looks up a phone number for a
+name in a list. We wrote several versions of this function in
+part&nbsp;<a href="curriculum-Z-H-12.html#node_part_II">II</a> but always used it with DrScheme's
+<tt>Interactions</tt>
+<a name="node_idx_1550"></a>window. Using the GUI of figure&nbsp;<a href="#node_fig_Temp_119">60</a>,
+people who know nothing about Scheme can now use our function, too.</p>
+<p>
+To build a graphical user interface, we build structures<a name="call_footnote_Temp_121"></a><a href="#footnote_Temp_121"><sup><small>49</small></sup></a> that correspond to the
+GUI items and hand them over to a GUI manager. The latter constructs the
+visible window from these items. Some of the structures' fields describe
+the visual properties of the GUI's elements, such as the label of a button,
+the initial content of a message field, or the available choices on a
+menu. Other fields stand for functions. They are called <small>C</small><small>A</small><small>L</small><small>L</small>-<small>B</small><small>A</small><small>C</small><small>K</small>
+<small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small> 
+<a name="node_idx_1552"></a>because the GUI manager calls -- or applies -- these functions
+when the user manipulates the corresponding GUI element. Upon application,
+a call-back function obtains strings and (natural) numbers from the
+elements of the GUI and then applies the function proper. This last step
+computes answers, which the call-back function can place into GUI elements
+just like graphics functions draw shapes on a canvas.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_122"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum3a-Z-G-1.gif" border="0" alt="[curriculum3a-Z-G-1.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 61:</b>&nbsp;&nbsp;The model-view arrangement</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The ideal program consists of two completely separate components: the
+<small>M</small><small>O</small><small>D</small><small>E</small><small>L</small>,
+<a name="node_idx_1554"></a><a name="node_idx_1556"></a>which is the kind of program we are learning to design,
+and a <small>V</small><small>I</small><small>E</small><small>W</small>,
+<a name="node_idx_1558"></a>which is the GUI program that manages the display of
+information and the user's mouse and keyboard manipulations. The bridge
+between the two is the <small>C</small><small>O</small><small>N</small><small>T</small><small>R</small><small>O</small><small>L</small> 
+<a name="node_idx_1560"></a>expression. Figure&nbsp;<a href="#node_fig_Temp_122">61</a>
+graphically illustrates the organization, known as the
+<small>M</small><small>O</small><small>D</small><small>E</small><small>L</small>-<small>V</small><small>I</small><small>E</small><small>W</small>-<small>C</small><small>O</small><small>N</small><small>T</small><small>R</small><small>O</small><small>L</small>
+architecture. The lowest arrow indicates how a
+program makes up a button along with a call-back function.  The
+left-to-right arrow depicts the mouse-click event and how it triggers an
+application of the call-back function. It, in turn, uses other GUI
+functions to obtain user input before it applies a core function or
+to display results of the core function.</p>
+<p>
+The separation of the program into two parts means that the definitions for
+the model contain no references to the view, and that the definitions for
+the view contain no references to the data or the functionality of the
+model.  The organization principle evolved over two decades from many good
+and bad experiences.  It has the advantage that, with an adaptation of just
+the bridge expression, we can use one and the same program with different
+GUIs and vice versa. Furthermore, the construction of views
+requires different tools than does the construction of models. Constructing
+views is a labor-intensive effort and involves graphical design, but
+fortunately, it is often possible to generate large portions automatically.
+The construction of models, in contrast, will always demand a serious
+program design effort.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_123"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1562"></a>A <i>gui-item</i> is either 
+<ol>
+<li><p><code class="scheme">(<span class="variable">make-button</span> <span class="variable">string</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="variable">make-text</span> <span class="variable">string</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="variable">make-choices</span> (<span class="keyword">listof</span> <span class="variable">string</span>))</code> or
+</p>
+<li><p><code class="scheme">(<span class="variable">make-message</span> <span class="variable">string</span>)</code>.
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-window</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> (<span class="keyword">listof</span> <span class="variable">gui-item</span>)) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code> </span>
+<span class="comment">;; to add gui-items to the window and to show the window</span>
+<span class="comment">;; each list of gui-items defines one row of gui items in the window</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">hide-window</span> <span class="selfeval">:</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code> </span>
+<span class="comment">;; to hide the window</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-button</span> <span class="selfeval">:</span> <span class="variable">string</span> (<span class="variable">event%</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">gui-item</span></code> </span>
+<span class="comment">;; to create a button with label and call-back function </span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-message</span> <span class="selfeval">:</span> <span class="variable">string</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">gui-item</span></code> </span>
+<span class="comment">;; to create an item that displays a message</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">draw-message</span> <span class="selfeval">:</span> <span class="variable">gui-item</span>[<span class="variable">message%</span>] <span class="variable">string</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code> </span>
+<span class="comment">;; to display a message in a message item </span>
+<span class="comment">;; it erases the current message </span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-text</span> <span class="selfeval">:</span> <span class="variable">string</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">gui-item</span></code> </span>
+<span class="comment">;; to create an item (with label) that allows users to enter text</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">text-contents</span> <span class="selfeval">:</span> <span class="variable">gui-item</span>[<span class="variable">text%</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">string</span></code> </span>
+<span class="comment">;; to determine the contents of a text field </span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-choice</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">string</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">gui-item</span></code> </span>
+<span class="comment">;; to create a choice menu that permits users to choose from some</span>
+<span class="comment">;; string alternatives </span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">choice-inded</span> <span class="selfeval">:</span> <span class="variable">gui-item</span>[<span class="variable">choice%</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">num</span></code> </span>
+<span class="comment">;; to determine which choice is currently selected in a choice-item </span>
+<span class="comment">;; the result is the 0-based index in the choice menu </span>
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 62:</b>&nbsp;&nbsp;The <tt><strong>gui.ss</strong></tt> operations</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+Here we study the simplified GUI world of the teachpack
+<tt><strong>gui.ss</strong></tt>. Figure&nbsp;<a href="#node_fig_Temp_123">62</a> specifies the operations that the
+teachpack provides.<a name="call_footnote_Temp_124"></a><a href="#footnote_Temp_124"><sup><small>50</small></sup></a> The GUI
+manager is represented by the function <code class="scheme"><span class="variable">create-window</span></code>. Its contract
+and purpose statement are instructive. They explain that we create a window
+from a list. The function arranges these lists in a corresponding number of
+rows on the visible window. Each row is specified as a list of
+<code class="scheme"><span class="variable">gui-item</span></code>s. The data definition for <code class="scheme"><span class="variable">gui-item</span></code>s in
+figure&nbsp;<a href="#node_fig_Temp_123">62</a> shows that there are four kinds:
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>text fields,</b></dt><dd> which are created with <code class="scheme">(<span class="variable">make-text</span> <span class="variable">a-string</span>)</code> and
+allow users to enter arbitrary text into an area in the window; <p>
+</p>
+</dd><dt><b>buttons,</b></dt><dd> which are created with <code class="scheme">(<span class="variable">make-button</span> <span class="variable">a-string</span>
+<span class="variable">a-function</span>)</code> and allow users to apply a function with the click of a mouse
+button;<p>
+</p>
+</dd><dt><b>choice menus,</b></dt><dd> which are created with <code class="scheme">(<span class="variable">make-choice</span>
+<span class="variable">a-list-of-strings</span>)</code> and allow users to pick a choice from a specified set
+of choices; and<p>
+</p>
+</dd><dt><b>message fields,</b></dt><dd> which are created with <code class="scheme">(<span class="variable">make-message</span>
+<span class="variable">a-string</span>)</code> and enable the model to inform users of results. 
+</dd></dl><p>
+The function that goes with a button is a function of one argument: an
+event. For most uses, we can ignore the event; it is simply a token that
+signals the user's click action.</p>
+<p>
+How all this works is best illustrated with examples.
+Our first example is a canonical GUI program: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-window</span> (<span class="builtin">list</span> (<span class="builtin">list</span> (<span class="variable">make-button</span> <span class="selfeval">&quot;Close&quot;</span> <span class="variable">hide-window</span>))))
+</pre></div><p>
+It creates a window with a single button and equips it with the simplest of
+all call-backs: <code class="scheme"><span class="variable">hide-window</span></code>, the function that hides the window. When
+the user clicks the button labeled <code class="scheme"><span class="selfeval">&quot;Close&quot;</span></code>, the window disappears.</p>
+<p>
+The second sample GUI copies what the user enters into a text field to a
+message field. We first create a text field and a message field:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a-text-field</span>
+  (<span class="variable">make-text</span> <span class="selfeval">&quot;Enter Text:&quot;</span>))
+
+(<span class="keyword">define</span> <span class="variable">a-message</span>
+  (<span class="variable">make-message</span> <span class="selfeval">&quot;`Hello World' is a silly program.&quot;</span>))
+</pre></div><p>
+Now we can refer to these fields in a call-back function: 
+<a name="node_idx_1564"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">echo-message</span> <span class="selfeval">:</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to extract the contents of <code class="scheme"><span class="variable">a-text-field</span></code> and to draw it into <code class="scheme"><span class="variable">a-message</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">echo-message</span> <span class="variable">e</span>)
+  (<span class="variable">draw-message</span> <span class="variable">a-message</span> (<span class="variable">text-contents</span> <span class="variable">a-text-field</span>)))
+</pre></div><p>
+The definition of the call-back function is based on our (domain) knowledge
+about the <code class="scheme"><span class="variable">gui-item</span></code>s. Specifically, the function
+<code class="scheme"><span class="variable">echo-message</span></code> obtains the current contents of the text field with
+<code class="scheme"><span class="variable">text-contents</span></code> as a string, and it draws this string into the
+message field with the <code class="scheme"><span class="variable">draw-message</span></code> function. To put everything
+together, we create a window with two rows:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-window</span>
+ (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="variable">a-text-field</span> <span class="variable">a-message</span>)
+       (<span class="builtin">list</span> (<span class="variable">make-button</span> <span class="selfeval">&quot;Copy Now&quot;</span> <span class="variable">echo-message</span>))))
+</pre></div><p>
+The first row contains the text and the message field; the second one
+contains a button with the label <code class="scheme"><span class="selfeval">&quot;Copy Now&quot;</span></code> whose call-back
+function is <code class="scheme"><span class="variable">echo-message</span></code>. The user can now enter text into the
+text field, click the button, and see the text appear in the message
+field of the window.</p>
+<p>
+The purpose of the third and last example is to create a window with a
+choice menu, a message field, and a button. Clicking the button puts the
+current choice into the message field. As before, we start by defining the
+input and output <code class="scheme"><span class="variable">gui-item</span></code>s:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">THE-CHOICES</span>
+  (<span class="builtin">list</span> <span class="selfeval">&quot;green&quot;</span> <span class="selfeval">&quot;red&quot;</span> <span class="selfeval">&quot;yellow&quot;</span>))
+
+(<span class="keyword">define</span> <span class="variable">a-choice</span>
+  (<span class="variable">make-choice</span> <span class="variable">THE-CHOICES</span>))
+
+(<span class="keyword">define</span> <span class="variable">a-message</span>
+  (<span class="variable">make-message</span> (<span class="builtin">first</span> <span class="variable">THE-CHOICES</span>)))
+</pre></div><p>
+Because the list of choices is used more than once in the program, it is
+specified in a separate variable definition.  </p>
+<p>
+As before, the call-back function for the button interacts with
+<code class="scheme"><span class="variable">a-choice</span></code> and <code class="scheme"><span class="variable">a-message</span></code>:
+<a name="node_idx_1566"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">echo-choice</span> <span class="selfeval">:</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to determine the current choice of <code class="scheme"><span class="variable">a-choice</span></code> and</span>
+<span class="comment">;; to draw the corresponding string into <code class="scheme"><span class="variable">a-message</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">echo-choice</span> <span class="variable">e</span>)
+  (<span class="variable">draw-message</span> <span class="variable">a-message</span>
+                (<span class="builtin">list-ref</span> <span class="variable">THE-CHOICES</span>
+		          (<span class="variable">choice-index</span> <span class="variable">a-choice</span>))))
+</pre></div><p>
+Specifically, the call-back function finds the <code class="scheme"><span class="selfeval">0</span></code>-based index
+of the user's current choice with <code class="scheme"><span class="variable">choice-index</span></code>, uses Scheme's
+<code class="scheme"><span class="builtin">list-ref</span></code> function to extract the corresponding string from
+<code class="scheme"><span class="variable">THE-CHOICES</span></code>, and then draws the result into the message field of
+the window. To create the window, we arrange <code class="scheme"><span class="variable">a-choice</span></code> and
+<code class="scheme"><span class="variable">a-message</span></code> in one row and the button in a row below:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">create-window</span>
+ (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="variable">a-choice</span> <span class="variable">a-message</span>)
+       (<span class="builtin">list</span> (<span class="variable">make-button</span> <span class="selfeval">&quot;Confirm Choice&quot;</span> <span class="variable">echo-choice</span>))))
+</pre></div><p>                          </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_125"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_1568"></a><a name="node_idx_1570"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Model</u>:</span>
+<span class="comment">;; <code class="scheme"><span class="variable">build-number</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">digit</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to translate a list of digits into a number</span>
+<span class="comment">;; example: <code class="scheme">(<span class="variable">build-number</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)) <span class="builtin">=</span> <span class="selfeval">123</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">build-number</span> <span class="variable">x</span>) ...)
+
+<span class="comment">;; </span>
+<span class="comment"><p></p>
+<p></p>
+</span>
+<span class="comment">;; <u>View</u>:</span>
+<span class="comment">;; the ten digits as strings </span>
+(<span class="keyword">define</span> <span class="variable">DIGITS</span>
+  (<span class="builtin">build-list</span> <span class="selfeval">10</span>  number<tt>-&gt;</tt> string))
+
+<span class="comment">;; a list of three digit choice menus </span>
+(<span class="keyword">define</span> <span class="variable">digit-choosers</span>
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">builder</span> <span class="variable">i</span>) (<span class="variable">make-choice</span> <span class="variable">DIGITS</span>)))
+    (<span class="builtin">build-list</span> <span class="selfeval">3</span> <span class="variable">builder</span>)))
+
+<span class="comment">;; a message field for saying hello and displaying the number </span>
+(<span class="keyword">define</span> <span class="variable">a-msg</span>
+  (<span class="variable">make-message</span> <span class="selfeval">&quot;Welcome&quot;</span>))
+
+<span class="comment">;; </span>
+<span class="comment"><p></p>
+<p></p>
+</span>
+<span class="comment">;; <u>Controller</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">check-call-back</span> <span class="selfeval">:</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to get the current choices of digits, convert them to a number, </span>
+<span class="comment">;; and to draw this number as a string into the message field </span>
+(<span class="keyword">define</span> (<span class="variable">check-call-back</span> <span class="variable">b</span>)
+  (<span class="variable">draw-message</span> <span class="variable">a-msg</span> 
+                ( number<tt>-&gt;</tt> string
+                 (<span class="variable">build-number</span> 
+                  (<span class="builtin">map</span> <span class="variable">choice-index</span> <span class="variable">digit-choosers</span>)))))
+
+(<span class="variable">create-window</span> 
+ (<span class="builtin">list</span> 
+  (<span class="builtin">append</span> <span class="variable">digit-choosers</span> (<span class="builtin">list</span> <span class="variable">a-msg</span>))
+  (<span class="builtin">list</span> (<span class="variable">make-button</span> <span class="selfeval">&quot;Check Guess&quot;</span> <span class="variable">check-call-back</span>))))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 63:</b>&nbsp;&nbsp;A GUI for echoing digits as numbers</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Now that we have examined some basic GUI programs, we can study a program
+with full-fledged core and GUI components. Take a look at the definitions
+in figure&nbsp;<a href="#node_fig_Temp_125">63</a>. The program's purpose is to echo the values
+of several digit choice menus as a number into some message field. The
+model consists of the <code class="scheme"><span class="variable">build-number</span></code> function, which converts a list
+of (three) digits into a number. We have developed several such functions,
+so the figure mentions only what it does. The GUI component of the program
+sets up three choice menus, a message field, and a button.  The control
+part consists of a single call-back function, which is attached to the
+single button in the window. It determines the (list of) current choice
+indices, hands them over to <code class="scheme"><span class="variable">build-number</span></code>, and draws the result as
+a string into the message field.</p>
+<p>
+Let's study the organization of the call-back functions in more detail. It
+composes three kinds of functions:
+</p>
+<ol>
+<li><p>The innermost function determines the current state of the
+<code class="scheme"><span class="variable">gui-item</span></code>s. This is the user's input. With the given functions, we
+can determine the string that the user entered into either a text field or
+the 0-based index of a choice menu.</p>
+<p>
+</p>
+<li><p>This user input is consumed by the main function of the model. The
+call-back function may convert the user's string into some other data, say,
+a symbol or a number.</p>
+<p>
+</p>
+<li><p>The result of the model function, in turn, is drawn into a message
+field, possibly after converting it to a string first.
+</p>
+</li></ol><p>
+The control component of a program is also responsible for the visual
+composition of the window. The teachpack provides only one function for
+this purpose: <code class="scheme"><span class="variable">create-window</span></code>. Standard GUI toolboxes provide many
+more functions, though all of these toolboxes differ from each other and
+are changing rapidly. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_22.3.1"></a>
+<b>Exercise 22.3.1.</b>&nbsp;&nbsp; 
+Modify the program of figure&nbsp;<a href="#node_fig_Temp_125">63</a> so that it implements the
+number-guessing game from exercises&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.2">5.1.2</a>, <a href="curriculum-Z-H-8.html#node_thm_5.1.3">5.1.3</a>,
+and&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.5.5">9.5.5</a>. Make sure that the number of digits that the player
+must guess can be changed by editing a single definition in the program.</p>
+<p>
+<strong>Hint:</strong> Recall that exercise&nbsp;<a href="curriculum-Z-H-15.html#node_thm_11.3.1">11.3.1</a> introduces a function that
+generates random numbers.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gui-guess.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_22.3.2"></a>
+<b>Exercise 22.3.2.</b>&nbsp;&nbsp; 
+Develop a program for looking up phone numbers. The program's GUI should
+consist of a text field, a message field, and a button. The text field
+permits users to enter names. The message field should display the number
+that the model finds or the message <code class="scheme"><span class="selfeval">&quot;name not found&quot;</span></code>, if the model
+produces <code class="scheme"><span class="builtin">false</span></code>.</p>
+<p>
+Generalize the program so that a user can also enter a phone number (as a
+sequence of digits containing no other characters). </p>
+<p>
+<strong>Hints:</strong> (1) Scheme provides the function <code class="scheme"><i>string</i><tt>-&gt;</tt><i>symbol</i></code> for
+converting a string to a symbol. (2) It also provides the function
+<code class="scheme">string<tt>-&gt;</tt>number</code>, which converts a string to a number if
+possible. If the function consumes a string that doesn't represent a
+number, it produces <code class="scheme"><span class="builtin">false</span></code>: 
+</p>
+<div align="left"><pre class="scheme">  ( string<tt>-&gt;</tt> number <span class="selfeval">&quot;6670004&quot;</span>)
+<span class="builtin">=</span> <span class="selfeval">6670004</span>
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">  ( string<tt>-&gt;</tt> number <span class="selfeval">&quot;667-0004&quot;</span>)
+<span class="builtin">=</span> false
+</pre></div><p>
+The generalization demonstrates how one and the same GUI can use two
+distinct models.</p>
+<p>
+<a name="node_idx_1572"></a>
+</p>
+<p></p>
+<p><strong>Real-world GUIs</strong>:  The graphical user interface in
+figure&nbsp;<a href="#node_fig_Temp_119">60</a> was not constructed from the items provided by
+the teachpack. GUIs constructed with the teachpack's <code class="scheme"><span class="variable">gui-item</span></code>s are 
+primitive. They are sufficient, however, to study the basic
+principles of GUI programming. The design of real-world GUIs involves
+graphics designers and tools that generate GUI programs (rather than making
+them by hand).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gui-phone.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_22.3.3"></a>
+<b>Exercise 22.3.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><i>pad</i><tt>-&gt;</tt><i>gui</i></code>. The function consumes a title (string) and a
+<code class="scheme"><span class="variable">gui-table</span></code>. It turns the table into a list of lists of
+<code class="scheme"><span class="variable">gui-item</span></code>s that <code class="scheme"><span class="variable">create-window</span></code> can consume. Here is the
+data definition for <code class="scheme"><span class="variable">gui-table</span></code>s:</p>
+<p>
+<a name="node_idx_1574"></a>A <i>cell</i> is either 
+</p>
+<ol>
+<li><p>a number, 
+</p>
+<li><p>a symbol. 
+</p>
+</li></ol><p></p>
+<p>
+<a name="node_idx_1576"></a>A <i>gui-table</i> is a <code class="scheme">(<span class="keyword">listof</span> (<span class="keyword">listof</span> <span class="variable">cell</span>))</code> .</p>
+<p>
+</p>
+<p>
+Here are two examples of gui-tables: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">pad</span>
+  <span class="keyword">'</span>((<span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)
+    (<span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span>)
+    (<span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span>)
+    (<span class="variable">\#</span> <span class="selfeval">0</span> <span class="builtin">*</span>)))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">pad2</span> 
+  <span class="keyword">'</span>((<span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>  <span class="builtin">+</span>)
+    (<span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span>  <span class="builtin">-</span>)
+    (<span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span>  <span class="builtin">*</span>)
+    (<span class="selfeval">0</span> <span class="builtin">=</span> <span class="variable">\.</span> <span class="builtin">/</span>)))
+</pre></div></td><td>
+</td></tr></table></div>
+
+The table on the left lays out a virtual phone pad, the right one a
+calculator pad. <p>
+The function <code class="scheme"><i>pad</i><tt>-&gt;</tt><i>gui</i></code> should turn each cell into a button. The
+resulting list should be prefixed with two messages. The first one displays
+the title and never changes. The second one displays the latest button that
+the user clicked. The two examples above should produce the following two 
+GUIs: </p>
+<p>
+
+</p>
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left">  <img src="../icons/vp.gif"></td>
+      <td align="right"> <img src="../icons/cal.gif"></td>
+ </tr>
+ </table>
+ <p>
+<strong>Hint:</strong> The second message header requires a short string, for example,
+<code class="scheme"><span class="selfeval">&quot;N&quot;</span></code>, as the initial value.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gui-guipad.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_120"></a><a href="#call_footnote_Temp_120"><sup><small>48</small></sup></a> The program
+has also cleared the result field to avoid any misunderstanding. Similarly,
+the user could also just hit the enter key instead of clicking the
+button. We ignore such subtleties here.</p>
+<p><a name="footnote_Temp_121"></a><a href="#call_footnote_Temp_121"><sup><small>49</small></sup></a> More
+precisely, we construct an object, but we do not need to understand the
+distinction between a structure and an object here.</p>
+<p><a name="footnote_Temp_124"></a><a href="#call_footnote_Temp_124"><sup><small>50</small></sup></a> The <code class="scheme"><span class="variable">gui-item</span></code>s aren't really
+structures, which explains the font of the operations' names.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-27.html">previous</a></span><span>, <a href="curriculum-Z-H-29.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-28.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

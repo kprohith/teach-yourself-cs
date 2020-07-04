@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/profit-comp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.1.4; How to Design Programs </title>
+</head>
+<body>
+<a href="profit-eval.html">3.1.3</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.1.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="profit-constants.html">3.2.1</a><pre>;; profit-left : number -&gt; number
+;; determines the profit of the program
+(define (profit-left ticket-price)
+  (- (revenue ticket-price)
+     (cost ticket-price)))
+
+;; revenue : number -&gt; number
+;; determines the revenue for a particular ticket price.
+(define (revenue ticket-price)
+  (*  (attendees ticket-price) ticket-price))
+
+;; cost : number -&gt; number
+;; determines the cost for a particular ticket price.
+(define (cost ticket-price)
+  (* 1.50 (attendees ticket-price)))
+
+;; attendees : number -&gt; number
+;; determines the number of attendees for a particular ticket price.
+(define (attendees ticket-price)
+  (+ 120
+     (* (/ 15 .10) (- 5.00 ticket-price))))
+
+
+;; profit-right : number -&gt; number
+;; determines the profit of the program
+(define (profit-right ticket-price)
+  (- (* (+ 120
+           (* (/ 15 .10)
+              (- 5.00 ticket-price)))
+        ticket-price)
+     (* 1.50 (+ 120
+                (* (/ 15 .10)
+                   (- 5.00 ticket-price))))))
+
+;; EXAMPLES AS TESTS
+
+(profit-left 3.00) "should be"
+(profit-right 3.00)
+(profit-left 4.00) "should be"
+(profit-right 4.00)
+(profit-left 5.00) "should be"
+(profit-right 5.00)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/profit-comp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

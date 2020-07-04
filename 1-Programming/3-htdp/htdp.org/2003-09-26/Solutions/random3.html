@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="random.html">11.3.1</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="random2.html">11.3.3</a><pre>;; draw-shapes : posn list-of-numbers -&gt; true
+;; draws circles centered at a-posn with radii taken from a-lon
+
+#|
+;; Template
+(define (draw-shapes a-posn a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (draw-shapes a-posn (rest a-lon)) ...]))
+|#
+
+(define (draw-shapes a-posn a-lon)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (draw-circle a-posn (first a-lon))
+               (draw-shapes a-posn (rest a-lon)))]))
+
+;; Examples:
+(start 300 300)
+(draw-shapes (make-posn 10 10) empty)
+(draw-shapes (make-posn 10 10) (cons 5 empty))
+(draw-shapes (make-posn 150 150)
+             (cons 20
+                   (cons 40
+                         (cons 60
+                               (cons 80
+                                     (cons 100
+                                           (cons 120
+                                                 (cons 140
+                                                       empty))))))))
+
+; -------------------------------------------------------------------------
+
+;; tie-dyed : number -&gt; list-of-numbers
+;; to construct a list of numbers between 20 and 120
+(define (tie-dyed n)
+  (cond
+    [(zero? n) empty]
+    [else (cons (+ (random 101) 20)
+                (tie-dyed (sub1 n)))]))
+
+;; EXAMPLES
+(tie-dyed 3)
+;; = a list of three numbers between 20 and 120
+
+(start 240 240)
+(draw-shapes (make-posn 120 120) (tie-dyed 10))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

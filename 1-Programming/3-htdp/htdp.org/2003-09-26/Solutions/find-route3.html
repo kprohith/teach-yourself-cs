@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/find-route3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 28.1.4; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-35.html#node_thm_28.1.4">Problem Statement</a>
+<pre>#| ---------------------------------------------------------------------------------
+
+   Find Route in Graph: Global Tests
+
+   find-route : node node graph -&gt; (listof node) or #f
+   Purpose: produce a list of nodes, starting with origination 
+    and ending destination. The list represent a path from 
+    the origination node to the destination node in a-graph.
+    If there is no path, the function produces #f. 
+|#
+
+(define (find-route origination destination graph)
+  (cond
+    ((eq? origination destination) (list destination))
+    (else (local ((define possible-route 
+		    (find-route/list (neighbors origination graph) destination graph)))
+	    (cond
+	      ((boolean? possible-route) #f)
+	      (else (cons origination possible-route)))))))
+
+#| find-route/list : (listof node) node graph -&gt; (listof node) or #f
+   Purpose: produce a list of nodes, starting with one node on lo-originations 
+    and ending destination. The list represent a path from 
+    the node on lo-originations to destination in a-graph.
+    If there is no path, the function produces #f.     |#
+(define (find-route/list lo-Os D graph)
+  (cond
+    ((empty? lo-Os) #f)
+    (else (local ((define possible-route (find-route (first lo-Os) D graph)))
+	    (cond
+	      ((boolean? possible-route) (find-route/list (rest lo-Os) D graph))
+	      (else possible-route))))))
+
+#| neighbors: node graph -&gt; (listof node)
+   (define (neighbors a-node a-graph) ...)
+   Purpose: compute a-node's neighbors in a-graph
+|#
+(define (neighbors a-node a-graph)
+  (cond
+    ((empty? a-graph) (error 'neighbors "can't happen"))
+    (else (cond
+	    ((eq? (first (first a-graph)) a-node)
+	     (second (first a-graph)))
+	    (else (neighbors a-node (rest a-graph)))))))
+
+;; equivalently, with Scheme's built-in lookup function:
+(define (neighbors a-node a-graph)
+  (second (assq a-node a-graph)))
+
+#| ---------------------------------------------------------------------------------
+   Tests: data followed by expessions
+
+   test-on-all-nodes : graph -&gt; ???
+   Purpose: to produce all possible results of connecting nodes in a graph
+    The actual format of the answer is irrelevant, as long as it is a datum
+    that contains the result of all possible applications.
+
+   Questions:
+    - Why does the output of test-on-all-nodes contain the output of all
+      possible find-route-problems in Graph?
+
+    - Specify the class of data that test-on-all-nodes produces, given some graph.
+|#
+
+(define Graph 
+  '((A (B E))
+    (B (E F))
+    (C (D))
+    (D ())
+    (E (C F))
+    (F (D G))
+    (G ())))
+
+
+(define (test-on-all-nodes a-graph)
+  (local ((define all-nodes (map first a-graph)))
+    (map (lambda (a-node)
+	   (map (lambda (another-node)
+		  (list a-node another-node
+		        (find-route a-node another-node a-graph)))
+	        all-nodes))
+          all-nodes)))
+  
+(pretty-print (test-on-all-nodes Graph))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/find-route3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/phone-directory.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.4; How to Design Programs </title>
+</head>
+<body>
+<a href="price-of.html">10.2.3</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="extract2.html">10.2.5</a><pre>;; A phone-record is
+;;   (make-phone-record NUM NAME)
+;; where NUM is a number, and
+;;       NAME is a symbol
+(define-struct phone-record (num name))
+
+;; A phone-directory is either:
+;;  empty, or
+;;  (cons PR PD)
+;; where PR is a phone-record, and
+;;       PD is a phone-directory
+
+;; whose-number : phone-directory number -&gt; name
+;; finds the person in pd who has the number num
+
+#|
+;; Template
+(define (whose-number pd num)
+  (cond
+    [(empty? pd) ...]
+    [else (phone-record-num (first pd))
+          (phone-record-name (first pd))
+          (whose-number (rest pd) num)]))
+|#
+
+(define (whose-number pd num)
+  (cond
+    [(empty? pd) 'unknown-number]
+    [else (cond
+            [(= num (phone-record-num (first pd)))
+             (phone-record-name (first pd))]
+            [else
+             (whose-number (rest pd) num)])]))
+
+;; Examples
+(whose-number empty 2029398100) "should be" 'unknown-number
+(whose-number (cons (make-phone-record 2125551212 'ny-information) empty)
+              2125551212)
+"should be"
+'ny-information
+(whose-number (cons (make-phone-record 2125551212 'ny-information)
+                    (cons (make-phone-record 2025551212 'dc-information)
+                          empty))
+              2025551212)
+"should be"
+'dc-information
+
+;; phone-number : phone-directory number -&gt; name
+;; finds the number of per in pd
+
+#|
+;; Template
+(define (phone-number pd per)
+  (cond
+    [(empty? pd) ...]
+    [else (phone-record-num (first pd))
+          (phone-record-name (first pd))
+          (phone-number (rest pd) per)]))
+|#
+
+(define (phone-number pd per)
+  (cond
+    [(empty? pd) 'unlisted]
+    [else (cond
+            [(eq? per (phone-record-name (first pd)))
+             (phone-record-num (first pd))]
+            [else
+             (phone-number (rest pd) per)])]))
+
+;; Examples
+(phone-number empty 'san-fransisco-info) "should be" 'unlisted
+(phone-number (cons (make-phone-record 2125551212 'ny-information) empty)
+              'ny-information)
+"should be"
+2125551212
+(phone-number (cons (make-phone-record 2125551212 'ny-information)
+                    (cons (make-phone-record 2025551212 'dc-information)
+                          empty))
+              'dc-information)
+"should be"
+2025551212
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/phone-directory.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

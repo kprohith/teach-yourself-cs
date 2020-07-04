@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/check-guess.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 5.1.5; How to Design Programs </title>
+</head>
+<body>
+<a href="quad2.html">5.1.4</a> | <a href="../Book/curriculum-Z-H-8.html#node_thm_5.1.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="eval-distance-to-0.html">6.1.1</a><pre>;; Language: Beginning Student
+;; Teachpack: master.ss
+
+;; check-color : symbol symbol symbol symbol -&gt; symbol 
+;; to determine how well  the target-colors match with the guess-colors
+(define (check-color target-1 target-2 guess-1 guess-2)
+  (cond
+    [(and (symbol=? guess-1 target-1) (symbol=? guess-2 target-2))
+     'Perfect]
+    [(or  (symbol=? guess-1 target-1) (symbol=? guess-2 target-2)) 
+     'OneColorAtCorrectPosition]
+    [(or  (symbol=? guess-1 target-2) (symbol=? guess-2 target-1))
+     'OneColorOccurs]
+    [else
+     'NothingCorrect]))
+
+;; Examples turned into Tests:
+;; at least one example per case: 
+(check-expect (check-color 'red 'green 'red 'green) 'Perfect)
+(check-expect (check-color 'red 'green 'red 'purple) 'OneColorAtCorrectPosition)
+(check-expect (check-color 'red 'green 'purple 'red) 'OneColorOccurs)
+(check-expect (check-color 'green 'red 'red 'purple) 'OneColorOccurs)
+(check-expect (check-color 'green 'blue 'red 'purple) 'NothingCorrect)
+
+;; uncomment the following line
+;; and use the master.ss teachpack
+;; to play the game!
+;(master check-color)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/check-guess.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

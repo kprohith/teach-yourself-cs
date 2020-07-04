@@ -1,0 +1,572 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-5.html">previous</a></span><span>, <a href="drscheme-Z-H-7.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_2"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_2">Section  2</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_2">Numbers, Expressions, Simple Programs</a></h1>
+<p></p>
+<p>
+</p>
+<a name="node_sec_2.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_2.1">2.1&nbsp;&nbsp;Numbers and Arithmetic</a></h2>
+<p></p>
+<p>
+DrScheme looks like this:</p>
+<p>
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="init-screen.gif" border="0" alt="[init-screen.gif]">&nbsp;</div>
+<p></p>
+<p>
+</p>
+<blockquote>
+<strong>Beware!</strong> 
+If your window does not say <strong><tt>Language: Beginning Student</tt></strong> in the lower
+window like the above picture, then see the IMPORTANT note in
+<a href="drscheme-Z-H-3.html#node_sec_0.3">Preparing DrScheme</a>.<p>
+</p>
+</blockquote><p>
+The top area, the <em>definitions window</em>, is for defining new
+programs.  We'll explain how to use this window later, in
+<a href="#node_sec_2.2">Variables and Programs</a>.</p>
+<p>
+To type Scheme numbers into DrScheme, first click in DrScheme's bottom
+area, the <em>interactions window</em>, to set the keyboard focus to a point
+after the ``&gt; '' prompt.
+</p>
+<blockquote>
+<strong>Beware!</strong> 
+The insertion caret (the focus point for typing) must be placed after
+the space following the last ``&gt;'' in the window; otherwise,
+DrScheme won't let you type a new expression. You can still select old
+expressions and results for copying, but they cannot be modified.<p>
+</p>
+</blockquote>
+After typing a Scheme expression, type ENTER (a.k.a. RETURN).  If you
+type a number, DrScheme echoes the number back. If you type a more
+complex expression, DrScheme prints the expression's value. For
+example, evaluating <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">5</span>)</code> in DrScheme looks like this:<p>
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="interactive.gif" border="0" alt="[interactive.gif]">&nbsp;</div>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Numbers</strong></p>
+<p>Scheme numbers are printed in the standard way, but spaces are not
+allowed within a number. Thus, <code class="scheme"><span class="selfeval">-5</span></code>, with no space between the
+<code class="scheme"><span class="builtin">-</span></code> and <code class="scheme"><span class="selfeval">5</span></code>, is the negative integer -5. But <code class="scheme"><span class="builtin">-</span> <span class="selfeval">5</span></code>,
+with a space in between, is two separate expressions: the minus
+operator and the number 5. Similarly, <code class="scheme"><span class="selfeval">3/2</span></code> is the fraction
+3/2, while <code class="scheme"><span class="selfeval">3</span> <span class="builtin">/</span> <span class="selfeval">2</span></code> is three separate expressions: the number 3,
+the division operator, and the number 2. </p>
+<p>
+There is no limit on the size of exact numbers in Scheme. Try giving
+DrScheme the number <code class="scheme"><span class="selfeval">123456789012345678901234567890</span></code>.</p>
+<p>
+Try the number <code class="scheme"><span class="selfeval">10/12</span></code>. DrScheme echoes back the repeating
+decimal 0.83 with a line over the 3. If you right-click the
+number (Mac OS: control-click), then you can choose to display the
+number in fraction form, 5/6. Note that DrScheme automatically puts
+the displayed fraction in its simplest form.</p>
+<p>
+DrScheme also accepts decimal numbers, such as <code class="scheme"><span class="selfeval">3.2</span></code>, and
+treats them in the same way as fractions.</p>
+<p>
+To change the default method for printing numbers (fractions versus
+decimals), open the <strong><tt>Choose Language</tt></strong> dialog, click the
+<strong><tt>Show Details</tt></strong> button, and adjust the <strong><tt>Fraction
+Style</tt></strong> setting.</p>
+<p>
+DrScheme always prints inexact results with a leading <code class="scheme"><span class="selfeval">#i</span></code> to
+alert you that the number is inexact. For example, an abbreviation
+for pi (the ratio between a circle's circumference and diameter)
+is built into DrScheme, and the input <code class="scheme"><span class="variable">pi</span></code> produces the output
+<code class="scheme"><span class="selfeval">#i3.14159</span></code> (perhaps with more digits).</p>
+<p>
+</p>
+<blockquote>
+<strong>For the Especially Curious:</strong> 
+Inexact numbers have a limited size as well as a limited
+precision. Thus, <code class="scheme">(<span class="variable">expt</span> <span class="selfeval">#i2</span> <span class="selfeval">#i5000</span>)</code> calculates the inexact
+value of 2<sup>5000</sup> to be <code class="scheme"><span class="selfeval">#i+inf.0</span></code>, which means ``roughly
+infinity'' -- very inexact, indeed!<p>
+</p>
+</blockquote><p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Numeric Expressions</strong></p>
+<p>Every numeric expression that is not a number must start with an open
+parenthesis <code class="scheme">(</code> and end with a close parenthesis
+<code class="scheme">)</code>. If, instead of <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code>, you type <code class="scheme"><span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span></code>
+or <code class="scheme"><span class="selfeval">1</span> <span class="builtin">+</span> <span class="selfeval">2</span></code>, DrScheme echos back each of the three separate
+pieces: <code class="scheme"><span class="selfeval">1</span></code>, <code class="scheme"><span class="builtin">+</span></code>, and <code class="scheme"><span class="selfeval">2</span></code>.
+</p>
+<blockquote>
+<strong>Beware!</strong> If you type an open parenthesis without a matching close
+parenthesis (or vice versa), DrScheme does not even try to
+evaluate the malformed expression; instead, typing ENTER creates a
+new line for typing.
+</blockquote>
+To help you match parentheses, DrScheme highlights
+parenthesis-balanced expressions with a gray background when the
+insertion caret is immediately before an open parenthesis or after a
+close parenthesis. However, this highlighting is only an indicator.
+The highlight does not actually select any text; in particular, the
+copy and cut commands do not apply to the highlighted region. The
+normal caret, which is used to select text for cut and paste
+poerations, is still visible as a blinking black line on the end of
+the highlighted region.<p>
+If a numeric expression starts with an open parenthesis, an operator
+must follow the parenthesis. Unlike arithmetic, where extra
+parentheses are always allowed, extra parentheses are illegal in a
+Scheme expression. Thus, <code class="scheme">(<span class="selfeval">1</span>)</code> is not a numeric expression,
+neither is <code class="scheme">(<span class="builtin">+</span> (<span class="selfeval">1</span>) <span class="selfeval">2</span>)</code>, and neither is <code class="scheme">((<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))</code>. If
+you give DrScheme the expression <code class="scheme">(<span class="selfeval">1</span>)</code>, it replies with the
+error ``First term after parenthesis is illegal in an application.''
+In other words, since <code class="scheme"><span class="selfeval">1</span></code> appears after the parenthesis,
+DrScheme thinks you want to apply the ``operator'' <code class="scheme"><span class="selfeval">1</span></code> to some
+arguments. But <code class="scheme"><span class="selfeval">1</span></code> is not an operator, so it is illegal for
+<code class="scheme"><span class="selfeval">1</span></code> to follow an open parenthesis. DrScheme gives the same
+error message for <code class="scheme">((<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))</code> because <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code> is also
+not an operator.</p>
+<p>
+When typing a compound expression, you may accidentally omit a set of
+internal parentheses. In this case, DrScheme may report an error that
+a primitive operation was received when a number was expected.  For
+example:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="variable">&gt;</span> (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">2</span> <span class="builtin">-</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">43</span> <span class="selfeval">5</span>)
+<span class="variable">+:</span> <span class="variable">expects</span> <span class="variable">type</span> <span class="variable">&lt;number&gt;</span> <span class="variable">as</span> <span class="variable">2nd</span> <span class="variable">argument</span><span class="comment">; given -; other</span>
+<span class="variable">arguments</span> <span class="variable">were:</span> <span class="selfeval">2</span> <span class="selfeval">4</span> <span class="selfeval">5</span>
+</pre></div>
+</blockquote><br>
+When an error occurs, DrScheme highlights the erroneous expression in
+pink.  In the above example, <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">2</span> <span class="builtin">-</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)</code> is highlighted,
+pinpointing the specific part of the expression that contained the
+error: parentheses are missing around the sub-expression <code class="scheme"><span class="builtin">-</span> <span class="selfeval">4</span>
+ <span class="selfeval">5</span></code>.<p>
+An expression like <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> does not signal an error because
+the standard arithmetic operations accept more than two
+arguments. <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> is legal Scheme notation for 1  +  2  + 
+3, <code class="scheme">(<span class="builtin">-</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> means (1  <tt>-</tt>  2)  <tt>-</tt>  3, <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> means
+1 * 2 * 3, and <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> means (1 / 2) / 3.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Stepping</strong></p>
+<p>DrScheme provides a <strong><tt>Step</tt></strong> tool that shows how a complex
+expression is evaluated, step-by-step. For example, given the
+expression
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> <span class="selfeval">2</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+</pre></div>
+</blockquote><br>
+DrScheme must evaluate the <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)</code> expression first to get
+<code class="scheme"><span class="selfeval">12</span></code>. Then, it can evaluate <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">2</span> <span class="selfeval">12</span>)</code> to get
+<code class="scheme"><span class="selfeval">14</span></code>.<p>
+To use the <strong><tt>Step</tt></strong> tool, put the expression(s) you want to
+evaluate into DrScheme's top area, the definitions window, then click
+the <strong><tt>Step</tt></strong> button:
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="prepare-to-step.gif" border="0" alt="[prepare-to-step.gif]">&nbsp;</div>
+<p>
+When you click <strong><tt>Step</tt></strong>, a new window appears with three
+parts:
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="stepper.gif" border="0" alt="[stepper.gif]">&nbsp;</div>
+<p>
+</p>
+<ul><p>
+</p>
+<li><p>The top part contains values and definitions that have already
+been processed by the stepper. Unless the definition window contains
+function definitions (discussed in the next section), the top part of
+the stepper window is initially empty.</p>
+<p>
+</p>
+<li><p>The middle part shows a single step in evaluating an
+expression. The left-hand side of this part shows the expression
+before the step, with a green highlight for the relevant
+subexpression. The right-hand side shows the expression after a
+single step, with a result highlighted in purple corresponding to the
+green subexpression on the left.</p>
+<p>
+Clicking the <strong><tt>Next</tt></strong> button moves the right-hand expression
+to the left, highlights a new subexpression in green, and shows the
+next step in evaluation on the right.</p>
+<p>
+Clicking the <strong><tt>Previous</tt></strong> button undoes one step, showing the
+previous step again.</p>
+<p>
+Clicking the <strong><tt>Home</tt></strong> button starts returns to the very first
+evaluation step.</p>
+<p>
+</p>
+<li><p>The bottom part contains expressions to be evaluated
+later.</p>
+<p>
+</p>
+</li></ul><p>
+If you change the content of the definitions window, you must close
+the current stepper window and click <strong><tt>Step</tt></strong> again to step
+through the new expression.</p>
+<p>
+</p>
+<a name="node_sec_2.2"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_2.2">2.2&nbsp;&nbsp;Variables and Programs</a></h2>
+<p></p>
+<p>
+Type program definitions in DrScheme's top area, the definitions
+window, like this: 
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="using-defns.gif" border="0" alt="[using-defns.gif]">&nbsp;</div>
+<p>
+After the definition is complete, click the <strong><tt>Execute</tt></strong>
+button.  DrScheme creates a new prompt in the bottom window and
+starts evaluating expressions from the definitions window. If there
+are no errors in the definitions window, then the defined program can
+be tested the interactions window at the prompt. If there are errors
+in the definitions window, an error message is printed in the
+interactions window and the offending expression is highlighted with
+pink in the definitions window. After fixing an error in the
+definitions window, click <strong><tt>Execute</tt></strong> again.</p>
+<p>
+After your program has been executed, evaluate test expressions in the
+interactions window, e.g., <code class="scheme">(<span class="variable">area-of-disk</span> <span class="selfeval">3</span>)</code>. Test
+expressions can also appear in the definitions window.  In this case,
+when the <strong><tt>Execute</tt></strong> button is clicked, the value of each test
+expression is displayed in the interactions window.</p>
+<p>
+If the definitions window is modified and you type an expression into
+the interactions window without clicking <strong><tt>Execute</tt></strong>, DrScheme
+warns you that <strong><tt>Execute</tt></strong> is needed. If you do not click
+<strong><tt>Execute</tt></strong>, tests evaluated in the interactions window use
+programs from the previous <strong><tt>Execute</tt></strong>.</p>
+<p>
+Don't forget to save your work. When the definitions window is
+modified, a <strong><tt>Save</tt></strong> button appears in the top left corner of
+DrScheme's window. Click the button to save your definitions to a
+file, and use the filename extension ``.scm'' for definition files.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>The Shape of Definitions</strong></p>
+<p>
+
+
+</p>
+<p>
+The location of parentheses in a definition must match the following
+pattern <em>exactly</em>:
+
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"> <span class="variable">.--</span> <span class="variable">start</span> <span class="variable">definition</span>
+|
+|         <span class="variable">.--</span> <span class="variable">start</span> <span class="variable">program</span> <span class="keyword">and</span> <span class="variable">input</span> <span class="variable">names</span>
+|        |
+|        |        <span class="variable">.-</span> <span class="variable">end</span> <span class="variable">input</span> <span class="variable">names</span>
+<span class="variable">v</span>        <span class="variable">v</span>        <span class="variable">v</span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">arg</span> ...)
+  <span class="variable">expression</span>)
+            <span class="variable">^-</span> <span class="variable">end</span> <span class="variable">definition</span>
+</pre></div>
+</blockquote><br>
+
+Compare this pattern to the <code class="scheme"><span class="variable">area-of-disk</span></code> program:
+<br>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-disk</span> <span class="variable">r</span>)
+  (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>)))
+</pre></div>
+</blockquote><br>
+<p>
+In <code class="scheme"><span class="variable">area-of-disk</span></code>, the expression is <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>))</code>.
+No extra parentheses are added to this expression.</p>
+<p>
+If the parentheses for <code class="scheme"><span class="keyword">define</span></code> are not correct, DrScheme
+reports the error ``Malformed define''. When this error occurs, check
+that a single set of parentheses surrounds the program name and
+argument list, and that a <em>single</em> body expression is provided
+(perhaps with its own set of parentheses, but with no extra
+parentheses).</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The following is <em>not</em> a legal definition in the
+<strong><tt>Beginning Student</tt></strong> language level:
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span>) <span class="variable">expr</span>)</code></blockquote><br>
+because no arguments have been specified. (If DrScheme accepts this
+definition, double-check that the current language level is
+<strong><tt>Beginning Student</tt></strong>; see <a href="drscheme-Z-H-3.html#node_sec_0.3">Preparing DrScheme</a>).<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Formatting Definitions</strong></p>
+<p>DrScheme helps you format your definitions in a standard, easy-to-read
+way. After typing the first line of a definition:
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-disk</span> <span class="variable">r</span>)</code></blockquote><br>
+when you type ENTER, DrScheme automatically inserts some space at the
+beginning of the next line. Whenever the indentation of a line is
+incorrect, typing TAB with the caret anywhere in the line re-indents
+the line. Multiple lines can be reformatted by selecting the lines
+and typing TAB. DrScheme's <strong><tt>Scheme|Indent All</tt></strong> menu item
+reformats everything in the program window.<p>
+After a while, you will become used to the standard way of formatting
+definitions and expressions. When ENTER or TAB does not produce the
+indentation you expect, check the expression to make sure that
+parentheses are inserted at the right places. Strange indentation is
+a sign that your expression has the wrong shape.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Variable Names</strong></p>
+<p>Unlike most programming languages, program and variable names in
+Scheme can contain almost any character. For example, the following
+are legal names:
+<br>
+</p>
+<blockquote><div align="left"><pre class="scheme"><span class="variable">a-b</span>    <span class="variable">in-&gt;ft</span>    <span class="variable">my-2nd-program</span>     <span class="variable">positive?</span>    <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="705130">[email&#160;protected]</a>$%^&amp;/*~program </pre></div></blockquote><br>
+The name <code class="scheme"><span class="variable">a-b</span></code> does not mean <code class="scheme"><span class="variable">a</span></code> minus <code class="scheme"><span class="variable">b</span></code>; it's
+just a name.  Even <code class="scheme"><span class="variable">*3.14</span></code> is a name. Suppose that you forget
+the space between <code class="scheme"><span class="builtin">*</span></code> and <code class="scheme"><span class="selfeval">3.14</span></code> when defining
+<code class="scheme"><span class="variable">area-of-disk</span></code>:
+<br>
+<blockquote><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-disk</span> <span class="variable">r</span>)
+  (<span class="variable">*3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>)))
+</pre></div></blockquote><br>
+When you test this definition of <code class="scheme"><span class="variable">area-of-disk</span></code>, DrScheme
+reports that the name <code class="scheme"><span class="variable">*3.14</span></code> is undefined.<p>
+Avoid the following characters in variable names:
+<br>
+</p>
+<blockquote><div align="left"><pre class="scheme">&quot;   <span class="keyword">'</span>   <span class="keyword">`</span>   <span class="keyword">,</span>   <span class="selfeval">#</span>   ;   |   <span class="variable">\ </span></pre></div></blockquote><br>
+Since quotes cannot be used in names, do not attempt to use
+<code class="scheme"><span class="variable">x</span><span class="keyword">'</span></code> as ``x prime.'' The pairs of bracket characters
+<code class="scheme">[</code> <code class="scheme">]</code> and <code class="scheme">{</code> <code class="scheme">}</code> are also special:
+they act just like parenthesis pairs <code class="scheme">(</code> <code class="scheme">)</code>.<p>
+Names are case-sensitive, i.e., an upper-case letter is treated
+different from a lower-case letter in a name. For example, the name
+<code class="scheme"><span class="variable">area-of-disk</span></code> is different from the name
+<code class="scheme"><span class="variable">Area-Of-Disk</span></code>.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Interactions Window Tips</strong></p>
+<p>When you click the <strong><tt>Execute</tt></strong> button, the interactions window
+is cleared, but your old test expressions are not lost. In the
+interactions window, typing ESC-P copies the most recent test
+expression to the current prompt. (``ESC-P'' means ``push the ESC
+key, let go, and then push the p key''.) Typing ESC-P multiple times
+produces older and older expressions from the history of interaction
+expressions, while ESC-N produces newer expressions. Alternatively,
+place the insertion caret at the end of any old expression in the
+interactions window and type ENTER to copy the expression down to the
+current prompt. Of course, cut and paste work as usual.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Exercise Notes</strong></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 2.2.1</strong>    To use the
+<strong><tt>convert.ss</tt></strong> teachpack in DrScheme, choose the
+<strong><tt>Language|Add Teachpack</tt></strong> menu item. The file dialog starts
+in the <strong><tt>teachpack</tt></strong> directory of the <strong><tt>plt</tt></strong>
+installation directory. From there, go into the <strong><tt>htdp</tt></strong>
+directory and select the file <strong><tt>convert.ss</tt></strong>.</p>
+<p>
+After clicking <strong><tt>Execute</tt></strong>, the definitions window shows
+<strong><tt>convert.ss</tt></strong> in its header, indicating that the teachpack is
+loaded. You must click the <strong><tt>Execute</tt></strong> button after selecting
+the teachpack before using it (otherwise DrScheme warns you that
+``the program has changed,'' meaning that a different teachpack is
+now used by the program).</p>
+<p>
+A teachpack extends the set of built-in operations and programs
+provided by DrScheme. After the <strong><tt>convert.ss</tt></strong> teachpack is
+selected, DrScheme provides the <code class="scheme"><span class="variable">convert-gui</span></code>,
+<code class="scheme"><span class="variable">convert-repl</span></code>, and <code class="scheme"><span class="variable">convert-file</span></code> programs.</p>
+<p>
+More than one teachpack can be loaded at a time. The current set of
+teachpacks is stored as a preference, so even if you quit and restart
+DrScheme, the selected set is preserved. If you open multiple windows
+in DrScheme, the teachpack selection applies to all windows.</p>
+<p>
+DrScheme's <strong><tt>Language</tt></strong> menu provides a menu item for each
+selected teachpack that clears it from the selected set, plus a
+<strong><tt>Clear All Teachpacks</tt></strong> menu item for clearing the entire
+set.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 2.2.5</strong>   Scheme has a built-in <code class="scheme"><span class="variable">square</span></code>
+operator. In futrure versions of DrScheme (startign with version
+200), the operator's name will change to <code class="scheme"><span class="variable">sqr</span></code>.</p>
+<p>
+</p>
+<a name="node_sec_2.3"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_2.3">2.3&nbsp;&nbsp;Word Problems <em>- no notes</em></a></h2>
+<p></p>
+<p>
+<em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<a name="node_sec_2.4"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_2.4">2.4&nbsp;&nbsp;Errors</a></h2>
+<p></p>
+<p>
+When an error occurs, DrScheme highlights the source of the error,
+whether it is in the definitions window or the interactions
+window. For example, typing <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code> in the interactions
+window causes that expression to be highlighted (and also produces the
+error message ``/: division by zero'').</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Exercise Notes</strong></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 2.4.1</strong>   If DrScheme gives the error message
+``procedure application: expected procedure'' for the expression
+<code class="scheme">(<span class="builtin">+</span> (<span class="selfeval">10</span>) <span class="selfeval">20</span>)</code> make sure that the language level is set to
+<strong><tt>Beginning Student</tt></strong>, as described in <a href="drscheme-Z-H-3.html#node_sec_0.3">Preparing
+DrScheme</a>. The correct error message is more
+specific: ``First term after parenthesis is illegal in an
+application''.</p>
+<p>
+</p>
+<a name="node_sec_2.5"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_2.5">2.5&nbsp;&nbsp;Designing Programs</a></h2>
+<p></p>
+<p>
+Contracts are specified in the following format:
+<br>
+</p>
+<blockquote>
+<code class="scheme">;; <span class="variable">program</span> <span class="selfeval">:</span> <span class="variable">input1</span> <span class="variable">input2</span> ... <span class="variable">-&gt;</span> <span class="variable">output</span> </code>
+</blockquote><br>
+but DrScheme cannot check the format of your contracts.  In Scheme, a
+semi-colon <code class="verbatim">;</code> starts a comment that extends to the next
+linefeed (i.e., the end of the line if the program text is not
+automatically line-wrapped). DrScheme ignores anything between the
+first semi-colon in a line and the end of the line.<p>
+DrScheme can insert semi-colons at the start of lines for you. Select
+all of the lines to be ``commented out'' and select the
+<strong><tt>Scheme|Comment Out</tt></strong> menu item. Leading semi-colons are
+removed from all selected lines by the <strong><tt>Scheme|Uncomment</tt></strong>
+menu item.</p>
+<p>
+You can also write a contract inside a text box. To insert a text
+box into your program, choose the <strong><tt>Edit|Insert Text Box</tt></strong>
+menu item. It inserts a text box wherever the caret is sitting.
+</p>
+<blockquote>
+<strong>Beware!</strong> If you use text boxes to enter contracts, DrScheme saves
+your program file in a special format, instead of the normal text
+format. Only DrScheme can read this special format.
+</blockquote>
+Unlike comments, a text box is not ignored by DrScheme. Instead, it
+acts like a constant expression (just like a number), so DrScheme
+shows contract text boxes at the top of the interactions window when
+<strong><tt>Execute</tt></strong> is hit. (DrScheme does not look inside the text
+box, so don't put definitions or test expressions there.) Many
+programmers find these contracts in the interactions window useful as
+a summary of the programs in the definitions window. If you prefer,
+insert a single semi-colon before a text box (making it a comment) to
+prevent it from appearing in the interactions window.<p>
+In addition to line-based comments using <code class="verbatim">;</code>, DrScheme ignores
+block comments starting with <code class="verbatim">#|</code> and ending with <code class="verbatim">|#</code>:
+<br>
+</p>
+<blockquote><div align="left"><pre class="scheme"><span class="comment">#| This is a
+   multi-line
+   block comment. |#</span>
+</pre></div></blockquote><br>
+Block comments using <code class="verbatim">#|</code> and <code class="verbatim">|#</code> can be nested.<p>
+For the testing phase, a useful trick is to move the commented-out
+examples below the program definition, uncomment them, and put quotes
+around the <code class="scheme"><span class="variable">=</span></code> intact between the test expression and its
+result. Then, when you click <strong><tt>Execute</tt></strong> DrScheme will run all
+the tests, printing the actual result, a <code class="scheme"><span class="selfeval">&quot;=&quot;</span></code> (read as ``should
+be equal to''), and the expected result. For example,
+<br>
+</p>
+<blockquote><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">plus-ten</span> <span class="variable">n</span>)
+  (<span class="builtin">+</span> <span class="variable">n</span> <span class="selfeval">10</span>))
+<span class="comment">;; Tests:</span>
+(<span class="variable">plus-ten</span> <span class="selfeval">4</span>) <span class="selfeval">&quot;=&quot;</span> <span class="selfeval">14</span>
+(<span class="variable">plus-ten</span> <span class="selfeval">-4</span>) <span class="selfeval">&quot;=&quot;</span> <span class="selfeval">-6</span> <span class="comment">;; oops!</span>
+</pre></div></blockquote><br>
+produces the output
+<br>
+<blockquote><div align="left"><pre class="scheme"><span class="selfeval">14</span>
+<span class="selfeval">&quot;=&quot;</span>
+<span class="selfeval">14</span>
+<span class="selfeval">6</span>
+<span class="selfeval">&quot;=&quot;</span>
+<span class="selfeval">-6</span>
+</pre></div></blockquote><br>
+in the interactions window when <strong><tt>Execute</tt></strong> is clicked. We can
+quickly see in the output that <code class="scheme"><span class="selfeval">6</span></code> is not <code class="scheme"><span class="selfeval">-6</span></code>, so
+either the program or the test case must be wrong. The string
+<code class="scheme"><span class="selfeval">&quot;should be&quot;</span></code> is often better than <code class="scheme"><span class="selfeval">&quot;=&quot;</span></code>, since it
+clarifies which is the program result and which is the predicted
+result.<p>
+Test cases written as above must follow the program being
+tested. However, program implementors should always create the test
+cases as examples, before the program is written.</p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-5.html">previous</a></span><span>, <a href="drscheme-Z-H-7.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

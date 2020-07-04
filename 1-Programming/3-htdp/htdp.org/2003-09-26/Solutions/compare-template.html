@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compare-template.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="vehicles.html">7.2.2</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="moving-fig-dat.html">7.4.1</a><pre>;; Language: Beginning Student
+
+;; a shape is either:
+;;   (make-square P S) or
+;;   (make circle P S)
+;;   (make-rectangle P S S)
+;; where P is a posn, S is a number and S2 is a number
+
+(define-struct square (nw-corner length))
+(define-struct circle (center radius))
+(define-struct rectangle (nw-corner width height))
+
+;; perimeter : shape -&gt; number
+;; computes the perimeter of a-shape
+
+#|
+;; Template
+(define (perimeter a-shape)
+  (cond
+    [(square? a-shape) ...
+     (square-nw-corner a-shape) ...
+     (square-length a-shape) ...]
+    [(circle? a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]
+    [(rectangle? a-shape) ...
+     (rectangle-nw-corner a-shape) ...
+     (rectangle-width a-shape) ...
+     (rectangle-height a-shape)]))
+|#
+
+(define (perimeter a-shape)
+  (cond
+    [(square? a-shape)
+     (* 4
+        (square-length a-shape))]
+    [(circle? a-shape) 
+     (* pi
+        2
+        (circle-radius a-shape))]
+    [(rectangle? a-shape) 
+     (* 2
+        (+ (rectangle-width a-shape)
+           (rectangle-height a-shape)))]))
+
+;; EXAMPLES AS TESTS
+(perimeter (make-square (make-posn 10 10) 5)) "should be" 20
+(perimeter (make-circle (make-posn 10 10) 3)) "should be" (* 6 pi)
+(perimeter (make-rectangle (make-posn 10 10) 2 4)) "should be" 12
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compare-template.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

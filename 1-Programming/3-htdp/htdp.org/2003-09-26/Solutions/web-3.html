@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.7; How to Design Programs </title>
+</head>
+<body>
+<a href="web-1.html">17.8.6</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web-5.html">17.8.8</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.7 posn=?
+------------------------------------------------------------
+;Data Definition:
+A posn is a structure:
+    (make-posn x y)
+where x and y are numbers.
+(define-struct posn (x y))
+
+;template:
+(define (posn=? a-posn another-posn)
+  ...(posn-x a-posn)...(posn-x another-posn)...
+  ...(posn-y a-posn)...(posn-y another-posn)...)
+|#
+;;posn=?: posn posn -&gt; boolean
+;;consumes two posns and returns true if they
+;;are equal, false otherwise
+(define (posn=? a-posn another-posn)
+  (and (= (posn-x a-posn)
+          (posn-x another-posn))
+       (= (posn-y a-posn)
+          (posn-y another-posn))))
+
+;Examples as Tests:
+(check-expect
+ (posn=? (make-posn 8 12) (make-posn 8 12))
+ true)
+
+(check-expect
+ (posn=? (make-posn 7 12) (make-posn 8 12))
+ false)
+
+(check-expect
+ (posn=? (make-posn 8 3) (make-posn 8 12))
+ false)
+
+(check-expect
+ (posn=? (make-posn 8 3) (make-posn 3 8))
+ false)
+
+(check-expect
+ (posn=? (make-posn 3 5) (make-posn 3 5))
+ true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

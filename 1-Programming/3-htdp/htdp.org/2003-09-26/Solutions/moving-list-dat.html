@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-list-dat.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="name-robot.html">10.2.9</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="moving-list-dr.html">10.3.2</a><pre>;; a shape is either:
+;;   - (make-circle C P N)
+;;   - (make-rectangle C P N N)
+;; where C is a color,
+;;       P is a posn, and
+;;       N is a number.
+
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+#|
+;; TEMPLATE
+(define (prog-for-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (circle-color a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]
+    [(rectangle? a-shape)
+     (rectangle-color a-shape) ...
+     (rectangle-nw-corner a-shape) ...
+     (rectangle-width a-shape) ...
+     (rectangle-height a-shape) ...]))
+|#
+
+; -------------------------------------------------------------------------
+
+;; A list-of-shapes is either:
+;;  - empty, or
+;;  - (cons shape list-of-shapes)
+
+#|
+;; TEMPLATE
+(define (prog-for-losh a-los)
+  (cond
+    [(empty? a-los) ...]
+    [else (first a-los) ...
+          (prog-for-losh (rest a-los))..]))
+|#
+
+(define FACE
+  (cons (make-circle 'red (make-posn 50 50) 50)
+        (cons (make-rectangle 'blue (make-posn 30 20) 10 10)
+              (cons (make-rectangle 'blue (make-posn 65 20) 10 10)
+                    (cons (make-rectangle 'blue (make-posn 40 75) 10 10)
+                          (cons (make-rectangle 'blue (make-posn 40 75) 25 10)
+                                (cons (make-rectangle 'blue (make-posn 45 35) 15 30)
+                                      empty)))))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-list-dat.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

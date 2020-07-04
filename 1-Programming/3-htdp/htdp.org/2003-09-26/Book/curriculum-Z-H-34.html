@@ -1,0 +1,1382 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-34.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-33.html">previous</a></span><span>, <a href="curriculum-Z-H-35.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_27"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_27">Section  27</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_27">Variations on a Theme</a></h1>
+<p></p>
+<p>
+As we have seen in the previous two sections, the design of an algorithm
+usually starts with an informal description of a mechanism. The kernel of
+this description is about how to create a problem that is more easily
+solvable than the given one and whose solution contributes to the solution
+of the given problem. Coming up with such ideas requires studying many
+different examples.  This section presents several illustrative examples of
+the design recipe for generative recursion. Some are directly drawn from
+mathematics, which is the source of many ideas for general problem-solving
+processes; others come from computational contexts. The important point is
+to understand the generative ideas behind the algorithms so that they
+can be applied in other contexts.</p>
+<p>
+The first example is a graphical illustration of our principle: the
+Sierpinski triangle. The second one concerns ``parsing,'' that is, the
+process of dissecting sequences of symbols. The third one explains the
+divide-and-conquer principle with a simple mathematical example: finding
+the root of a function. Many mathematical processes exploit this idea, and
+it is important to understand the idea for applied mathematics.  In the
+fourth section, we discuss yet another way of finding a root, this time
+based on Newton's method. The last section is an extended exercise; it
+introduces Gaussian elimination, the first step in solving a system of
+equations.</p>
+<p>
+</p>
+<a name="node_sec_27.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_27.1">27.1&nbsp;&nbsp;Fractals</a></h2>
+<p></p>
+<p>
+Fractals play an important role in computational geometry. Flake (<i>The
+Computational Beauty of Nature</i>, The MIT Press, 1998) says that
+``geometry can be extended to account for objects with a fractional
+dimension. Such objects, known as <i>fractals</i>,
+<a name="node_idx_1776"></a>come very close to capturing the richness and variety of forms found in
+nature. Fractals possess structural self-similarity on multiple <tt>...</tt>
+scales, meaning that a piece of a fractal will often look like the whole.''</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_144"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left"><img src="../icons/sie1.gif"></td>
+      <td align="center"><img src="../icons/sie2.gif"></td>
+      <td align="right"><img src="../icons/sie3.gif"></td>
+ </tr>
+ </table>
+ </td></tr>
+<tr><td align="center"><b>Figure 71:</b>&nbsp;&nbsp;The Sierpinski triangle</td></tr>
+<tr><td>
+
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_144">71</a> displays an example of a fractal, widely known as
+the Sierpinski triangle. The basic shape is an (equilateral) triangle, as
+shown in the left-most picture.  In the right-most example we see that the
+triangle is repated many times and in many sizes inside of the outermost
+triangle. The picture in the middle is a snapshot from the middle of the
+drawing process.</p>
+<p>
+The middle picture also suggests what the generative step might look like.
+Given the three endpoints of a triangle, we draw the triangle and then
+compute the midpoint of each side. If we were to connect these midpoints to
+each other, we would divide the given triangle into four triangles. The
+middle picture illustrates this idea. The Sierpinski triangle is the result
+of repeating the process for the three outer triangles and leaving the inner
+one alone.</p>
+<p>
+A function that draws this nest of triangles must mirror this process. Its
+input data must represent the triangle that we start with. The process
+stops when the input data specifies a triangle that is too small to be
+drawn. Since all of our drawing functions produce <code class="scheme">true</code> when they are
+done, we agree that our Sierpinski function should also produce
+<code class="scheme">true</code>.</p>
+<p>
+If the given triangle is still large enough, the function must draw the
+triangle and possibly some nested ones. The trick is to translate the
+partitioning of the triangle into Scheme. Let us summarize our discussion
+with a skeletal Scheme definition: 
+<a name="node_idx_1778"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sierpinski</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; true</code></span>
+<span class="comment">;; to draw a Sierpinski triangle down at <code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code>, </span>
+<span class="comment">;; assuming it is large enough</span>
+(<span class="keyword">define</span> (<span class="variable">sierpinski</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">too-small?</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>) true]
+    [<span class="keyword">else</span> ... (<span class="variable">draw-triangle</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>) ... ]))
+</pre></div><p>
+The function consumes three <code class="scheme"><span class="variable">posn</span></code> structures and returns <code class="scheme">true</code>
+when it is done. The <strong>cond</strong>-expression reflects the general outline
+of an algorithm. It is our task to define <code class="scheme"><span class="variable">too-small?</span></code>, the function
+that determines whether the problem is trivially solvable, and
+<code class="scheme"><span class="variable">draw-triangle</span></code>. In addition, we must still add a Scheme expression
+that formulates the partitioning of the triangle. </p>
+<p>
+The partitioning step requires the function to determine the three mid-points
+between the three end-points. Let us call these new mid-points
+<code class="scheme"><span class="variable">a-b</span></code>, <code class="scheme"><span class="variable">b-c</span></code>, and <code class="scheme"><span class="variable">c-a</span></code>. Together with the given
+endpoints, <code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code>, they determine four
+triangles:
+<code class="scheme"><span class="variable">a</span><span class="keyword">,</span> <span class="variable">a-b</span><span class="keyword">,</span> <span class="variable">c-a</span></code>;
+<code class="scheme"><span class="variable">b</span><span class="keyword">,</span> <span class="variable">a-b</span><span class="keyword">,</span> <span class="variable">b-c</span></code>;
+<code class="scheme"><span class="variable">c</span><span class="keyword">,</span> <span class="variable">c-a</span><span class="keyword">,</span> <span class="variable">b-c</span></code>;
+<code class="scheme"><span class="variable">a-b</span><span class="keyword">,</span> <span class="variable">b-c</span><span class="keyword">,</span> <span class="variable">c-a</span></code>.
+Thus, if we wanted to create the Sierpinski triangle for, say, the first
+listed triangle, we would use <code class="scheme">(<span class="variable">sierpinski</span> <span class="variable">a</span> <span class="variable">a-b</span> <span class="variable">c-a</span>)</code>. </p>
+<p>
+Since each midpoint is used twice, we use a <strong>local</strong>-expression to
+translate the generative step into Scheme. The <strong>local</strong>-expression
+introduces the three new midpoints. Its body contains three recursive
+applications of <code class="scheme"><span class="variable">sierpinski</span></code> and the <code class="scheme"><span class="variable">draw-triangle</span></code>
+application mentioned earlier. To combine the solutions of the three
+problems, we use an <strong>and</strong>-expression, which ensures that all three
+recursions must succeed. Figure&nbsp;<a href="#node_fig_Temp_145">72</a> collects all the
+relevant definitions, including two small functions based on domain
+knowledge from geometry. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_145"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1780"></a><a name="node_idx_1782"></a><a name="node_idx_1784"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sierpinski</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; true</code></span>
+<span class="comment">;; to draw a Sierpinski triangle down at <code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code>,</span>
+<span class="comment">;; assuming it is large enough</span>
+(<span class="keyword">define</span> (<span class="variable">sierpinski</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">too-small?</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>) true]
+    [<span class="keyword">else</span> 
+      (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">a-b</span> (<span class="variable">mid-point</span> <span class="variable">a</span> <span class="variable">b</span>))
+	      (<span class="keyword">define</span> <span class="variable">b-c</span> (<span class="variable">mid-point</span> <span class="variable">b</span> <span class="variable">c</span>))
+	      (<span class="keyword">define</span> <span class="variable">c-a</span> (<span class="variable">mid-point</span> <span class="variable">a</span> <span class="variable">c</span>)))
+	(<span class="keyword">and</span>
+	  (<span class="variable">draw-triangle</span> <span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span>)	    
+	  (<span class="variable">sierpinski</span> <span class="variable">a</span> <span class="variable">a-b</span> <span class="variable">c-a</span>)
+	  (<span class="variable">sierpinski</span> <span class="variable">b</span> <span class="variable">a-b</span> <span class="variable">b-c</span>)
+	  (<span class="variable">sierpinski</span> <span class="variable">c</span> <span class="variable">c-a</span> <span class="variable">b-c</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">mid-point</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">posn</span></code></span>
+<span class="comment">;; to compute the mid-point between <code class="scheme"><span class="variable">a-posn</span></code> and <code class="scheme"><span class="variable">b-posn</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">mid-point</span> <span class="variable">a-posn</span> <span class="variable">b-posn</span>)
+  (<span class="builtin">make-posn</span>
+    (<span class="variable">mid</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) (<span class="builtin">posn-x</span> <span class="variable">b-posn</span>))
+    (<span class="variable">mid</span> (<span class="builtin">posn-y</span> <span class="variable">a-posn</span>) (<span class="builtin">posn-y</span> <span class="variable">b-posn</span>))))
+
+<span class="comment">;; <code class="scheme"><span class="variable">mid</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the average of <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="variable">y</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">mid</span> <span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="builtin">/</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>) <span class="selfeval">2</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 72:</b>&nbsp;&nbsp;The Sierpinski algorithm</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Since <code class="scheme"><span class="variable">sierpinski</span></code> is based on generative recursion, collecting the
+code and testing it is not the last step. We must also consider why the
+algorithm terminates for any given legal input. The inputs of
+<code class="scheme"><span class="variable">sierpinski</span></code> are three positions.  The algorithm terminates if the
+corresponding triangle is too small. But, each recursive step subdivides
+the triangle so that the sum of its sides is only half of the given
+triangle. Hence the size of the triangles indeed decreases and
+<code class="scheme"><span class="variable">sierpinski</span></code> is bound to produce <code class="scheme">true</code>.</p>
+<p>
+</p>
+<p><a name="node_thm_27.1.1"></a>
+<b>Exercise 27.1.1.</b>&nbsp;&nbsp; 
+Develop the functions 
+</p>
+<ol>
+<li><p>;; <code class="scheme"><span class="variable">draw-triangle</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; true</code></p>
+<p>
+</p>
+<li><p>;; <code class="scheme"><span class="variable">too-small?</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">bool</span></code>
+</p>
+</li></ol><p>
+to complete the definitions in figure&nbsp;<a href="#node_fig_Temp_145">72</a>. </p>
+<p>
+Use the teachpack <tt><strong>draw.ss</strong></tt> to test the code. 
+For a first test of the complete function, use the following
+definitions: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">A</span> (<span class="builtin">make-posn</span> <span class="selfeval">200</span> <span class="selfeval">0</span>))
+(<span class="keyword">define</span> <span class="variable">B</span> (<span class="builtin">make-posn</span> <span class="selfeval">27</span> <span class="selfeval">300</span>))
+(<span class="keyword">define</span> <span class="variable">C</span> (<span class="builtin">make-posn</span> <span class="selfeval">373</span> <span class="selfeval">300</span>)
+</pre></div><p>
+Create a canvas with <code class="scheme">(<span class="variable">start</span> <span class="selfeval">400</span> <span class="selfeval">400</span>)</code>.  Experiment with other end
+points and canvas dimensions.  &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sierpinski-work.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_27.1.2"></a>
+<b>Exercise 27.1.2.</b>&nbsp;&nbsp;  
+ 
+The process of drawing a Sierpinski triangle usually starts from an
+equilateral shape.  To compute the endpoints of an equilateral Sierpinski
+triangle, we can pick a large circle and three points on the circle that
+are 120 degrees apart. For example, they could be at 0, 120, 240:
+<a name="node_idx_1786"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">CENTER</span> (<span class="builtin">make-posn</span> <span class="selfeval">200</span> <span class="selfeval">200</span>))
+
+(<span class="keyword">define</span> <span class="variable">RADIUS</span> <span class="selfeval">200</span>)
+
+<span class="comment">;; <code class="scheme"><span class="variable">cicrcl-pt</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">posn</span></code></span>
+<span class="comment">;; to compute a position on the circle with <code class="scheme"><span class="variable">CENTER</span></code></span>
+<span class="comment">;; and <code class="scheme"><span class="variable">RADIUS</span></code> as defined above </span>
+(<span class="keyword">define</span> (<span class="variable">circle-pt</span> <span class="variable">factor</span>) ...)
+
+(<span class="keyword">define</span> <span class="variable">A</span> (<span class="variable">circle-pt</span> <span class="selfeval">120/360</span>))
+(<span class="keyword">define</span> <span class="variable">B</span> (<span class="variable">circle-pt</span> <span class="selfeval">240/360</span>))
+(<span class="keyword">define</span> <span class="variable">C</span> (<span class="variable">circle-pt</span> <span class="selfeval">360/360</span>))
+</pre></div><p>
+Develop the function <code class="scheme"><span class="variable">circle-pt</span></code>. </p>
+<p>
+<strong>Hints:</strong> Recall that DrScheme's <code class="scheme"><span class="builtin">sin</span></code> and <code class="scheme"><span class="builtin">cos</span></code> compute the
+sine and cosine in terms of radians, not degrees. Also keep in mind that
+on-screen positions grow downwards not upwards.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sierpinski-start.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.1.3"></a>
+<b>Exercise 27.1.3.</b>&nbsp;&nbsp; 
+Rewrite the function in figure&nbsp;<a href="#node_fig_Temp_145">72</a> to use structures
+for the representation of triangles. Then apply the new function to a list 
+of triangles and observe the effect.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sierpinski-struct.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.1.4"></a>
+<b>Exercise 27.1.4.</b>&nbsp;&nbsp; 
+ 
+Take a look at the following two pictures: </p>
+<p>
+
+</p>
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left"><img src="../icons/tree1.gif"></td>
+      <td align="right"><img src="../icons/tree2.gif"></td>
+ </tr>
+ </table>
+ <p>
+The left one is the basic step for the generation of the
+``Savannah'' tree on the right. It is analogous to the middle picture on
+page&nbsp;<a href="">34</a>. Develop a function that draws trees like the one
+in the right picture.  </p>
+<p>
+<strong>Hint:</strong> Think of the problem as drawing a straight line, given its starting
+point and an angle in, say, radians. Then, the generative step divides a
+single straight line into three pieces and uses the two intermediate points
+as new starting points for straight lines. The angle changes at each
+step in a regular manner.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tree-generation.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.1.5"></a>
+<b>Exercise 27.1.5.</b>&nbsp;&nbsp; 
+In mathematics and computer graphics, people must often connect some
+given points with a smooth curve. One popular method for this purpose
+is due to Bezier.<a name="call_footnote_Temp_146"></a><a href="#footnote_Temp_146"><sup><small>58</small></sup></a> Here is a sequence of pictures that illustrate the idea:</p>
+<p>
+
+</p>
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left"><img src="../icons/bezier1.gif"></td>
+      <td align="center"><img src="../icons/bezier2.gif"></td>
+      <td align="right"><img src="../icons/bezier3.gif"></td>
+ </tr>
+ </table>
+ <p>
+For simplicity, we start with three points: <code class="scheme"><span class="variable">p1</span></code>,
+<code class="scheme"><span class="variable">p2</span></code>, and <code class="scheme"><span class="variable">p3</span></code>. The goal is to draw a smooth curve from
+<code class="scheme"><span class="variable">p1</span></code> to <code class="scheme"><span class="variable">p3</span></code>, viewed from <code class="scheme"><span class="variable">p2</span></code>. The original
+triangle is shown on the left; the desired curve appears on the right.</p>
+<p>
+To draw the curve from a given triangle, we proceed as follows.  If the
+triangle is small enough, draw it. It appears as a large point. If
+not, generate two smaller triangles as illustrated in the center
+picture. The outermost points, <code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p3</span></code>, remain the
+respective outermost points. The replacements for the point in the
+middle are <code class="scheme"><span class="variable">r2</span></code> and <code class="scheme"><span class="variable">q2</span></code>, which are the midpoints
+between <code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p2</span></code> and between <code class="scheme"><span class="variable">p2</span></code> and
+<code class="scheme"><span class="variable">p3</span></code>, respectively. The midpoint between <code class="scheme"><span class="variable">r2</span></code> and
+<code class="scheme"><span class="variable">q2</span></code> (marked with <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]">) is the new left-most and
+right-most endpoint, respectively, for the two new triangles.</p>
+<p>
+To test the function, use the teachpack <tt><strong>draw.ss</strong></tt>. Here is some
+good test data: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">p1</span> (<span class="builtin">make-posn</span> <span class="selfeval">50</span> <span class="selfeval">50</span>))
+(<span class="keyword">define</span> <span class="variable">p2</span> (<span class="builtin">make-posn</span> <span class="selfeval">150</span> <span class="selfeval">150</span>))
+(<span class="keyword">define</span> <span class="variable">p3</span> (<span class="builtin">make-posn</span> <span class="selfeval">250</span> <span class="selfeval">100</span>))
+</pre></div><p> 
+Use <code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">200</span>)</code> to create the canvas. Experiment with other
+positions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bezier.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_27.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_27.2">27.2&nbsp;&nbsp;From Files to Lines, from Lists to Lists of Lists</a></h2>
+<p></p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-21.html#node_chap_16">16</a>, we discussed the organization of computer
+files, which is one way to equip a computer with permanent memory. We did
+not discuss the nature of files per se. Roughly put, we can think
+of a <i>file</i> 
+<a name="node_idx_1788"></a>as a list of symbols:</p>
+<p>
+</p>
+
+
+
+
+
+<a name="node_idx_1790"></a>A <i>file</i> is either
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">f</span>)</code>
+where <code class="scheme"><span class="variable">s</span></code> is a symbol and <code class="scheme"><span class="variable">f</span></code> is a file. 
+</p>
+</li></ol><p>
+</p>
+<p>
+A fully faithful representation of files should include only
+symbols that correspond to characters, but for our purposes we may ignore
+this distinction.</p>
+<p>
+Following a tradition that predates computers,<a name="call_footnote_Temp_147"></a><a href="#footnote_Temp_147"><sup><small>59</small></sup></a> one symbol is almost always treated differently:
+<code class="scheme"><span class="keyword">'</span><span class="variable">NL</span></code>. The symbol stands for <i>newline</i> 
+<a name="node_idx_1792"></a>and separates two lines
+from each other. That is, <code class="scheme"><span class="keyword">'</span><span class="variable">NL</span></code> indicates the end of one line and
+the beginning of another. In most cases, it is therefore better to think of
+files as data with more structure. In particular, a file could be
+represented as a list of lines, where each line is a list of symbols.</p>
+<p>
+For example, the file 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">how</span> <span class="keyword">'</span><span class="variable">are</span> <span class="keyword">'</span><span class="variable">you</span> <span class="keyword">'</span><span class="variable">NL</span>
+      <span class="keyword">'</span><span class="variable">doing</span> <span class="keyword">'</span><span class="variable">?</span> <span class="keyword">'</span><span class="variable">NL</span>
+      <span class="keyword">'</span><span class="variable">any</span> <span class="keyword">'</span><span class="variable">progress</span> <span class="keyword">'</span><span class="variable">?</span>)
+</pre></div><p>
+should be processed as a list of three lines: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">how</span> <span class="keyword">'</span><span class="variable">are</span> <span class="keyword">'</span><span class="variable">you</span>)
+      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">doing</span> <span class="keyword">'</span><span class="variable">?</span>)
+      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">any</span> <span class="keyword">'</span><span class="variable">progress</span> <span class="keyword">'</span><span class="variable">?</span>))
+</pre></div><p>
+Similarly, the file
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">NL</span>
+      <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">NL</span>
+      <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span> <span class="keyword">'</span><span class="variable">NL</span>)
+</pre></div><p>
+is also represented as a list of three lines, because, by convention, an
+empty line at the end is ignored: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p><a name="node_thm_27.2.1"></a>
+<b>Exercise 27.2.1.</b>&nbsp;&nbsp; 
+Determine what the list-of-lines representation for <code class="scheme"><span class="builtin">empty</span></code>,
+<code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">NL</span>)</code>, and <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">NL</span> <span class="keyword">'</span><span class="variable">NL</span>)</code> should be. Why are these
+examples important test cases?</p>
+<p>
+<strong>Hint:</strong>  Keep in mind that an empty line at the end is
+ignored.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/test-file-lines.html">Solution</a></p>
+<p></p>
+<p>
+Here are the contract, purpose statement, and header: 
+<a name="node_idx_1794"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="selfeval">:</span> <span class="variable">file</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> (<span class="keyword">listof</span> <span class="variable">symbols</span>))</code></span>
+<span class="comment">;; to convert a file into a list of lines </span>
+(<span class="keyword">define</span> (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="variable">afile</span>) ...)
+</pre></div><p>
+Describing the process of separating a file into a list of lines is
+easy. The problem is trivially solvable if the file is <code class="scheme"><span class="builtin">empty</span></code>; in
+that case, the file doesn't contain a line. Otherwise, the file contains at
+least one symbol and thus at least one line.  This line must be separated
+from the rest of the file, and then the rest of the file must be translated
+into a list of lines.</p>
+<p>
+Let us sketch this process description in Scheme: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="variable">afile</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">afile</span>) ...]
+    [<span class="keyword">else</span>
+      ... (<span class="variable">first-line</span> <span class="variable">afile</span>) ...
+      ... (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="variable">remove-first-line</span> <span class="variable">afile</span>)) ...]))
+</pre></div><p>
+Because the separation of the first line from the rest of the file requires
+a scan of an arbitrarily long list of symbols, we add two auxiliary
+functions to our wish list: <code class="scheme"><span class="variable">first-line</span></code>, which collects all symbols
+up to, but excluding, the first occurrence of <code class="scheme"><span class="keyword">'</span><span class="variable">NL</span></code> or the end of
+the list; and <code class="scheme"><span class="variable">remove-first-line</span></code>, which removes all those symbols
+and produces the remainder of <code class="scheme"><span class="variable">afile</span></code>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_148"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_1796"></a><a name="node_idx_1798"></a><a name="node_idx_1800"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="selfeval">:</span> <span class="variable">file</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> (<span class="keyword">listof</span> <span class="variable">symbol</span>))</code></span>
+<span class="comment">;; to convert a file into a list of lines </span>
+(<span class="keyword">define</span> (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="variable">afile</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">afile</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<span class="variable">first-line</span> <span class="variable">afile</span>)
+	    (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="variable">remove-first-line</span> <span class="variable">afile</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">first-line</span> <span class="selfeval">:</span> <span class="variable">file</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to compute the prefix of <code class="scheme"><span class="variable">afile</span></code> up to the first occurrence of <code class="scheme"><span class="variable">NEWLINE</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">first-line</span> <span class="variable">afile</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">afile</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">afile</span>) <span class="variable">NEWLINE</span>) <span class="builtin">empty</span>]
+	    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">afile</span>) (<span class="variable">first-line</span> (<span class="builtin">rest</span> <span class="variable">afile</span>)))])]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">remove-first-line</span> <span class="selfeval">:</span> <span class="variable">file</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to compute the suffix of <code class="scheme"><span class="variable">afile</span></code> behind the first occurrence of <code class="scheme"><span class="variable">NEWLINE</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">remove-first-line</span> <span class="variable">afile</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">afile</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">afile</span>) <span class="variable">NEWLINE</span>) (<span class="builtin">rest</span> <span class="variable">afile</span>)]
+	    [<span class="keyword">else</span> (<span class="variable">remove-first-line</span> (<span class="builtin">rest</span> <span class="variable">afile</span>))])]))
+
+(<span class="keyword">define</span> <span class="variable">NEWLINE</span> <span class="keyword">'</span><span class="variable">NL</span>)
+</pre></div><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 73:</b>&nbsp;&nbsp;Translating a file into a list of lines</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+From here, we can fill the gaps easily. In <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-lines</i></code>,
+the answer in the first clause must be <code class="scheme"><span class="builtin">empty</span></code> because an empty file
+does not contain any lines. The answer in the second clause must
+<code class="scheme"><span class="builtin">cons</span></code> the value of <code class="scheme">(<span class="variable">first-line</span> <span class="variable">afile</span>)</code> onto the value
+<code class="scheme">(<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="variable">remove-first-line</span> <span class="variable">afile</span>))</code>, because the first
+expression computes the first line and the second one computes the rest of
+the lines. Finally, the auxiliary functions process their inputs in a
+structurally recursive manner; their development is a straightforward
+exercise. Figure&nbsp;<a href="#node_fig_Temp_148">73</a> collects the three function
+definitions and a variable definition for <code class="scheme"><span class="variable">NEWLINE</span></code>.</p>
+<p>
+Let us take a look at the process of turning the first file from above into a list
+of lines: 
+</p>
+<div align="left"><pre class="scheme">  (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">NL</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">NL</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span> <span class="keyword">'</span><span class="variable">NL</span>))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>) (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">NL</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span> <span class="keyword">'</span><span class="variable">NL</span>)))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+        (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+	      (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span> <span class="keyword">'</span><span class="variable">NL</span>))))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+        (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+	      (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span>)
+		    (<i>file</i><tt>-&gt;</tt><i>list-of-lines</i> <span class="builtin">empty</span>))))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+        (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+	      (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span>)
+		    <span class="builtin">empty</span>)))
+
+<span class="builtin">=</span> (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)
+        (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">f</span> <span class="keyword">'</span><span class="variable">g</span> <span class="keyword">'</span><span class="variable">h</span>))
+</pre></div><p>
+From this evaluation we can easily tell that the argument of the recursive
+application of <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-lines</i></code> is almost never the rest of the
+given file. That is, it is basically never an immediate component of the
+given file but always a proper suffix. The only exception occurs when
+<code class="scheme"><span class="keyword">'</span><span class="variable">NL</span></code> occurs twice in a row.  </p>
+<p>
+Finally, the evaluation and the definition of <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-lines</i></code>
+show that its generative recursion is simple. Every recursive application
+consumes a list that is shorter than the given one. Hence the recursive
+process eventually stops because the function consumes <code class="scheme"><span class="builtin">empty</span></code>.</p>
+<p>
+</p>
+<p><a name="node_thm_27.2.2"></a>
+<b>Exercise 27.2.2.</b>&nbsp;&nbsp; 
+Organize the program in figure&nbsp;<a href="#node_fig_Temp_148">73</a> using <code class="scheme"><span class="keyword">local</span></code>. </p>
+<p>
+Abstract the functions <code class="scheme"><span class="variable">first-line</span></code> and <code class="scheme"><span class="variable">remove-first-line</span></code>.
+Then organize the resulting program using a <code class="scheme"><span class="keyword">local</span></code>
+again.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abstract-file.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.2.3"></a>
+<b>Exercise 27.2.3.</b>&nbsp;&nbsp; 
+Design <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-checks</i></code>.  The function consumes a file of
+numbers and outputs a list of restaurant
+records.</p>
+<p>
+<a name="node_idx_1802"></a>A <i>file of numbers</i> is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">N</span> <span class="variable">F</span>)</code> 
+where <code class="scheme"><span class="variable">N</span></code> is a number and <code class="scheme"><span class="variable">F</span></code> is a
+file, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">NL</span> <span class="variable">F</span>)</code>, where <code class="scheme"><span class="variable">F</span></code> is a file. 
+</p>
+</li></ol><p></p>
+<p>
+The output of <code class="scheme"><i>file</i><tt>-&gt;</tt><i>list-of-checks</i></code> is a list of restaurant
+structures with two fields: 
+<a name="node_idx_1804"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">rr</span> (<span class="variable">table</span> <span class="variable">costs</span>))
+</pre></div><p>
+They are: a table number and a list of amounts charged to that table.</p>
+<p>
+Example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<i>file</i><tt>-&gt;</tt><i>list-of-checks</i>
+	  (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2.30</span> <span class="selfeval">4.00</span> <span class="selfeval">12.50</span> <span class="selfeval">13.50</span> <span class="keyword">'</span><span class="variable">NL</span>
+       	        <span class="selfeval">2</span> <span class="selfeval">4.00</span> <span class="selfeval">18.00</span> <span class="keyword">'</span><span class="variable">NL</span>
+                <span class="selfeval">4</span> <span class="selfeval">2.30</span> <span class="selfeval">12.50</span>))
+        (<span class="builtin">list</span> (<span class="builtin">make-rr</span> <span class="selfeval">1</span> (<span class="builtin">list</span> <span class="selfeval">2.30</span> <span class="selfeval">4.00</span> <span class="selfeval">12.50</span> <span class="selfeval">13.50</span>))
+              (<span class="builtin">make-rr</span> <span class="selfeval">2</span> (<span class="builtin">list</span> <span class="selfeval">4.00</span> <span class="selfeval">18.00</span>))
+	      (<span class="builtin">make-rr</span> <span class="selfeval">4</span> (<span class="builtin">list</span> <span class="selfeval">2.30</span> <span class="selfeval">12.50</span>))))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/restaurant.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.2.4"></a>
+<b>Exercise 27.2.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">create-matrix</span></code>. It consumes a number
+<code class="scheme"><span class="variable">n</span></code> and a list of <em>n</em><sup>2</sup> numbers. It produces a list of <code class="scheme"><span class="variable">n</span></code>
+lists of <code class="scheme"><span class="variable">n</span></code> numbers. </p>
+<p>
+Example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">create-matrix</span> <span class="selfeval">2</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+        (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)
+	      (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/matrix-gen.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_27.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_27.3">27.3&nbsp;&nbsp;Binary Search</a></h2>
+<p></p>
+<p>
+Applied mathematicians model the real-world with non-linear equations 
+<a name="node_idx_1806"></a>and then try to solve them. Here is a simplistic example:
+</p>
+<blockquote>
+Given a perfect cube that encloses 27m<sup>3</sup>. What area do its six
+walls cover? 
+</blockquote>
+We know from geometry that if the length of a cube's side is <em>x</em>, the
+enclosed space is <em>x</em><sup>3</sup>. Hence we need to know the possible values of <em>x</em> such that
+<div align="center"><img src="curriculum4a-Z-G-1.gif" border="0" alt="[curriculum4a-Z-G-1.gif]"></div><p>
+Once we have solved the equation, the covered area is 6  &middot;  <em>x</em><sup>2</sup>.</p>
+<p>
+In general, we are given a function <em>f</em> from numbers to numbers, and
+want to know some number <em>r</em> such that 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-2.gif" border="0" alt="[curriculum4a-Z-G-2.gif]"></div><p>
+The value <code class="scheme"><span class="variable">r</span></code> is called the <i>root</i> 
+<a name="node_idx_1808"></a><a name="node_idx_1810"></a>of <em>f</em>.  In our above
+example, <em>f</em>(<em>x</em>)  =  <em>x</em><sup>3</sup>  <tt>-</tt>  27, and the value <em>r</em> is the length of the
+side of the cube.<a name="call_footnote_Temp_149"></a><a href="#footnote_Temp_149"><sup><small>60</small></sup></a>  </p>
+<p>
+For the past few centuries, mathematicians have developed many methods for
+finding the root of different types of functions. In this section, we study
+a solution that is based on the <strong>Intermediate Value Theorem</strong>, an early result
+of mathematical analysis. The resulting algorithm is a primary example of
+generative recursion based on a deep mathematical theorem. It has been
+adapted to other uses and has become known as the binary search
+algorithm<a name="node_idx_1812"></a>
+<a name="node_idx_1814"></a>
+in computer science.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_150"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><img src="curriculum4a-Z-G-3.gif" border="0" alt="[curriculum4a-Z-G-3.gif]"></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 74:</b>&nbsp;&nbsp;A numeric function <em>f</em> with root in interval [<em>a</em>,<em>b</em>] (stage&nbsp;1)</td></tr>
+<tr><td>
+<p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The Intermediate Value Theorem says that a continuous function <em>f</em> has a root in an
+interval [<em>a</em>,<em>b</em>] if the signs of <em>f</em>(<em>a</em>) and <em>f</em>(<em>b</em>) differ. By 
+<i>continuous</i> 
+<a name="node_idx_1816"></a><a name="node_idx_1818"></a>we mean a function that doesn't ``jump,'' that doesn't have
+gaps, and that always continues in a ``smooth'' fashion. The theorem is
+best illustrated with the graph of a function. The function <em>f</em> in
+figure&nbsp;<a href="#node_fig_Temp_150">74</a> is below the <em>x</em> axis at <em>a</em> and above the <em>x</em>-axis
+at <em>b</em>. It is a continuous function, which we can tell from the
+uninterrupted, smooth line.  And indeed, the function intersects the
+<em>x</em> axis somewhere between <em>a</em> and <em>b</em>.</p>
+<p>
+Now take a look at the midpoint between <em>a</em> and <em>b</em>:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-4.gif" border="0" alt="[curriculum4a-Z-G-4.gif]"></div><p> 
+It partitions the interval [<em>a</em>,<em>b</em>] into two smaller, equally large
+intervals. We can now compute the value of <em>f</em> at <em>m</em> and see whether it is
+below or above 0. Here <em>f</em>(<em>m</em>) &lt; 0, so according to the Intermediate Value Theorem,
+the root is in the right interval: [<em>m</em>,<em>b</em>]. Our picture confirms this
+because the root is in the right half of the interval, labeled ``range 2''
+in figure&nbsp;<a href="#node_fig_Temp_150">74</a>.</p>
+<p>
+The abstract description of the Intermediate Value Theorem and the illustrative
+example describe a process for finding a root. Specifically, we use the
+halving step as many times as necessary to determine a tolerably small
+range in which <em>f</em> must have a root. Let us now translate this description
+into a Scheme algorithm, which we call <code class="scheme"><span class="variable">find-root</span></code>. </p>
+<p>
+To begin with, we must agree on the exact task of <code class="scheme"><span class="variable">find-root</span></code>. It
+consumes a function, let's call it <code class="scheme"><span class="variable">f</span></code>, for which we need to find a
+root. In addition, it must consume the boundaries of the interval in which we
+expect to find a root. For simplicity, let's say that <code class="scheme"><span class="variable">find-root</span></code>
+consumes two numbers: <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code>.  But these parameters
+can't be just any two numbers. For our algorithm to work we must assume that
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">left</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>))
+    (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">right</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">left</span>)))
+</pre></div><p>
+holds. This assumption expresses the condition of the Intermediate Value
+Theorem that the function must have different signs for <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code>. </p>
+<p>
+According to the informal process description, the task of
+<code class="scheme"><span class="variable">find-root</span></code> is to find an interval that contains a root and that is
+tolerably small. The size of the given interval is <code class="scheme">(<span class="builtin">-</span> <span class="variable">right</span>
+<span class="variable">left</span>)</code>. For the moment, we assume that the tolerance is defined as a top-level
+variable <code class="scheme"><span class="variable">TOLERANCE</span></code>. Given that, <code class="scheme"><span class="variable">find-root</span></code> can produce one
+of the two boundaries of the interval because we know what its size is;
+let's pick the left one. </p>
+<p>
+Here is a translation of our discussion into a contract, a purpose
+statement, and a header, including the assumption on the parameters: 
+<a name="node_idx_1820"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-root</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine <code class="scheme"><span class="variable">R</span></code> such that <code class="scheme"><span class="variable">f</span></code> has a root in [<code class="scheme"><span class="variable">R</span></code>,<code class="scheme">(<span class="builtin">+</span> <span class="variable">R</span> <span class="variable">TOLERANCE</span>)</code>]</span>
+<span class="comment">;; </span>
+<span class="comment">;; A<small>S</small><small>S</small><small>U</small><small>M</small><small>P</small><small>T</small><small>I</small><small>O</small><small>N</small>: <code class="scheme">(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">left</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">right</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">left</span>)))</code></span>
+(<span class="keyword">define</span> (<span class="variable">find-root</span> <span class="variable">f</span> <span class="variable">left</span> <span class="variable">right</span>) ...)
+</pre></div><p>
+At this stage, we should develop an example of how the function works. We
+have already seen one; the following exercise develops a second one. </p>
+<p>
+</p>
+<p><a name="node_thm_27.3.1"></a>
+<b>Exercise 27.3.1.</b>&nbsp;&nbsp; 
+Consider the following function definition: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">poly</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">poly</span> <span class="variable">x</span>)
+ (<span class="builtin">*</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="selfeval">2</span>) (<span class="builtin">-</span> <span class="variable">x</span> <span class="selfeval">4</span>)))
+</pre></div><p>
+It defines a binomial for which we can determine its roots by hand -- they
+are <code class="scheme"><span class="selfeval">2</span></code> and <code class="scheme"><span class="selfeval">4</span></code>. But it is also a non-trivial input for
+<code class="scheme"><span class="variable">find-root</span></code>, so that it makes sense to use it as an example.</p>
+<p>
+Mimic the root-finding process based on the Intermediate Value Theorem for
+<code class="scheme"><span class="variable">poly</span></code>, starting with the interval <code class="scheme"><span class="selfeval">3</span></code> and
+<code class="scheme"><span class="selfeval">6</span></code>. Tabulate the information as follows: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">#step </td><td valign="top"><i>left</i> </td><td valign="top">(<em>f</em> <i>left</i>) </td><td valign="top"><i>right</i> </td><td valign="top">(<em>f</em> <i>right</i>) </td><td valign="top"><i>mid</i> </td><td valign="top">(<em>f</em> <i>mid</i>) </td></tr>
+<tr><td valign="top"><em>n</em>  =  1 </td><td valign="top">3        </td><td valign="top">-1                   </td><td valign="top">6.00 </td><td valign="top">8.00 </td><td valign="top">4.5  </td><td valign="top">1.25</td></tr>
+<tr><td valign="top"><em>n</em>  =  2 </td><td valign="top">3        </td><td valign="top">-1                   </td><td valign="top">4.25 </td><td valign="top">1.25 </td><td valign="top">? </td><td valign="top">? </td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+Find an interval of size .5 (or less) in which <code class="scheme"><span class="variable">poly</span></code> contains a
+root.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-root-example.html">Solution</a><p></p>
+<p>
+Next we turn our attention to the definition of <code class="scheme"><span class="variable">find-root</span></code>. We start
+from <code class="scheme"><span class="variable">generative-recursive-fun</span></code> and ask the four relevant questions: 
+</p>
+<ol>
+<li><p>We need a condition that describes when the problem is solved and a
+matching answer. This is straightforward. The problem is solved if the
+distance from <code class="scheme"><span class="variable">left</span></code> to <code class="scheme"><span class="variable">right</span></code> is smaller than or equal to
+<code class="scheme"><span class="variable">TOLERANCE</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;=</span> (<span class="builtin">-</span> <span class="variable">right</span> <span class="variable">left</span>) <span class="variable">TOLERANCE</span>)
+</pre></div><p>
+The matching result is <code class="scheme"><span class="variable">left</span></code>. </p>
+<p>
+</p>
+<li><p>We must formulate an expression that generates new problems for
+<code class="scheme"><span class="variable">find-root</span></code>. According to our informal process description, this step
+requires determining the midpoint and choosing the next interval. The
+midpoint is used several times, so we use a <strong>local</strong>-expression to
+introduce it:
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">mid</span> (<span class="builtin">/</span> (<span class="builtin">+</span> <span class="variable">left</span> <span class="variable">right</span>) <span class="selfeval">2</span>)))
+  ...)
+</pre></div><p>
+</p>
+<p></p>
+<p>Choosing an interval is more complicated than that. </p>
+<p>
+Consider the Intermediate Value Theorem again. It says that a given interval is an
+interesting candidate if the function values at the boundaries have different
+signs. For the function's purpose statement, we expressed this constraint
+using 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">left</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">right</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">left</span>)))
+</pre></div><p>
+Accordingly, the interval between <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">mid</span></code> is the next
+candidate if 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">left</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">mid</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">mid</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">left</span>)))
+</pre></div><p>
+And, the interval between <code class="scheme"><span class="variable">mid</span></code> and <code class="scheme"><span class="variable">right</span></code> is it, if 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">mid</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">right</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">mid</span>)))
+</pre></div><p>
+In short, the body of the <strong>local</strong>-expression must be a conditional: 
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">mid</span> (<span class="builtin">/</span> (<span class="builtin">+</span> <span class="variable">left</span> <span class="variable">right</span>) <span class="selfeval">2</span>)))
+  (<span class="keyword">cond</span>
+    [(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">left</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">mid</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">mid</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">left</span>)))
+     (<span class="variable">find-root</span> <span class="variable">left</span> <span class="variable">mid</span>)]
+    [(<span class="keyword">or</span> (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">mid</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>)) (<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">right</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">mid</span>)))
+     (<span class="variable">find-root</span> <span class="variable">mid</span> <span class="variable">right</span>)]))
+</pre></div><p>
+In both clauses, we use <code class="scheme"><span class="variable">find-root</span></code> to continue the search.
+</p>
+</li></ol><p>
+The completed function is displayed in figure&nbsp;<a href="#node_fig_Temp_151">75</a>. The
+following exercises suggest some tests and a termination argument. </p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_151"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1822"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-root</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine a number <em>R</em> such that <code class="scheme"><span class="variable">f</span></code> has a </span>
+<span class="comment">;; root between R and <code class="scheme">(<span class="builtin">+</span> <span class="variable">R</span> <span class="variable">TOLERANCE</span>)</code> </span>
+<span class="comment">;; </span>
+<span class="comment">;; A<small>S</small><small>S</small><small>U</small><small>M</small><small>P</small><small>T</small><small>I</small><small>O</small><small>N</small>: <em>f</em> is continuous and monotonic</span>
+(<span class="keyword">define</span> (<span class="variable">find-root</span> <span class="variable">f</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> (<span class="builtin">-</span> <span class="variable">right</span> <span class="variable">left</span>) <span class="variable">TOLERANCE</span>) <span class="variable">left</span>]
+    [<span class="keyword">else</span> 
+      (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">mid</span> (<span class="builtin">/</span> (<span class="builtin">+</span> <span class="variable">left</span> <span class="variable">right</span>) <span class="selfeval">2</span>)))
+	(<span class="keyword">cond</span>
+	  [(<span class="builtin">&lt;=</span> (<span class="variable">f</span> <span class="variable">mid</span>) <span class="selfeval">0</span> (<span class="variable">f</span> <span class="variable">right</span>)) 
+           (<span class="variable">find-root</span> <span class="variable">mid</span> <span class="variable">right</span>)]
+	  [<span class="keyword">else</span> 
+           (<span class="variable">find-root</span> <span class="variable">left</span> <span class="variable">mid</span>)]))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 75:</b>&nbsp;&nbsp;The root-finding algorithm <i>find-root</i></td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_27.3.2"></a>
+<b>Exercise 27.3.2.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="variable">poly</span></code> from <a href="#node_thm_27.3.1">27.3.1</a> to test
+<code class="scheme"><span class="variable">find-root</span></code>.  Experiment with different values for
+<code class="scheme"><span class="variable">TOLERANCE</span></code>. Use the strategy of section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to
+formulate the tests as boolean-valued
+expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-root-test.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_27.3.3"></a>
+<b>Exercise 27.3.3.</b>&nbsp;&nbsp; 
+Suppose the original arguments of <code class="scheme"><span class="variable">find-root</span></code> describe an interval
+of size <code class="scheme"><span class="variable">S1</span></code>. How large is the distance between <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code> for the first recursive call to <code class="scheme"><span class="variable">find-root</span></code>? The
+second one? And the third?  After how many evaluation steps is the distance
+between <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code> smaller than or equal to
+<code class="scheme"><span class="variable">TOLERANCE</span></code>? How does the answer to this question show that
+<code class="scheme"><span class="variable">find-root</span></code> produces an answer for all inputs that satisfy the
+assumption?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-root-termination.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.3.4"></a>
+<b>Exercise 27.3.4.</b>&nbsp;&nbsp; 
+For every midpoint <code class="scheme"><span class="variable">m</span></code>, except for the last one, the
+function <code class="scheme"><span class="variable">find-root</span></code> needs to determine the value of
+<code class="scheme">(<span class="variable">f</span> <span class="variable">m</span>)</code> twice. Validate this claim for one example with a
+hand-evaluation. </p>
+<p>
+Since the evaluation of <code class="scheme">(<span class="variable">f</span> <span class="variable">m</span>)</code> may be time-consuming, programmers
+often implement a variant of <code class="scheme"><span class="variable">find-root</span></code> that avoids this
+recomputation.  Modify <code class="scheme"><span class="variable">find-root</span></code> in figure&nbsp;<a href="#node_fig_Temp_151">75</a> so
+that it does not need to recompute the value of <code class="scheme">(<span class="variable">f</span> <span class="variable">mid</span>)</code>. </p>
+<p>
+<strong>Hint:</strong> Define a help function <code class="scheme"><span class="variable">find-root-aux</span></code> that takes two extra
+arguments: the values <code class="scheme">(<span class="variable">f</span> <span class="variable">left</span>)</code> and <code class="scheme">(<span class="variable">f</span>
+<span class="variable">right</span>)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-root-recomp.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.3.5"></a>
+<b>Exercise 27.3.5.</b>&nbsp;&nbsp; 
+A <i>table</i> 
+<a name="node_idx_1824"></a><a name="node_idx_1826"></a>is a function that consumes natural numbers between
+<code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="variable">VL</span></code> (exclusive) and produces numbers:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">g</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">num</span></code></span>
+<span class="comment">;; A<small>S</small><small>S</small><small>U</small><small>M</small><small>P</small><small>T</small><small>I</small><small>O</small><small>N</small>: <code class="scheme"><span class="variable">i</span></code> is between 0 and <code class="scheme"><span class="variable">VL</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">i</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">0</span>) <span class="selfeval">-10</span>]
+    [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">1</span>) ...]
+    ...
+    [(<span class="builtin">=</span> <span class="variable">i</span> (<span class="builtin">-</span> <span class="variable">VL</span> <span class="selfeval">1</span>)) ...]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">g</span> <span class="selfeval">&quot;is defined only between 0 and VL (exclusive)&quot;</span>)]))
+</pre></div><p>
+The number <code class="scheme"><span class="variable">VL</span></code> is called the <i>table's length</i>. The <i>root
+of a table</i> is the number in the table that is closest to <code class="scheme"><span class="selfeval">0</span></code>. Even
+if we can't read the definition of a table, we can find its root with a
+search function.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">find-root-linear</span></code>, which consumes a table, the
+table's length, and finds the root of the table. Use structural induction
+on natural numbers. This kind of root-finding process is often called a
+<small>L</small><small>I</small><small>N</small><small>E</small><small>A</small><small>R</small> <small>S</small><small>E</small><small>A</small><small>R</small><small>C</small><small>H</small>.
+<a name="node_idx_1828"></a></p>
+<p>
+A table <code class="scheme"><span class="variable">t</span></code> is sorted in ascending order if <code class="scheme">(<span class="variable">t</span> <span class="selfeval">0</span>)</code> is less
+then <code class="scheme">(<span class="variable">t</span> <span class="selfeval">1</span>)</code>, <code class="scheme">(<span class="variable">t</span> <span class="selfeval">1</span>)</code> is less than <code class="scheme">(<span class="variable">t</span> <span class="selfeval">2</span>)</code>, and so
+on. If a table is monotonic, we can determine the root using binary
+search. Specifically, we can use binary search to find an interval of size
+<code class="scheme"><span class="selfeval">1</span></code> such that either the left or the right boundary is the root's
+index.  Develop <code class="scheme"><span class="variable">find-root-discrete</span></code>, which consumes a table and its
+length, and finds the table's root.</p>
+<p>
+<strong>Hints:</strong> (1) The interval boundary arguments for <code class="scheme"><span class="variable">find-root-discrete</span></code>
+must always be natural numbers. Consider how this affects the midpoint
+computation. (2) Also contemplate how the first hint affects the discovery
+of trivially solvable problem instances. (3) Does the termination argument
+from exercise&nbsp;<a href="#node_thm_27.3.3">27.3.3</a> apply?</p>
+<p>
+If the tabulating function is defined on all natural numbers between
+<code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="selfeval">1024</span></code>, and if its root is at <code class="scheme"><span class="selfeval">0</span></code>, how many
+recursive applications are needed with <code class="scheme"><span class="variable">find-root-discrete</span></code> and
+<code class="scheme"><span class="variable">find-root-lin</span></code> to determine a root
+interval?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-root-discrete.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.3.6"></a>
+<b>Exercise 27.3.6.</b>&nbsp;&nbsp; 
+We mentioned in section&nbsp;<a href="curriculum-Z-H-29.html#node_sec_23.4">23.4</a> that mathematicians are interested
+not only about the roots of functions, but also in the area that a function
+encloses between two points. Mathematically put, we are interested in 
+<i>integrating</i> 
+<a name="node_idx_1830"></a>functions over some interval. Take another look at the graph in
+figure&nbsp;<a href="curriculum-Z-H-29.html#node_fig_Temp_128">64</a> on page&nbsp;<a href="curriculum-Z-H-29.html">29</a>.  Recall that the
+area of interest is that enclosed by the bold vertical lines at <em>a</em> and
+<em>b</em>, the <em>x</em> axis, and the graph of the function. </p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-29.html#node_sec_23.4">23.4</a>, we learned to approximate the area by
+computing and adding up the area of rectangles like the two above.  Using
+the divide-and-conquer strategy, we can also design a function that
+computes the area based on generative recursion. Roughly speaking, we split
+the interval into two pieces, compute the area of each piece, and add the
+two areas together.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+<strong>Step 1</strong>: Develop the algorithm <code class="scheme"><span class="variable">integrate-dc</span></code>, which
+integrates a function <code class="scheme"><span class="variable">f</span></code> between the boundaries <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code> via the divide-and-conquer strategy employed in
+<code class="scheme"><span class="variable">find-root</span></code>. Use rectangle approximations when an interval has
+become small enough.</p>
+<p>
+Although the area of a rectangle is easy to compute, a rectangle is often
+a bad approximation of the area under a function graph. A better geometric
+shape is the trapezoid limited by <em>a</em>, <code class="scheme">(<span class="variable">f</span> <span class="variable">a</span>)</code>, <em>b</em>, and
+<code class="scheme">(<span class="variable">f</span> <span class="variable">b</span>)</code>. Its area is: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-5.gif" border="0" alt="[curriculum4a-Z-G-5.gif]"></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+<strong>Step 2</strong>: Modify <code class="scheme"><span class="variable">integrate-dc</span></code> so that it uses
+trapezoids instead of rectangles.</p>
+<p>
+The plain divide-and-conquer approach is wasteful. Consider that a function
+graph is level in one part and rapidly changes in another. For the level
+part it is pointless to keep splitting the interval. We could just compute
+the trapezoid over <em>a</em> and <em>b</em> instead of the two halves. </p>
+<p>
+To discover when <em>f</em> is level, we can change the algorithm as
+follows. Instead of just testing how large the interval is, the new
+algorithm computes the area of three trapezoids: the given one, and the two
+halves. Suppose the difference between the two is less than
+</p>
+<div align="center"><img src="curriculum4a-Z-G-6.gif" border="0" alt="[curriculum4a-Z-G-6.gif]"></div><p>
+This area represents a small rectangle, of height <code class="scheme"><span class="variable">TOLERANCE</span></code>, and
+represents the error margin of our computation. In other words, the
+algorithm determines whether <em>f</em> changes enough to affect the error
+margin, and if not, it stops. Otherwise, it continues with the
+divide-and-conquer approach. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+<strong>Step 3</strong>: Develop <code class="scheme"><span class="variable">integrate-adaptive</span></code>, which
+integrates a function <em>f</em> between <i>left</i> and <i>right</i>
+according to the suggested method. Do not discuss the termination
+of <code class="scheme"><span class="variable">integrate-adaptive</span></code>.</p>
+<p>
+<a name="node_idx_1832"></a></p>
+<p></p>
+<p><strong>Adaptive Integration</strong>:  The algorithm is called ``adaptive
+integration'' because it automatically adapts its strategy. For those parts
+of <em>f</em> that are level, it performs just a few calculations; for the other
+parts, it inspects very small intervals so that the error margin is also
+decreased accordingly.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adaptive-integral.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_27.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_27.4">27.4&nbsp;&nbsp;Newton's Method</a></h2>
+<p></p>
+<p>
+Newton invented another method for finding the root of a function.
+Newton's method exploits the idea of an approximation. To search a root of
+some function <code class="scheme"><span class="variable">f</span></code>, we start with a guess, say, <code class="scheme"><span class="variable">r1</span></code>. Then we
+study the tangent of <code class="scheme"><span class="variable">f</span></code> at <code class="scheme"><span class="variable">r1</span></code>, that is, the line that
+goes through the Cartesian point (<code class="scheme"><span class="variable">r1</span></code>, <code class="scheme"><span class="variable">f</span>(<span class="variable">r1</span>)</code>) and has the
+same slope as <code class="scheme"><span class="variable">f</span></code>. This tangent is a linear approximation of
+<code class="scheme"><span class="variable">f</span></code> and it has a root that is in many cases closer to the root of
+<code class="scheme"><span class="variable">f</span></code> than our original guess. Hence, by repeating this process
+sufficiently often, we can find an <code class="scheme"><span class="variable">r</span></code> for which <code class="scheme">(<span class="variable">f</span> <span class="variable">r</span>)</code> is
+close to <code class="scheme"><span class="selfeval">0</span></code>.</p>
+<p>
+To translate this process description into Scheme, we follow the familiar
+process. The function -- let's call it <code class="scheme"><span class="variable">newton</span></code> in honor of its
+inventor -- consumes a function <code class="scheme"><span class="variable">f</span></code> and a number <code class="scheme"><span class="variable">r0</span></code>, the
+current guess. If <code class="scheme">(<span class="variable">f</span> <span class="variable">r0</span>)</code> is close to <code class="scheme"><span class="selfeval">0</span></code>, the problem is
+solved. Of course, close to <code class="scheme"><span class="selfeval">0</span></code> could be mean <code class="scheme">(<span class="variable">f</span> <span class="variable">r0</span>)</code> is a
+small positive number or a small negative number. Hence we translate this
+idea into 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;=</span> (<span class="builtin">abs</span> (<span class="variable">f</span> <span class="variable">r0</span>)) <span class="variable">TOLERANCE</span>)
+</pre></div><p>
+That is, we determine whether the absolute value is small. The answer in
+this case is <code class="scheme"><span class="variable">r0</span></code>.</p>
+<p>
+The generative step of the algorithm consists of finding the root of the
+tangent of <code class="scheme"><span class="variable">f</span></code> at <code class="scheme"><span class="variable">r0</span></code>. It generates a new guess. By applying
+<code class="scheme"><span class="variable">newton</span></code> to this new guess, we resume the process with what we
+hope is a better guess:
+<a name="node_idx_1834"></a><a name="node_idx_1836"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">newton</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to find a number <code class="scheme"><span class="variable">r</span></code> such that <code class="scheme">(<span class="builtin">&lt;</span> (<span class="builtin">abs</span> (<span class="variable">f</span> <span class="variable">r</span>)) <span class="variable">TOLERANCE</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">newton</span> <span class="variable">f</span> <span class="variable">r0</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;=</span> (<span class="builtin">abs</span> (<span class="variable">f</span> <span class="variable">r0</span>)) <span class="variable">TOLERANCE</span>) <span class="variable">r0</span>]
+    [<span class="keyword">else</span> (<span class="variable">newton</span> <span class="variable">f</span> (<span class="variable">find-root-tangent</span> <span class="variable">f</span> <span class="variable">r0</span>))]))
+</pre></div><p>
+Since finding the root of a tangent is domain knowledge, we define a
+separate function for this purpose:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-root-tangent</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to find the root of the tagent of <code class="scheme"><span class="variable">f</span></code> at <code class="scheme"><span class="variable">r0</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">find-root-tangent</span> <span class="variable">f</span> <span class="variable">r0</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">fprime</span> (<span class="variable">d/dx</span> <span class="variable">f</span>)))
+    (<span class="builtin">-</span> <span class="variable">r0</span>
+       (<span class="builtin">/</span> (<span class="variable">f</span> <span class="variable">r0</span>)
+	  (<span class="variable">fprime</span> <span class="variable">r0</span>)))))
+</pre></div><p>
+The function first computes <code class="scheme">(<span class="variable">d/dx</span> <span class="variable">f</span>)</code>, that is, the derivative of
+<code class="scheme"><span class="variable">f</span></code> at <code class="scheme"><span class="variable">r0</span></code> (see&nbsp;section&nbsp;<a href="curriculum-Z-H-29.html#node_sec_23.5">23.5</a>) at <code class="scheme"><span class="variable">r0</span></code>. The
+body of the <strong>local</strong>-expression computes the root from the current
+guess, <code class="scheme">(<span class="variable">f</span> <span class="variable">r0</span>)</code>, and the slope of <code class="scheme"><span class="variable">f</span></code> at
+<code class="scheme"><span class="variable">r0</span></code>.<a name="call_footnote_Temp_152"></a><a href="#footnote_Temp_152"><sup><small>61</small></sup></a></p>
+<p>
+The most interesting aspect of <code class="scheme"><span class="variable">newton</span></code> is that, unlike all other
+functions we have discussed, it does <strong>not</strong> always terminate. Consider
+the following function:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>)
+  (<span class="builtin">-</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) <span class="variable">x</span> <span class="selfeval">1.8</span>))
+</pre></div><p>
+A simple hand-calculation shows that its derivative is 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">fprime</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+  (<span class="builtin">-</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">x</span>) <span class="selfeval">1</span>))
+</pre></div><p>
+If we were to use <code class="scheme"><span class="selfeval">1/2</span></code> as the initial guess, we would have to find
+the root of a tangent with slope <code class="scheme"><span class="selfeval">0</span></code>, that is, a tangent that is
+parallel to the <em>x</em> axis. Of course, such a tangent doesn't have a
+root. As a result, <code class="scheme"><span class="variable">find-root-of-tangent</span></code> cannot find a tangent
+and <code class="scheme"><span class="variable">newton</span></code> won't find a root.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_27.4.1"></a>
+<b>Exercise 27.4.1.</b>&nbsp;&nbsp; 
+Test <code class="scheme"><span class="variable">newton</span></code> with <code class="scheme"><span class="variable">f</span></code>. Use the initial guesses <code class="scheme"><span class="selfeval">1</span></code>,
+<code class="scheme"><span class="selfeval">2</span></code>, and <code class="scheme"><span class="selfeval">3</span></code>. Also use <code class="scheme"><span class="variable">find-root</span></code> from the preceding
+section to find a root. </p>
+<p>
+Use a hand-evaluation to determine how quickly <code class="scheme"><span class="variable">newton</span></code> finds a
+value close to the root (if it finds one). Compare <code class="scheme"><span class="variable">newton</span></code>'s
+behavior with <code class="scheme"><span class="variable">find-root</span></code>'s behavior. </p>
+<p>
+Employ the strategy of section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to formulate the tests
+as boolean-valued expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/newton-test.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<a name="node_sec_27.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_27.5">27.5&nbsp;&nbsp;Extended Exercise: Gaussian Elimination</a></h2>
+<p></p>
+<p>
+Mathematicians not only search for solutions of equations in one variable;
+they also study whole systems of linear equations.
+<a name="node_idx_1840"></a>Here is a sample system of equations in three variables, <em>x</em>, <em>y</em>, and <em>z</em>:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-10.gif" border="0" alt="[curriculum4a-Z-G-10.gif]"></div><p>
+A solution to a system of equations is a series of numbers, one per
+variable, such that if we replace the variable with its corresponding number, 
+the two sides of each equation evaluate to the same number. In our running
+example, the solution is <em>x</em>  =  1, <em>y</em>  =  1, and <em>z</em>  =  2, as we can easily check: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-11.gif" border="0" alt="[curriculum4a-Z-G-11.gif]"></div><p>
+The first equation now reads as 10  =  10, the second one as 31  =  31, and the
+last one as 1  = 1. </p>
+<p>
+One of the most famous methods for finding a solution is called Gaussian
+elimination. It consists of two steps. The first step is to transform the
+system of equations into a system of different shape but with the
+same solution. The second step is to find solutions to one equation
+at a time. Here we focus on the first step because it is another interesting
+instance of generative recursion.</p>
+<p>
+The first step of the Gaussian elimination algorithm is called ``triangulation''
+because the result is a system of equations in the shape of a triangle. In
+contrast, the original system is typically a rectangle. To understand this
+terminology, take a look at this representation of the original system: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-12.gif" border="0" alt="[curriculum4a-Z-G-12.gif]"></div><p>
+This representation captures the essence of the system, namely, the numeric
+coefficients of the variables and the right-hand sides. The names of the variables
+don't play any role. </p>
+<p>
+The generative step in the triangulation phase is to subtract the first row
+(list) of numbers from all the other rows. Subtracting one row from another
+means subtracting the corresponding items in the two rows. With our running
+example, this step would yield
+</p>
+<div align="center"><img src="curriculum4a-Z-G-13.gif" border="0" alt="[curriculum4a-Z-G-13.gif]"></div><p>
+when we subtract the first row from the second. </p>
+<p>
+The goal of these subtractions is to put a 0 into the first column of all but the
+first row. To achieve this for the last row, we subtract the first row twice from 
+the second one:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-14.gif" border="0" alt="[curriculum4a-Z-G-14.gif]"></div><p>
+Put differently, we first multiply each item in the first row with <code class="scheme"><span class="selfeval">2</span></code> and
+then subtract the result from the last row. It is easy to check that the solutions
+for the original system of equations and for this new one are identical.</p>
+<p>
+</p>
+<p><a name="node_thm_27.5.1"></a>
+<b>Exercise 27.5.1.</b>&nbsp;&nbsp; 
+Check that the following system of equations 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-15.gif" border="0" alt="[curriculum4a-Z-G-15.gif]"></div><p>
+has the same solution as the one labeled with (&plusmn;).
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gauss-equiv.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.5.2"></a>
+<b>Exercise 27.5.2.</b>&nbsp;&nbsp;  Develop <code class="scheme"><span class="variable">subtract</span></code>.  The
+function consumes two lists of numbers of equal length. It subtracts the
+first from the second, item by item, as many times as necessary to
+obtain <code class="scheme"><span class="selfeval">0</span></code> in the first position. The result is the <code class="scheme"><span class="builtin">rest</span></code> of
+this list.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gauss-subtract.html">Solution</a></p>
+<p></p>
+<p>
+Following convention, we drop the leading <code class="scheme"><span class="selfeval">0</span></code>'s from the
+last two equations: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-16.gif" border="0" alt="[curriculum4a-Z-G-16.gif]"></div><p>
+If, in addition, we use the same process for the remainder of the system to
+generate shorter rows, the final representation has a triangular shape.</p>
+<p>
+Let us study this idea with our running example. For the moment we ignore the
+first row and focus on the rest of the equations: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-17.gif" border="0" alt="[curriculum4a-Z-G-17.gif]"></div><p>
+By subtracting the first row now -1 times from the second one, we get 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-18.gif" border="0" alt="[curriculum4a-Z-G-18.gif]"></div><p>
+after dropping the leading <code class="scheme"><span class="selfeval">0</span></code>. The remainder of this system is a single
+equation, which cannot be simplified any further. </p>
+<p>
+Here is the result of adding this last system to the first
+equation:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-19.gif" border="0" alt="[curriculum4a-Z-G-19.gif]"></div><p>
+As promised, the shape of this system of equations is (roughly) a triangle, and 
+as we can easily check, it has the same solution as the original system. </p>
+<p>
+</p>
+<p><a name="node_thm_27.5.3"></a>
+<b>Exercise 27.5.3.</b>&nbsp;&nbsp; 
+Check that the following system of equations 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-20.gif" border="0" alt="[curriculum4a-Z-G-20.gif]"></div><p>
+has the same solution as the one labeled with (&plusmn;).
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gauss-equiv2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.5.4"></a>
+<b>Exercise 27.5.4.</b>&nbsp;&nbsp; 
+Develop the algorithm <code class="scheme"><span class="variable">triangulate</span></code>, which consumes a rectangular
+representation of a system of equations and produces a triangular version
+according the Gaussian algorithm. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/triangulate1.html">Solution</a></p>
+<p></p>
+<p>
+Unfortunately, the current version of the triangulation algorithm
+occasionally fails to produce the solution. Consider the following
+(representation of a) system of equations:  
+</p>
+<div align="center"><img src="curriculum4a-Z-G-21.gif" border="0" alt="[curriculum4a-Z-G-21.gif]"></div><p>
+Its solution is <em>x</em>  =  1, <em>y</em>  =  1, and <em>z</em>  =  1. </p>
+<p>
+The first step is to subtract the first row from the second and to subtract
+it twice from the last one, which yields the following matrix:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-22.gif" border="0" alt="[curriculum4a-Z-G-22.gif]"></div><p>
+Next our algorithm would focus on the rest of the matrix: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-23.gif" border="0" alt="[curriculum4a-Z-G-23.gif]"></div><p>
+but the first item of this matrix is <code class="scheme"><span class="selfeval">0</span></code>. Since we cannot divide by
+<code class="scheme"><span class="selfeval">0</span></code>, we are stuck.</p>
+<p>
+To overcome this problem, we need to use another piece of knowledge from
+our problem domain, namely, that we can switch equations around without
+changing the solution. Of course, as we switch rows, we must make sure that
+the first item of the row to be moved is not <code class="scheme"><span class="selfeval">0</span></code>. Here we can simply
+swap the two rows:
+</p>
+<div align="center"><img src="curriculum4a-Z-G-24.gif" border="0" alt="[curriculum4a-Z-G-24.gif]"></div><p>
+From here we may continue as before, subtracting the first equation from the
+remaining ones a sufficient number of times. The final triangular matrix is: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-25.gif" border="0" alt="[curriculum4a-Z-G-25.gif]"></div><p>
+It is easy to check that this system of equations still has the solution 
+<em>x</em>  =  1, <em>y</em>  =  1, and <em>z</em>  =  1. </p>
+<p>
+</p>
+<p><a name="node_thm_27.5.5"></a>
+<b>Exercise 27.5.5.</b>&nbsp;&nbsp; 
+Revise the algorithm <code class="scheme"><span class="variable">triangulate</span></code> from exercise&nbsp;<a href="#node_thm_27.5.4">27.5.4</a> so
+that it switches rows when the first item of the matrix is <code class="scheme"><span class="selfeval">0</span></code>.</p>
+<p>
+<strong>Hint:</strong> DrScheme provides the function <code class="scheme"><span class="variable">remove</span></code>. It
+consumes an item <code class="scheme"><span class="variable">I</span></code> and a list <code class="scheme"><span class="variable">L</span></code> and produces a list like
+<code class="scheme"><span class="variable">L</span></code> but with the first occurrence of <code class="scheme"><span class="variable">I</span></code> removed. For
+example,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">remove</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span>) (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span>))) 
+        (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span>)))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/triangulate2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.5.6"></a>
+<b>Exercise 27.5.6.</b>&nbsp;&nbsp; 
+Some systems of equations don't have a solution. Consider the following system as
+an example: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-26.gif" border="0" alt="[curriculum4a-Z-G-26.gif]"></div><p>
+Try to produce a triangular system by hand and with
+<code class="scheme"><span class="variable">triangulate</span></code>. What happens?  Modify the function so that it signals
+an error if it encounters this situation.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/triangulate3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_27.5.7"></a>
+<b>Exercise 27.5.7.</b>&nbsp;&nbsp; 
+After we obtain a triangular system of equations such as (*) on
+page&nbsp;<a href="">34</a> (or exercise&nbsp;<a href="#node_thm_27.5.3">27.5.3</a>), we can
+solve the equations. In our specific example, the last equation says that
+<em>z</em> is 2. Equipped with this knowledge, we can eliminate <em>z</em>
+from the second equation through a substitution: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-27.gif" border="0" alt="[curriculum4a-Z-G-27.gif]"></div><p></p>
+<p>
+Determine the value for <em>y</em>. Then repeat the substitution step for <em>y</em>
+and <em>z</em> in the first equation and find the value for <em>x</em>.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">solve</span></code>, which consumes triangular systems of
+equations and produces a solution. A triangular system of equations has
+the shape 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-28.gif" border="0" alt="[curriculum4a-Z-G-28.gif]"></div><p>
+where <em>a</em><sub><em>i</em><em>j</em></sub> and <em>b</em><sub><em>i</em></sub> are numbers. That is, it is a list of lists and each of
+the lists is one item shorter than the preceding one. A solution is a list of
+numbers. The last number on the list is
+</p>
+<div align="center"><img src="curriculum4a-Z-G-29.gif" border="0" alt="[curriculum4a-Z-G-29.gif]"></div><p></p>
+<p>
+<strong>Hint:</strong> Developing <code class="scheme"><span class="variable">solve</span></code> requires a solution for the following
+problem. Suppose we are given a row:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">9</span> <span class="selfeval">21</span>)
+</pre></div><p>
+and a list of numbers that solve the remainder of the system:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">2</span>).
+</pre></div><p>
+In the world of equations, these two pieces of data represent the following
+knowledge: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-30.gif" border="0" alt="[curriculum4a-Z-G-30.gif]"></div><p>
+and 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-31.gif" border="0" alt="[curriculum4a-Z-G-31.gif]"></div><p>
+which in turn means we must solve the following equation: 
+</p>
+<div align="center"><img src="curriculum4a-Z-G-32.gif" border="0" alt="[curriculum4a-Z-G-32.gif]"></div><p></p>
+<p>
+Develop the function <code class="scheme"><span class="variable">evaluate</span></code>, which evaluates the rest of the
+left-hand side of an equation and subtracts the right-hand side from this
+sum.  Equivalently, <code class="scheme"><span class="variable">evaluate</span></code> consumes <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">9</span> <span class="selfeval">21</span>)</code> and
+<code class="scheme">(<span class="builtin">list</span> <span class="selfeval">2</span>)</code> and produces <code class="scheme"><span class="selfeval">-3</span></code>, that is, 9  &middot;  2  <tt>-</tt>  21. Now
+use <code class="scheme"><span class="variable">evaluate</span></code> for the intermediate step in
+<code class="scheme"><span class="variable">solve</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/gauss-solve.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_146"></a><a href="#call_footnote_Temp_146"><sup><small>58</small></sup></a> Ms. Geraldine Morin suggested this
+exercise.</p>
+<p><a name="footnote_Temp_147"></a><a href="#call_footnote_Temp_147"><sup><small>59</small></sup></a> The tradition of
+breaking a file into lines is due to the use of punch cards with early
+mechanical computers, dating back to the 1890 census. It is meaningless for
+file storage in modern computing.  Unfortunately, this historical accident
+continues to affect the development of computing and software technology in
+a negative manner.</p>
+<p><a name="footnote_Temp_149"></a><a href="#call_footnote_Temp_149"><sup><small>60</small></sup></a> If the equation is originally presented as <em>g</em>(<em>x</em>)
+ =  <em>h</em>(<em>x</em>), we set <em>f</em>(<em>x</em>)  =  <em>g</em>(<em>x</em>)  <tt>-</tt>  <em>h</em>(<em>x</em>) to transform the equation into the
+standard form.</p>
+<p><a name="footnote_Temp_152"></a><a href="#call_footnote_Temp_152"><sup><small>61</small></sup></a>  The tangent of a function <em>f</em> at <em>r</em><sub><em>i</em></sub> is the linear
+function
+</p>
+<div align="center"><img src="curriculum4a-Z-G-7.gif" border="0" alt="[curriculum4a-Z-G-7.gif]"></div><p>
+The function <em>f</em>' is the derivative of <em>f</em>, and <em>f</em>'(<em>r</em>0) is the slope of
+<em>f</em> at <em>r</em>0. Furthermore, the root of a linear function is the intersection
+of a straight line with the <em>x</em> axis. In general, if the line's equation
+<a name="node_idx_1838"></a>
+is
+</p>
+<div align="center"><img src="curriculum4a-Z-G-8.gif" border="0" alt="[curriculum4a-Z-G-8.gif]"></div><p>
+then its root is  <tt>-</tt> <em>b</em>/<em>a</em>. In our case, the root of <em>f</em>'s tangent is
+</p>
+<div align="center"><img src="curriculum4a-Z-G-9.gif" border="0" alt="[curriculum4a-Z-G-9.gif]"></div><p>
+</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-33.html">previous</a></span><span>, <a href="curriculum-Z-H-35.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-34.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

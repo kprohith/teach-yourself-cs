@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/wp-to-file.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 15.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="wp-count.html">15.3.1</a> | <a href="../Book/curriculum-Z-H-20.html#node_thm_15.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="wp-occurs.html">15.3.3</a><pre>;; Language: Beginning Student with List Abbreviations
+
+;; Data Definitions
+
+(define-struct wp (header body))
+;; A Web-page (short: WP) is a structure:
+;;   (make-wp h p) 
+;; where h is a symbol and p is a (Web) document.
+
+;; A (Web) document is either:
+;; 1. empty
+;; 2. (cons s p)  where s is a symbol and p is a (Web) document
+;; 3. (cons wp p)  where wp is a web-page and p is a document
+
+;; A list-of-symbols is either:
+;; 1. empty
+;; 2. (cons symbol list-of-symbols)
+
+;; wp-to-file : WP -&gt; list-of-symbols
+(define (wp-to-file wp)
+  (doc-to-file (wp-body wp)))
+
+(define (doc-to-file doc)
+  (cond
+    [(empty? doc) empty]
+    [(symbol? (first doc))
+     (cons (first doc) (doc-to-file (rest doc)))]
+    [else
+     (cons (wp-header (first doc))
+           (doc-to-file (rest doc)))]))
+
+;; --- test code
+
+;; data examples:
+(define empty-page (make-wp 'empty-page empty))
+(define page-1-word (make-wp 'page-1-word (cons 'w1 empty)))
+(define page-2-words (make-wp 'page-2-words (list 'w1 'w2)))
+(define with-1-word-subpage (make-wp 'page-1-word-with-subpage (cons page-1-word empty)))
+(define with-2-words-subpage (make-wp 'with-2-words-subpage (cons page-2-words empty)))
+(define dense-page1 (make-wp 'realistic (list 'w3  page-2-words 'w4 page-1-word 'w5)))
+(define dense-page2 (make-wp 'realistic (list 'w3  empty-page 'w4 with-1-word-subpage 'w5)))
+
+;; test cases
+
+;; test for 'wp-to-file'
+(equal? (wp-to-file empty-page) (list))
+(equal? (wp-to-file page-1-word) (list 'w1))
+(equal? (wp-to-file page-2-words) (list 'w1 'w2))
+(equal? (wp-to-file with-1-word-subpage) (list 'page-1-word))
+(equal? (wp-to-file with-2-words-subpage) (list 'page-2-words))
+(equal? (wp-to-file dense-page1) (list 'w3 'page-2-words 'w4 'page-1-word 'w5))
+(equal? (wp-to-file dense-page2) (list 'w3 'empty-page 'w4 'page-1-word-with-subpage 'w5))
+
+;; --- end test code
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/wp-to-file.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

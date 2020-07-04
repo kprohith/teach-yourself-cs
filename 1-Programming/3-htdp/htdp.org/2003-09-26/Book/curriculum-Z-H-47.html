@@ -1,0 +1,1180 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-47.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-46.html">previous</a></span><span>, <a href="curriculum-Z-H-48.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_38"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_38">Section  38</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_38">Intermezzo 7: The Final Syntax and Semantics</a></h1>
+<p></p>
+<p>
+</p>
+<p>
+With the introduction of <strong>set!</strong>-expressions
+<a name="node_idx_2214"></a><a name="node_idx_2216"></a>and <strong>begin</strong>-expressions
+<a name="node_idx_2218"></a><a name="node_idx_2220"></a>we have covered most
+of Scheme's kernel language.  In DrScheme, this portion is called
+<tt>Advanced Student</tt> Scheme. Considering the complexity of <code class="scheme"><span class="keyword">set!</span></code>, this
+is a good place to summarize our programming language  
+<a name="node_idx_2222"></a>in the spirit of
+intermezzo&nbsp;1. Following the organization of that intermezzo, we discuss the
+vocabulary, the grammar, and the meaning of <tt>Advanced Student</tt> Scheme.  The
+last subsection explains what kind of errors we may encounter in
+<tt>Advanced Student</tt> Scheme.</p>
+<p>
+
+</p>
+<a name="node_sec_38.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_38.1">38.1&nbsp;&nbsp;The Vocabulary of Advanced Scheme</a></h2>
+<p></p>
+<p>
+The foundation of any language is its vocabulary. In <tt>Beginning Student</tt>
+Scheme, we distinguish four categories of words: variables, constants,
+primitive functions, and keywords. The classification ignores parentheses
+but we know that every compound phrase is surrounded by a pair of
+parentheses, and that every atomic phrase stands on its own. </p>
+<p>
+<tt>Advanced Student</tt> Scheme respects this basic classification, though it
+contains four important new keywords: <code class="scheme"><span class="keyword">local</span></code>, <code class="scheme"><span class="keyword">lambda</span></code>,
+<code class="scheme"><span class="keyword">set!</span></code>, and <code class="scheme"><span class="keyword">begin</span></code>. The first two are important for
+organizing and abstracting programs; the last two are important for the
+computation of effects. Still, keywords per se have no
+meaning. They are road signs that tell us what is ahead so that we can
+orient ourselves. It is the grammar and the meaning of a language that
+explains the role of the keywords. </p>
+<p>
+
+</p>
+<a name="node_sec_38.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_38.2">38.2&nbsp;&nbsp;The Grammar of Advanced Scheme</a></h2>
+<p></p>
+<p>
+Even though Scheme is a full-fledged language with as much power as any
+other programming language, its designers have kept its grammar simple. The
+grammar of <tt>Advanced Student</tt> Scheme, which is most of Scheme, is only a few
+lines longer than that of <tt>Beginning Student</tt> Scheme.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_195"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> 
+</td><td valign="top">=</td><td valign="top"> &nbsp;  (<strong>define</strong> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define</strong> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define-struct</strong> <tt>&lt;var0&gt;</tt> (<tt>&lt;var-1&gt;</tt> <tt>...</tt> <tt>&lt;var-n&gt;</tt>))</td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><tt>&lt;exp&gt;</tt> 
+</td><td valign="top">=</td><td valign="top"> &nbsp;  <tt>&lt;var&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;con&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  <tt>&lt;prm&gt;</tt> </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>cond</strong> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>cond</strong> (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>) <tt>...</tt>(<code class="scheme"><span class="keyword">else</span></code> <tt>&lt;exp&gt;</tt>))</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>local</strong> (<tt>&lt;def&gt;</tt> <tt>...</tt><tt>&lt;def&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>lambda</strong> (<tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>set!</strong> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>)</td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>begin</strong> <tt>&lt;exp&gt;</tt> <tt>...</tt><tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 111:</b>&nbsp;&nbsp;<tt>Advanced Student</tt> Scheme: The core grammar</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_195">111</a> contains the essential grammar of the
+<tt>Advanced Student</tt> Scheme language.<a name="call_footnote_Temp_196"></a><a href="#footnote_Temp_196"><sup><small>71</small></sup></a> It extends
+<tt>Intermediate Student</tt> Scheme with three new forms of expressions:
+<strong>lambda</strong>-expressions, <strong>set!</strong>-expressions, and <strong>begin</strong>-expressions. The specification of <strong>local</strong>-expressions
+refers to the category of definitions, which refers back to the category of
+expressions. A <strong>lambda</strong>-expression consists of a sequence of variables, enclosed in
+parentheses, and an expression. Similarly, a <strong>set!</strong>-expression consists of a
+variable and an expression. Finally, a <strong>begin</strong>-expression is just a sequence of
+expressions prefixed with the keyword <code class="scheme"><span class="keyword">begin</span></code> to distinguish it from
+an application.</p>
+<p>
+Since functions are values now, the grammar of <tt>Advanced Student</tt> Scheme is
+also simpler than that of <tt>Beginning Student</tt> Scheme in one
+regard. Specifically, it merges the lines for primitive and function
+application into a single line. The new line specifies applications, which
+are now sequences of expressions enclosed in parentheses. Owing to the
+inclusion of primitive operations into the set of expressions,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+is still an expression. After all, <code class="scheme"><span class="builtin">+</span></code> is now an expression, and so
+are <code class="scheme"><span class="selfeval">1</span></code> and <code class="scheme"><span class="selfeval">2</span></code>. The application of <code class="scheme"><span class="keyword">define</span></code>d
+functions works similarly: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">f</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)
+</pre></div><p>
+The first expression is a variable, and the others are numbers.  The
+application is thus a legal expression.</p>
+<p>
+Unfortunately, a language grammar can only specify the large contours of
+what is a legal sentence construction. It cannot express restrictions that
+require some knowledge about the context of a phrase. <tt>Advanced Student</tt>
+Scheme requires a few such restrictions: 
+</p>
+<ol>
+<li><p>In a <strong>lambda</strong>-expression no variable may occur twice in the parameter
+sequence. </p>
+<p>
+</p>
+<li><p>In a <strong>local</strong>-expression no definition may introduce the same variable as any
+other definition in the same sequence. </p>
+<p>
+</p>
+<li><p>A <strong>set!</strong>-expression must occur in the lexical scope of a <code class="scheme"><span class="keyword">define</span></code> that
+introduces the <strong>set!</strong>-expression's left-hand side. 
+</p>
+</li></ol><p>
+In addition, the old restriction applies that keywords cannot be used as
+variables. </p>
+<p>
+Consider the following definition, which uses the new constructs: 
+<a name="node_idx_2224"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">switch</span>
+  (<span class="keyword">local</span> ((<span class="keyword">define-struct</span> <span class="variable">hide</span> (<span class="variable">it</span>))
+	  (<span class="keyword">define</span> <span class="variable">state</span> (<span class="builtin">make-hide</span> <span class="selfeval">1</span>)))
+    (<span class="keyword">lambda</span> ()
+      (<span class="keyword">begin</span>
+	(<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">make-hide</span> (<span class="builtin">-</span> <span class="selfeval">1</span> (<span class="builtin">hide-it</span> <span class="variable">state</span>))))
+	<span class="variable">state</span>))))
+</pre></div><p>
+The definition introduces the variable <code class="scheme"><span class="variable">switch</span></code>. The right-hand side
+of the definition is a <strong>local</strong>-expression. It in turn defines the structure
+<code class="scheme"><span class="variable">hide</span></code> and the variable <code class="scheme"><span class="variable">state</span></code>, which stands for an instance
+of <code class="scheme"><span class="variable">hide</span></code>. The body of the <strong>local</strong>-expression is a <strong>lambda</strong>-expression, whose parameter
+sequence is empty. The function's body consists of a <strong>begin</strong>-expression with two
+expressions: a <strong>set!</strong>-expression and an expression that consists of just the
+variable <code class="scheme"><span class="variable">state</span></code>.</p>
+<p>
+All expressions in our program satisfy the necessary restrictions. First,
+the <strong>local</strong>-expression introduces four names that are distinct: <code class="scheme"><span class="builtin">make-hide</span></code>,
+<code class="scheme"><span class="builtin">hide?</span></code>, <code class="scheme"><span class="builtin">hide-it</span></code>, and <code class="scheme"><span class="variable">state</span></code>. Second, the parameter
+list of the <strong>lambda</strong>-expression is empty, so there is no possible conflict.  Finally,
+the <strong>set!</strong>-expression's variable is the <code class="scheme"><span class="keyword">local</span></code>ly defined variable
+<code class="scheme"><span class="variable">state</span></code>, so it is legal, too.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_38.2.1"></a>
+<b>Exercise 38.2.1.</b>&nbsp;&nbsp;  
+Determine whether the following phrases are syntactically legal or illegal
+programs:
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) 
+       (<span class="keyword">begin</span>
+	 (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x</span>)
+	 <span class="variable">x</span>))
+
+<span class="variable">2.</span> (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) 
+       (<span class="keyword">begin</span>
+	 (<span class="keyword">set!</span> <span class="variable">f</span> <span class="variable">x</span>)
+	 <span class="variable">x</span>))
+
+<span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define-struct</span> <span class="variable">hide</span> (<span class="variable">it</span>))
+	     (<span class="keyword">define</span> <span class="builtin">make-hide</span> <span class="selfeval">10</span>))
+       (<span class="builtin">hide?</span> <span class="selfeval">10</span>))
+
+<span class="variable">4.</span> (<span class="keyword">local</span> ((<span class="keyword">define-struct</span> <span class="variable">loc</span> (<span class="variable">con</span>))
+	     (<span class="keyword">define</span> <span class="variable">loc</span> <span class="selfeval">10</span>))
+       (<span class="builtin">loc?</span> <span class="selfeval">10</span>))
+
+<span class="variable">5.</span> (<span class="keyword">define</span> <span class="variable">f</span>
+       (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">x</span>)
+	 (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>)))
+     
+     (<span class="keyword">define</span> <span class="variable">z</span> <span class="selfeval">3.14</span>)
+</pre></div><p>
+Explain why a phrase is legal or illegal.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adv-syn0.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_38.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_38.3">38.3&nbsp;&nbsp;The Meaning of Advanced Scheme</a></h2>
+<p> 
+</p>
+<p>
+When we first used <tt>Advanced Student</tt> Scheme, we did so because we
+wanted to deal with functions as ordinary values. The evaluation rules
+<a name="node_idx_2226"></a>barely changed. We just agreed to allow expressions in the first position
+of an application and to deal with the names of functions as values.</p>
+<p>
+The extension of the language with <strong>set!</strong>-expressions required another change to
+our rules. Now definitions that associate variables and values can change
+over the course of an evaluation. The informal rules we've used so far deal
+with changes to the definition of state variables, because they matter the
+most. But the rules are informal and imprecise, so a precise description of
+how the addition of <code class="scheme"><span class="keyword">set!</span></code> changes the meaning of the language must
+be our primary concern.</p>
+<p>
+Let's recall how we determine the meaning of a program. A program consists
+of two parts: a collection of definitions and an expression. The goal is to
+evaluate the expression, which means to determine the expression's
+value.<a name="call_footnote_Temp_197"></a><a href="#footnote_Temp_197"><sup><small>72</small></sup></a> In
+<tt>Beginning Student</tt> Scheme, the collection of values consists of all
+the constants plus lists. Only one list has a concise representation: the
+empty one. All other lists are written down as a series of
+<code class="scheme"><span class="builtin">cons</span></code>tructed lists.</p>
+<p>
+The evaluation of an expression consists of a series of steps. At each step
+we use the laws of arithmetic and algebra
+<a name="node_idx_2228"></a><a name="node_idx_2230"></a>to simplify a subexpression. This
+yields another expression. We also say that we <small>R</small><small>E</small><small>W</small><small>R</small><small>I</small><small>T</small><small>E</small> 
+<a name="node_idx_2232"></a>the first expression into the second. If the second expression is a value,
+we are finished. </p>
+<p>
+The introduction of <strong>set!</strong>-expressions into our programming language requires a
+few small adjustments and extensions to this process: 
+</p>
+<ol>
+<li><p>Instead of rewriting just an expression, we must now rewrite
+definitions and expressions. More precisely, each step changes the
+expression and possibly the definition of a state variable. To make these
+effects as obvious as possible, each stage in an evaluation displays the
+definitions of state variables and the current expression.</p>
+<p>
+</p>
+<li><p>Furthermore, it is no longer possible to apply the laws of arithmetic
+and algebra whenever or wherever we want. Instead, we must determine the
+subexpression that we must evaluate if we wish to make progress. This
+rule still leaves us with choices. For example, when we rewrite an
+expression such as 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">3</span>) (<span class="builtin">*</span> <span class="selfeval">4</span> <span class="selfeval">4</span>))
+</pre></div><p>
+we may choose to evaluate <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">3</span>)</code> and then <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">4</span> <span class="selfeval">4</span>)</code> or
+vice versa. Fortunately, for such simple expressions, the choice
+doesn't affect the final outcome, so we don't have to supply a complete
+unambigous rule. In general, though, we rewrite subexpressions in a
+left-to-right and top-to-bottom order. At each stage in the evaluation,
+we best start by underlining the subexpression that must be evaluated
+next.</p>
+<p>
+</p>
+<li><p>Suppose the underlined subexpression is a <strong>set!</strong>-expression. By the
+restrictions on <strong>set!</strong>-expressions, we know that there is a <code class="scheme"><span class="keyword">define</span></code> for
+the left-hand side of the subexpression. That is, we face the
+following situation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">aValue</span>)
+  ...
+  ... <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">anotherValue</span>)</code></u></span> ... 
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">anotherValue</span>)
+  ...
+  ... (void) ...
+</pre></div><p>
+The equation indicates that the program changes in two ways. First, the
+variable definition is modified. Second, the underlined <strong>set!</strong>-expression is
+replaced by <code class="scheme">(void)</code>, the invisible value. </p>
+<p>
+</p>
+<li><p>The next change concerns the replacement of variables in expressions
+with the value in their definition. Until now, we could replace a
+variable with its value wherever we thought it was convenient or
+necessary. Indeed, we just thought of the variable as a shorthand for the
+value. With <strong>set!</strong>-expressions in the language, this is no longer
+possible. After all, the evaluation of a <strong>set!</strong>-expression modifies the
+definition of a state variable, and if we replace a variable with its value
+at the wrong time, we get the wrong value. </p>
+<p>
+Suppoe that the underlined expression is a (state) variable. Then
+we know that we can't make any progress in our evaluation until we have
+replaced the variable with the current value in its definition. This
+suggests the following revised law for variable evaluation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">aValue</span>)
+  ...
+  ... <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span> ... 
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">aValue</span>)
+  ...
+  ... <span class="variable">aValue</span> ... 
+</pre></div><p>
+In short, substitute the value in a state variable definition for the
+state variable only when the value is needed for this particular
+occurrence of the state variable. </p>
+<p>
+</p>
+<li><p>Last, but not least, we also need a rule for <strong>begin</strong>-expressions. The
+simplest one says to drop the first subexpression if it is a value: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">begin</span> <span class="variable">v</span> <span class="variable">exp-1</span> ... <span class="variable">exp-n</span>)
+<span class="builtin">=</span> (<span class="keyword">begin</span> <span class="variable">exp-1</span> ... <span class="variable">exp-n</span>)
+</pre></div><p> 
+That means we also need a rule for dropping <code class="scheme"><span class="keyword">begin</span></code> completely: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">begin</span> <span class="builtin">exp</span>)
+<span class="builtin">=</span> <span class="builtin">exp</span>
+</pre></div><p> 
+In addition, we use a rule for dropping several values at once: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">begin</span> <span class="variable">v-1</span> ... <span class="variable">v-m</span> <span class="variable">exp-1</span> ... <span class="variable">exp-n</span>)
+<span class="builtin">=</span> (<span class="keyword">begin</span> <span class="variable">exp-1</span> ... <span class="variable">exp-n</span>)
+</pre></div><p> 
+But this is only a convenience.
+</p>
+</li></ol><p>
+Although the laws are more complicated than those of <tt>Beginning Student</tt>
+Scheme, they are still manageable. </p>
+<p>
+</p>
+<p>
+Let's consider some examples. The first one demonstrates how the order of
+evaluation of subexpressions makes a difference: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">5</span>)
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">11</span>)</code></u></span> <span class="variable">x</span>) <span class="variable">x</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">11</span>)
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> (void) <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>) <span class="variable">x</span>)
+
+<span class="builtin">=</span> ...
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">11</span>)
+  (<span class="builtin">+</span> <span class="selfeval">11</span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">11</span>)
+  <span class="variable"><u><code class="scheme">(<span class="builtin">+</span> <span class="selfeval">11</span> <span class="selfeval">11</span>)</code></u></span>
+</pre></div><p>
+The program consists of one definition and one addition, which is to be
+evaluated. One of the addition's arguments is a <strong>set!</strong>-expression that mutates
+<code class="scheme"><span class="variable">x</span></code>; the other is just <code class="scheme"><span class="variable">x</span></code>. By evaluating the subexpressions
+of the addition from left to right, the mutation takes place before we
+replace the second subexpression with its value. As a result, the outcome
+is <code class="scheme"><span class="selfeval">22</span></code>. If we had evaluated the addition from right to left, the
+result would have been <code class="scheme"><span class="selfeval">16</span></code>. To avoid such problems, we use the
+fixed ordering but give ourselves more freedom when no state variables are
+involved.</p>
+<p>
+The second example illustrates how a <strong>set!</strong>-expression that occurs in a <strong>local</strong>-expression
+actually affects a top-level definition:
+<a name="node_idx_2234"></a></p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">make-counter</span> <span class="variable">x0</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">counter</span> <span class="variable">x0</span>)
+	    (<span class="keyword">define</span> (<span class="variable">increment</span>)
+	      (<span class="keyword">begin</span>
+		(<span class="keyword">set!</span> <span class="variable">counter</span> (<span class="builtin">+</span> <span class="variable">counter</span> <span class="selfeval">1</span>))
+		<span class="variable">counter</span>)))
+      <span class="variable">increment</span>))
+  (<span class="variable"><u><code class="scheme">(<span class="variable">make-counter</span> <span class="selfeval">0</span>)</code></u></span>)
+</pre></div><p>
+The program again consists of a single definition and an expression that is
+to be evaluated. The latter, however, is an application nested in an
+application. The inner application is underlined, because we must evaluate
+it to make progress. Here are the first few steps: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">make-counter</span> <span class="variable">x0</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">counter</span> <span class="variable">x0</span>)
+	    (<span class="keyword">define</span> (<span class="variable">increment</span>)
+	      (<span class="keyword">begin</span>
+		(<span class="keyword">set!</span> <span class="variable">counter</span> (<span class="builtin">+</span> <span class="variable">counter</span> <span class="selfeval">1</span>))
+		<span class="variable">counter</span>)))
+      <span class="variable">increment</span>))
+  ((<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">counter</span> <span class="selfeval">0</span>)
+	   (<span class="keyword">define</span> (<span class="variable">increment</span>)
+	     (<span class="keyword">begin</span>
+	       (<span class="keyword">set!</span> <span class="variable">counter</span> (<span class="builtin">+</span> <span class="variable">counter</span> <span class="selfeval">1</span>))
+	       <span class="variable">counter</span>)))
+     <span class="variable">increment</span>))
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">make-counter</span> <span class="variable">x0</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">counter</span> <span class="variable">x0</span>)
+	    (<span class="keyword">define</span> (<span class="variable">increment</span>)
+	      (<span class="keyword">begin</span>
+		(<span class="keyword">set!</span> <span class="variable">counter</span> (<span class="builtin">+</span> <span class="variable">counter</span> <span class="selfeval">1</span>))
+		<span class="variable">counter</span>)))
+      <span class="variable">increment</span>))
+  (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> (<span class="variable">increment1</span>)
+    (<span class="keyword">begin</span>
+      (<span class="keyword">set!</span> <span class="variable">counter1</span> (<span class="builtin">+</span> <span class="variable">counter1</span> <span class="selfeval">1</span>))
+      <span class="variable">counter1</span>))
+  (<span class="variable">increment1</span>)
+</pre></div><p>
+The evaluation of the <strong>local</strong>-expression created additional top-level
+expressions. One of them introduces a state variable; the others define
+functions.</p>
+<p>
+The second part of the evaluation determines what <code class="scheme">(<span class="variable">increment1</span>)</code>
+accomplishes: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">0</span>)
+  <span class="variable"><u><code class="scheme">(<span class="variable">increment1</span>)</code></u></span>
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">counter1</span> (<span class="builtin">+</span> <span class="variable"><u><code class="scheme"><span class="variable">counter1</span></code></u></span> <span class="selfeval">1</span>))
+    <span class="variable">counter1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">counter1</span> <span class="variable"><u><code class="scheme">(<span class="builtin">+</span> <span class="selfeval">0</span> <span class="selfeval">1</span>)</code></u></span>)
+    <span class="variable">counter1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">begin</span>
+    <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">counter1</span> <span class="selfeval">1</span>)</code></u></span>
+    <span class="variable">counter1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">1</span>)
+  (<span class="keyword">begin</span>
+    (void)
+    <span class="variable"><u><code class="scheme"><span class="variable">counter1</span></code></u></span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">counter1</span> <span class="selfeval">1</span>)
+  <span class="selfeval">1</span>
+</pre></div><p>
+During the evaluation, we replace <code class="scheme"><span class="variable">counter1</span></code> with its value
+twice. First, the second step replaces <code class="scheme"><span class="variable">counter1</span></code> with <code class="scheme"><span class="selfeval">0</span></code>,
+its value at that point. Second, we substitute <code class="scheme"><span class="selfeval">1</span></code> for
+<code class="scheme"><span class="variable">counter1</span></code> during the last step, which is its new
+value. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_38.3.1"></a>
+<b>Exercise 38.3.1.</b>&nbsp;&nbsp;  
+Underline the subexpression that must be evaluated next in the following
+expressions: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">11</span>)
+     (<span class="keyword">begin</span>
+       (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+       <span class="variable">x</span>)
+
+<span class="variable">2.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">11</span>)
+     (<span class="keyword">begin</span>
+       (<span class="keyword">set!</span> <span class="variable">x</span> 
+	 (<span class="keyword">cond</span>
+	   [(<span class="builtin">zero?</span> <span class="selfeval">0</span>) <span class="selfeval">22</span>]
+	   [<span class="keyword">else</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)]))
+       <span class="keyword">'</span><span class="variable">done</span>)
+
+<span class="variable">3.</span> (<span class="keyword">define</span> (<span class="variable">run</span> <span class="variable">x</span>)
+       (<span class="variable">run</span> <span class="variable">x</span>))
+     (<span class="variable">run</span> <span class="selfeval">10</span>)
+
+<span class="variable">4.</span> (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="variable">pi</span> <span class="variable">x</span> <span class="variable">x</span>))
+     (<span class="keyword">define</span> <span class="variable">a1</span> (<span class="variable">f</span> <span class="selfeval">10</span>))
+     (<span class="keyword">begin</span>
+       (<span class="keyword">set!</span> <span class="variable">a1</span> (<span class="builtin">-</span> <span class="variable">a1</span> (<span class="variable">f</span> <span class="selfeval">5</span>)))
+       <span class="keyword">'</span><span class="variable">done</span>)
+
+<span class="variable">5.</span> (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>)
+       (<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>)))
+     (<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>)
+     (<span class="variable">f</span> (<span class="variable">f</span> (<span class="variable">f</span>)))
+</pre></div><p>
+Explain why the expression must be evaluated.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adv-sem0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_38.3.2"></a>
+<b>Exercise 38.3.2.</b>&nbsp;&nbsp;  
+Confirm that the underlined expressions must be evaluated next: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+     (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">1</span>)
+     (<span class="keyword">begin</span> 
+       <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">3</span>)</code></u></span>
+       (<span class="keyword">set!</span> <span class="variable">y</span> <span class="selfeval">4</span>)
+       (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+
+<span class="variable">2.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+     (<span class="keyword">set!</span> <span class="variable">x</span> 
+       (<span class="keyword">cond</span>
+	 [(<span class="builtin">zero?</span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>) <span class="selfeval">1</span>]
+	 [<span class="keyword">else</span> <span class="selfeval">0</span>]))
+
+<span class="variable">3.</span> (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>)
+       (<span class="keyword">cond</span>
+	 [(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="selfeval">1</span>]
+	 [<span class="keyword">else</span> <span class="selfeval">0</span>]))
+     (<span class="keyword">begin</span>
+       <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">f</span> <span class="selfeval">11</span>)</code></u></span>
+       <span class="variable">f</span>)
+</pre></div><p>
+Rewrite the three programs to show the next state.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adv-sem1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_38.3.3"></a>
+<b>Exercise 38.3.3.</b>&nbsp;&nbsp;  
+Evaluate the following programs: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+     (<span class="keyword">define</span> (<span class="variable">bump</span> <span class="variable">delta</span>)
+       (<span class="keyword">begin</span>
+	 (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">delta</span>))
+	 <span class="variable">x</span>))
+     (<span class="builtin">+</span> (<span class="variable">bump</span> <span class="selfeval">2</span>) (<span class="variable">bump</span> <span class="selfeval">3</span>))
+
+<span class="variable">2.</span> (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">10</span>)
+     (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="keyword">cond</span>
+	       [(<span class="variable">zeor?</span> <span class="variable">x</span>) <span class="selfeval">13</span>]
+	       [<span class="keyword">else</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="variable">x</span>)]))
+
+<span class="variable">3.</span> (<span class="keyword">define</span> (<span class="variable">make-box</span> <span class="variable">x</span>)
+       (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">contents</span> <span class="variable">x</span>)
+	       (<span class="keyword">define</span> (<span class="variable">new</span> <span class="variable">y</span>)
+		 (<span class="keyword">set!</span> <span class="variable">contents</span> <span class="variable">y</span>))
+	       (<span class="keyword">define</span> (<span class="variable">peek</span>)
+		 <span class="variable">contents</span>))
+	 (<span class="builtin">list</span> <span class="variable">new</span> <span class="variable">peek</span>)))
+     
+     (<span class="keyword">define</span> <span class="variable">B</span> (<span class="variable">make-box</span> <span class="selfeval">55</span>))
+     (<span class="keyword">define</span> <span class="variable">C</span> (<span class="variable">make-box</span> <span class="keyword">'</span><span class="variable">a</span>))
+     
+     (<span class="keyword">begin</span>
+       ((<span class="builtin">first</span> <span class="variable">B</span>) <span class="selfeval">33</span>)
+       ((<span class="builtin">second</span> <span class="variable">C</span>)))
+</pre></div><p>
+Underline for each step the subexpression that must be evaluated next. 
+Show only those steps that involve a <strong>local</strong>-expression or a
+<strong>set!</strong>-expression.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adv-semN.html">Solution</a></p>
+<p></p>
+<p>
+In principle, we could work with the rules we just discussed. They cover
+the common cases, and they explain the behavior of the programs we have
+encountered. They do not explain, however, how an assignment works when the
+left-hand side refers to a <code class="scheme"><span class="keyword">define</span></code>d function. Consider the
+following example, for which the rules still work:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)
+  
+  (<span class="keyword">begin</span> 
+    <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">f</span> <span class="selfeval">10</span>)</code></u></span>
+    <span class="variable">f</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> <span class="selfeval">10</span>)
+  
+  (<span class="keyword">begin</span> 
+    (void)
+    <span class="variable">f</span>)
+</pre></div><p>
+Here <code class="scheme"><span class="variable">f</span></code> is a state variable. The <strong>set!</strong>-expression changes the definition
+so <code class="scheme"><span class="variable">f</span></code> stands for a number. The next step in an evaluation
+substitutes <code class="scheme"><span class="selfeval">10</span></code> for the occurrence of <code class="scheme"><span class="variable">f</span></code>.</p>
+<p>
+Under ordinary circumstances, an assignment would replace a function
+definition with a different function definition. Take a look at this
+program: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))</code></u></span> <span class="selfeval">5</span>) (<span class="variable">g</span> <span class="selfeval">1</span>))
+</pre></div><p>
+The purpose of the underlined <strong>set!</strong>-expression is to modify the definition of
+<code class="scheme"><span class="variable">f</span></code> so that it becomes a function that always produces <code class="scheme"><span class="selfeval">22</span></code>.
+But <code class="scheme"><span class="variable">g</span></code> stands for <code class="scheme"><span class="variable">f</span></code> initially. Since <code class="scheme"><span class="variable">f</span></code> is a the
+name of a function, we can think of <code class="scheme">(<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)</code> as a value
+definition. The problem is that our current rules change the definition of
+<code class="scheme"><span class="variable">f</span></code> and, by implication, the definition of <code class="scheme"><span class="variable">g</span></code>, because it
+stands for <code class="scheme"><span class="variable">f</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+  (<span class="builtin">+</span> <span class="variable"><u><code class="scheme">(<span class="keyword">begin</span> (void) <span class="selfeval">5</span>)</code></u></span> (<span class="variable">g</span> <span class="selfeval">1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+  (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="variable"><u><code class="scheme">(<span class="variable">g</span> <span class="selfeval">1</span>)</code></u></span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+  (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">22</span>)
+</pre></div><p>
+Scheme, however, does not behave this way. A <strong>set!</strong>-expression can modify only one
+definition at a time. Here it modifies two: <code class="scheme"><span class="variable">f</span></code>'s, which is
+intended, and <code class="scheme"><span class="variable">g</span></code>'s, which happens through the indirection from
+<code class="scheme"><span class="variable">g</span></code> to <code class="scheme"><span class="variable">f</span></code>. In short, our rules do not explain the behavior
+of all programs with <strong>set!</strong>-expressions; we need better rules if we wish to
+understand Scheme fully. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_198"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;vdf&gt;</tt> 
+</td><td valign="top">= </td><td valign="top"> &nbsp;  (<strong>define</strong> <tt>&lt;var&gt;</tt> <tt>&lt;val&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define-struct</strong> <tt>&lt;var&gt;</tt> (<tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>)) </td></tr>
+<tr><td valign="top"></td></tr>
+<tr><td valign="top"><tt>&lt;val&gt;</tt> </td><td valign="top">= </td><td valign="top"><tt>&lt;con&gt;</tt>  |  <tt>&lt;lst&gt;</tt>  |  <tt>&lt;prm&gt;</tt>  |  <tt>&lt;fun&gt;</tt>  |  <tt>&lt;void&gt;</tt> </td></tr>
+<tr><td valign="top"></td></tr>
+<tr><td valign="top"><tt>&lt;lst&gt;</tt> </td><td valign="top">= </td><td valign="top">empty  |  (cons <tt>&lt;val&gt;</tt> <tt>&lt;lst&gt;</tt>) </td></tr>
+<tr><td valign="top"></td></tr>
+<tr><td valign="top"><tt>&lt;fun&gt;</tt> </td><td valign="top">= </td><td valign="top">(<strong>lambda</strong> (<tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) 
+</td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 112:</b>&nbsp;&nbsp; <tt>Advanced Student</tt> Scheme: The values</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The problem concerns the definitions of functions, which suggests that we
+take a second look at the representation of functions and function
+definitions. So far, we used the names of functions as values. As we have
+just seen, this choice may cause trouble in case the state variable is a
+function. The solution is to use a concrete representation of
+functions. Fortunately, we already have one in Scheme:
+<strong>lambda</strong>-expressions. Furthermore, we rewrite function definitions so that they turn
+into variable definitions with a <strong>lambda</strong>-expression on the right-hand side:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+</pre></div><p>
+Even recursive definitions are evaluated in this manner: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span>) 
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="selfeval">1</span>]
+      [<span class="keyword">else</span> (<span class="variable">g</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))]))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">g</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="selfeval">1</span>]
+	[<span class="keyword">else</span> (<span class="variable">g</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+</pre></div><p>
+All other rules, including the rule for replacing variables with their
+values, remain the same. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_198">112</a> specifies the set of values,<a name="call_footnote_Temp_199"></a><a href="#footnote_Temp_199"><sup><small>73</small></sup></a>  as a subset of the set of expressions, and the set of value
+definitions, as a subset of the definitions. Using these definitions and
+the modified rules, we can take a second look at at the above example:
+</p>
+<div align="left"><pre class="scheme">  <span class="variable"><u><code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">x</span>)</code></u></span>
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>)) <span class="selfeval">5</span>) (<span class="variable">g</span> <span class="selfeval">1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable"><u><code class="scheme"><span class="variable">f</span></code></u></span>)
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>)) <span class="selfeval">5</span>) (<span class="variable">g</span> <span class="selfeval">1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="builtin">+</span> (<span class="keyword">begin</span> <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))</code></u></span> <span class="selfeval">5</span>) (<span class="variable">g</span> <span class="selfeval">1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="builtin">+</span> <span class="variable"><u><code class="scheme">(<span class="keyword">begin</span> (void) <span class="selfeval">5</span>)</code></u></span> (<span class="variable">g</span> <span class="selfeval">1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="variable"><u><code class="scheme">(<span class="variable">g</span> <span class="selfeval">1</span>)</code></u></span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="selfeval">22</span>))
+  (<span class="keyword">define</span> <span class="variable">g</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+  (<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">1</span>)
+</pre></div><p>
+The key difference is that the definition of <code class="scheme"><span class="variable">g</span></code> directly associates
+the variable with a function representation, not just a name for a
+function. </p>
+<p>
+The following program shows the effects of <strong>set!</strong>-expressions on functions with an extreme
+example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+    [<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))]))
+
+(<span class="keyword">define</span> <span class="variable">g</span> <span class="variable">f</span>)
+
+(<span class="keyword">begin</span> 
+  (<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+  (<span class="builtin">symbol=?</span> (<span class="variable">g</span> <span class="selfeval">1</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">f</span></code> is recursive on natural numbers and always produces
+<code class="scheme"><span class="keyword">'</span><span class="variable">done</span></code>. Initially, <code class="scheme"><span class="variable">g</span></code> is defined to be <code class="scheme"><span class="variable">f</span></code>. The
+final <strong>begin</strong>-expression first modifies <code class="scheme"><span class="variable">f</span></code> and then uses <code class="scheme"><span class="variable">g</span></code>.</p>
+<p>
+At first, we must rewrite the function definitions according to our
+modified rules: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  (<span class="keyword">define</span> <span class="variable">g</span> <span class="variable"><u><code class="scheme"><span class="variable">f</span></code></u></span>)
+  (<span class="keyword">begin</span> 
+    (<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+    (<span class="builtin">symbol=?</span> (<span class="variable">g</span> <span class="selfeval">1</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  (<span class="keyword">define</span> <span class="variable">g</span> 
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  (<span class="keyword">begin</span> 
+    <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="keyword">'</span><span class="variable">ouch</span>))</code></u></span>
+    (<span class="keyword">set!</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+    (<span class="builtin">symbol=?</span> (<span class="variable">g</span> <span class="selfeval">1</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+</pre></div><p>
+Rewriting the definition of <code class="scheme"><span class="variable">f</span></code> is straightforward. The major change
+concerns the definition of <code class="scheme"><span class="variable">g</span></code>. Instead of <code class="scheme"><span class="variable">f</span></code> it now
+contains a copy of the value for which <code class="scheme"><span class="variable">f</span></code> currently stands. This
+value contains a reference to <code class="scheme"><span class="variable">f</span></code>, but that is not unusual. </p>
+<p>
+Next, the <strong>set!</strong>-expression modifies the definition of <code class="scheme"><span class="variable">f</span></code>: 
+</p>
+<div align="left"><pre class="scheme">  ...
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>) 
+      <span class="keyword">'</span><span class="variable">ouch</span>))
+  
+  (<span class="keyword">define</span> <span class="variable">g</span> 
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  
+  (<span class="keyword">begin</span> 
+    (void)
+    (<span class="builtin">symbol=?</span> <span class="variable"><u><code class="scheme">(<span class="variable">g</span> <span class="selfeval">1</span>)</code></u></span> <span class="keyword">'</span><span class="variable">ouch</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>No other definition, however, is affected. 
+In particular, the definition of <code class="scheme"><span class="variable">g</span></code> remains the same, though the
+<code class="scheme"><span class="variable">f</span></code> inside of <code class="scheme"><span class="variable">g</span></code>'s value now refers to a new value. But we
+have seen this phenomenon before. The next two steps follow the basic rules
+of intermezzo&nbsp;1: 
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">  ...
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>) 
+      <span class="keyword">'</span><span class="variable">ouch</span>))
+  
+  (<span class="keyword">define</span> <span class="variable">g</span> 
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  
+  (<span class="keyword">begin</span> 
+    (void)
+    (<span class="builtin">symbol=?</span> (<span class="variable">f</span> <span class="selfeval">0</span>) <span class="keyword">'</span><span class="variable">ouch</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">f</span>
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>) 
+      <span class="keyword">'</span><span class="variable">ouch</span>))
+  
+  (<span class="keyword">define</span> <span class="variable">g</span> 
+    (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> <span class="variable">x</span>) <span class="keyword">'</span><span class="variable">done</span>]
+	[<span class="keyword">else</span> (<span class="variable">f</span> (<span class="builtin">sub1</span> <span class="variable">x</span>))])))
+  
+  (<span class="keyword">begin</span> 
+    (void)
+    (<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">ouch</span> <span class="keyword">'</span><span class="variable">ouch</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>That is, the application of <code class="scheme"><span class="variable">g</span></code> eventually applies <code class="scheme"><span class="variable">f</span></code> to
+<code class="scheme"><span class="selfeval">0</span></code>, which yields <code class="scheme"><span class="keyword">'</span><span class="variable">ouch</span></code>. Hence the final result is
+<code class="scheme"><span class="builtin">true</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_38.3.4"></a>
+<b>Exercise 38.3.4.</b>&nbsp;&nbsp;  
+Validate that the following program evaluates to <code class="scheme"><span class="builtin">true</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">make-box</span> <span class="variable">x</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">contents</span> <span class="variable">x</span>)
+	  (<span class="keyword">define</span> (<span class="variable">new</span> <span class="variable">y</span>) (<span class="keyword">set!</span> <span class="variable">contents</span> <span class="variable">y</span>))
+	  (<span class="keyword">define</span> (<span class="variable">peek</span>) <span class="variable">contents</span>))
+    (<span class="builtin">list</span> <span class="variable">new</span> <span class="variable">peek</span>)))
+
+(<span class="keyword">define</span> <span class="variable">B</span> (<span class="variable">make-box</span> <span class="selfeval">55</span>))
+
+(<span class="keyword">define</span> <span class="variable">C</span> <span class="variable">B</span>)
+
+(<span class="keyword">and</span> 
+  (<span class="keyword">begin</span> 
+    ((<span class="builtin">first</span> <span class="variable">B</span>) <span class="selfeval">33</span>)
+    <span class="builtin">true</span>)
+  (<span class="builtin">=</span> (<span class="builtin">second</span> <span class="variable">C</span>) <span class="selfeval">33</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">B</span> (<span class="variable">make-box</span> <span class="selfeval">44</span>))
+    (<span class="builtin">=</span> (<span class="builtin">second</span> <span class="variable">C</span>) <span class="selfeval">33</span>))) 
+</pre></div><p>
+Underline for each step the subexpression that must be evaluated next. 
+Show only those steps that involve a <strong>local</strong>-expression or a
+<strong>set!</strong>-expression.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/adv-sem13.html">Solution</a></p>
+<p></p>
+<p>
+While we decided to rewrite function definitions so that their right-hand
+side are always <strong>lambda</strong>-expressions, we stuck with a function application rule
+that assumes function definitions in the style of <tt>Beginning
+Student</tt> Scheme. More concretely, if the definition context contains a
+definition such as
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">f</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>)))
+</pre></div><p>
+and the expression is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">*</span> (<span class="variable">f</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+then the next step in the evaluation is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+For other occasions, however, we just replace variables with the values in
+the respective definitions. If we followed that rule, we would rewrite
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">*</span> (<span class="variable">f</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+to
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">*</span> ((<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>))
+    <span class="selfeval">1</span> <span class="selfeval">2</span>)
+   <span class="selfeval">5</span>)
+</pre></div><p>
+At first glance, this exploration route ends here, because there are no
+laws for this application. </p>
+<p>
+We can reconcile the two ideas with a new law, suggested by the last
+expression:
+</p>
+<div align="left"><pre class="scheme">  ((<span class="keyword">lambda</span> (<span class="variable">x-1</span> ... <span class="variable">x-n</span>) <span class="builtin">exp</span>)
+   <span class="variable">v-1</span> ... <span class="variable">v-n</span>)
+<span class="builtin">=</span> <span class="builtin">exp</span> <span class="variable"> with all </span> <span class="variable">x-1</span> ... <span class="variable">x-n</span> <span class="variable"> replaced by </span> <span class="variable">v-1</span> ... <span class="variable">v-n</span>
+</pre></div><p>
+The law serves as a replacement of the law of application from algebra in
+the study of the foundations of computing. By convention, this law is
+called the <i>&szlig;</i><sub><em>v</em></sub> (pronounced ``beta value'') axiom.</p>
+<p>
+<a name="node_idx_2236"></a><a name="node_idx_2238"></a></p>
+<p></p>
+<p><strong>Beta and the Lambda Calculus</strong>:  The orginal <i>&szlig;</i> axiom was
+formulated by Alonzo Church in the late 1920s as follows: 
+<a name="node_idx_2240"></a></p>
+<div align="left"><pre class="scheme">  ((<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="builtin">exp</span>)
+   <span class="variable">exp-1</span>)
+<span class="builtin">=</span> <span class="builtin">exp</span> <span class="variable"> with </span> <span class="variable">x</span> <span class="variable"> replaced by </span> <span class="variable">exp-1</span>
+</pre></div><p>
+It does not restrict the argument in a function application to be a
+value. The interest of Church and other logicians<a name="call_footnote_Temp_200"></a><a href="#footnote_Temp_200"><sup><small>74</small></sup></a>  was to explore the principles
+of computation, what computation could achieve, and what it couldn't. They
+confirmed that the axiom and a small sublanguage of Scheme, namely,
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> 
+</td><td valign="top">=</td><td valign="top"><tt>&lt;var&gt;</tt> 
+ |  (<strong>lambda</strong> (<tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>)
+ |  (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+are enough to define all computable functions on a (simulation of) the
+natural numbers. Functions that cannot be formulated in this language 
+are not computable. <p>
+The language and the <i>&szlig;</i> axiom became known as the lambda
+(pronounced: ``lambda'') calculus. Gerald Sussman and Guy L. Steele Jr.  
+<a name="node_idx_2242"></a>
+<a name="node_idx_2244"></a>later based Scheme on the lambda calculus. In the mid-1970s,
+Gordon Plotkin
+<a name="node_idx_2246"></a>suggested the <i>&szlig;</i><sub><em>v</em></sub> axiom as a better method for understanding function
+applications in programming languages such as Scheme.&nbsp;</p>
+<p>
+
+</p>
+<a name="node_sec_38.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_38.4">38.4&nbsp;&nbsp;Errors in Advanced Scheme</a></h2>
+<p> 
+</p>
+<p>
+The extension of our language with functions as values introduces not only
+new powers for the programmer but also new possibilities for errors. Recall
+that there are three kinds of errors: syntax errors, run-time (or
+semantics) errors, and logical errors. <tt>Advanced Student</tt> Scheme
+turns a class of syntactic errors of <tt>Beginning Student</tt> Scheme into
+run-time errors. It also introduces a new form of logical error.</p>
+<p>
+Consider the following program: 
+<a name="node_idx_2248"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">how-many-in-list</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to count how many items <code class="scheme"><span class="variable">alist</span></code> contains </span>
+(<span class="keyword">define</span> (<span class="variable">how-many-in-list</span> <span class="variable">alist</span>)
+  (<span class="keyword">cond</span>
+    [<span class="builtin">empty?</span> (<span class="variable">alist</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many-in-list</span> (<span class="builtin">rest</span> <span class="variable">alist</span>)) <span class="selfeval">1</span>)]))
+</pre></div><p>
+In <tt>Beginning Student</tt> Scheme or <tt>Intermediate Student</tt> Scheme,
+DrScheme would have signaled a syntax error because <code class="scheme"><span class="variable">alist</span></code> is the
+parameter to a function but is also used as a function. Because functions
+are values in <tt>Advanced Student</tt> Scheme, DrScheme must now accept
+this function definition as syntactially correct. When the function is
+applied to <code class="scheme"><span class="builtin">empty</span></code> or any other list value, however, DrScheme soon
+applies <code class="scheme"><span class="builtin">empty</span></code> to no arguments, which is a run-time error. After
+all, lists are not functions.  DrScheme signals immediately with an error
+message any attempt to apply a non-function and stops the evaluation.</p>
+<p>
+The second form of error is logical. That is, a program that suffers from
+this form of error doesn't produce a syntax or a run-time error
+message. Instead, it produces wrong answers. Take a look at the following
+two definitions: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">flip1</span>
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>))
+    (<span class="keyword">lambda</span> ()
+      (<span class="keyword">begin</span>
+	(<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>))
+	<span class="variable">state</span>))))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">flip2</span>
+  (<span class="keyword">lambda</span> ()
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>))
+      (<span class="keyword">begin</span>
+	(<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>))
+	<span class="variable">state</span>))))
+</pre></div></td><td>
+</td></tr></table></div>
+
+They differ in the order of two lines. One introduces a <code class="scheme"><span class="keyword">local</span></code>
+definition whose body evaluates to a function. The other defines a function
+whose body contains a <strong>local</strong>-expression.  According to our rules, the definition on
+the left rewrites to
+<p></p>
+<p></p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">1</span>)
+
+(<span class="keyword">define</span> <span class="variable">flip1</span>
+  (<span class="keyword">lambda</span> ()
+    (<span class="keyword">begin</span>
+      (<span class="keyword">set!</span> <span class="variable">state1</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state1</span>))
+      <span class="variable">state1</span>)))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">flip2</span>
+  (<span class="keyword">lambda</span> ()
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>))
+      (<span class="keyword">begin</span>
+	(<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>))
+	<span class="variable">state</span>))))
+
+</pre></div></td><td>
+</td></tr></table></div>
+
+<p></p>
+<p>The one on the right already associates a name with a function.</p>
+<p>
+Let us now see how the two functions have radically different behaviors. To
+do so, we evaluate the expressions
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>)
+     (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+     (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>)
+     (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">1</span>)
+     (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+in the context of the respective definitions.<p>
+Here are the first four steps of the evaluation for the
+expression on the  left-hand side:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">1</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">1</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (<span class="keyword">set!</span> <span class="variable">state1</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state1</span>))
+	    <span class="variable">state1</span>)
+	  <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">1</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (<span class="keyword">set!</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+	    <span class="variable">state1</span>)
+	  <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (void)
+	    <span class="variable">state1</span>)
+	  <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip1</span>) <span class="selfeval">0</span>))
+</pre></div><p>
+The relevant definition context is the definition of <code class="scheme"><span class="variable">state1</span></code>, which
+we see changing from <code class="scheme"><span class="selfeval">1</span></code> to <code class="scheme"><span class="selfeval">0</span></code> during the third step. From
+this point, it is not difficult to validate that the expression produces
+<code class="scheme"><span class="builtin">true</span></code> and that <code class="scheme"><span class="variable">state1</span></code> ends up being <code class="scheme"><span class="selfeval">0</span></code>.</p>
+<p>
+Compare this with the first three steps in the evaluation of the right-hand
+expression: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>))
+	    (<span class="keyword">begin</span>
+	      (<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>))
+	      <span class="variable">state</span>))
+	  <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">1</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (<span class="keyword">set!</span> <span class="variable">state1</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state1</span>))
+	    <span class="variable">state1</span>)
+	  <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+</pre></div><p>
+The only definition that matters here is the one for <code class="scheme"><span class="variable">flip2</span></code>.
+Superficially, the two evaluations are alike. But a closer look shows 
+that the second one differs from the first in crucial way. It creates the
+definition for <code class="scheme"><span class="variable">state1</span></code> while the first evaluation started with such
+a definition.</p>
+<p>
+Here is the continuation of the second evaluation: 
+</p>
+<div align="left"><pre class="scheme">  ... 
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> <span class="builtin">true</span>
+       (<span class="builtin">=</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">state</span> <span class="selfeval">1</span>))
+	    (<span class="keyword">begin</span>
+	      (<span class="keyword">set!</span> <span class="variable">state</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state</span>))
+	      <span class="variable">state</span>))
+	  <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> <span class="variable">state2</span> <span class="selfeval">1</span>)
+  (<span class="keyword">and</span> <span class="builtin">true</span>
+       (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (<span class="keyword">set!</span> <span class="variable">state2</span> (<span class="builtin">-</span> <span class="selfeval">1</span> <span class="variable">state2</span>))
+	    <span class="variable">state2</span>)
+	  <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> <span class="variable">state2</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> <span class="builtin">true</span>
+       (<span class="builtin">=</span> (<span class="keyword">begin</span>
+	    (void)
+	    <span class="variable">state2</span>)
+	  <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">state1</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> <span class="variable">state2</span> <span class="selfeval">0</span>)
+  (<span class="keyword">and</span> <span class="builtin">true</span>
+       (<span class="builtin">=</span> <span class="selfeval">0</span> <span class="selfeval">1</span>)
+       (<span class="builtin">=</span> (<span class="variable">flip2</span>) <span class="selfeval">0</span>))
+</pre></div><p>
+It shows that <code class="scheme"><span class="variable">flip2</span></code> creates a new definition every time it is
+applied and that it always produces <code class="scheme"><span class="selfeval">0</span></code>. Contrary to its name, it
+does not flip the value of <code class="scheme"><span class="variable">state</span></code> upon every application. As a
+result, the evaluation ends now with two new top-level definitions and the
+value <code class="scheme"><span class="builtin">false</span></code>. </p>
+<p>
+The general moral is that a function defined in a <strong>local</strong>-expression is different
+from a function whose body contains a <strong>local</strong>-expression. The first ensures that some
+definitions are accessible only to a function. The definition exists once
+and only once for this function. In contrast, the second creates a new
+(top-level) definition for every evaluation of the function body. In the
+next part of the book, we exploit both ideas to create new kinds of
+programs.</p>
+<p>
+</p>
+<p>
+</p>
+
+ <p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_196"></a><a href="#call_footnote_Temp_196"><sup><small>71</small></sup></a> The grammar misses
+<strong>and</strong>-expression and <strong>or</strong>-expression, and a few other short-cuts.</p>
+<p><a name="footnote_Temp_197"></a><a href="#call_footnote_Temp_197"><sup><small>72</small></sup></a> We also evaluate the right-hand side of definitions if they
+are not values, but we can safely ignore this minor issue here.</p>
+<p><a name="footnote_Temp_199"></a><a href="#call_footnote_Temp_199"><sup><small>73</small></sup></a> It lacks
+a specification of structural values, but they play no role in this
+discussion.</p>
+<p><a name="footnote_Temp_200"></a><a href="#call_footnote_Temp_200"><sup><small>74</small></sup></a> Logic is to
+computing what mathematics is to physics.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-46.html">previous</a></span><span>, <a href="curriculum-Z-H-48.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-47.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

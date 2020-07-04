@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="web2.html">14.3.2</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web4.html">14.3.4</a><pre>; DATA DEFINITIONS
+; a web-page is either: 
+;   1. empty
+;   2. (cons S WP) where S is a symbol and WP is a web-page
+;   3. (cons EWP WP) where EWP and WP are web-pages
+
+; TEMPLATE
+;(define (fun-for-webpage wp)
+;  (cond
+;    [(empty? wp) ...]
+;    [(symbol? (first wp)) 
+;     (... (first wp) ... (fun-for-webpage (rest wp)) ...)]
+;    [else
+;     (... (fun-for-webpage (first wp)) ...
+;          (fun-for-webpage (rest wep)) ...)]))
+
+; EXAMPLES
+; (replace 'new 'old empty) =&gt; empty
+; (replace 'new 'old '(other)) =&gt; (list 'other)
+; (replace 'new 'old '(old)) =&gt; (list 'new)
+; (replace 'new 'old '((new old other) other old old)) 
+; =&gt; 
+; (list (list 'new 'new 'other) 'other 'new 'new)
+
+; CONTRACT/PURPOSE/HEADERS
+; replace : symbol symbol webpage -&gt; webpage
+; to produce a webpage identical to the given web page except that all 
+; occurences the second symbol are replaced with the first. 
+(define (replace new old wp)
+  (cond
+    [(empty? wp) empty]
+    [(symbol? (first wp)) 
+     (cond
+       [(symbol=? (first wp) old)
+        (cons new (replace new old (rest wp)))]
+       [else (cons (first wp) (replace new old (rest wp)))])]
+    [else
+     (cons (replace new old (first wp)) (replace new old (rest wp)))]))
+
+(equal? (replace 'new 'old empty) empty)
+(equal? (replace 'new 'old '(other)) (list 'other))
+(equal? (replace 'new 'old '(old)) (list 'new))
+(equal? (replace 'new 'old '((new old other) other old old))
+        (list (list 'new 'new 'other) 'other 'new 'new))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

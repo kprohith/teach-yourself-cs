@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="profit-constants.html">3.2.1</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="compose-cylinder.html">3.3.2</a><pre>;; CONSTANTS
+(define cm-per-inch 2.54)
+(define inches-per-foot 12)
+(define feet-per-yard 3)
+(define yards-per-rod (+ 5 1/2))
+(define rods-per-furlong 40)
+(define furlongs-per-mile 8)
+  
+;; inches-&gt;cm : number -&gt; number
+;; to determine the number of cm in some number of inches
+(define (inches-&gt;cm inches)
+  (* inches cm-per-inch))
+
+;; feet-&gt;inches : number -&gt; number
+;; to determine the number of inches in some number of feet
+(define (feet-&gt;inches feet)
+  (* feet inches-per-foot))
+
+;; yards-&gt;feet : number -&gt; number
+;; to determine the number of feet in some number of yards
+(define (yards-&gt;feet yards)
+  (* yards feet-per-yard))
+
+;; rods-&gt;yards : number -&gt; number
+;; to determine the number of yards in some number of rods
+(define (rods-&gt;yards rods)
+  (* rods yards-per-rod))
+
+;; furlongs-&gt;rods : number -&gt; number
+;; to determine the number of rods in some number of furlongs
+(define (furlongs-&gt;rods furlongs)
+  (* furlongs rods-per-furlong))
+
+;; miles-&gt;furlongs : number -&gt; number
+;; to determine the number of furlongs in some number of miles
+(define (miles-&gt;furlongs miles)
+  (* miles furlongs-per-mile))
+
+;; feet-&gt;cm : number -&gt; number
+;; to determine the number of cm in some number of feet
+(define (feet-&gt;cm feet)
+  (inches-&gt;cm (feet-&gt;inches feet)))
+
+;; yards-&gt;cm : number -&gt; number
+;; to determine the number of cm in some number of yards
+(define (yards-&gt;cm yards)
+  (feet-&gt;cm (yards-&gt;feet yards)))
+
+;; rods-&gt;inches : number -&gt; number
+;; to determine the number of inches in some number of rods
+(define (rods-&gt;inches rods)
+  (feet-&gt;inches (yards-&gt;feet (rods-&gt;yards rods))))
+
+;; miles-&gt;feet : number -&gt; number
+;; to determine the number of feet in some number of miles
+(define (miles-&gt;feet miles)
+  (yards-&gt;feet 
+   (rods-&gt;yards
+    (furlongs-&gt;rods
+     (miles-&gt;furlongs 
+      miles)))))
+
+;; EXAMPLES AS TESTS
+
+(inches-&gt;cm 1) "should be" 2.54
+(inches-&gt;cm 3) "should be" 7.62
+
+(feet-&gt;inches 1) "should be" 12
+(feet-&gt;inches 3/2) "should be" 18
+
+(yards-&gt;feet 1) "should be" 3
+(yards-&gt;feet 12) "should be" 36
+
+(rods-&gt;inches 1) "should be" 198
+(rods-&gt;inches 3/2) "should be" 297
+
+(furlongs-&gt;rods 1) "should be" 40
+(furlongs-&gt;rods 7) "should be" 280
+
+(miles-&gt;furlongs 1) "should be" 8
+(miles-&gt;furlongs 10) "should be" 80
+
+(feet-&gt;cm 1) "should be" 30.48
+(feet-&gt;cm 4) "should be" 121.92
+
+(yards-&gt;cm 1) "should be" 91.44
+(yards-&gt;cm 2) "should be" 182.88
+
+(rods-&gt;inches 1) "should be" 198
+(rods-&gt;inches 3.5) "should be" 693
+
+(miles-&gt;feet 1) "should be" 5280
+(miles-&gt;feet 4) "should be" 21120
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

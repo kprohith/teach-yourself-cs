@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/checked3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.5.3; How to Design Programs </title>
+</head>
+<body>
+<a href="checked1.html">7.5.2</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.5.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="legal-ex1.html">8.2.1</a><pre>;; a speed vector (vec) is a structure:
+;;     (make-vec x y)
+;; where x and y are both positive numbers
+(define-struct vec (x y))
+
+;; checked-make-vec : Scheme-value Scheme-value -&gt; vec
+(define (checked-make-vec x y)
+  (cond
+    [(and (number? x)
+          (number? y)
+          (&gt; x 0)
+          (&gt; y 0))
+     (make-vec x y)]
+    [else (error 'checked-make-vec "expected two positive numbers")]))
+
+;; examples as tests
+(checked-make-vec 10 10) "should be" (make-vec 10 10)
+(checked-make-vec -1 'not-a-number) "should be" error!
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/checked3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.9; How to Design Programs </title>
+</head>
+<body>
+<a href="web-5.html">17.8.8</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.9">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="test2.html">17.8.10</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.9 Slist=?
+------------------------------------------------------------
+;Data Definition:
+A Slist is either
+   1.  empty
+   2. (cons s sl) 
+   where s is a Sexpr and sl is a Slist.
+
+A Sexpr is either
+   1. a number
+   2. a boolean
+   3. a symbol
+   4. a Slist
+
+;template:
+(define (Slist=? a-slist another-slist)
+  (cond
+    [(empty? a-slist)...]
+    [else
+     ...(first a-slist)...(first another-slist)...
+     ...(Slist=? (rest a-slist) (rest another-slist))...]))
+|#
+
+;;Slist=?: Slist Slist -&gt; boolean
+;;consumes two Slists and returns true if
+;;they are equal, false otherwise
+(define (Slist=? a-slist another-slist)
+  (cond
+    [(empty? a-slist) (empty? another-slist)]
+    [else
+     (and (cons? another-slist)
+          (Sexpr=? (first a-slist) (first another-slist))
+          (Slist=? (rest a-slist) (rest another-slist)))]))
+
+;Examples as Tests:
+(check-expect
+ (Slist=?
+  empty
+  empty)
+ true)
+
+(check-expect
+ (Slist=?
+  empty
+  (list 'w 6 6 false))
+ false)
+
+(check-expect
+ (Slist=?
+  (list 'w 6 6 false)
+  empty)
+ false)
+
+(check-expect
+ (Slist=?
+  (list 'w 6 6 false)
+  (list 'w 6 6 false))
+ true)
+
+(check-expect
+ (Slist=?
+  (list 'w 6 6 false)
+  (list 'w 6 false))
+ false)
+
+(check-expect
+ (Slist=?
+  (list 'w 6 6 false (list true 'a 7 'b))
+  (list 'w 6 6 false (list true 'a 7 'b)))
+ true)
+
+(check-expect
+ (Slist=?
+  (list 'w 6 6 false (list true 'a 7 'b))
+  (list 'w 6 (list true 'a 7 'b) 6 false ))
+ false)
+
+(check-expect
+ (Slist=?
+  (list 'w (list 5) 6 false)
+  (list 'w (list 5) 6 false))
+ true)
+
+#| We need a mutually recursive function 
+that determines if two Sexprs are equal
+------------------------------------------------------------
+;template:
+(define (Sexpr=? a-sexpr another-sexpr)
+  (cond
+    [(number? a-sexpr)...]
+    [(boolean? a-sexpr)...]    
+    [(symbol? a-sexpr)...]
+    [else
+     ...(Slist=? a-sexpr another-sexpr)...]))
+|#
+;;Sexpr=?: Sexpr Sexpr -&gt; boolean
+;;consumes two Sexprs and returns true
+;;if they are equal, false otherwise
+(define (Sexpr=? a-sexpr another-sexpr)
+  (cond
+    [(number? a-sexpr)
+     (and (number? another-sexpr)
+          (= a-sexpr another-sexpr))]
+    [(boolean? a-sexpr)
+     (and (boolean? another-sexpr)
+          (boolean=? a-sexpr another-sexpr))]    
+    [(symbol? a-sexpr)
+     (and (symbol? another-sexpr)
+          (symbol=? a-sexpr another-sexpr))]
+    [else
+     (and (or (empty? another-sexpr) (cons? another-sexpr))
+          (Slist=? a-sexpr another-sexpr))]))
+
+;Examples as Tests:
+(check-expect
+ (Sexpr=? 5 5)
+ true)
+
+(check-expect
+ (Sexpr=? 5 8)
+ false)
+
+(check-expect
+ (Sexpr=? 5 true)
+ false)
+
+(check-expect
+ (Sexpr=? 5 'hello)
+ false)
+
+(check-expect
+ (Sexpr=? false false)
+ true)
+
+(check-expect
+ (Sexpr=? false 8)
+ false)
+
+(check-expect
+ (Sexpr=? false 'hello)
+ false)
+
+(check-expect
+ (Sexpr=? false 8)
+ false)
+
+(check-expect
+ (Sexpr=? 'hello 'hello)
+ true)
+
+(check-expect
+ (Sexpr=? 'hello 8)
+ false)
+
+(check-expect
+ (Sexpr=? 'hello true)
+ false)
+
+(check-expect
+ (Sexpr=? 'hello 'goodbye)
+ false)
+
+(check-expect
+ (Sexpr=? empty
+          empty)
+ true)
+
+(check-expect
+ (Sexpr=? (list 6 'bye true)
+          (list 6 'bye true))
+ true)
+
+(check-expect
+ (Sexpr=? (list 6 'bye true)
+          (list true 7 'bye))
+ false)
+
+(check-expect
+ (Sexpr=? (list 6 'bye true)
+          9)
+ false)
+
+(check-expect
+ (Sexpr=? (list 6 'bye true)
+          true)
+ false)
+
+(check-expect
+ (Sexpr=? (list 6 'bye true)
+          'bye)
+ false)
+
+
+(check-expect
+ (Sexpr=? (list 6 'bye (list 5 6) true)
+          (list 6 'bye (list 5 6) true))
+ true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

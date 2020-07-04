@@ -1,0 +1,180 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-8.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-7.html">previous</a></span><span>, <a href="drscheme-Z-H-9.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_4"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_4">Section  4</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_4">Conditional Expressions and Functions</a></h1>
+<p></p>
+<p>
+</p>
+<a name="node_sec_4.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_4.1">4.1&nbsp;&nbsp;Booleans and Relations</a></h2>
+<p></p>
+<p>
+Like the arithmetic operations, the test operations can take more than
+two arguments. For example, <code class="scheme">(<span class="variable">&lt;</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code> is legal Scheme
+notation for ``1 &lt; 2 and 2 &lt; 3.'' The <code class="scheme"><span class="keyword">and</span></code> and
+<code class="scheme"><span class="keyword">or</span></code> operators also take any number of arguments. The
+<code class="scheme"><span class="variable">not</span></code> operation always takes one argument.  The <code class="scheme"><span class="keyword">and</span></code>,
+<code class="scheme"><span class="keyword">or</span></code>, and <code class="scheme"><span class="variable">not</span></code> operators work on Boolean values only.</p>
+<p>
+</p>
+<a name="node_sec_4.2"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_4.2">4.2&nbsp;&nbsp;Functions that Test Conditions</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Exercise Notes</strong></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 3.3.1</strong>   The <code class="scheme"><span class="variable">=</span></code> operator works on numbers,
+only, so trying to test a Boolean function using the pattern
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="variable">=</span> (<span class="variable">in-interval-1?</span> <span class="selfeval">0</span>)
+   <span class="builtin">false</span>)
+</pre></div>
+</blockquote><br>
+will not succeed. If a test is supposed to produce <code class="scheme"><span class="builtin">false</span></code>, you
+can create a test claim using <code class="scheme"><span class="variable">not</span></code>, instead:
+<br>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="variable">not</span> (<span class="variable">in-interval-1?</span> <span class="selfeval">0</span>))
+</pre></div>
+</blockquote><br>
+Of course, if a test is supposed to produce <code class="scheme"><span class="builtin">true</span></code>, it needs no
+wrapper.<p>
+</p>
+<a name="node_sec_4.3"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_4.3">4.3&nbsp;&nbsp;Conditionals and Conditional Functions</a></h2>
+<p></p>
+<p>
+A <code class="scheme"><span class="keyword">cond</span></code> expression must contain a sequence of
+condition lines, where each line has exactly two parts:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="variable">condition1</span> <span class="variable">answer1</span>]
+  [<span class="variable">condition2</span> <span class="variable">answer2</span>]
+  ...)
+</pre></div>
+</blockquote><br>
+(We're using square brackets to surround condition-answer pairs. You
+can use round parentheses if you prefer.)  When a poorly-formed
+<code class="scheme"><span class="keyword">cond</span></code> expression is typed into DrScheme, DrScheme highlights
+the incorrect part of the expression as a syntax error. If an
+individual condition line is highlighted, then only that line is
+incorrect. If multiple lines are highlighted, then the parentheses
+are not balanced in an individual line (so DrScheme thinks that
+multiple lines are a single line).<p>
+Just like an expression in a definition, no extra parentheses can be
+added around the condition or answer expressions in a
+<code class="scheme"><span class="keyword">cond</span></code>-line. Parentheses cannot be placed around
+<code class="scheme"><span class="keyword">else</span></code>.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Beyond Syntax</strong></p>
+<p>The rules concerning the shape of a <code class="scheme"><span class="keyword">cond</span></code> expression do not
+specify the <em>kind</em> of condition expressions that are allowed.
+In fact, a condition expression must have a Boolean value. For
+example, according to the syntax for forming a <code class="scheme"><span class="keyword">cond</span></code>
+expression, the following is a legal expression:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="selfeval">1</span> <span class="selfeval">2</span>])
+</pre></div>
+</blockquote><br>
+If you enter this expression in DrScheme, DrScheme tentatively accepts
+the expression, but then checks whether the condition <code class="scheme"><span class="selfeval">1</span></code> is
+<code class="scheme"><span class="builtin">true</span></code> or <code class="scheme"><span class="builtin">false</span></code>. It is neither, so DrScheme highlights the
+<code class="scheme"><span class="selfeval">1</span></code> and prints an error message. This is a run-time error.<p>
+The following is another legal expression according to the syntax
+rules:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="builtin">true</span> <span class="selfeval">5</span>]
+  [<span class="selfeval">1</span> <span class="selfeval">2</span>])
+</pre></div>
+</blockquote><br>
+In this case, DrScheme evaluates the expression and returns
+<code class="scheme"><span class="selfeval">5</span></code>.  Although <code class="scheme"><span class="selfeval">1</span></code> would be an illegal condition value
+if the second condition is ever tested, DrScheme never tests it since
+the first condition is always <code class="scheme"><span class="builtin">true</span></code>.<p>
+When a <code class="scheme"><span class="keyword">cond</span></code> expression is evaluated, at least one of the
+conditions must be <code class="scheme"><span class="builtin">true</span></code>. If no condition is <code class="scheme"><span class="builtin">true</span></code>,
+then DrScheme prints the run-time error ``no matching cond case.''
+For example, the following expression generates the ``no matching
+cond clause'' error, since there is only one condition and it is
+<code class="scheme"><span class="builtin">false</span></code>:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [<span class="builtin">false</span> <span class="selfeval">0</span>])
+</pre></div>
+</blockquote><br>
+A <code class="scheme"><span class="keyword">cond</span></code> expression with an <code class="scheme"><span class="keyword">else</span></code> clause never
+generates the ``no matching case'' error because the <code class="scheme"><span class="keyword">else</span></code>
+clause always matches.<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Automatic Parenthesis Correction</strong></p>
+<p>When you type an close parenthesis <code class="scheme">)</code> where an open bracket
+<code class="scheme">[</code> needs to be closed, DrScheme automtically changes
+<code class="scheme">)</code> to <code class="scheme">]</code> to close the bracket. For example, typing
+<code class="scheme">)</code> after
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">positive?</span> <span class="variable">n</span>)
+ (<span class="keyword">cond</span>
+   [(<span class="variable">&gt;</span> <span class="variable">n</span> <span class="selfeval">0</span>) <span class="builtin">true</span>
+</pre></div>
+</blockquote><br>
+produces <code class="scheme">]</code>, instead of <code class="scheme">)</code>.  Similarly, <code class="scheme">]</code> may
+be automatically converted to <code class="scheme">)</code>.  Automatic parenthesis
+correction is handy, but if it bothers you, turn it off via the
+<strong><tt>Edit|Preferences</tt></strong> menu item.<p>
+</p>
+<a name="node_sec_4.4"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_4.4">4.4&nbsp;&nbsp;Designing Conditional Functions <em>- no notes</em></a></h2>
+<p></p>
+<p>
+<em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-7.html">previous</a></span><span>, <a href="drscheme-Z-H-9.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-8.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

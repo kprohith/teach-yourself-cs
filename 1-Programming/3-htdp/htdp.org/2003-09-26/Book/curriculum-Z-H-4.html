@@ -1,0 +1,137 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-3.html">previous</a></span><span>, <a href="curriculum-Z-H-5.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_1"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_1">Section  1</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_1">Students, Teachers, and Computers</a></h1>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-3.html#node_chap_0"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Getting Started</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p>
+We learn to compute at a young age. At first we just add and subtract
+numbers.
+</p>
+<blockquote>
+One plus one equals two. Five minus two is three.
+</blockquote>
+As we grow older we learn about additional mathematical operations, like
+exponentiation and sine, but we also learn to describe rules of
+computation.
+<blockquote>
+Given a circle of radius <em>r</em>, its circumference is <em>r</em> times
+two times <i>pi</i>. A minimum-wage laborer who works for <i>N</i> hours
+earns <em>N</em> times 5.35 dollars. 
+</blockquote>
+The truth is, our teachers turn us into computers and program us to execute
+simple computer programs.<p>
+So, the secret is out. Computer programs are just very fast students. They
+can perform millions of additions while we might still be struggling with
+the first one. But computer programs can do more than just manipulate
+numbers.  They can guide an airplane.  They can play games. They can look
+up a person's phone number. They can print the payroll checks for huge
+corporations. In short, computers process all kinds of information.</p>
+<p>
+People state information and instructions in English. 
+</p>
+<blockquote>
+The temperature is 35<sup><em>o</em></sup> <em>C</em>; convert this temperature into Fahrenheit.  It
+takes this car 35 seconds to accelerate from zero to 100 miles per hour;
+determine how far the car gets in 20 seconds. 
+</blockquote>
+Computers, however, barely understand basic English and certainly can't
+understand complex instructions expressed in English. Instead we must learn
+to speak a computer language
+<a name="node_idx_32"></a>so that we can communicate information and instructions.<p>
+A computer's language of instruction and information is a
+<small>P</small><small>R</small><small>O</small><small>G</small><small>R</small><small>A</small><small>M</small><small>M</small><small>I</small><small>N</small><small>G</small> <small>L</small><small>A</small><small>N</small><small>G</small><small>U</small><small>A</small><small>G</small><small>E</small>.
+<a name="node_idx_34"></a>Information expressed in a programming
+language is called <small>D</small><small>A</small><small>T</small><small>A</small>.
+<a name="node_idx_36"></a>There are many flavors of data.  <i>Numbers</i>
+<a name="node_idx_38"></a>are one class of data.
+<i>Number series</i> belong to 
+the class of <small>C</small><small>O</small><small>M</small><small>P</small><small>O</small><small>U</small><small>N</small><small>D</small> <small>D</small><small>A</small><small>T</small><small>A</small>,
+<a name="node_idx_40"></a>because each series is made up of
+other pieces of smaller pieces of data, namely, numbers. To contrast the
+two kinds of data, we also call numbers <small>A</small><small>T</small><small>O</small><small>M</small><small>I</small><small>C</small> <small>D</small><small>A</small><small>T</small><small>A</small>.
+<a name="node_idx_42"></a><a name="node_idx_44"></a>Letters are other examples of atomic data; family trees are compound data.</p>
+<p>
+Data represents information, but the concrete interpretation is up to
+us. For example, a number like 37.51 may represent a temperature, a time,
+or a distance.  A letter like ``A'' may denote a school grade, a quality
+symbol for eggs, or a part of an address.</p>
+<p>
+Like data, instructions, also called <small>O</small><small>P</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small>,
+<a name="node_idx_46"></a>come in several
+flavors. Each class of data comes with a set of <small>P</small><small>R</small><small>I</small><small>M</small><small>I</small><small>T</small><small>I</small><small>V</small><small>E</small>
+<small>O</small><small>P</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_48"></a><a name="node_idx_50"></a>For numbers, we naturally get <code class="scheme"><span class="builtin">+</span></code>, <code class="scheme"><span class="builtin">-</span></code>,
+<code class="scheme"><span class="builtin">*</span></code>, and so on.  Programmers compose primitive operations into
+<small>P</small><small>R</small><small>O</small><small>G</small><small>R</small><small>A</small><small>M</small><small>S</small>.
+<a name="node_idx_52"></a>Thus, we may think of primitive operations as the
+words of a foreign language and of programming as forming sentences in this
+language.
+<a name="node_idx_54"></a></p>
+<p>
+Some programs are as small as essays. Others are like sets of
+encyclopedias.  Writing good essays and books requires careful planning,
+and writing good programs does, too. Small or large, a good program cannot
+be created by tinkering around. It must be carefully <em>designed</em>. Each
+piece needs a lot of attention; composing programs into larger units must
+follow a well-planned strategy. Designing programs properly must be
+practiced from our very first day of programming.</p>
+<p>
+</p>
+<p>
+In this book, we will learn to design computer programs, and we will learn
+to understand how they function.  Becoming and being a programmer is fun,
+but it is not easy.  The best part of being a programmer is watching our
+``products'' grow and become successful. It is fun to observe a computer
+program play a game. It is exciting to see a computer program help
+someone. To get to this point, however, we must practice many skills. As we
+will find out, programming languages
+<a name="node_idx_56"></a>are primitive; especially, their grammar is restrictive. And unfortunately,
+computers are stupid. The smallest grammatical mistake in a program is a
+fatal stumbling block for a computer.  Worse, once our program is in proper
+grammatical shape, it might not perform the computations as intended.</p>
+<p>
+Programming a computer requires patience and concentration. Only attention
+to minute details will avoid frustrating grammatical mistakes. Only
+rigorous planning and adherence to the plan will prevent serious logical
+mistakes in our designs. But when we finally master the design of programs, we
+will have learned skills that are useful far beyond the realm of
+programming.</p>
+<p>
+Let's get started! </p>
+<p>
+</p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-3.html">previous</a></span><span>, <a href="curriculum-Z-H-5.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

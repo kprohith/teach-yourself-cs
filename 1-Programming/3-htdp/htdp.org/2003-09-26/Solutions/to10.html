@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/to10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.7; How to Design Programs </title>
+</head>
+<body>
+<a href="palindrome.html">31.3.6</a> | <a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="is-prime.html">31.3.8</a><pre>;; to10 : (listof digit) -&gt; number
+(define (to10 digits)
+  (local [;; to10/acc : (listof digit) number -&gt; number
+          ;; accumulator: the base 10 representation of the digits seen so far
+          (define (to10/acc digits acc)
+            (cond
+              [(empty? digits) acc]
+              [else (to10/acc
+                     (rest digits) 
+                     (+ (* 10 acc) (first digits)))]))]
+    (to10/acc digits 0)))
+
+;; examples as tests
+(= (to10 (list 1 0 2)) 
+   102)
+
+(= (to10 (list 2 1))
+   21)
+
+;; to10-general : number (listof digit) -&gt; number
+(define (to10-general b digits)
+  (local [;; to10/acc : (listof digit) number -&gt; number
+          ;; accumulator: the base 10 representation of the digits seen so far
+          (define (to10-general/acc digits acc)
+            (cond
+              [(empty? digits) acc]
+              [else (to10-general/acc 
+                     (rest digits) 
+                     (+ (* b acc) (first digits)))]))]
+    (to10-general/acc digits 0)))
+
+
+;; examples as tests
+(= (to10-general 10 (list 1 0 2)) 
+   102)
+
+(= (to10-general 8 (list 1 0 2)) 
+   66)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/to10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

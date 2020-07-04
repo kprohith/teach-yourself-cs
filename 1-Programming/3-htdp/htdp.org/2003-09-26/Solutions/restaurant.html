@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/restaurant.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 27.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="abstract-file.html">27.2.2</a> | <a href="../Book/curriculum-Z-H-34.html#node_thm_27.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student with Lambda
+
+;; FILE is one of:
+;; -- '()
+;; -- (cons Number FILE)
+;; -- (cons 'NL FILE)
+
+(define-struct rr (table costs))
+;; RR is (make-rr Nat Number)
+
+(define FILE1
+  (list 1 2.30 4.00 12.50 13.50 'NL
+        2 4.00 18.00 'NL
+        4 2.30 12.50))
+(define RRS1
+  (list (make-rr 1 (list 2.30 4.00 12.50 13.50))
+        (make-rr 2 (list 4.00 18.00))
+        (make-rr 4 (list 2.30 12.50))))
+(define FILE2
+  (list 1 2.30 4.00 12.50 13.50 'NL
+        2 'NL ;; nobody ordered anything
+        4 2.30 12.50))
+(define RRS2
+  (list (make-rr 1 (list 2.30 4.00 12.50 13.50))
+        (make-rr 2 '())
+        (make-rr 4 (list 2.30 12.50))))
+
+;; FILE -&gt; [List-of RR]
+;; extract a list of checks per table from an FILE
+;; TERMINATES! drop-up-to-nl always eliminates at least some 'NL or number
+
+(check-expect (file-&gt;list-of-checks FILE1) RRS1)
+(check-expect (file-&gt;list-of-checks FILE2) RRS2)
+
+(define (file-&gt;list-of-checks f)
+  (cond
+    [(empty? f) '()]
+    [else (cons (create-rr (take-up-to-nl f)) (file-&gt;list-of-checks (drop-up-to-nl f)))]))
+
+;; [List-of Number] -&gt; RR
+;; turn NON-EMPTY list of numbers into an RR structure
+(define (create-rr l)
+  (make-rr (first l) (rest l)))
+
+;; FILE -&gt; [List-of Number]
+;; extract the list of numbers up to first 'NL or end of list
+
+(check-expect (take-up-to-nl '(1 2 3 NL)) '(1 2 3))
+(check-expect (take-up-to-nl '(1 2 3)) '(1 2 3))
+
+(define (take-up-to-nl f)
+  (cond
+    [(empty? f) '()]
+    [else (if (symbol? (first f))
+              '()
+              (cons (first f) (take-up-to-nl (rest f))))]))
+
+;; FILE -&gt; [List-of Number]
+;; drop the list of numbers up to first 'NL or end of list
+
+(check-expect (drop-up-to-nl '(1 2 3 NL)) '())
+(check-expect (drop-up-to-nl '(1 2 3)) '())
+
+(define (drop-up-to-nl f)
+  (cond
+    [(empty? f) '()]
+    [else (if (symbol? (first f))
+              (rest f)
+              (drop-up-to-nl (rest f)))]))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/restaurant.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

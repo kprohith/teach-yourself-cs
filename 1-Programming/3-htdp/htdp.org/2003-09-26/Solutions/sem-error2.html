@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-error2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.4.4; How to Design Programs </title>
+</head>
+<body>
+<a href="sem-error.html">2.4.3</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.4.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="movie-examples.html">3.1.1</a><pre>;; Execute this example in DrScheme.(define (somef x)  (sin x x));;1. then, type this in Interactions window: (somef 10 20);;error message: procedure somef: expects 1 argument, given 2: 10 20;;meaning:       function contract was designed for one argument, ;;               you gave two. Scheme gives an error for the function ;;               call and not yet for the illegal use of sin function.;;2. then, type this in Interactions window: (somef 10);;error message: sin: expects 1 argument, given 2: 10 10;;meaning:       similar error but this time the sin function has ;;               too many arguments in the function definition ;;               for somef.
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-error2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

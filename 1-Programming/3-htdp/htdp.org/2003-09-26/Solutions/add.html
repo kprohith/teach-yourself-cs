@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/add.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.5.1; How to Design Programs </title>
+</head>
+<body>
+<a href="prime.html">11.4.7</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.5.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="mult.html">11.5.2</a><pre>;; add : N N -&gt; N
+;; to add n and x
+(define (add n x)
+  (cond
+    [(zero? n) x]
+    [else (add1 (add (sub1 n) x))]))
+
+;; EXAMPLES AS TEST
+(add 0 0) "should be" 0
+(add 0 10) "should be" 10
+(add 10 0) "should be" 10
+(add 10 10) "should be" 20
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/add.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

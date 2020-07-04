@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/word-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.4.3; How to Design Programs </title>
+</head>
+<body>
+<a href="time-dd.html">6.4.2</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.4.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="data-def-ex1.html">6.5.1</a><pre>;; a letter is a symbol, one of 'a ... 'z.
+
+;; a word is
+;;   (make-word FIRST SECOND THIRD)
+;; where FIRST is a letter,
+;;       SECOND is a letter, and
+;;       THIRD is a letter.
+(define-struct word (first second third))
+
+;; DATA EXAMPLES
+
+(make-word 'a 'p 'e)
+(make-word 'b 'i 'g)
+(make-word 'c 'a 't)
+(make-word 'd 'o 'g)
+(make-word 'e 'l 'm)
+(make-word 'f 'i 't)
+(make-word 'g 'a 's)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/word-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

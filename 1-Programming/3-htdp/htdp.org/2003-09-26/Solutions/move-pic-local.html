@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/move-pic-local.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.7; How to Design Programs </title>
+</head>
+<body>
+<a href="local-prag-eval.html">18.1.6</a> | <a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="draw-poly-local.html">18.1.8</a><pre>;; Language: Intermediate Student
+;; Teachpack: draw.ss
+
+#| 18.1.7 adapt 
+------------------------------------------------------------
+;; a shape is either:
+;;   - (make-circle C P N)
+;;   - (make-rectangle C P N N)
+;; where C is a color,
+;;       P is a posn, and
+;;       N is a number.
+|#
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+;-----------------------------------------------------------
+
+;; draw-shape : shape -&gt; true
+;; draws a-shape
+(define (draw-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      (circle-color a-shape))]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      (rectangle-color a-shape))]))
+
+;; EXAMPLES AS TESTS
+(check-expect 
+ (start 200 200)
+ true)
+(check-expect 
+ (draw-shape (make-circle 'red (make-posn 30 30) 20))
+ true)
+(check-expect 
+ (draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50))
+ true)
+
+;-----------------------------------------------------------
+
+;; draw-losh : list-of-shapes -&gt; true
+;; draws each shape on a-los
+(define (draw-losh a-los)
+  (cond
+    [(empty? a-los) true]
+    [else (and (draw-shape (first a-los))
+               (draw-losh (rest a-los)))]))
+
+;; EXAMPLES AS TESTS
+(check-expect 
+ (start 100 100)
+ true)
+(check-expect 
+ (draw-losh empty)
+ true)
+(check-expect 
+ (draw-losh (cons (make-circle 'red (make-posn 50 50) 40) empty))
+ true)
+
+(define FACE
+  (cons (make-circle 'red (make-posn 50 50) 50)
+        (cons (make-rectangle 'blue (make-posn 30 20) 10 10)
+              (cons (make-rectangle 'blue (make-posn 65 20) 10 10)
+                    (cons (make-rectangle 'blue (make-posn 40 75) 10 10)
+                          (cons (make-rectangle 'blue (make-posn 40 75) 25 10)
+                                (cons (make-rectangle 'blue (make-posn 45 35) 15 30)
+                                      empty)))))))
+
+; ----------------------------------------------------------
+
+;; move : number list-of-shapes -&gt; list-of-shapes
+;; moves each shape on the screen, delta pixels
+(define (move-picture delta 1-los)
+  (local 
+    ((define (move-picture delta a-los)
+       (cond
+         [(and 
+           (draw-losh (translate-losh a-los delta))
+           (sleep-for-a-while 1)
+           (clear-losh (translate-losh a-los delta)))
+          (translate-losh a-los delta)]
+         [else a-los]))
+     
+     (define (translate-losh a-los delta)
+       (cond
+         [(empty? a-los) empty]
+         [else (cons (translate-shape (first a-los) delta)
+                     (translate-losh (rest a-los) delta))]))
+     (define (translate-shape a-shape delta)
+       (cond
+         [(circle? a-shape) 
+          (make-circle      
+           (circle-color a-shape)
+           (make-posn 
+            (+ delta (posn-x (circle-center a-shape)))
+            (posn-y (circle-center a-shape)))
+           (circle-radius a-shape))]
+         [(rectangle? a-shape)
+          (make-rectangle
+           (rectangle-color a-shape)
+           (make-posn 
+            (+ delta (posn-x (rectangle-nw-corner a-shape)))
+            (posn-y (rectangle-nw-corner a-shape)))
+           (rectangle-width a-shape)
+           (rectangle-height a-shape))]))
+     (define (clear-losh a-los)
+       (cond
+         [(empty? a-los) true]
+         [else (and (clear-shape (first a-los))
+                    (clear-losh (rest a-los)))]))
+     (define (clear-shape a-shape)
+       (cond
+         [(circle? a-shape) 
+          (draw-circle
+           (circle-center a-shape)
+           (circle-radius a-shape)
+           'white)]
+         [(rectangle? a-shape)
+          (draw-solid-rect 
+           (rectangle-nw-corner a-shape)
+           (rectangle-width a-shape)
+           (rectangle-height a-shape)
+           'white)])))
+    (move-picture delta 1-los)))
+
+;-----------------------------------------------------------
+
+;; EXAMPLES AS TESTS
+(check-expect 
+ (start 500 100)
+ true)
+
+(check-expect 
+ (draw-losh
+  (move-picture 
+   -5
+   (move-picture
+    23
+    (move-picture
+     10
+     FACE))))
+ true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/move-pic-local.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

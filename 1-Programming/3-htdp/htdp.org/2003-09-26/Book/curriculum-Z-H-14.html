@@ -1,0 +1,929 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-13.html">previous</a></span><span>, <a href="curriculum-Z-H-15.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_10"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_10">Section  10</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_10">More on Processing Lists</a></h1>
+<p></p>
+<p>
+The functions in section&nbsp;<a href="curriculum-Z-H-13.html#node_chap_9">9</a> consume lists that contain
+atomic data, especially numbers, symbols, and booleans. But functions must
+also be able to produce such lists. Furthermore, they must be able
+to consume and produce lists that contain structures. We discuss these
+cases in this section, and we continue practicing the use of the design
+recipe.</p>
+<p>
+</p>
+<a name="node_sec_10.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_10.1">10.1&nbsp;&nbsp;Functions that Produce Lists</a></h2>
+<p> 
+</p>
+<p>
+Recall the function <code class="scheme"><span class="variable">wage</span></code> from section&nbsp;<a href="curriculum-Z-H-5.html#node_sec_2.3">2.3</a>:
+<a name="node_idx_934"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">wage</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the total wage (at $12 per hour)</span>
+<span class="comment">;; of someone who worked for <code class="scheme"><span class="variable">h</span></code> hours</span>
+(<span class="keyword">define</span> (<span class="variable">wage</span> <span class="variable">h</span>)
+  (<span class="builtin">*</span> <span class="selfeval">12</span> <span class="variable">h</span>))
+</pre></div><p>
+The <code class="scheme"><span class="variable">wage</span></code> function consumes the number of hours some employee worked
+and produces the weekly wage payment. For simplicity, we assume that all
+employees earn the same hourly rate, namely, $12. A company, however,
+isn't interested in a function like <code class="scheme"><span class="variable">wage</span></code>, which computes the wage
+of a single employee. Instead, it wants a function that computes the wages
+for all of its employees, especially if there are a lot of them.</p>
+<p>
+Call this new function <code class="scheme"><i>hours</i><tt>-&gt;</tt><i>wages</i></code>. It consumes a list that
+represents how many hours the employees of the company worked and must
+produce a list of the weekly wages they earned. We can represent both the
+input and the output as Scheme lists of numbers. Since we already have a
+data definition for the inputs and outputs, we can immediately start our
+function development:
+<a name="node_idx_936"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to create a list of weekly wages from a list of weekly hours (<code class="scheme"><span class="variable">alon</span></code>)</span>
+(<span class="keyword">define</span> (<i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="variable">alon</span>) ...)
+</pre></div><p></p>
+<p>
+Next we need some examples of inputs and the corresponding outputs: 
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="selfeval">28</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">40</span> (<span class="builtin">cons</span> <span class="selfeval">28</span> <span class="builtin">empty</span>))
+</pre></div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="selfeval">336</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">480</span> (<span class="builtin">cons</span> <span class="selfeval">336</span> <span class="builtin">empty</span>))
+</pre></div>
+</blockquote>
+The outputs are obtained by calculating the wage for each item on the list
+to the left. <p>
+Given that <code class="scheme"><i>hours</i><tt>-&gt;</tt><i>wages</i></code> consumes the same class of data as, say,
+the function <code class="scheme"><span class="variable">sum</span></code>, and given that the shape of a function template
+depends only on the shape of the data definition, we can reuse the
+<code class="scheme"><span class="variable">list-of-numbers</span></code> template:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">alon</span>) ... (<i>hours</i><tt>-&gt;</tt><i>wages</i> (<span class="builtin">rest</span> <span class="variable">alon</span>)) ...]))
+</pre></div><p></p>
+<p>
+Starting with this template, we can turn to the most creative step of
+function development: the definition of the function body. Following our
+recipe, we consider each <code class="scheme"><span class="keyword">cond</span></code>-line in isolation, starting with the
+simpler case.  First, assume <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">alon</span>)</code> is true, which means
+that the input is <code class="scheme"><span class="builtin">empty</span></code>. The answer in this case is <code class="scheme"><span class="builtin">empty</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">alon</span>) ... (<i>hours</i><tt>-&gt;</tt><i>wages</i> (<span class="builtin">rest</span> <span class="variable">alon</span>)) ...]))
+</pre></div><p></p>
+<p>
+Second, assume that <code class="scheme"><span class="variable">alon</span></code> was <code class="scheme"><span class="builtin">cons</span></code>tructed from a number
+and a list of numbers.  The expressions in the second line remind us of
+this assumption, and the recipe tells us that we should state explicitly
+what they compute:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> yields the first number on <code class="scheme"><span class="variable">alon</span></code>, which
+is the first number of hours worked; and </p>
+<p>
+</p>
+<li><p><code class="scheme">(<i>hours</i><tt>-&gt;</tt><i>wages</i> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> reminds us that <code class="scheme">(<span class="builtin">rest</span>
+<span class="variable">alon</span>)</code> is a list and can be processed by the very function we are
+defining. According to the purpose statement, the expression computes the
+list of wages for the rest of the list of hours, and we may assume this
+relationship in our construction -- even though the function is not yet
+completely defined.  </p>
+</li></ol><p></p>
+<p>
+From here it is a short step to the complete function definition.  Since we
+already have the list of wages for all but the first item of <code class="scheme"><span class="variable">alon</span></code>,
+the function must do two things to produce an output for the <em>entire</em>
+list of hours:
+</p>
+<ol>
+<li><p>Compute the weekly wage for the first number of hours. </p>
+<p>
+</p>
+<li><p>Construct a list that represents all weekly wages for <code class="scheme"><span class="variable">alon</span></code>,
+using the first weekly wage and the list of weekly wages for <code class="scheme">(<span class="builtin">rest</span>
+<span class="variable">alon</span>)</code>. 
+</p>
+</li></ol><p>
+For the first part, we reuse <code class="scheme"><span class="variable">wage</span></code>. For the second, we
+<code class="scheme"><span class="builtin">cons</span></code> the two pieces of information together into one list:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="variable">wage</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<i>hours</i><tt>-&gt;</tt><i>wages</i> (<span class="builtin">rest</span> <span class="variable">alon</span>)))
+</pre></div><p>
+And with that, we have a complete function. It is shown in
+figure&nbsp;<a href="#node_fig_Temp_65">27</a>. To finish the design of the function,
+we must still test it.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_65"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_938"></a><a name="node_idx_940"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to create a list of weekly wages from a list of weekly hours (<code class="scheme"><span class="variable">alon</span></code>)</span>
+(<span class="keyword">define</span> (<i>hours</i><tt>-&gt;</tt><i>wages</i> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="variable">wage</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<i>hours</i><tt>-&gt;</tt><i>wages</i> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">wage</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the total wage (at $12 per hour)</span>
+<span class="comment">;; of someone who worked for <code class="scheme"><span class="variable">h</span></code> hours</span>
+(<span class="keyword">define</span> (<span class="variable">wage</span> <span class="variable">h</span>)
+  (<span class="builtin">*</span> <span class="selfeval">12</span> <span class="variable">h</span>))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 27:</b>&nbsp;&nbsp;Computing weekly wages</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.1"></a>
+<b>Exercise 10.1.1.</b>&nbsp;&nbsp; 
+How do we have to change the function in figure&nbsp;<a href="#node_fig_Temp_65">27</a> if we
+want to give everyone a raise to $14?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/raises.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.2"></a>
+<b>Exercise 10.1.2.</b>&nbsp;&nbsp; 
+No employee could possibly work more than 100 hours per week. To protect
+the company against fraud, the function should check that no item of the
+input list of <code class="scheme"><i>hours</i><tt>-&gt;</tt><i>wages</i></code> exceeds 100. If one of them does, the
+function should immediately signal the error <code class="scheme"><span class="selfeval">&quot;too many hours&quot;</span></code>.</p>
+<p>
+How do we have to change the function in figure&nbsp;<a href="#node_fig_Temp_65">27</a> if we
+want to perform this basic reality check?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/fraud.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.3"></a>
+<b>Exercise 10.1.3.</b>&nbsp;&nbsp; 
+</p>
+<p>
+Develop <code class="scheme"><span class="variable">convertFC</span></code>.  The function converts a list of Fahrenheit
+measurements to a list of Celsius measurements. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/convertFC.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.4"></a>
+<b>Exercise 10.1.4.</b>&nbsp;&nbsp;   
+Develop the function <code class="scheme"><span class="variable">convert-euro</span></code>, which converts a list of
+U.S. dollar amounts into a list of euro amounts. Assume the exchange rate
+is 1.22 euro for each dollar.</p>
+<p>
+Generalize <code class="scheme"><span class="variable">convert-euro</span></code> to the function <code class="scheme"><span class="variable">convert-euro-1</span></code>,
+which consumes an exchange rate and a list of dollar amounts and converts
+the latter into a list of euro amounts.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/convertDM.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.5"></a>
+<b>Exercise 10.1.5.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">eliminate-exp</span></code> to eliminate expensive toys. The
+function consumes a number, called <code class="scheme"><span class="variable">ua</span></code>, and a list of toy prices,
+called <code class="scheme"><span class="variable">lotp</span></code>, and produces a list of all those prices in
+<code class="scheme"><span class="variable">lotp</span></code> that are below or equal to <code class="scheme"><span class="variable">ua</span></code>. For
+example,<a name="call_footnote_Temp_66"></a><a href="#footnote_Temp_66"><sup><small>32</small></sup></a>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">eliminate-exp</span> <span class="selfeval">1.0</span> (<span class="builtin">cons</span> <span class="selfeval">2.95</span> (<span class="builtin">cons</span> <span class="selfeval">.95</span> (<span class="builtin">cons</span> <span class="selfeval">1.0</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> <span class="builtin">empty</span>)))))
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="selfeval">.95</span> (<span class="builtin">cons</span> <span class="selfeval">1.0</span> <span class="builtin">empty</span>))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/elim-expensive.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.6"></a>
+<b>Exercise 10.1.6.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">name-robot</span></code>, which consumes a list of toy
+descriptions (names) and produces an equivalent list of more accurate
+descriptions. Specifically, it replaces all occurrences of <code class="scheme"><span class="keyword">'</span><span class="variable">robot</span></code>
+with <code class="scheme"><span class="keyword">'</span><span class="variable">r2d2</span></code> and otherwise retains the toy descriptions in the same
+order.</p>
+<p>
+Generalize <code class="scheme"><span class="variable">name-robot</span></code> to the function <code class="scheme"><span class="variable">substitute</span></code>. The new
+function consumes two symbols, called <code class="scheme"><span class="variable">new</span></code> and <code class="scheme"><span class="variable">old</span></code>, and a
+list of symbols. It produces a new list of symbols by substituting all
+occurrences of <code class="scheme"><span class="variable">old</span></code> by <code class="scheme"><span class="variable">new</span></code>. For example, 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">substitute</span> <span class="keyword">'</span><span class="variable">Barbie</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">robot</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">dress</span> <span class="builtin">empty</span>))))
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">robot</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Barbie</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">dress</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/subst.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.7"></a>
+<b>Exercise 10.1.7.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">recall</span></code> to eliminate specific toys from a list.
+The function consumes the name of a toy, called <code class="scheme"><span class="variable">ty</span></code>, and a list of
+names, called <code class="scheme"><span class="variable">lon</span></code>, and produces a list of names that contains all
+components of <code class="scheme"><span class="variable">lon</span></code> with the exception of <code class="scheme"><span class="variable">ty</span></code>.  For example,
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">recall</span> <span class="keyword">'</span><span class="variable">robot</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">robot</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">dress</span> <span class="builtin">empty</span>))))
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">dress</span> <span class="builtin">empty</span>))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/recall.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.8"></a>
+<b>Exercise 10.1.8.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">quadratic-roots</span></code>, which solves quadratic equations: see
+exercises&nbsp;<a href="curriculum-Z-H-7.html#node_thm_4.4.4">4.4.4</a> and&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.4">5.1.4</a>. The function accepts the
+coefficients <code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code>. The computations it
+performs depend on the input:
+</p>
+<ol>
+<li><p>if <em>a</em>  =  0, its output is <code class="scheme"><span class="keyword">'</span><span class="variable">degenerate</span></code>.</p>
+<p>
+</p>
+<li><p>if <em>b</em><sup>2</sup> &lt; 4  &middot;  <em>a</em>  &middot;  <em>c</em>, the quadratic equation has no solution;
+<code class="scheme"><span class="variable">quadratic-roots</span></code> produces <code class="scheme"><span class="keyword">'</span><span class="variable">none</span></code> in this case.  </p>
+<p>
+</p>
+<li><p>if <em>b</em><sup>2</sup>  =  4  &middot;  <em>a</em>  &middot;  <em>c</em>, the equation has one solution:
+</p>
+<div align="center"><img src="curriculum1b-Z-G-2.gif" border="0" alt="[curriculum1b-Z-G-2.gif]"></div><p>
+the solution is the answer. </p>
+<p>
+</p>
+<li><p>if <em>b</em><sup>2</sup> &gt; 4  &middot;  <em>a</em>  &middot;  <em>c</em>, the equation has two solutions:
+</p>
+<div align="center"><img src="curriculum1b-Z-G-3.gif" border="0" alt="[curriculum1b-Z-G-3.gif]"></div><p>
+and 
+</p>
+<div align="center"><img src="curriculum1b-Z-G-4.gif" border="0" alt="[curriculum1b-Z-G-4.gif]"></div><p>
+the result is a list of two numbers: the first solution followed by the
+second solution.
+</p>
+</li></ol><p>
+Test the function with the examples from exercises&nbsp;<a href="curriculum-Z-H-7.html#node_thm_4.4.4">4.4.4</a>
+and&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.4">5.1.4</a>. First decide the answer for each example, then
+determine it with DrScheme.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quad3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.1.9"></a>
+<b>Exercise 10.1.9.</b>&nbsp;&nbsp; 
+The cash registers at many grocery stores talk to customers. The
+register's computer receives the number of cents that the customer must pay
+and then builds a list with the following five items:
+</p>
+<ol>
+<li><p>the dollar amount;
+</p>
+<li><p>the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">dollar</span></code> if the dollar amount is <code class="scheme"><span class="selfeval">1</span></code> 
+and <code class="scheme"><span class="keyword">'</span><span class="variable">dollars</span></code> otherwise; 
+</p>
+<li><p>the symbol <code class="scheme"><span class="keyword">'</span><span class="keyword">and</span></code>;
+</p>
+<li><p>the cent amount; and
+</p>
+<li><p>the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">cent</span></code> if the cent amount is 1 
+and <code class="scheme"><span class="keyword">'</span><span class="variable">cents</span></code> otherwise.
+</p>
+</li></ol><p></p>
+<p>
+Develop the function <code class="scheme"><span class="variable">controller</span></code>, which consumes a number and
+produces a list according to the above description.  For example, if the
+amount is $1.03, then the cash register evaluates <code class="scheme">(<span class="variable">controller</span> <span class="selfeval">103</span>)</code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">controller</span> <span class="selfeval">103</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">dollar</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="keyword">and</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">cents</span> <span class="builtin">empty</span>)))))
+</pre></div><p></p>
+<p>
+<strong>Hint</strong>: Scheme provides the arithmetic operations
+<code class="scheme"><span class="builtin">quotient</span></code> and <code class="scheme"><span class="builtin">remainder</span></code>, which produce the quotient and
+remainder of the expression <em>n</em>/<em>m</em> for integers <em>n</em> and <em>m</em>,
+respectively.</p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-15.html#node_sec_10.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Sound Files</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p>
+Once the controller returns the correct list for amounts whose dollar and
+cent amounts are between 0 and 20, test the controller with a computer that
+can speak. Set the teachpack to <tt><strong>sound.ss</strong></tt>, which makes two
+operations available: <code class="scheme"><span class="variable">speak-word</span></code> and <code class="scheme"><span class="variable">speak-list</span></code>.  The
+first accepts a symbol or a number, the second a list of symbols and
+numbers. Both pronounce the symbols they consume. Evaluate the following
+expressions <code class="scheme">(<span class="variable">speak-word</span> <span class="selfeval">1</span>)</code>, <code class="scheme">(<span class="variable">speak-list</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span>
+<span class="keyword">'</span><span class="variable">dollar</span> <span class="builtin">empty</span>)))</code>, and <code class="scheme">(<span class="variable">speak-list</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">beautiful</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">lady</span>
+<span class="builtin">empty</span>)))</code> to understand how the operations operate.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Simple Challenge</strong>: The sound teachpack contains only
+the sounds for the numbers <code class="scheme"><span class="selfeval">0</span></code> through <code class="scheme"><span class="selfeval">20</span></code> and <code class="scheme"><span class="selfeval">30</span></code>,
+<code class="scheme"><span class="selfeval">40</span></code>, <code class="scheme"><span class="selfeval">50</span></code>, <code class="scheme"><span class="selfeval">60</span></code>, <code class="scheme"><span class="selfeval">70</span></code>, <code class="scheme"><span class="selfeval">80</span></code>, and
+<code class="scheme"><span class="selfeval">90</span></code>. Because of this restriction, this challenge problem works only on
+amounts with cents and dollars between <code class="scheme"><span class="selfeval">0</span></code> to <code class="scheme"><span class="selfeval">20</span></code>. Implement
+a controller that deals with arbitrary amounts between 0 and 99.99. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/speak.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_10.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_10.2">10.2&nbsp;&nbsp;Lists that Contain Structures</a></h2>
+<p> 
+</p>
+<p>
+The representation of an inventory as a list of symbols or a list of prices
+is naive. A sales clerk in a toy store needs to know not only the name of
+the toy, but also its price, and possibly other attributes like warehouse
+availability, delivery time, or even a picture of the item. Similarly,
+representing the personnel's work week as a list of hours is a bad
+choice. Even the printing of a paycheck requires more information about the
+employee than the hours worked per week.</p>
+<p>
+Fortunately, the items of lists do not have to be atomic values. Lists may
+contain whatever values we want, especially structures.  Let's try to make
+our toy store inventory functions more realistic. We start with the
+structure and the data definition of a class of inventory records:
+<a name="node_idx_942"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">ir</span> (<span class="variable">name</span> <span class="variable">price</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_944"></a><a name="node_idx_946"></a>An <i>inventory-record</i> (short: <i>ir</i>) is a structure: <br>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="builtin">make-ir</span> <span class="variable">s</span> <span class="variable">n</span>)</code> &nbsp;</div>
+ <br>
+where <code class="scheme"><span class="variable">s</span></code> is a symbol and <code class="scheme"><span class="variable">n</span></code> is a (positive) number.<p>
+Most important, we can define a class of lists that represent
+inventories much more realistically:</p>
+<p>
+<a name="node_idx_948"></a>An <i>inventory</i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">ir</span> <span class="variable">inv</span>)</code> <br>
+where <code class="scheme"><span class="variable">ir</span></code> is an inventory record and <code class="scheme"><span class="variable">inv</span></code> is an inventory. 
+</p>
+</li></ol><p></p>
+<p>
+While the shape of the list definition is the same as before, its
+components are defined in a separate data definition. Since this is our
+first such data definition, we should make up some examples before we
+proceed.</p>
+<p>
+The simplest example of an inventory is <code class="scheme"><span class="builtin">empty</span></code>. To
+create a larger inventory, we must create an inventory record and
+<code class="scheme"><span class="builtin">cons</span></code> it onto another inventory:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>)
+  <span class="builtin">empty</span>)
+</pre></div><p>
+From here, we can create yet a larger inventory listing: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>)
+  (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">17.95</span>)
+    <span class="builtin">empty</span>))
+</pre></div><p></p>
+<p>
+Now we can adapt our inventory-processing functions.  First look at
+<code class="scheme"><span class="variable">sum</span></code>, the function that consumes an inventory and produces its total
+value. Here is a restatement of the basic information about the function:
+<a name="node_idx_950"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of prices on <code class="scheme"><span class="variable">an-inv</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">an-inv</span>) ...)
+</pre></div><p>
+For our three sample inventories, the function should produce the following
+results: <code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="selfeval">17.95</span></code>, and <code class="scheme"><span class="selfeval">40.0</span></code>. </p>
+<p>
+Since the data definition of inventories is basically that of lists, we can
+again start from the template for list-processing functions: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">an-inv</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">an-inv</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">an-inv</span>) ... (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)) ...]))
+</pre></div><p>
+Following our recipe, the template only reflects the data definition of the
+input, not that of its constituents. Therefore the template for <code class="scheme"><span class="variable">sum</span></code>
+here is indistinguishable from that in section&nbsp;<a href="curriculum-Z-H-13.html#node_sec_9.5">9.5</a>. </p>
+<p>
+For the definition of the function body, we consider each <code class="scheme"><span class="keyword">cond</span></code>-line
+in isolation. First, if <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">an-inv</span>)</code> is true, <code class="scheme"><span class="variable">sum</span></code> is
+supposed to produce <code class="scheme"><span class="selfeval">0</span></code>. Hence the answer expression in the first
+<code class="scheme"><span class="keyword">cond</span></code>-line is obviously <code class="scheme"><span class="selfeval">0</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_67"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">an-inv</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">an-inv</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>)) (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)))]))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 28:</b>&nbsp;&nbsp;Computing the value of an inventory</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Second, if <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">an-inv</span>)</code> is false, in other words, if
+<code class="scheme"><span class="variable">sum</span></code> is applied to a <code class="scheme"><span class="builtin">cons</span></code>tructed inventory, the recipe
+requires us to understand the purpose of two expressions:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">an-inv</span>)</code>, which extracts the first item of the list; and</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>))</code>, which extracts the rest of
+<code class="scheme"><span class="variable">an-inv</span></code> and then computes its cost with <code class="scheme"><span class="variable">sum</span></code>.
+</p>
+</li></ol><p>
+To compute the total cost of the entire input <code class="scheme"><span class="variable">an-inv</span></code> in the second
+case, we must determine the cost of the first item. The cost of
+the first item may be obtained via the selector <code class="scheme"><span class="builtin">ir-price</span></code>, which
+extracts the price from an inventory record. Now we just add the cost of
+the first item and the cost of the rest of the inventory:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>))
+   (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)))
+</pre></div><p>
+The complete function definition is contained in figure&nbsp;<a href="#node_fig_Temp_67">28</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_10.2.1"></a>
+<b>Exercise 10.2.1.</b>&nbsp;&nbsp; 
+Adapt the function <code class="scheme"><span class="variable">contains-doll?</span></code> so that it consumes inventories
+instead of lists of symbols: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains-doll?</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">an-inv</span></code> contains a record for <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">an-inv</span>) ...)
+</pre></div><p></p>
+<p>
+Also adapt the function <code class="scheme"><span class="variable">contains?</span></code>, which consumes a symbol and an
+inventory and determines whether an inventory record with this symbol
+occurs in the inventory: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains?</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">inventory</span></code> contains a record for <code class="scheme"><span class="variable">asymbol</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains?</span> <span class="variable">asymbol</span> <span class="variable">an-inv</span>) ...)
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/contains-dollp.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_68"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <center>
+ <table border="1" bgcolor="beige">
+ <tr>
+   <td align="center" valign="bottom">Item</td>
+   <td align="center" valign="bottom">Price</td> 
+   <td align="center" valign="bottom">Image</td>
+ </tr>
+
+ <tr>
+   <td align="center" valign="bottom">robot</td>
+   <td align="center" valign="bottom">29.95</td> 
+   <td align="center" valign="bottom"><img src="../icons/robot.gif"></td>
+ </tr>
+
+ <tr>
+   <td align="center" valign="bottom">robot</td>
+   <td align="center" valign="bottom">29.95</td> 
+   <td align="center" valign="bottom"><img src="../icons/doll.gif"></td>
+ </tr>
+
+ <tr>
+   <td align="center" valign="bottom">robot</td>
+   <td align="center" valign="bottom">29.95</td> 
+   <td align="center" valign="bottom"><img src="../icons/rocket.gif"></td>
+ </tr>
+ </table>
+ </center>
+ </td></tr>
+<tr><td align="center"><b>Figure 29:</b>&nbsp;&nbsp;A table of toys</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.2"></a>
+<b>Exercise 10.2.2.</b>&nbsp;&nbsp; 
+Provide a data definition and a structure definition for an inventory that
+includes pictures with each object. Show how to represent the inventory
+listing in figure&nbsp;<a href="#node_fig_Temp_68">29</a>.<a name="call_footnote_Temp_69"></a><a href="#footnote_Temp_69"><sup><small>33</small></sup></a></p>
+<p>
+Develop the function <code class="scheme"><span class="variable">show-picture</span></code>. The function consumes a symbol,
+the name of a toy, and one of the new inventories. It produces the picture
+of the named toy or <code class="scheme">false</code> if the desired item is not in the
+inventory. Pictures of toys are available on the Web.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/show-picture.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.3"></a>
+<b>Exercise 10.2.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">price-of</span></code>, which consumes the name of a toy and
+an inventory and produces the toy's price. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/price-of.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.4"></a>
+<b>Exercise 10.2.4.</b>&nbsp;&nbsp; 
+A phone directory combines names with phone numbers. Develop a data
+definition for phone records and directories. Using this data definition
+develop the functions 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">whose-number</span></code>, which determines the name that goes with some
+given phone number and phone directory, and</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">phone-number</span></code>, which determines the phone number that goes
+with some given name and phone directory. 
+</p>
+</li></ol><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/phone-directory.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Suppose a business wishes to separate all those items that sell for a
+dollar or less from all others. The goal might be to sell these items in a
+separate department of the store. To perform this split, the business also
+needs a function that can extract these items from its inventory listing,
+that is, a function that produces a list of structures. </p>
+<p>
+Let us name the function <code class="scheme"><span class="variable">extract1</span></code> because it creates an inventory
+from all those inventory records whose price item is less than or equal to
+<code class="scheme"><span class="selfeval">1.00</span></code>. The function consumes an inventory and produces one with
+items of appropriate prices. Thus the contract for <code class="scheme"><span class="variable">extract1</span></code> is
+easy to formulate:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">extract1</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">inventory</span></code></span>
+<span class="comment">;; to create an <code class="scheme"><span class="variable">inventory</span></code> from <code class="scheme"><span class="variable">an-inv</span></code> for all</span>
+<span class="comment">;; those items that cost less than $1</span>
+(<span class="keyword">define</span> (<span class="variable">extract1</span> <span class="variable">an-inv</span>) ...)
+</pre></div><p></p>
+<p>
+We can reuse our old inventory examples to make examples of
+<code class="scheme"><span class="variable">extract1</span></code>'s input-output relationship. Unfortunately, for these
+three examples it must produce the empty inventory, because all prices are
+above one dollar. For a more interesting input-output example, we need an
+inventory with more variety:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">dagger</span> <span class="selfeval">.95</span>)
+      (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">Barbie</span> <span class="selfeval">17.95</span>)
+            (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">key-chain</span> <span class="selfeval">.55</span>)
+                  (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>)
+                        <span class="builtin">empty</span>))))
+</pre></div><p>
+Out of the four items in this new inventory, two have prices below one
+dollar. If given to <code class="scheme"><span class="variable">extract1</span></code>, we should get the result 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">dagger</span> <span class="selfeval">.95</span>)
+      (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">key-chain</span> <span class="selfeval">.55</span>)
+            <span class="builtin">empty</span>))
+</pre></div><p>
+The new listing enumerates the items in the same order as the original, but
+contains only those items whose prices match our condition. </p>
+<p>
+The contract also implies that the template for <code class="scheme"><span class="variable">extract1</span></code> is identical
+to that of <code class="scheme"><span class="variable">sum</span></code>, except for a name change: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">extract1</span> <span class="variable">an-inv</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">an-inv</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">an-inv</span>) ... (<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)) ...]))
+</pre></div><p>
+As always, the difference in outputs between <code class="scheme"><span class="variable">sum</span></code> and
+<code class="scheme"><span class="variable">extract1</span></code> does not affect the template derivation.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_70"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_952"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">extract1</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">inventory</span></code></span>
+<span class="comment">;; to create an <code class="scheme"><span class="variable">inventory</span></code> from <code class="scheme"><span class="variable">an-inv</span></code> for all</span>
+<span class="comment">;; those items that cost less than $1</span>
+(<span class="keyword">define</span> (<span class="variable">extract1</span> <span class="variable">an-inv</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">an-inv</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">&lt;=</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>)) <span class="selfeval">1.00</span>)
+             (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>) (<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)))]
+            [<span class="keyword">else</span> (<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>))])]))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 30:</b>&nbsp;&nbsp;Extracting dollar items from an inventory</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+For the definition of the function body, we again analyze each case
+separately. First, if <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">an-inv</span>)</code> is true, then the answer is
+clearly <code class="scheme"><span class="builtin">empty</span></code>, because no item in an empty store costs less than
+one dollar.  Second, if the inventory is not empty, we first determine what
+the expressions in the matching <code class="scheme"><span class="keyword">cond</span></code>-clause compute. Since
+<code class="scheme"><span class="variable">extract1</span></code> is the first recursive function to produce a list of
+structures, let us look at our interesting example:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">dagger</span> <span class="selfeval">.95</span>)
+      (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">Barbie</span> <span class="selfeval">17.95</span>)
+            (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">key-chain</span> <span class="selfeval">.55</span>)
+                  (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>)
+                        <span class="builtin">empty</span>))))
+</pre></div><p>
+If <code class="scheme"><span class="variable">an-inv</span></code> stands for this inventory, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">first</span> <span class="variable">an-inv</span>) <span class="builtin">=</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">dagger</span> <span class="selfeval">.95</span>)
+
+(<span class="builtin">rest</span> <span class="variable">an-inv</span>) <span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">Barbie</span> <span class="selfeval">17.95</span>)
+                     (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">key-chain</span> <span class="selfeval">.55</span>)
+                           (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">22.05</span>)
+                             <span class="builtin">empty</span>)))
+</pre></div><p>
+Assuming <code class="scheme"><span class="variable">extract1</span></code> works correctly, we also know that 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)) <span class="builtin">=</span> (<span class="builtin">cons</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">key-chain</span> <span class="selfeval">.55</span>)
+                             <span class="builtin">empty</span>)
+</pre></div><p>
+In other words, the recursive application of <code class="scheme"><span class="variable">extract1</span></code> produces the
+appropriate selection from the rest of <code class="scheme"><span class="variable">an-inv</span></code>, which is a list
+with a single inventory record.</p>
+<p>
+To produce an appropriate inventory for all of <code class="scheme"><span class="variable">an-inv</span></code>, we must
+decide what to do with the first item. Its price may be more or less than
+one dollar, which suggests the following template for the second answer:
+</p>
+<div align="left"><pre class="scheme">... (<span class="keyword">cond</span> 
+      [(<span class="builtin">&lt;=</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>)) <span class="selfeval">1.00</span>) ...]
+      [<span class="keyword">else</span> ...]) ...
+</pre></div><p>
+If the first item's price is one dollar or less, it must be included in the
+final output and, according to our example, should be the first item on the
+output. Translated into Scheme, the output should be a list whose first
+item is <code class="scheme">(<span class="builtin">first</span> <span class="variable">an-inv</span>)</code> and the rest of which is whatever the
+recursion produces. If the price is more than one dollar, the item should
+not be included. That is, the result should be whatever the recursion
+produces for the <code class="scheme"><span class="builtin">rest</span></code> of <code class="scheme"><span class="variable">an-inv</span></code> and nothing else. The
+complete definition is displayed in figure&nbsp;<a href="#node_fig_Temp_70">30</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_10.2.5"></a>
+<b>Exercise 10.2.5.</b>&nbsp;&nbsp; 
+Define the function <code class="scheme"><span class="variable">extract&gt;1</span></code>, which consumes an inventory and
+creates an inventory from those records whose prices are above one
+dollar.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/extract2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.6"></a>
+<b>Exercise 10.2.6.</b>&nbsp;&nbsp; 
+Develop a precise data definition for inventory1, which are inventory
+listings of one-dollar stores.  Using the new data definition, the contract
+for <code class="scheme"><span class="variable">extract1</span></code> can be refined: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">extract1</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">inventory1</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">extract1</span> <span class="variable">an-inv</span>) ...)
+</pre></div><p>
+Does the refined contract affect the development of the function above? 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/inventory1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.7"></a>
+<b>Exercise 10.2.7.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">raise-prices</span></code>, which consumes an inventory and
+produces an inventory in which all prices are raised by 5%. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/raise-prices.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.8"></a>
+<b>Exercise 10.2.8.</b>&nbsp;&nbsp; 
+Adapt the function <code class="scheme"><span class="variable">recall</span></code> from exercise&nbsp;<a href="#node_thm_10.1.7">10.1.7</a> for the new
+data definition of inventory. The function consumes the name of a toy
+<code class="scheme"><span class="variable">ty</span></code> and an inventory and produces an inventory that contains all
+items of the input with the exception of those labeled <code class="scheme"><span class="variable">ty</span></code>.
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/recall2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.2.9"></a>
+<b>Exercise 10.2.9.</b>&nbsp;&nbsp; 
+Adapt the function <code class="scheme"><span class="variable">name-robot</span></code> from exercise&nbsp;<a href="#node_thm_10.1.6">10.1.6</a> for the
+new data definition of inventory. The function consumes an inventory and
+produces an inventory with more accurate names. Specifically, it replaces
+all occurrences of <code class="scheme"><span class="keyword">'</span><span class="variable">robot</span></code> with <code class="scheme"><span class="keyword">'</span><span class="variable">r2d3</span></code>.</p>
+<p>
+Generalize <code class="scheme"><span class="variable">name-robot</span></code> to the function <code class="scheme"><span class="variable">substitute</span></code>. The new
+function consumes two symbols, called <code class="scheme"><span class="variable">new</span></code> and <code class="scheme"><span class="variable">old</span></code>, and an
+inventory. It produces a new inventory by substituting all occurrences of
+<code class="scheme"><span class="variable">old</span></code> with <code class="scheme"><span class="variable">new</span></code> and leaving all others alone.
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/name-robot.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_10.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_10.3">10.3&nbsp;&nbsp;Extended Exercise: Moving Pictures</a></h2>
+<p> </p>
+<p>
+In sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a> and&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>, we studied how
+to move individual shapes. A picture, however, isn't just a single shape
+but a whole collection of them. Considering that we have to draw,
+translate, and clear pictures, and that we may wish to change a picture or
+manage several pictures at the same time, it is best to collect all of the
+parts of a picture into a single piece of data. Because pictures may
+consist of a varying number of items, a list representation for pictures
+naturally suggests itself.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_10.3.1"></a>
+<b>Exercise 10.3.1.</b>&nbsp;&nbsp;  
+Provide a data definition that describes the class of lists of <code class="scheme"><span class="variable">shape</span></code>s.
+The class of <code class="scheme"><span class="variable">shape</span></code>s was defined in exercise&nbsp;<a href="curriculum-Z-H-10.html#node_thm_7.4.1">7.4.1</a>.</p>
+<p>
+Create a sample list that represents the face of figure&nbsp;<a href="#node_thm_10.3.6">10.3.6</a>
+and name it <code class="scheme"><span class="variable">FACE</span></code>. Its basic dimensions are gathered in the
+following table:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top">shape     </td><td valign="top">position </td><td valign="top">size(s)         </td><td valign="top">color </td></tr>
+<tr><td valign="top">circle    </td><td valign="top">(50,50)  </td><td valign="top">40             </td><td valign="top">red </td></tr>
+<tr><td valign="top">rectangle </td><td valign="top">(30,20)  </td><td valign="top">5 &times; 5   </td><td valign="top">blue </td></tr>
+<tr><td valign="top">rectangle </td><td valign="top">(65,20)  </td><td valign="top">5 &times; 5   </td><td valign="top">blue </td></tr>
+<tr><td valign="top">rectangle </td><td valign="top">(40,75)  </td><td valign="top">20 &times; 10 </td><td valign="top">red </td></tr>
+<tr><td valign="top">rectangle </td><td valign="top">(45,35)  </td><td valign="top">10 &times; 30 </td><td valign="top">blue </td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+The table assumes a canvas of size 300 by 100.<p>
+Develop the template <code class="scheme"><span class="variable">fun-for-losh</span></code>, which outlines functions
+that consume a <code class="scheme"><span class="variable">list-of-shapes</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-list-dat.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.3.2"></a>
+<b>Exercise 10.3.2.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-losh</span></code> to develop the function
+<code class="scheme"><span class="variable">draw-losh</span></code>. It consumes a <code class="scheme"><span class="variable">list-of-shapes</span></code>, draws each item
+on the list, and returns <code class="scheme">true</code>. Remember to use <code class="scheme">(<span class="variable">start</span> <span class="variable">n</span> <span class="variable">m</span>)</code> to
+create the canvas before the function is
+used.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-list-dr.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.3.3"></a>
+<b>Exercise 10.3.3.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-losh</span></code> to develop <code class="scheme"><span class="variable">translate-losh</span></code>.
+The function consumes a <code class="scheme"><span class="variable">list-of-shapes</span></code> and a number
+<code class="scheme"><span class="variable">delta</span></code>. The result is a list of shapes where each of them has been
+moved by <code class="scheme"><span class="variable">delta</span></code> pixels in the <em>x</em> direction. <strong>The
+function has no effect on the canvas.</strong>&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-list-tr.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.3.4"></a>
+<b>Exercise 10.3.4.</b>&nbsp;&nbsp;  
+Use the template  <code class="scheme"><span class="variable">fun-for-losh</span></code> to develop <code class="scheme"><span class="variable">clear-losh</span></code>.  The
+function consumes a <code class="scheme"><span class="variable">list-of-shapes</span></code>, erases each item on the list from
+the canvas, and returns <code class="scheme">true</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-list-cl.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.3.5"></a>
+<b>Exercise 10.3.5.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">draw-and-clear-picture</span></code>.  It consumes a
+<code class="scheme"><span class="variable">picture</span></code>. Its effect is to draw the picture, sleep for a while, and
+to clear the picture.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-dc.html">Solution</a>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_10.3.6"></a>
+<b>Exercise 10.3.6.</b>&nbsp;&nbsp;   
+Develop the function <code class="scheme"><span class="variable">move-picture</span></code>.  It consumes a number
+(<code class="scheme"><span class="variable">delta</span></code>) and a <code class="scheme"><span class="variable">picture</span></code>. It draws the picture, sleeps for a
+while, clears the picture and then produces a translated version. The
+result should be moved by <code class="scheme"><span class="variable">delta</span></code> pixels. </p>
+<p>
+Test the function with expressions like these:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="selfeval">500</span> <span class="selfeval">100</span>)
+
+(<span class="variable">draw-losh</span>
+  (<span class="variable">move-picture</span> <span class="selfeval">-5</span> 
+    (<span class="variable">move-picture</span> <span class="selfeval">23</span>
+      (<span class="variable">move-picture</span> <span class="selfeval">10</span> <span class="variable">FACE</span>))))
+
+(<span class="variable">stop</span>) 
+</pre></div><p> 
+This moves <code class="scheme"><span class="variable">FACE</span></code> (see exercise&nbsp;<a href="#node_thm_10.3.1">10.3.1</a>) by
+<code class="scheme"><span class="selfeval">10</span></code>, <code class="scheme"><span class="selfeval">23</span></code>, and <code class="scheme"><span class="selfeval">-5</span></code> pixels in the
+<em>x</em> direction.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving.html">Solution</a></p>
+<p></p>
+<p>
+When the function is fully tested, use the teachpack <tt><strong>arrow.ss</strong></tt> and
+evaluate 
+the expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="selfeval">500</span> <span class="selfeval">100</span>)
+
+(<span class="variable">control-left-right</span> <span class="variable">FACE</span> <span class="selfeval">100</span> <span class="variable">move-picture</span> <span class="variable">draw-losh</span>)
+</pre></div><p>
+The last one creates a graphical user interface that permits users to move the
+shape <code class="scheme"><span class="variable">FACE</span></code> by clicking on arrows. The shape then moves in increments of
+<code class="scheme"><span class="selfeval">100</span></code> (right) and <code class="scheme"><span class="selfeval">-100</span></code> (left) pixels. The teachpack also provides 
+arrow controls for other directions. Use them to develop other moving pictures. </p>
+<p>
+</p>
+
+
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_66"></a><a href="#call_footnote_Temp_66"><sup><small>32</small></sup></a> Since we don't know yet how to compare two lists with a
+function, we use the old style of specifying examples and tests.</p>
+<p><a name="footnote_Temp_69"></a><a href="#call_footnote_Temp_69"><sup><small>33</small></sup></a> Thanks to Mr. John Clements
+for drawing these pictures.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-13.html">previous</a></span><span>, <a href="curriculum-Z-H-15.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

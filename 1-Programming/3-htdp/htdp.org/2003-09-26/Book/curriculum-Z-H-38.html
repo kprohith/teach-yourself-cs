@@ -1,0 +1,607 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-38.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-37.html">previous</a></span><span>, <a href="curriculum-Z-H-39.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_30"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_30">Section  30</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_30">The Loss of Knowledge</a></h1>
+<p></p>
+<p>
+When we design recursive functions, we don't think about the context of
+their use. Whether they are applied for the first time or whether they are
+called for the hundredth time in a recursive manner doesn't matter. They
+are to work according to their purpose statement, and that's all we need to
+know as we design the bodies of the functions.</p>
+<p>
+Altough this principle of context-independence greatly facilitates the
+development of functions, it also causes occasional problems. In this
+section, we illustrate the most important problem with two 
+examples. Both concern the loss of knowledge that occurs during a recursive
+evaluation. The first subsection shows how this loss makes a structurally
+recursive function more complicated and less efficient than necessary; the
+second one shows how the loss of knowledge causes a fatal flaw in an algorithm.</p>
+<p>
+</p>
+<a name="node_sec_30.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_30.1">30.1&nbsp;&nbsp;A Problem with Structural Processing</a></h2>
+<p>
+<a name="node_idx_1944"></a></p>
+<p>
+Suppose we are given the relative distances between a series of points,
+starting at the origin, and suppose we are to compute the absolute
+distances from the origin. For example, we might be given a line such as
+this:</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+
+<img src="../icons/rel-distance.gif" alt="relative distance">
+<p>
+Each number specifies the distance between two dots. What we need is the
+following picture, where each dot is annotated with the distance to the 
+left-most dot: 
+
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+
+<img src="../icons/abs-distance.gif" alt="absolute distance">
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_161"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_1946"></a><a name="node_idx_1948"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">relative-2-absolute</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to convert a list of relative distances to a list of absolute distances</span>
+<span class="comment">;; the first item on the list represents the distance to the origin</span>
+(<span class="keyword">define</span> (<span class="variable">relative-2-absolute</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	        (<span class="variable">add-to-each</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">relative-2-absolute</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">add-to-each</span> <span class="selfeval">:</span> <span class="variable">number</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to add <code class="scheme"><span class="variable">n</span></code> to each number on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-each</span> <span class="variable">n</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">n</span>) (<span class="variable">add-to-each</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 83:</b>&nbsp;&nbsp;Converting relative distances to absolute distances</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Developing a program that performs this calculation is at this point an
+exercise in structural function design. Figure&nbsp;<a href="#node_fig_Temp_161">83</a>
+contains the complete Scheme program. When the given list is not
+<code class="scheme"><span class="builtin">empty</span></code>, the natural recursion computes the absolute distance of the
+remainder of the dots to the first item on <code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code>. Because
+the first item is not the actual origin and has a distance of
+<code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> to the origin, we must add <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> to
+each and every item on the result of the recursive application. This second
+step, adding a number to each item on a list of numbers, requires an
+auxiliary function.</p>
+<p>
+While the development of the program is straightforward, using it on larger
+and larger lists reveals a problem. Consider the evaluation of the
+following definition:<a name="call_footnote_Temp_162"></a><a href="#footnote_Temp_162"><sup><small>64</small></sup></a>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> (<span class="variable">relative-2-absolute</span> (<span class="builtin">list</span> <span class="selfeval">0</span> ... <span class="variable">N</span>)))
+</pre></div><p>
+As we increase <code class="scheme"><span class="variable">N</span></code>, the time needed grows even
+faster:<a name="call_footnote_Temp_163"></a><a href="#footnote_Temp_163"><sup><small>65</small></sup></a> 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top"><code class="scheme"><span class="variable">N</span></code> </td><td valign="top">time of evaluation </td></tr>
+<tr><td valign="top">100 </td><td valign="top">220 </td></tr>
+<tr><td valign="top">200 </td><td valign="top">880 </td></tr>
+<tr><td valign="top">300 </td><td valign="top">2050 </td></tr>
+<tr><td valign="top">400 </td><td valign="top">5090 </td></tr>
+<tr><td valign="top">500 </td><td valign="top">7410 </td></tr>
+<tr><td valign="top">600 </td><td valign="top">10420 </td></tr>
+<tr><td valign="top">700 </td><td valign="top">14070 </td></tr>
+<tr><td valign="top">800 </td><td valign="top">18530 
+</td></tr></table>
+</td></tr></table></div>
+
+Instead of doubling as we go from 100 to 200 items, the time
+quadruples. This is also the approximate relationship for going from 200
+to 400, 300 to 600, and so on.<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_30.1.1"></a>
+<b>Exercise 30.1.1.</b>&nbsp;&nbsp; 
+Reformulate <code class="scheme"><span class="variable">add-to-each</span></code> using <code class="scheme"><span class="builtin">map</span></code> and
+<code class="scheme"><span class="keyword">lambda</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/add-to-each-map.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_30.1.2"></a>
+<b>Exercise 30.1.2.</b>&nbsp;&nbsp; 
+Determine the abstract running time of <code class="scheme"><span class="variable">relative-2-absolute</span></code>.</p>
+<p>
+<strong>Hint:</strong> Evaluate the expression 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">relative-2-absolute</span> (<span class="builtin">list</span> <span class="selfeval">0</span> ... <span class="variable">N</span>))
+</pre></div><p>
+by hand. Start by replacing <code class="scheme"><span class="variable">N</span></code> with 1, 2, and 3. How many natural
+recursions of <code class="scheme"><span class="variable">relative-2-absolute</span></code> and <code class="scheme"><span class="variable">add-to-each</span></code> are
+required each time?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rel-abs-O.html">Solution</a></p>
+<p></p>
+<p>
+Considering the simplicity of the problem, the amount of ``work'' that the
+two functions perform is surprising. If we were to convert the same list by
+hand, we would tally up the total distance and just add it to the relative
+distances as we take another step along the line.</p>
+<p>
+Let's attempt to design a second version of the function that is closer to
+our hand method. The new function is still a list-processing function, so we
+start from the appropriate template:
+<a name="node_idx_1950"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">rel-2-abs</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">alon</span>) ... (<span class="variable">rel-2-abs</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) ...]))
+</pre></div><p>
+Now imagine an ``evaluation'' of <code class="scheme">(<span class="variable">rel-2-abs</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">2</span> <span class="selfeval">7</span>))</code>: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">rel-2-abs</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">2</span> <span class="selfeval">7</span>))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> ... <span class="selfeval">3</span> ...
+    (<span class="variable">convert</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">7</span>)))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> ... <span class="selfeval">3</span> ...
+    (<span class="builtin">cons</span> ... <span class="selfeval">2</span> ...
+      (<span class="variable">convert</span> (<span class="builtin">list</span> <span class="selfeval">7</span>))))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> ... <span class="selfeval">3</span> ...
+    (<span class="builtin">cons</span> ... <span class="selfeval">2</span> ...
+      (<span class="builtin">cons</span> ... <span class="selfeval">7</span> ...
+	(<span class="variable">convert</span> <span class="builtin">empty</span>))))
+</pre></div><p>
+The first item of the result list should obviously be <code class="scheme"><span class="selfeval">3</span></code>, and it is
+easy to construct this list. But, the second one should be <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">3</span>
+<span class="selfeval">2</span>)</code>, yet the second instance of <code class="scheme"><span class="variable">rel-2-abs</span></code> has no way of
+``knowing'' that the first item of the original list is
+<code class="scheme"><span class="selfeval">3</span></code>. The ``knowledge'' is lost.</p>
+<p>
+Put differently, the problem is that recursive functions are independent of
+their context. A function processes the list <code class="scheme"><span class="variable">L</span></code> in <code class="scheme">(<span class="builtin">cons</span> <span class="variable">N</span>
+<span class="variable">L</span>)</code> in the exact same manner as <code class="scheme"><span class="variable">L</span></code> in <code class="scheme">(<span class="builtin">cons</span> <span class="variable">K</span> <span class="variable">L</span>)</code>. Indeed,
+it would also process <code class="scheme"><span class="variable">L</span></code> in that manner if it were given <code class="scheme"><span class="variable">L</span></code>
+by itself. While this property makes structurally recursive functions easy
+to design, it also means that solutions are, on occasion, more complicated
+than necessary, and this complication may affect the performance of the
+function.</p>
+<p>
+To make up for the loss of ``knowledge,'' we equip the function with an
+additional parameter: <code class="scheme"><span class="variable">accu-dist</span></code>. The new parameter represents
+the accumulated distance, which is the tally that we keep when we convert a
+list of relative distances to a list of absolute distances. Its initial
+value must be <code class="scheme"><span class="selfeval">0</span></code>. As the function processes the numbers on the list,
+it must add them to the tally.</p>
+<p>
+Here is the revised definition: 
+<a name="node_idx_1952"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">rel-2-abs</span> <span class="variable">alon</span> <span class="variable">accu-dist</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accu-dist</span>)
+	        (<span class="variable">rel-2-abs</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accu-dist</span>)))]))
+</pre></div><p> 
+The recursive application consumes the rest of the list and the new
+absolute distance of the current point to the origin. Although this means
+that two arguments are changing simultaneously, the change in the second
+one strictly depends on the first argument. The function is still a plain
+list-processing procedure. </p>
+<p>
+Evaluating our running example with <code class="scheme"><span class="variable">rel-2-abs</span></code> shows how much the
+use of an accumulator simplifies the conversion process:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">rel-2-abs</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">2</span> <span class="selfeval">7</span>) <span class="selfeval">0</span>)
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="variable">rel-2-abs</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">7</span>) <span class="selfeval">3</span>))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> (<span class="variable">rel-2-abs</span> (<span class="builtin">list</span> <span class="selfeval">7</span>) <span class="selfeval">5</span>)))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> (<span class="builtin">cons</span> <span class="selfeval">12</span> (<span class="variable">rel-2-abs</span> <span class="builtin">empty</span> <span class="selfeval">12</span>))))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> (<span class="builtin">cons</span> <span class="selfeval">12</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+Each item in the list is processed once. When <code class="scheme"><span class="variable">rel-2-abs</span></code> reaches
+the end of the argument list, the result is completely determined and no
+further work is needed. In general, the function performs on the order of
+<em>N</em> natural recursion steps for a list with <em>N</em> items.</p>
+<p>
+One minor problem with the new definition is that the function consumes two
+arguments and is thus not equivalent to <code class="scheme"><span class="variable">relative-2-absolute</span></code>, a
+function of one argument. Worse, someone might accidentally misuse
+<code class="scheme"><span class="variable">rel-2-abs</span></code> by applying it to a list of numbers and a number that
+isn't <code class="scheme"><span class="selfeval">0</span></code>. We can solve both problems with a function definition
+that contains <code class="scheme"><span class="variable">rel-2-abs</span></code> in a <code class="scheme"><span class="keyword">local</span></code> definition: see
+figure&nbsp;<a href="#node_fig_Temp_164">84</a>.
+<a name="node_idx_1954"></a><a name="node_idx_1956"></a>Now, <code class="scheme"><span class="variable">relative-2-absolute</span></code> and
+<code class="scheme"><span class="variable">relative-2-absolute2</span></code> are indistinguishable.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_164"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1958"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">relative-2-absolute2</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to convert a list of relative distances to a list of absolute distances</span>
+<span class="comment">;; the first item on the list represents the distance to the origin</span>
+(<span class="keyword">define</span> (<span class="variable">relative-2-absolute2</span> <span class="variable">alon</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">rel-2-abs</span> <span class="variable">alon</span> <span class="variable">accu-dist</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accu-dist</span>)
+		          (<span class="variable">rel-2-abs</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accu-dist</span>)))])))
+    (<span class="variable">rel-2-abs</span> <span class="variable">alon</span> <span class="selfeval">0</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 84:</b>&nbsp;&nbsp;Converting relative distances with an accumulator</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_30.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_30.2">30.2&nbsp;&nbsp;A Problem with Generative Recursion</a></h2>
+<p>
+<a name="node_idx_1960"></a></p>
+<p>
+</p>
+<p>
+Let us revisit the problem of finding a path in a graph from
+section&nbsp;<a href="curriculum-Z-H-35.html#node_chap_28">28</a>. Recall that we are given a collection of nodes
+and connections between nodes, and that we need to determine whether there
+is a route from a node labeled <code class="scheme"><span class="variable">orig</span></code> to one called
+<code class="scheme"><span class="variable">dest</span></code>. Here we study the slightly simpler version of the problem of
+<i>simple graphs</i> 
+<a name="node_idx_1962"></a><a name="node_idx_1964"></a>where each node has exactly one (one-directional)
+connection to another node.</p>
+<p>
+Consider the example in figure&nbsp;<a href="#node_fig_Temp_165">85</a>. There are six nodes:
+A through F, and six connections. To get from A to E, we go through B, C, and E. It is impossible, though,
+to reach F from A or from any other node (besides F
+itself).</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_165"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p></p>
+<p></p>
+<p></p>
+<p></p>
+<div align="center">&nbsp;<img src="../icons/sga.gif">&nbsp;<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">SimpleG</span> 
+  <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>)
+    (<span class="variable">B</span> <span class="variable">C</span>)
+    (<span class="variable">C</span> <span class="variable">E</span>)
+    (<span class="variable">D</span> <span class="variable">E</span>)
+    (<span class="variable">E</span> <span class="variable">B</span>)
+    (<span class="variable">F</span> <span class="variable">F</span>)))    
+</pre></div>&nbsp;</div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 85:</b>&nbsp;&nbsp;A simple graph</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The right part of figure&nbsp;<a href="#node_fig_Temp_165">85</a> contains a Scheme definition
+that represents the graph. Each node is represented by a list of two
+symbols. The first symbol is the label of the node; the second one is the
+reachable node. Here are the relevant data definitions: </p>
+<p>
+<a name="node_idx_1966"></a>A <i>node</i> is a symbol.</p>
+<p>
+<a name="node_idx_1968"></a>A <i>pair</i> is a list of two <code class="scheme"><span class="variable">node</span></code>s: <br>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="builtin">cons</span> <span class="variable">S</span> (<span class="builtin">cons</span> <span class="variable">T</span> <span class="builtin">empty</span>))</code> &nbsp;</div>
+
+where <code class="scheme"><span class="variable">S</span></code>, <code class="scheme"><span class="variable">T</span></code> are symbols.<p>
+<a name="node_idx_1970"></a>A <i>simple-graph</i> is a list of <code class="scheme"><span class="variable">pair</span></code>s: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="keyword">listof</span> <span class="variable">pair</span>)</code>.&nbsp;</div>
+<p>
+They are straightforward translations of our informal
+descriptions. </p>
+<p>
+Finding a route in a graph is a problem of generative recursion.
+<a name="node_idx_1972"></a></p>
+<p>
+We have
+data definitions, we have (informal) examples, and the header material is 
+standard: 
+<a name="node_idx_1974"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>) ...)
+</pre></div><p>
+What we need are answers to the four basic questions of the recipe for
+generative recursion: 
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>What is a trivially solvable problem?</b></dt><dd> The problem is trivial if
+the nodes <code class="scheme"><span class="variable">orig</span></code> and <code class="scheme"><span class="variable">dest</span></code> are the same. <p>
+</p>
+</dd><dt><b>What is a corresponding solution?</b></dt><dd> Easy: <code class="scheme">true</code>. <p>
+</p>
+</dd><dt><b>How do we generate new problems?</b></dt><dd> If <code class="scheme"><span class="variable">orig</span></code> is not the same as
+<code class="scheme"><span class="variable">dest</span></code>, there is only one thing we can do, namely, go to the node to
+which <code class="scheme"><span class="variable">orig</span></code> is connected and determine whether a route exists
+between it and <code class="scheme"><span class="variable">dest</span></code>.<p>
+</p>
+</dd><dt><b>How do we relate the solutions?</b></dt><dd> There is no need to do anything
+after we find the solution to the new problem. If <code class="scheme"><span class="variable">orig</span></code>'s neighbor
+is connected to <code class="scheme"><span class="variable">dest</span></code>, then so is <code class="scheme"><span class="variable">orig</span></code>. 
+</dd></dl><p>
+From here we just need to express these answers in Scheme, and we get an
+algorithm. Figure&nbsp;<a href="#node_fig_Temp_166">86</a> contains the complete
+function, including a function for looking up the neighbor of a node in a
+simple graph. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_166"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1976"></a><a name="node_idx_1978"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">orig</span> <span class="variable">dest</span>) true]
+    [<span class="keyword">else</span> (<span class="variable">route-exists?</span> (<span class="variable">neighbor</span> <span class="variable">orig</span> <span class="variable">sg</span>) <span class="variable">dest</span> <span class="variable">sg</span>)]))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">neighbor</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">node</span></code></span>
+<span class="comment">;; to determine the node that is connected to <code class="scheme"><span class="variable">a-node</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">neighbor</span> <span class="variable">a-node</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">sg</span>) (<span class="builtin">error</span> <span class="selfeval">&quot;neighbor: impossible&quot;</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> (<span class="builtin">first</span> <span class="variable">sg</span>)) <span class="variable">a-node</span>)
+	     (<span class="builtin">second</span> (<span class="builtin">first</span> <span class="variable">sg</span>))]
+	    [<span class="keyword">else</span> (<span class="variable">neighbor</span> <span class="variable">a-node</span> (<span class="builtin">rest</span> <span class="variable">sg</span>))])]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 86:</b>&nbsp;&nbsp;Finding a route in a simple graph (version 1)</td></tr>
+<tr><td> 
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Even a casual look at the function suggests that we have a
+problem. Although the function is supposed to produce <code class="scheme">false</code> if there
+is no route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code>, the function definition
+doesn't contain <code class="scheme">false</code> anywhere. Conversely, we need to ask what the
+function actually does when there is no route between two nodes.</p>
+<p>
+Take another look at figure&nbsp;<a href="#node_fig_Temp_165">85</a>. In this simple graph there
+is no route from C to D. The connection that leaves C
+passes right by D and instead goes to E. So let's look at how
+<code class="scheme"><span class="variable">route-exists?</span></code> deals with the inputs <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> and <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>
+for <code class="scheme"><span class="variable">SimpleG</span></code>:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">route-exists?</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)))
+<span class="builtin">=</span> (<span class="variable">route-exists?</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)))
+<span class="builtin">=</span> (<span class="variable">route-exists?</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)))
+<span class="builtin">=</span> (<span class="variable">route-exists?</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)))
+</pre></div><p>
+The hand-evaluation confirms that as the function recurs, it calls itself
+with the exact same arguments again and again. In other words, the
+evaluation never stops. </p>
+<p>
+Our problem with <code class="scheme"><span class="variable">route-exists?</span></code> is again a loss of ``knowledge,''
+similar to that of <code class="scheme"><span class="variable">relative-2-absolute</span></code> in the preceding section.
+Like <code class="scheme"><span class="variable">relative-2-absolute</span></code>, <code class="scheme"><span class="variable">route-exists?</span></code>  was developed
+according to the recipe and is independent of its context. That is, it
+doesn't ``know'' whether some application is the first or the hundredth of
+a recursive chain. In the case of <code class="scheme"><span class="variable">route-exists?</span></code>  this means, in
+particular, that the function doesn't ``know'' whether a previous
+application in the current chain of recursions received the exact same
+arguments.</p>
+<p>
+The solution follows the pattern of the preceding section. We add a
+parameter, which we call <code class="scheme"><span class="variable">accu-seen</span></code> and which represents the
+accumulated list of origination nodes that the function has encountered,
+starting with the original application. Its initial value must be
+<code class="scheme"><span class="builtin">empty</span></code>. As the function checks on a specific <code class="scheme"><span class="variable">orig</span></code> and
+moves to its neighbors, <code class="scheme"><span class="variable">orig</span></code> is added to <code class="scheme"><span class="variable">accu-seen</span></code>.</p>
+<p>
+Here is a first revision of <code class="scheme"><span class="variable">route-exists?</span></code>, dubbed
+<code class="scheme"><span class="variable">route-exists-accu?</span></code>:
+<a name="node_idx_1980"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists-accu?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> (<span class="keyword">listof</span> <span class="variable">node</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code>, </span>
+<span class="comment">;; assuming the nodes in <code class="scheme"><span class="variable">accu-seen</span></code> have already been inspected </span>
+<span class="comment">;; and failed to deliver a solution </span>
+(<span class="keyword">define</span> (<span class="variable">route-exists-accu?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span> <span class="variable">accu-seen</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">orig</span> <span class="variable">dest</span>) true]
+    [<span class="keyword">else</span> (<span class="variable">route-exists-accu?</span> (<span class="variable">neighbor</span> <span class="variable">orig</span> <span class="variable">sg</span>) <span class="variable">dest</span> <span class="variable">sg</span>
+	                      (<span class="builtin">cons</span> <span class="variable">orig</span> <span class="variable">accu-seen</span>))]))
+</pre></div><p>
+The addition of the new parameter alone does not solve our problem, but, as
+the following hand-evaluation shows, provides the foundation for one: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">route-exists-accu?</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)) <span class="builtin">empty</span>)
+<span class="builtin">=</span> (<span class="variable">route-exists-accu?</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)) <span class="keyword">'</span>(<span class="variable">C</span>))
+<span class="builtin">=</span> (<span class="variable">route-exists-accu?</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>)) <span class="keyword">'</span>(<span class="variable">E</span> <span class="variable">C</span>))
+<span class="builtin">=</span> (<span class="variable">route-exists-accu?</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>))
+                      <span class="keyword">'</span>(<span class="variable">B</span> <span class="variable">E</span> <span class="variable">C</span>))
+</pre></div><p>
+In contrast to the original function, the revised function no longer calls
+itself with the exact same arguments. While the three arguments proper are
+again the same for the third recursive application, the accumulator
+argument is different from that of the first application. Instead of
+<code class="scheme"><span class="builtin">empty</span></code>, it is now <code class="scheme"><span class="keyword">'</span>(<span class="variable">B</span> <span class="variable">E</span> <span class="variable">C</span>)</code>. The new value represents the
+fact that during the search of a route from <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>, the
+function has inspected <code class="scheme"><span class="keyword">'</span><span class="variable">B</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">E</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> as starting
+points.</p>
+<p>
+All we need to do at this point is exploit the accumulated knowledge in
+the function definition. Specifically, we determine whether the given
+<code class="scheme"><span class="variable">orig</span></code> is already an item on <code class="scheme"><span class="variable">accu-seen</span></code>. If so, the problem
+is trivially solvable with <code class="scheme">false</code>. Figure&nbsp;<a href="#node_fig_Temp_167">87</a>
+contains the definition of <code class="scheme"><span class="variable">route-exists2?</span></code>, which is the revision
+of <code class="scheme"><span class="variable">route-exists?</span></code>. The definition refers to <code class="scheme"><span class="variable">contains</span></code>, our
+first recursive function (see part&nbsp;<a href="curriculum-Z-H-12.html#node_part_II">II</a>), which determines
+whether a specific symbol is on a list of symbols.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_167"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1982"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists2?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">route-exists2?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">re-accu?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span> <span class="variable">accu-seen</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">symbol=?</span> <span class="variable">orig</span> <span class="variable">dest</span>) true]
+              [(<span class="variable">contains</span> <span class="variable">orig</span> <span class="variable">accu-seen</span>) false]
+              [<span class="keyword">else</span> (<span class="variable">re-accu?</span> (<span class="variable">neighbor</span> <span class="variable">orig</span> <span class="variable">sg</span>) <span class="variable">dest</span> <span class="variable">sg</span> (<span class="builtin">cons</span> <span class="variable">orig</span> <span class="variable">accu-seen</span>))]))) 
+    (<span class="variable">re-accu?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 87:</b>&nbsp;&nbsp;Finding a route in a simple graph (version&nbsp;2)</td></tr>
+<tr><td> 
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The definition of <code class="scheme"><span class="variable">route-exists2?</span></code> also eliminates the two minor
+problems with the first revision. By <code class="scheme"><span class="keyword">local</span></code>izing the definition of
+the accumulating function, we can ensure that the first call to
+<code class="scheme"><span class="variable">re-accu?</span></code>  always uses <code class="scheme"><span class="builtin">empty</span></code> as the initial value for
+<code class="scheme"><span class="variable">accu-seen</span></code>. And, <code class="scheme"><span class="variable">route-exists2?</span></code> satisfies the exact same
+contract and purpose statement as <code class="scheme"><span class="variable">route-exists?</span></code>.</p>
+<p>
+Still, there is a significant difference between <code class="scheme"><span class="variable">route-exists2?</span></code>
+and <code class="scheme"><span class="variable">relative-to-absolute2</span></code>. Whereas the latter was equivalent to
+the original function, <code class="scheme"><span class="variable">route-exists2?</span></code> is an improvement over the
+<code class="scheme"><span class="variable">route-exists?</span></code> function. After all, it corrects a fundamental flaw
+in <code class="scheme"><span class="variable">route-exists?</span></code>, which completely failed to find an answer for
+some inputs.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_30.2.1"></a>
+<b>Exercise 30.2.1.</b>&nbsp;&nbsp; 
+Complete the definition in figure&nbsp;<a href="#node_fig_Temp_167">87</a> and test it with
+the running example. Use the strategy of section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to 
+formulate the tests as boolean-valued expressions.</p>
+<p>
+Check with a hand-evaluation that this function computes the proper result
+for <code class="scheme"><span class="keyword">'</span><span class="variable">A</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code>, and
+<code class="scheme"><span class="variable">SimpleG</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/route-exists.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_30.2.2"></a>
+<b>Exercise 30.2.2.</b>&nbsp;&nbsp; 
+Edit the function in figure&nbsp;<a href="#node_fig_Temp_167">87</a> so that the locally
+defined function consumes only those arguments that change during an
+evaluation.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route-edit.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_30.2.3"></a>
+<b>Exercise 30.2.3.</b>&nbsp;&nbsp; 
+Develop a vector-based representation of simple graphs.  Adapt the function
+in figure&nbsp;<a href="#node_fig_Temp_167">87</a> so that it works on a vector-based
+representation of simple graphs.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route-vector.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_30.2.4"></a>
+<b>Exercise 30.2.4.</b>&nbsp;&nbsp; 
+Modify the definitions of <code class="scheme"><span class="variable">find-route</span></code> and <code class="scheme"><span class="variable">find-route/list</span></code>
+in figure&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_154">77</a> so that they produce <code class="scheme">false</code>, even
+if they encounter the same starting point
+twice.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route-comp.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_162"></a><a href="#call_footnote_Temp_162"><sup><small>64</small></sup></a> The most convenient way to construct this
+list is to evaluate <code class="scheme">(<span class="builtin">build-list</span> (<span class="builtin">add1</span> <span class="variable">N</span>) <span class="builtin">identity</span>)</code>.</p>
+<p><a name="footnote_Temp_163"></a><a href="#call_footnote_Temp_163"><sup><small>65</small></sup></a> The time of evaluation will differ from computer to
+computer. These measurements were conducted on a Pentium 166Mhz running
+Linux. Measuring timings is also difficult. At a minimum, each evaluation
+should be repeated several times, and the time reported should be the
+average of those measurements.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-37.html">previous</a></span><span>, <a href="curriculum-Z-H-39.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-38.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

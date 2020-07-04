@@ -1,0 +1,461 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2020-5-6/Book/part_preface.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=0.8"><title>Preface</title><link rel="stylesheet" type="text/css" href="scribble.css" title="default"><link rel="stylesheet" type="text/css" href="shared.css" title="default"><link rel="stylesheet" type="text/css" href="figure.css" title="default"><link rel="stylesheet" type="text/css" href="racket.css" title="default"><link rel="stylesheet" type="text/css" href="manual-style.css" title="default"><link rel="stylesheet" type="text/css" href="manual-racket.css" title="default"><script type="text/javascript" src="scribble-common.js"></script><script type="text/javascript" src="figure.js"></script><script type="text/javascript" src="manual-racket.js"></script><!--[if IE 6]><style type="text/css">.SIEHidden { overflow: hidden; }</style><![endif]--></head><body id="scribble-racket-lang-org"><div class="tocset"><div class="tocview"><div class="tocviewlist tocviewlisttopspace"><div class="tocviewtitle"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_0&quot;);">&#9660;</a></td><td></td><td><a href="index.html" class="tocviewlink" data-pltdoc="x">How to Design Programs, Second Edition</a></td></tr></table></div><div class="tocviewsublisttop" style="display: block;" id="tocview_0"><table cellspacing="0" cellpadding="0"><tr><td align="right"></td><td><a href="" class="tocviewselflink" data-pltdoc="x">Preface</a></td></tr><tr><td align="right"></td><td><a href="part_prologue.html" class="tocviewlink" data-pltdoc="x">Prologue:<span class="mywbr"> &nbsp;</span> How to Program</a></td></tr><tr><td align="right">I&nbsp;</td><td><a href="part_one.html" class="tocviewlink" data-pltdoc="x">Fixed-<wbr>Size Data</a></td></tr><tr><td align="right"></td><td><a href="i1-2.html" class="tocviewlink" data-pltdoc="x">Intermezzo 1: Beginning Student Language</a></td></tr><tr><td align="right">II&nbsp;</td><td><a href="part_two.html" class="tocviewlink" data-pltdoc="x">Arbitrarily Large Data</a></td></tr><tr><td align="right"></td><td><a href="i2-3.html" class="tocviewlink" data-pltdoc="x">Intermezzo 2: Quote, Unquote</a></td></tr><tr><td align="right">III&nbsp;</td><td><a href="part_three.html" class="tocviewlink" data-pltdoc="x">Abstraction</a></td></tr><tr><td align="right"></td><td><a href="i3-4.html" class="tocviewlink" data-pltdoc="x">Intermezzo 3: Scope and Abstraction</a></td></tr><tr><td align="right">IV&nbsp;</td><td><a href="part_four.html" class="tocviewlink" data-pltdoc="x">Intertwined Data</a></td></tr><tr><td align="right"></td><td><a href="i4-5.html" class="tocviewlink" data-pltdoc="x">Intermezzo 4: The Nature of Numbers</a></td></tr><tr><td align="right">V&nbsp;</td><td><a href="part_five.html" class="tocviewlink" data-pltdoc="x">Generative Recursion</a></td></tr><tr><td align="right"></td><td><a href="i5-6.html" class="tocviewlink" data-pltdoc="x">Intermezzo 5: The Cost of Computation</a></td></tr><tr><td align="right">VI&nbsp;</td><td><a href="part_six.html" class="tocviewlink" data-pltdoc="x">Accumulators</a></td></tr><tr><td align="right"></td><td><a href="part_epilogue.html" class="tocviewlink" data-pltdoc="x">Epilogue:<span class="mywbr"> &nbsp;</span> Moving On</a></td></tr></table></div></div><div class="tocviewlist"><table cellspacing="0" cellpadding="0"><tr><td style="width: 1em;"><a href="javascript:void(0);" title="Expand/Collapse" class="tocviewtoggle" onclick="TocviewToggle(this,&quot;tocview_1&quot;);">&#9658;</a></td><td></td><td><a href="" class="tocviewselflink" data-pltdoc="x">Preface</a></td></tr></table><div class="tocviewsublistbottom" style="display: none;" id="tocview_1"><table cellspacing="0" cellpadding="0"><tr><td align="right"></td><td><a href="#%28part._.Acknowledgments_from_the_.First_.Edition%29" class="tocviewlink" data-pltdoc="x">Acknowledgments from the First Edition</a></td></tr><tr><td align="right"></td><td><a href="#%28part._.Acknowledgments%29" class="tocviewlink" data-pltdoc="x">Acknowledgments</a></td></tr></table></div></div></div></div><div class="maincolumn"><div class="main"><div class="versionbox"><span class="version">7.7.0.4</span></div><div class="navsettop"><span class="navleft"><div class="nosearchform"></div>&nbsp;&nbsp;</span><span class="navright">&nbsp;&nbsp;<a href="index.html" title="backward to &quot;How to Design Programs, Second Edition&quot;" data-pltdoc="x">&larr; prev</a>&nbsp;&nbsp;<a href="index.html" title="up to &quot;How to Design Programs, Second Edition&quot;" data-pltdoc="x">up</a>&nbsp;&nbsp;<a href="part_prologue.html" title="forward to &quot;Prologue: How to Program&quot;" data-pltdoc="x">next &rarr;</a></span>&nbsp;</div><h3><a name="(part._part~3apreface)"></a>Preface</h3><a name="(part._chap~3apart~3apreface)"></a><table cellspacing="0" cellpadding="0"><tr><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="#%28part._sec~3asystematic-design%29" class="toclink" data-pltdoc="x">Systematic Program Design</a></p></td></tr><tr><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="#%28part._drtl%29" class="toclink" data-pltdoc="x">DrRacket and the Teaching Languages</a></p></td></tr><tr><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="#%28part._skills%29" class="toclink" data-pltdoc="x">Skills that Transfer</a></p></td></tr><tr><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="#%28part._this%29" class="toclink" data-pltdoc="x">This Book and Its Parts</a></p></td></tr><tr><td><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;</span><a href="#%28part._delta%29" class="toclink" data-pltdoc="x">The Differences</a></p></td></tr></table><p>Many professions require some form of programming. Accountants program
+ spreadsheets; musicians program synthesizers; authors program word
+ processors; and web designers program style sheets.  When we wrote these
+ words for the first edition of the book (1995&ndash;2000), readers may have considered
+ them futuristic; by now, programming has become a required skill and
+ numerous outlets&#8212;<wbr>books, on-line courses, K-12 curricula&#8212;<wbr>cater to this
+ need, always with the goal of enhancing people&rsquo;s job prospects.</p><p>The typical course on programming teaches a &ldquo;tinker until it works&rdquo;
+ approach. When it works, students exclaim &ldquo;It works!&rdquo; and move on. Sadly,
+ this phrase is also the shortest lie in computing, and it has cost many
+ people many hours of their lives. In contrast, this book focuses on habits
+ of <span class="emph">good programming</span>, addressing both professional and vocational
+ programmers.</p><p>By &ldquo;good programming,&rdquo; we mean an approach to the creation of software
+ that relies on systematic thought, planning, and understanding from the
+ very beginning, at every stage, and for every step.  To emphasize the
+ point, we speak of systematic <span class="emph">program design</span> and systematically
+ <span class="emph">designed programs</span>.  Critically, the latter articulates the rationale
+ of the desired functionality.  Good programming also satisfies an
+ aesthetic sense of accomplishment; the elegance of a good program is
+ comparable to time-tested poems or the black-and-white photographs of a
+ bygone era. In short, programming differs from good programming like
+ crayon sketches in a diner from oil paintings in a museum.</p><p><div class="SIntrapara">No, this book won&rsquo;t turn anyone into a master painter. But, we would not
+ have spent fifteen years writing this edition if we didn&rsquo;t believe that
+</div><div class="SIntrapara"><blockquote class="SCentered"><p><span class="emph">everyone can design programs</span></p></blockquote></div><div class="SIntrapara">and
+</div><div class="SIntrapara"><blockquote class="SCentered"><p><span class="emph">everyone can experience the satisfaction that comes with creative design.</span></p></blockquote></div><div class="SIntrapara">Indeed, we go even further and argue that
+</div><div class="SIntrapara"><blockquote class="SCentered"><p><span class="emph">program design&#8212;<wbr>but <span style="font-weight: bold">not programming</span>&#8212;<wbr>deserves the same role
+
+in a liberal-arts education as mathematics and language skills.</span></p></blockquote></div><div class="SIntrapara">A student of design who never touches a program again will still pick up
+ universally useful problem-solving skills, experience a deeply creative
+ activity, and learn to appreciate a new form of aesthetic. The rest of
+ this preface explains in detail what we mean with &#8220;systematic design,&#8221; who
+ benefits in what manner, and how we go about teaching it all.</div><h4><a name="(part._sec~3asystematic-design)"></a>Systematic Program Design</h4><p>A program interacts with people, dubbed <span style="font-style: italic">users</span>, and other programs, in
+ which case we speak of <span style="font-style: italic">server</span> and <span style="font-style: italic">client</span>
+ components. Hence any reasonably complete program consists of many building
+ blocks: some deal with input, some create output, while some bridge the gap
+ between those two. We choose to use functions as fundamental building
+ blocks because everyone encounters functions in pre-algebra and because
+ the simplest programs are just such functions.  The key is to discover
+ which functions are needed, how to connect them, and how to build them
+ from basic ingredients.</p><p>In this context, &ldquo;systematic program design&rdquo; refers to a mix of two
+ concepts: design recipes and iterative refinement.<span class="refelem"><span class="refcolumn"><span class="refcontent">We drew
+inspiration from Michael Jackson&rsquo;s method for creating COBOL programs plus
+conversations with Daniel Friedman on recursion, Robert Harper on type
+theory, and Daniel Jackson on software design.</span></span></span> The design recipes are a
+ creation of the authors, and here they enable the use of the latter.</p><blockquote class="Figure"><blockquote class="Leftfigure"><blockquote class="FigureInside"><ol><li><p><span style="font-weight: bold">From Problem Analysis to Data Definitions</span></p><p><span class="Smaller">Identify the information that must be represented and how it is
+represented in the chosen programming language. Formulate data definitions
+and illustrate them with examples.</span></p></li><li><p><span style="font-weight: bold">Signature, Purpose Statement, Header</span></p><p><span class="Smaller">State what kind of data the desired function consumes and
+produces.  Formulate a concise answer to the question <span class="emph">what</span> the
+function computes. Define a stub that lives up to the signature.</span></p></li><li><p><span style="font-weight: bold">Functional Examples</span></p><p><span class="Smaller">Work through examples that illustrate the function&rsquo;s purpose.</span></p></li><li><p><span style="font-weight: bold">Function Template</span></p><p><span class="Smaller">Translate the data definitions into an outline of the function.</span></p></li><li><p><span style="font-weight: bold">Function Definition</span></p><p><span class="Smaller">Fill in the gaps in the function template. Exploit the purpose
+statement and the examples.</span></p></li><li><p><span style="font-weight: bold">Testing</span></p><p><span class="Smaller">Articulate the examples as tests and ensure that the function
+passes all. Doing so discovers mistakes. Tests also supplement examples in
+that they help others read and understand the definition when the need
+arises&#8212;<wbr>and it will arise for any serious program.</span></p></li></ol></blockquote></blockquote><p class="Centertext"><span class="Legend"><span class="FigureTarget"><a name="(counter._(figure._fig~3athe-design-recipe))" x-target-lift="Figure"></a>Figure&nbsp;1: </span>The basic steps of a function design recipe</span></p></blockquote><p><span style="font-weight: bold">Design Recipes</span> apply to both complete programs and individual
+ functions. This book deals with just two recipes for complete programs:
+ one for programs with a graphical user interface (GUI) and one for batch
+ programs. In contrast, design recipes for functions come in a wide variety
+ of flavors: for atomic forms of data such as numbers; for enumerations of
+ different kinds of data; for data that compounds other data in a fixed
+ manner; for finite but arbitrarily large data; and so on.</p><p>The function-level design recipes share a common <span style="font-weight: bold">design
+process</span>. <a href="#%28counter._%28figure._fig~3athe-design-recipe%29%29" data-pltdoc="x">Figure&nbsp;<span class="FigureRef">1</span></a> displays its six essential
+ steps. The title of each step specifies the expected outcome(s); the
+ &ldquo;commands&rdquo; suggest the key activities.  Examples play a central role at
+ almost every stage.<span class="refelem"><span class="refcolumn"><span class="refcontent"><span style="font-weight: bold">Instructors</span> Have students copy
+<a href="#%28counter._%28figure._fig~3athe-design-recipe%29%29" data-pltdoc="x">figure&nbsp;<span class="FigureRef">1</span></a> on one side of an index card.  When
+students are stuck, ask them to produce their card and point them to the
+step where they are stuck.</span></span></span>  For the chosen data representation in step 1,
+ writing down examples proves how real-world information is encoded as data
+ and how data is interpreted as information. Step 3 says that a
+ problem-solver must work through concrete scenarios to gain an
+ understanding of what the desired function is expected to compute for
+ specific examples. This understanding is exploited in step 5, when it is
+ time to define the function. Finally, step 6 demands that examples are
+ turned into automated test code, which ensures that the function works
+ properly for some cases. Running the function on real-world data may
+ reveal other discrepancies between expectations and results.</p><p>Each step of the design process comes with pointed questions.  For certain
+ steps&#8212;<wbr>say, the creation of the functional examples or the template&#8212;<wbr>the
+ questions may appeal to the data definition. The answers almost
+ automatically create an intermediate
+ product.<span class="refelem"><span class="refcolumn"><span class="refcontent"><span style="font-weight: bold">Instructors</span> The most important questions are
+those for steps 4 and 5. Ask students to write down these questions in
+their own words on the back of their index card.</span></span></span> This scaffolding pays off
+ when it comes time to take the one creative step in the process: the
+ completion of the function definition. And even then, help is available in
+ almost all cases.</p><p>The novelty of this approach is the creation of intermediate products for
+ beginner-level programs. When a novice is stuck, an expert or an
+ instructor can inspect the existing intermediate products. The inspection
+ is likely to use the generic questions from the design process and thus
+ drive the novice to correct himself or herself. And this self-empowering
+ process is the key difference between programming and program design.</p><p><span style="font-weight: bold">Iterative Refinement</span> addresses the issue that problems are complex
+ and multifaceted. Getting everything right at once is nearly
+ impossible. Instead, computer scientists borrow iterative refinement from
+ the physical sciences to tackle this design problem. In essence, iterative
+ refinement recommends stripping away all inessential details at first and
+ finding a solution for the remaining core problem. A refinement step adds
+ in one of these omitted details and re-solves the expanded problem, using
+ the existing solution as much as possible. A repetition, also called an
+ iteration, of these refinement steps eventually leads to a complete
+ solution.</p><p>In this sense, a programmer is a miniscientist. Scientists create
+ approximate models for some idealized version of the world to make
+ predictions about it. As long as the model&rsquo;s predictions come true,
+ everything is fine; when the predicted events differ from the actual ones,
+ scientists revise their models to reduce the discrepancy. In a similar
+ vein, when programmers are given a task, they create a first design, turn
+ it into code, evaluate it with actual users, and iteratively refine the
+ design until the program&rsquo;s behavior closely matches the desired product.</p><p>This book introduces iterative refinement in two different ways. Since
+ designing via refinement becomes useful even when the design of programs becomes
+ complex, the book introduces the technique explicitly in the fourth part,
+ once the problems acquire a certain degree of difficulty. Furthermore, we
+ use iterative refinement to state increasingly complex variants of the
+ same problem over the course of the first three parts of the book. That
+ is, we pick a core problem, deal with it in one chapter, and then pose a
+ similar problem in a subsequent chapter&#8212;<wbr>with details matching the newly
+ introduced concepts.</p><h4><a name="(part._drtl)"></a>DrRacket and the Teaching Languages</h4><p>Learning to design programs calls for repeated hands-on practice. Just as
+ nobody becomes a piano player without playing the piano, nobody
+ becomes a program designer without creating actual programs and getting
+ them to work properly. Hence, our book comes with a modicum of software
+ support: a language in which to write down programs and a <span style="font-style: italic">program
+development environment</span> with which programs are edited like word
+ documents and with which readers can run programs.</p><p>Many people we encounter tell us they wish they knew how to code and then
+ ask <span class="emph">which programming language</span> they should learn. Given the press
+ that some programming languages get, this question is not surprising. But
+ it is also wholly inappropriate.<span class="refelem"><span class="refcolumn"><span class="refcontent"><span style="font-weight: bold">Instructors</span> For
+courses not aimed at beginners, it may be possible to use an off-the-shelf
+language with the design recipes.</span></span></span>  Learning to program in a currently
+ fashionable programming language often sets up students for
+ eventual failure. Fashion in this world is extremely short lived.  A typical
+ &ldquo;quick programming in X&rdquo; book or course fails to teach principles that
+ transfer to the next fashion language. Worse, the language itself often
+ distracts from the acquisition of transferable skills, at the level
+ of both expressing solutions and dealing with programming mistakes.</p><p>In contrast, learning to design programs is primarily about the study of
+ principles and the acquisition of transferable skills.  The ideal
+ programming language must support these two goals, but no off-the-shelf
+ industrial language does so. The crucial problem is that beginners make
+ mistakes <span class="emph">before</span> they know much of the language, yet programming
+ languages always diagnose these errors as if the programmer already knew
+ the whole language. As a result, diagnosis reports often stump beginners.</p><p>Our solution is to start with our own tailor-made teaching language,
+ dubbed &ldquo;Beginning Student Language&rdquo; or BSL. The language is
+ essentially the &ldquo;foreign&rdquo; language that students acquire in pre-algebra
+ courses. It includes notation for function definitions, function
+ applications, and conditional expressions. Also, expressions can
+ be<span class="refelem"><span class="refcolumn"><span class="refcontent"><span style="font-weight: bold">Instructors</span> You may wish to explain that BSL is
+pre-algebra with additional forms of data and a host of pre-defined
+functions on those.</span></span></span> nested. This language is thus so small that an error
+ diagnosis in terms of the whole language is still accessible to readers
+ with nothing but pre-algebra under their belt.</p><p>A student who has mastered the structural design principles can then move
+ on to &ldquo;Intermediate Student Language&rdquo; and other advanced dialects,
+ collectively dubbed <span class="stt">*SL</span>. The book uses these dialects to teach design
+ principles of abstraction and general recursion. We firmly believe that
+ using such a series of teaching languages provides readers with a superior
+ preparation for creating programs for the wide spectrum of
+ professional programming languages (JavaScript, Python, Ruby, Java, and
+ others).</p><p><span style="font-weight: bold">Note</span> The teaching languages are implemented in <span style="font-style: italic">Racket</span>, a
+ programming language we built for building programming languages. Racket
+ has escaped from the lab into the real world, and it is a programming
+ vehicle of choice in a variety of settings, from gaming to the control of
+ telescope arrays. Although the teaching languages borrow elements from the
+ Racket language, this book does <span style="font-weight: bold">not</span> teach Racket. Then again, a
+ student who has completed this book can easily move on to
+ Racket. <span style="font-weight: bold">End</span></p><p>When it comes to programming environments, we face an equally bad choice as
+ the one for languages. A programming environment for professionals is
+ analogous to the cockpit of a jumbo jet. It has numerous controls and
+ displays, overwhelming anyone who first launches such a software
+ application. Novice programmers need the equivalent of a two-seat,
+ single-engine propeller aircraft with which they can practice basic
+ skills. We have therefore created DrRacket, a programming environment for
+ novices.</p><p>DrRacket supports highly playful, feedback-oriented learning with just two
+ simple interactive panes: a definitions area, which contains function
+ definitions, and an interactions area, which allows a programmer to ask
+ for the evaluation of expressions that may refer to the definitions. In
+ this context, it is as easy to explore &ldquo;what if&rdquo; scenarios as in a
+ spreadsheet application. Experimentation can start on first contact, using
+ conventional calculator-style examples and quickly proceeding to
+ calculations with images, words, and other forms of data.</p><p>An interactive program development environment such as DrRacket simplifies the
+  learning process in two ways. First, it enables novice programmers to
+  manipulate data directly. Because no facilities for reading input
+  information from files or devices are needed, novices don&rsquo;t need to spend
+  valuable time on figuring out how these work. Second, the arrangement
+  strictly separates data and data manipulation from input and output of
+  information from the &ldquo;real world.&rdquo; Nowadays this separation is
+  considered so fundamental to the systematic design of software that it
+  has its own name: <span style="font-style: italic">model-view-controller architecture</span>. By
+  working in DrRacket, new programmers are exposed to this fundamental
+  software engineering idea in a natural way from the get-go.</p><h4><a name="(part._skills)"></a>Skills that Transfer</h4><p>The skills acquired from learning to design programs systematically
+ transfer in two directions. Naturally, they apply to programming in general
+ as well as to programming spreadsheets, synthesizers, style sheets, and even word
+ processors. Our observations suggest that the design process from
+ <a href="#%28counter._%28figure._fig~3athe-design-recipe%29%29" data-pltdoc="x">figure&nbsp;<span class="FigureRef">1</span></a> carries over to almost any programming
+ language, and it works for 10-line programs as well as for 10,000-line
+ programs. It takes some reflection to adopt the design process across the
+ spectrum of languages and scale of programming problems; but once the
+ process becomes second nature, its use pays off in many ways.</p><p>Learning to design programs also means acquiring two kinds of universally
+ useful skills. Program design certainly teaches the same analytical skills
+ as mathematics, especially (pre)algebra and geometry. But, unlike
+ mathematics, working with programs is an active approach to
+ learning. Creating software provides immediate feedback and thus leads to
+ exploration, experimentation, and self-evaluation. The results tend to be
+ interactive products, an approach that vastly increases the sense of accomplishment
+ when compared to drill exercises in textbooks.</p><p>In addition to enhancing a student&rsquo;s mathematical skills, program design
+ teaches analytical reading and writing skills. Even the smallest design
+ tasks are formulated as word problems. Without solid reading and comprehension skills, it
+ is impossible to design programs that solve a reasonably complex
+ problem. Conversely, program design methods force a creator to articulate
+ his or her thoughts in proper and precise language. Indeed, if students
+ truly absorb the design recipe, they enhance their articulation skills more than
+ anything else.</p><p><div class="SIntrapara">To illustrate this point, take a second look at the process description in
+<a href="#%28counter._%28figure._fig~3athe-design-recipe%29%29" data-pltdoc="x">figure&nbsp;<span class="FigureRef">1</span></a>. It says that a designer must
+</div><div class="SIntrapara"><ol><li><p>analyze a problem statement, typically stated as a word problem;</p></li><li><p>extract and express its essence, abstractly;</p></li><li><p>illustrate the essence with examples;</p></li><li><p>make outlines and plans based on this analysis;</p></li><li><p>evaluate results with respect to expected outcomes; and</p></li><li><p>revise the product in light of failed checks and tests.</p></li></ol></div><p>Each step requires analysis, precision, description, focus, and attention
+ to details.  Any experienced entrepreneur, engineer, journalist,
+ lawyer, scientist, or any other professional can explain how many of
+ these skills are necessary for his or her daily work. Practicing program
+ design&#8212;<wbr>on paper and in DrRacket&#8212;<wbr>is a joyful way to acquire these skills.</p><p>Similarly, refining designs is not restricted to computer science and
+ program creation.  Architects, composers, writers, and other professionals
+ do it, too.  They start with ideas in their head and somehow articulate
+ their essence. They refine these ideas on paper until their product
+ reflects their mental image as much as possible. As they bring their ideas
+ to paper, they employ skills analogous to fully absorbed design recipes:
+ drawing, writing, or piano playing to express certain style elements of a
+ building, describe a person&rsquo;s character, or formulate portions of a
+ melody. What makes them productive with an iterative development process
+ is that they have absorbed their basic design recipes and learned how to
+ choose which one to use for the current situation.</p><h4><a name="(part._this)"></a>This Book and Its Parts</h4><p>The purpose of this book is to introduce readers without prior experience
+ to the <span class="emph">systematic design of programs</span>.  In tandem, it presents a
+ <span class="emph">symbolic view of computation</span>, a method that explains how the
+ application of a program to data works. Roughly speaking, this method
+ generalizes what students learn in elementary school arithmetic and middle
+ school algebra. But have no fear. DrRacket comes with a mechanism&#8212;<wbr>the
+ algebraic stepper&#8212;<wbr>that can illustrate these step-by-step calculations.</p><p>The book consists of six parts separated by five intermezzos and is bookended
+ by a Prologue and an Epilogue. While the major parts focus on program
+ design, the intermezzos introduce supplementary concepts concerning
+ programming mechanics and computing.</p><p><div class="SIntrapara"><a href="part_prologue.html" data-pltdoc="x">Prologue: How to Program</a> is a quick introduction to plain programming. It
+ explains how to write a simple animation in <span class="stt">*SL</span>. Once finished, any
+ beginner is bound to feel simultaneously empowered and overwhelmed. The
+ final note therefore explains why plain programming is wrong and how a
+ systematic, gradual approach to program design eliminates the sense
+ of dread that every beginning programmer usually experiences. Now the
+ stage is set for the core of the book:
+</div><div class="SIntrapara"><ul><li><p><a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> explains the most fundamental concepts of
+systematic design using simple examples. The central idea is that
+designers typically have a rough idea of what data the program is supposed
+to consume and produce. A systematic approach to design must therefore
+extract as many hints as possible from the description of the data that
+flows into and out of a program. To keep things simple, this part starts
+with atomic data&#8212;<wbr>numbers, images, and so on&#8212;<wbr>and then gradually
+introduces new ways of describing data: intervals, enumerations,
+itemizations, structures, and combinations of these.</p></li><li><p><a href="i1-2.html" data-pltdoc="x">Intermezzo 1: Beginning Student Language</a> describes the teaching language in complete detail: its
+vocabulary, its grammar, and its meaning. Computer scientists refer to these
+as syntax and semantics. Program designers use this model of computation
+to predict what their creations compute when run or to analyze error
+diagnostics.</p></li><li><p><a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a> extends <a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> with the means to
+describe the most interesting and useful forms of data: arbitrarily large
+compound data. While a programmer may nest the kinds of data from
+<a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> to represent information, the nesting is always of a
+fixed depth and breadth. This part shows how a subtle generalization gets
+us from there to data of arbitrary size. The focus then switches to the
+systematic design of programs that process this kind of data.</p></li><li><p><a href="i2-3.html" data-pltdoc="x">Intermezzo 2: Quote, Unquote</a> introduces a concise and powerful notation for writing
+down large pieces of data: quotation and anti-quotation.</p></li><li><p><a href="part_three.html" data-pltdoc="x">Abstraction</a> acknowledges that many of the functions from
+<a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a> look alike. No programming language should force
+programmers to create pieces of code that are so similar to each other.
+Conversely, every good programming language comes with ways to eliminate
+such similarities. Computer scientists call both the step of eliminating
+similarities and its result <span style="font-style: italic">abstraction</span>, and they know that
+abstractions greatly increase a programmer&rsquo;s productivity. Hence, this
+part introduces design recipes for creating and using abstractions.</p></li><li><p><a href="i3-4.html" data-pltdoc="x">Intermezzo 3: Scope and Abstraction</a> plays two roles. On the one hand, it injects the concept of
+<span class="emph">lexical scope</span>, the idea that a programming language ties every
+occurrence of a name to a definition that a programmer can find with an
+inspection of the code. On the other hand, it explains a library with
+additional mechanisms for abstraction, including so-called <span class="emph">for loops</span>.</p></li><li><p><a href="part_four.html" data-pltdoc="x">Intertwined Data</a> generalizes <a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a> and explicitly
+introduces the idea of iterative refinement into the catalog of design
+concepts.</p></li><li><p><a href="i4-5.html" data-pltdoc="x">Intermezzo 4: The Nature of Numbers</a> explains and illustrates why decimal numbers work in
+such strange ways in all programming languages. Every budding programmer
+ought to know these basic facts.</p></li><li><p><a href="part_five.html" data-pltdoc="x">Generative Recursion</a> adds a new design principle. While
+structural design and abstraction suffice for most problems that
+programmers encounter, they occasionally lead to insufficiently
+&ldquo;performant&rdquo; programs. That is, structurally designed programs
+might need too much time or energy to compute the desired
+answers. Computer scientists therefore replace structurally designed
+programs with programs that benefit from ad hoc insights into the problem
+domain. This part of the book shows how to design a large class of just
+such programs.</p></li><li><p><a href="i5-6.html" data-pltdoc="x">Intermezzo 5: The Cost of Computation</a> uses examples from <a href="part_five.html" data-pltdoc="x">Generative Recursion</a> to illustrate how
+computer scientists think about performance.</p></li><li><p><a href="part_six.html" data-pltdoc="x">Accumulators</a> adds one final trick to the toolbox of designers:
+accumulators. Roughly speaking, an accumulator adds &ldquo;memory&rdquo; to a
+function.  The addition of memory greatly improves the performance of
+structurally designed functions from the first four parts of the book. For
+the ad hoc programs from <a href="part_five.html" data-pltdoc="x">Generative Recursion</a>, accumulators can make the
+difference between finding an answer and never finding one.</p></li></ul></div><div class="SIntrapara"><a href="part_epilogue.html" data-pltdoc="x">Epilogue: Moving On</a> is both an assessment and a look ahead to what&rsquo;s next.</div><blockquote class="Figure"><blockquote class="Centerfigure"><blockquote class="FigureInside"><blockquote class="SCentered"><p><img style="vertical-align: 0px; margin: -3px -3px -3px -3px;" src="pict.png" alt="image" width="534.0" height="534.0"></p></blockquote></blockquote></blockquote><p class="Centertext"><span class="Legend"><span class="FigureTarget"><a name="(counter._(figure._fig~3adependence))" x-target-lift="Figure"></a>Figure&nbsp;2: </span>The dependencies among parts and intermezzos</span></p></blockquote><p>Independent readers ought to work through the entire book, from the first
+ page to the last. We say &ldquo;work&rdquo; because we really mean that a reader
+ ought to solve all exercises or at least know how to solve them.</p><p>Similarly, instructors ought to cover as many elements as possible,
+ starting from the Prologue all the way through the Epilogue.  Our teaching
+ experience suggests that this is doable. Typically, we organize our courses
+ so that our readers create a sizable and entertaining program over the
+ course of the semester. We understand, however, that some circumstances
+ call for significant cuts and that some instructors&rsquo; tastes call for
+ slightly different ways to use the book.</p><p><a href="#%28counter._%28figure._fig~3adependence%29%29" data-pltdoc="x">Figure&nbsp;<span class="FigureRef">2</span></a> is a navigation chart for those who wish to
+ pick and choose from the elements of the book. The figure is a dependency
+ graph. A solid arrow from one element to another suggests a mandatory
+ ordering; for example, Part II requires an understanding of Part I. In
+ contrast, a dotted arrow is mostly a suggestion; for example,
+ understanding the Prologue is unnecessary to get through the rest of the
+ book.</p><p><div class="SIntrapara">Based on this chart, here are three feasible paths through the book:
+</div><div class="SIntrapara"><ul><li><p>A high school instructor may want to cover (as much as possible of)
+parts I and II, including a small project such as a game.</p></li><li><p>A college instructor in a quarter system may wish to focus on
+<a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a>, <a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a>, <a href="part_three.html" data-pltdoc="x">Abstraction</a>,
+and <a href="part_five.html" data-pltdoc="x">Generative Recursion</a>, plus the intermezzos on <span class="stt">*SL</span> and scope.</p></li><li><p>A college instructor in a semester system may prefer to discuss
+performance trade-offs in designs as early as possible. In this case, it
+is best to cover <a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> and <a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a> and then
+the accumulator material from <a href="part_six.html" data-pltdoc="x">Accumulators</a> that does not depend
+on <a href="part_five.html" data-pltdoc="x">Generative Recursion</a>. At that point, it is possible to discuss
+<a href="i5-6.html" data-pltdoc="x">Intermezzo 5: The Cost of Computation</a> and to study the rest of the book from this angle.</p></li></ul></div><p><span style="font-weight: bold">Iteration of Sample Topics</span> The book revisits certain exercise and
+ sample topics time and again.  For example, virtual pets are found all over
+ <a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> and even show up in <a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a>. Similarly, both
+ <a href="part_one.html" data-pltdoc="x">Fixed-Size Data</a> and <a href="part_two.html" data-pltdoc="x">Arbitrarily Large Data</a> cover alternative approaches to
+ implementing an interactive text editor. Graphs appear in
+ <a href="part_five.html" data-pltdoc="x">Generative Recursion</a> and immediately again in <a href="part_six.html" data-pltdoc="x">Accumulators</a>. The purpose
+ of these iterations is to motivate iterative refinement and to introduce
+ it through the backdoor. We urge instructors to assign these themed
+ sequences of exercises or to create their own such sequences.</p><h4><a name="(part._delta)"></a>The Differences</h4><p><div class="SIntrapara">This second edition of <span style="font-style: italic">How to Design Programs</span> differs from the first
+one in several major aspects:
+</div><div class="SIntrapara"><ol><li><p>It explicitly acknowledges the difference between
+designing a whole program and the functions that make up a
+program. Specifically, this edition focuses on two kinds of programs:
+event-driven (mostly GUI, but also networking) programs and batch programs.</p></li><li><p>The design of a program proceeds in a top-down planning phase
+followed by a bottom-up construction phase. We explicitly show how the
+interface to libraries dictates the shape of certain program elements. In
+particular, the very first phase of a program design yields a wish list of
+functions. While the concept of a wish list exists in the first edition,
+this second edition treats it as an explicit design element.</p></li><li><p>Fulfilling an entry from the wish list relies on the function
+design recipe, which is the subject of the six major parts.</p></li><li><p>A key element of structural design is the definition of functions
+that compose others. This design-by-composition is especially useful for
+the world of batch programs. Like generative recursion,<span class="refelem"><span class="refcolumn"><span class="refcontent">We
+thank Kathi Fisler for calling our attention to this point.</span></span></span> it requires a
+<span class="emph">eureka!</span>, specifically a recognition that the creation of
+intermediate data by one function and processing this intermediate result
+by a second function simplifies the overall design. This approach also
+needs a wish list, but formulating these wishes calls for an insightful
+development of an intermediate data definition. This edition of the book
+weaves in a number of explicit exercises on design by composition.</p></li><li><p>While testing has always been a part of our design philosophy, the
+teaching languages and DrRacket started supporting it properly only in 2002,
+just after we had released the first edition. This new edition heavily
+relies on this testing support.</p></li><li><p>This edition of the book drops the design of imperative programs. The
+old chapters remain available on-line. An adaptation of this material will
+appear in the second volume of this series, <span style="font-style: italic">How to Design Components.</span></p></li><li><p>The book&rsquo;s examples and exercises employ new teachpacks. The
+preferred style is to link in these libraries via
+<span class="RktSym"><a href="../../htdp-langs/beginner.html#%28form._%28%28lib._lang%2Fhtdp-beginner..rkt%29._require%29%29" class="RktStxLink" data-pltdoc="x">require</a></span>, but it is still possible to add
+teachpacks via a menu in DrRacket.</p></li><li><p><div class="SIntrapara">Finally, this second edition differs from the first in a few aspects
+ of terminology and notation:
+</div><div class="SIntrapara"><blockquote><table cellspacing="0" cellpadding="0" style="border-collapse: collapse;"><tr><td align="left" style="border-bottom: 1px solid black;"><p>Second Edition</p></td><td align="left" style="border-bottom: 1px solid black;"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left" style="border-bottom: 1px solid black;"><p>First Edition</p></td></tr><tr><td align="left"><p>signature</p></td><td align="left"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left"><p>contract</p></td></tr><tr><td align="left"><p>itemization</p></td><td align="left"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left"><p>union</p></td></tr><tr><td align="left"><p><span class="RktVal">'</span><span class="RktVal">(</span><span class="RktVal">)</span></p></td><td align="left"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left"><p><span class="RktSym"><a href="../../htdp-langs/beginner.html#%28def._%28%28lib._lang%2Fhtdp-beginner..rkt%29._empty%29%29" class="RktValLink" data-pltdoc="x">empty</a></span></p></td></tr><tr><td align="left"><p><span class="RktVal">#true</span></p></td><td align="left"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left"><p><span class="RktSym"><a href="../../htdp-langs/beginner.html#%28def._%28%28lib._lang%2Fhtdp-beginner..rkt%29._true%29%29" class="RktValLink" data-pltdoc="x">true</a></span></p></td></tr><tr><td align="left"><p><span class="RktVal">#false</span></p></td><td align="left"><p><span class="hspace">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p></td><td align="left"><p><span class="RktSym"><a href="../../htdp-langs/beginner.html#%28def._%28%28lib._lang%2Fhtdp-beginner..rkt%29._false%29%29" class="RktValLink" data-pltdoc="x">false</a></span></p></td></tr></table></blockquote></div><div class="SIntrapara">The last three differences greatly improve quotation for lists.</div></li></ol></div><h3><a name="(part._.Acknowledgments_from_the_.First_.Edition)"></a>Acknowledgments from the First Edition</h3><p>Four people deserve special thanks: Robert &ldquo;Corky&rdquo; Cartwright, who
+co-developed a predecessor of Rice University&rsquo;s introductory course with the first
+author; Daniel P. Friedman, for asking the first author to rewrite
+<span class="emph">The Little LISPer</span> (also MIT Press) in 1984, because it started this
+project; John Clements, who designed, implemented, and maintains DrRacket&rsquo;s
+stepper; and Paul Steckler, who faithfully supported the team with
+contributions to our suite of programming tools.</p><p>The development of the book benefited from many other friends and
+colleagues who used it in courses and/or gave detailed comments on
+early drafts. We are grateful to them for their help and patience:
+Ian Barland,
+John Clements,
+Bruce Duba,
+Mike Ernst,
+Kathi Fisler,
+Daniel P. Friedman,
+John Greiner,
+G&#233;raldine Morin,
+John Stone,
+and
+Valdemar Tamez.</p><p>A dozen generations of Comp 210 students at Rice used
+early drafts of the text and contributed improvements in various
+ways.  In addition, numerous attendees of our TeachScheme! workshops used early
+drafts in their classrooms. Many sent in comments and
+suggestions. As representative of these we mention the following active
+contributors:
+Ms. Barbara Adler,
+Dr. Stephen Bloch,
+Ms. Karen Buras,
+Mr. Jack Clay,
+Dr. Richard Clemens,
+Mr. Kyle Gillette,
+Mr. Marvin Hernandez,
+Mr. Michael Hunt,
+Ms. Karen North,
+Mr. Jamie Raymond,
+and
+Mr. Robert Reid.
+Christopher Felleisen patiently worked through the first few parts of
+the book with his father and provided direct insight into the views of a
+young student.
+Hrvoje Blazevic (sailing, at the time, as Master of the <span style="font-style: italic">LPG/C Harriette</span>),
+Joe Zachary (University of
+Utah), and Daniel P. Friedman (Indiana University) discovered numerous
+typos in the first printing, which we have now fixed.
+Thank you to everyone.</p><p>Finally, Matthias expresses his gratitude to Helga for her many years of
+patience and for creating a home for an absent-minded husband and
+father. Robby is grateful to Hsing-Huei Huang for her support and
+encouragement; without her, he would not have gotten anything
+done. Matthew thanks Wen Yuan for her constant support and enduring music.
+Shriram is indebted to Kathi Fisler for support, patience and puns, and for
+her participation in this project.</p><h3><a name="(part._.Acknowledgments)"></a>Acknowledgments</h3><p>As in 2001, we are grateful to John Clements for designing, validating,
+implementing, and maintaining DrRacket&rsquo;s algebraic stepper. He has done so for
+nearly 20 years now, and the stepper has become an indispensable tool of
+explanation and instruction.</p><p>Over the past few years, several colleagues have commented on the various
+drafts and suggested improvements. We gratefully acknowledge the thoughtful
+conversations and exchanges with these individuals:</p><p><div class="SIntrapara"><blockquote><p>Kathi Fisler (WPI and Brown University), Gregor Kiczales (University of
+British Columbia), Prabhakar Ragde (University of Waterloo), and Norman
+Ramsey (Tufts University).</p></blockquote></div><div class="SIntrapara">Thousands of teachers and instructors attended our various workshops over
+the years, and many provided valuable feedback. But Dan Anderson, Stephen
+Bloch, Jack Clay, Nadeem Abdul Hamid, and Viera Proulx stand out, and we
+wish to call out their role in the crafting of this edition.</div><p>Guillaume Marceau, working with Kathi Fisler and Shriram, spent many months
+studying and improving the error messages in DrRacket. We are grateful for his
+amazing work.</p><p>Celeste Hollenbeck is the most amazing reader ever. She never tired of
+pushing back until she understood the prose. She never stopped until a
+section supported its thesis, its organization matched, and its sentences
+connected. Thank you very much for your incredible efforts.</p><p>We also thank the following: Ennas Abdussalam,  Mark Aldrich,  Mehmet Akif Akkus,  Anisa Anuar,  Franco Barbeite, 
+ Saad Bashir, Aaron Bauman,  Suzanne Becker,  Michael Bausch,  Steven Belknap,
+ Stephen Bloch, Elijah Botkin,  Joseph Bogart William Brown, 
+ Tomas Cabrera, Xuyuqun C,  Colin Caine,  Anthony Carrico,  Rodolfo Carvalho, 
+ Estevo Castro, Maria Chacon, 
+ Stephen Chang, David Chatman,  Burleigh Chariton,  Tung Cheng,  Nelson Chiu, 
+ Jack Clay, Richard Cleis,
+ John Clements, Scott Crymble,  Pierce Darragh,  Jonas Decraecker,  Qu Dongfang, 
+ Mark Engelberg, Andrew Fallows,  Jiankun Fan,  Christopher Felleisen, Sebastian Felleisen,
+ Vladimir Gaji&#263;, Xin Gao, 
+ Adrian German, Jack Gitelson,  Kyle Gillette,  Scott Greene,  Ben Greenman, 
+ Ryan Golbeck, Josh Grams,  Grigorios, 
+ Jane Griscti, Alberto E. F. Guerrero, Tyler Hammond,  Nan Halberg,  Li Junsong, 
+ Nadeem Abdul Hamid, Jeremy Hanlon,  Tony Henk,  Craig Holbrook,  Connor Hetzler,  Benjamin Hosseinzahl, 
+ Wayne Iba,
+ John Jackaman,  Jordan Johnson, Blake Johnson,  Erwin Junge, 
+ Marc Kaufmann, Cole Kendrick, 
+ Gregor Kiczales,
+ Eugene Kohlbecker, Jaroslaw Kolosowski, Caitlin Kramer,  Roman Kunin, 
+ Jackson Lawler, Devon LePage, 
+ Ben Lerner, Shicheng Li,  Chen Lj,  Ed Maphis,  YuSheng Mei,  Andres Meza,  Saad Mhmood, 
+ Elena Machkasova, Jay Martin, Alexander Martinez,  Yury Mashika, 
+ Jay McCarthy, James McDonell,  Mike McHugh,  Wade McReynolds,  David Moses, 
+ Ann E. Moskol, Scott Newson, , &#352;t&#283;p&#225;n N&#283;mec, 
+ Paul Ojanen,  Prof. Robert Ord&#243;&#241;ez,   Laurent Orseau, 
+ Klaus Ostermann,
+ Alanna Pasco,  Sinan Pehlivanoglu,  Eric Parker, 
+ David Porter, Nick Pleatsikas,  Prathyush Pramod,  Alok Rai, 
+ Norman Ramsey,  Krishnan Ravikumar,   Jacob Rubin,  Ilnar Salimzianov,  Luis Sanju&#225;n, 
+ Brian Schack,  Ryan &ldquo;Havvy&rdquo; Scheel,   Lisa Scheuing,   Willi Schiegel,  Vinit Shah,   Nick Shelley,  Edward Shen, 
+ Tubo Shi, Hyeyoung Shin,  Atharva Shukla, Matthew Singer, 
+ Michael Siegel, Stephen Siegel, Milton Silva, 
+ Kartik Singhal,  Joe Snikeris, 
+ Marc Smith, Matthijs Smith, 
+ Dave Smylie,
+ Vincent St-Amour, Reed Stevens,  William Stevenson,  Kevin Sullivan,  Asumu Takikawa, 
+ &#201;ric Tanter,
+ Sam Tobin-Hochstadt, Thanos Tsouanas,   Aaron Tsay,  Mariska Twaalfhoven,  Bor Gonzalez Usach,  Ricardo Ruy Valle-mena, 
+ Manuel del Valle,
+ David Van Horn, Nick Vaughn,  Simeon Veldstra,  Andre Venter,  Jan Vitek,  Marco Villotta, 
+ Mitch Wand, Yuxu (Ewen) Wang,  Michael Wijaya,  G. Clifford Williams,  Ewan Whittaker-Walker,  Julia Wlochowski, 
+ Roelof Wobben, J.T. Wright,   Mardin Yadegar,  Huang Yichao,  Yuwang Yin, 
+ Andrew Zipperer,  Ari Zvi for comments on drafts of this second edition.</p><p>The HTML layout at <span class="stt">htdp.org</span> is the work of Matthew Butterick, who
+ created these styles for our on-line documentation.</p><p>Finally, we are grateful to Ada Brunstein and Marie Lufkin Lee, our editors
+ at MIT Press, who gave us permission to develop this second edition of
+ <span style="font-style: italic">How to Design Programs</span> on the web. We also thank MIT&rsquo;s Christine
+ Bridget Savage and John Hoey from Westchester Publishing Services for
+ managing the final production process. John Donohue, Jennifer Robertson, and Mark
+ Woodworth did a wonderful job of copy editing the manuscript.</p><div class="navsetbottom"><span class="navleft"><div class="nosearchform"></div>&nbsp;&nbsp;</span><span class="navright">&nbsp;&nbsp;<a href="index.html" title="backward to &quot;How to Design Programs, Second Edition&quot;" data-pltdoc="x">&larr; prev</a>&nbsp;&nbsp;<a href="index.html" title="up to &quot;How to Design Programs, Second Edition&quot;" data-pltdoc="x">up</a>&nbsp;&nbsp;<a href="part_prologue.html" title="forward to &quot;Prologue: How to Program&quot;" data-pltdoc="x">next &rarr;</a></span>&nbsp;</div></div></div><div id="contextindicator">&nbsp;</div></body><!-- Copied from https://htdp.org/2020-5-6/Book/part_preface.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

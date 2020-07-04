@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/check-range1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.4; How to Design Programs </title>
+</head>
+<body>
+<a href="dollar-store.html">9.5.3</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="guess3.html">9.5.5</a><pre>;; Language: Beginning Student
+
+;; check-range1? : list-of-numbers -&gt; boolean
+;; determines if the list of numbers is between 5 and 95
+
+#|
+;; Template 
+(define (check-range1? a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (check-range1? (rest a-lon)) ...]))
+|#
+
+(define (check-range1? a-lon)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (&lt;= 5 (first a-lon) 95)
+               (check-range1? (rest a-lon)))]))
+
+;; Examples:
+
+(check-expect (check-range1? empty) true)
+(check-expect (check-range1? (cons 50 empty)) true)
+(check-expect (check-range1? (cons 101 empty)) false)
+(check-expect (check-range1? (cons 45 (cons 52 (cons 23 (cons 44 (cons 96 (cons 22 empty))))))) false)
+
+;; check-range? : list-of-numbers number number -&gt; boolean
+;; checks to make sure all of the numbers on a-lon are between n1 and n2
+
+#|
+;; Template
+(define (check-range? a-lon n1 n2)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (check-range (rest a-lon) n1 n2) ...]))
+
+|#
+
+(define (check-range? a-lon n1 n2)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (&lt;= n1 (first a-lon) n2)
+               (check-range? (rest a-lon) n1 n2))]))
+
+(check-expect (check-range? empty 1 2) true)
+(check-expect (check-range? (cons 5 empty) 3 7) true)
+(check-expect (check-range? (cons 100 empty) 3 7) false)
+(check-expect (check-range? (cons 1 (cons 3 (cons 54 (cons 12312 empty)))) 0 1000000000) true)
+(check-expect (check-range? (cons 1 (cons 1000000000 (cons -1000000000 empty))) -1 1) false)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/check-range1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

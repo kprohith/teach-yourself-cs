@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sum-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.1; How to Design Programs </title>
+</head>
+<body>
+<a href="containsp.html">9.3.3</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="how-manyS.html">9.5.2</a><pre>;; sum : list-of-nums -&gt; number
+;; returns the sum of the numbers in a-list-of-nums
+(define (sum a-list-of-nums)
+  (cond
+    [(empty? a-list-of-nums) 0]
+    [else (+ (first a-list-of-nums)
+             (sum (rest a-list-of-nums)))]))
+
+;; Examples:
+(sum empty) "should be" 0
+(sum (cons 1.00 empty)) "should be" 1
+(sum (cons 17.05 (cons 1.22 (cons 2.59 empty)))) "should be" 20.86
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sum-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

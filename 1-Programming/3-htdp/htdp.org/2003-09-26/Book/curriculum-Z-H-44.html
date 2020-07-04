@@ -1,0 +1,673 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-44.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-43.html">previous</a></span><span>, <a href="curriculum-Z-H-45.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_35"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_35">Section  35</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_35">Assignment to Variables</a></h1>
+<p></p>
+<p>
+<a name="node_idx_2090"></a><a name="node_idx_2092"></a></p>
+<p>
+A <strong>set!</strong>-expression, also known as an <small>A</small><small>S</small><small>S</small><small>I</small><small>G</small><small>N</small><small>M</small><small>E</small><small>N</small><small>T</small>,
+<a name="node_idx_2094"></a>has the following shape:  
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">var</span> <span class="builtin">exp</span>)
+</pre></div><p>
+It consists of a variable, the <small>L</small><small>E</small><small>F</small><small>T</small>-<small>H</small><small>A</small><small>N</small><small>D</small> <small>S</small><small>I</small><small>D</small><small>E</small>,
+<a name="node_idx_2096"></a>and an expression, called <small>R</small><small>I</small><small>G</small><small>H</small><small>T</small>-<small>H</small><small>A</small><small>N</small><small>D</small> <small>S</small><small>I</small><small>D</small><small>E</small>.
+<a name="node_idx_2098"></a>The left-hand side of a <strong>set!</strong>-expression is a fixed
+variable. In this book, we only use variables that are <code class="scheme"><span class="keyword">define</span></code>d,
+either at the top-level or in a <strong>local</strong>-expression. A <strong>set!</strong>-expression may occur wherever
+an expression is legal.</p>
+<p>
+The value of a <strong>set!</strong>-expression is always the same and is moreover invisible. It
+is therefore irrelevant. What matters about a <strong>set!</strong>-expression, instead, is the
+effect of its evaluation.
+<a name="node_idx_2100"></a>Specifically, for the first step of the
+evaluation of a <strong>set!</strong>-expression, we determine the value of <code class="scheme"><span class="builtin">exp</span></code>. Let's
+say this value is <code class="scheme"><span class="variable">V</span></code>. For the second step, we change the definition
+of <code class="scheme"><span class="variable">var</span></code> to
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">var</span> <span class="variable">V</span>)
+</pre></div><p>
+The <small>E</small><small>F</small><small>F</small><small>E</small><small>C</small><small>T</small> 
+<a name="node_idx_2102"></a>of this second step is that from this point on,
+all references to <code class="scheme"><span class="variable">var</span></code> in an evaluation replace <code class="scheme"><span class="variable">var</span></code> by
+<code class="scheme"><span class="variable">V</span></code>.<a name="call_footnote_Temp_180"></a><a href="#footnote_Temp_180"><sup><small>68</small></sup></a> Its former value is lost. </p>
+<p>
+Understanding the true nature of assignments is difficult. We
+therefore first consider a simple though useless example.</p>
+<p>
+</p>
+<a name="node_sec_35.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_35.1">35.1&nbsp;&nbsp;Simple Assignments at Work</a></h2>
+<p></p>
+<p>
+Consider the following definition and expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">z</span> (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">2</span>))))
+  <span class="variable">x</span>)
+</pre></div><p>
+The definition says that <code class="scheme"><span class="variable">x</span></code> stands for <code class="scheme"><span class="selfeval">3</span></code>. The
+<strong>local</strong>-expression introduces a definition for <code class="scheme"><span class="variable">z</span></code>. Its body
+is <code class="scheme"><span class="variable">x</span></code> so, in the past, the value of this <strong>local</strong>-expression
+would have been <code class="scheme"><span class="selfeval">3</span></code> (if anything). Now, with <code class="scheme"><span class="keyword">set!</span></code> in the
+language, 
+<a name="node_idx_2104"></a>this is no longer true. To understand what happens, we must
+rewrite the program step by step until we have a final answer.</p>
+<p>
+The first step in the evaluation lifts the <code class="scheme"><span class="keyword">local</span></code> definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> <span class="variable">z</span> (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">2</span>)))
+
+<span class="variable">x</span>
+</pre></div><p>
+Next we must determine the value of <code class="scheme">(<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">2</span>))</code>. According to
+the general explanation of <code class="scheme"><span class="keyword">set!</span></code>, this requires the evaluation of
+the right-hand side of the assignment: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> <span class="variable">z</span> (<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">5</span>))
+
+<span class="variable">x</span>
+</pre></div><p>
+That value is <code class="scheme"><span class="selfeval">5</span></code> because the current value of <code class="scheme"><span class="variable">x</span></code> is
+<code class="scheme"><span class="selfeval">3</span></code>. </p>
+<p>
+Finally, the general explanation says that the effect of the <code class="scheme"><span class="keyword">set!</span></code>
+expression is to change the value that the left-hand side variable
+represents. In our example this means that from now on, <code class="scheme"><span class="variable">x</span></code> is no
+longer <code class="scheme"><span class="selfeval">3</span></code> but <code class="scheme"><span class="selfeval">5</span></code>. The best way to express this change is to
+modify the definition of <code class="scheme"><span class="variable">x</span></code> for the next step:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> <span class="variable">z</span> (void))
+
+<span class="variable">x</span>
+</pre></div><p>
+The value of <code class="scheme"><span class="keyword">set!</span></code> is <code class="scheme">(void)</code>, the invisible value. By
+replacing the <strong>set!</strong>-expression with the invisible value, we indicate that its
+evaluation is finished.</p>
+<p>
+At this point, it is easy to see that the result is <code class="scheme"><span class="selfeval">5</span></code>. The first
+definition says that <code class="scheme"><span class="variable">x</span></code> currently represents <code class="scheme"><span class="selfeval">5</span></code>, and the
+last expression is <code class="scheme"><span class="variable">x</span></code>. Hence the value of the function evaluation
+is <code class="scheme"><span class="selfeval">5</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_35.1.1"></a>
+<b>Exercise 35.1.1.</b>&nbsp;&nbsp; 
+Consider the following: 
+</p>
+<ol>
+<li><p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">5</span>)
+</pre></div><p>
+</p>
+<li><p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">set!</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+</p>
+<li><p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">7</span>)
+(<span class="keyword">define</span> <span class="variable">z</span> <span class="builtin">false</span>)
+
+(<span class="keyword">set!</span> (<span class="variable">z</span> <span class="variable">x</span> <span class="variable">y</span>) <span class="selfeval">5</span>)
+</pre></div>
+</li></ol><p>
+Which ones are syntactically legal programs? Which ones are
+illegal?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-syntax.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.1.2"></a>
+<b>Exercise 35.1.2.</b>&nbsp;&nbsp; 
+Evaluate the following program: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">1</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">1</span>)
+
+(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">u</span> (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>)))
+	(<span class="keyword">define</span> <span class="variable">v</span> (<span class="keyword">set!</span> <span class="variable">y</span> (<span class="builtin">-</span> <span class="variable">y</span> <span class="selfeval">1</span>))))
+  (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p>
+If <code class="scheme"><span class="keyword">set!</span></code> were not a part of the language, what could we say about
+the result of the <strong>local</strong>-expression? That is, consider the skeleton 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">1</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">1</span>)
+
+(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">u</span> ...)
+	(<span class="keyword">define</span> <span class="variable">v</span> ...))
+  (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p>
+where the right-hand sides of the definitions have been removed. What would
+this expression have produced before the introduction of
+<strong>set!</strong>-expressions?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_35.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_35.2">35.2&nbsp;&nbsp;Sequencing Expression Evaluations</a></h2>
+<p></p>
+<p>
+<a name="node_idx_2106"></a></p>
+<p>
+The hand-evaluation shows that the <code class="scheme"><span class="keyword">local</span></code> definition for <code class="scheme"><span class="variable">z</span></code>
+serves to evaluate a <strong>set!</strong>-expression and ``to throw away'' its
+value. After all, a <code class="scheme"><span class="keyword">set!</span></code>'s true purpose is to change a definition
+and not to generate a value. Because this situation is quite common, Scheme
+also provides the <strong>begin</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> <span class="variable">exp-1</span>
+       ...
+       <span class="variable">exp-n</span>
+       <span class="builtin">exp</span>)
+</pre></div><p>
+A <strong>begin</strong>-expression consists of the keyword <code class="scheme"><span class="keyword">begin</span></code> followed
+by a sequence of <em>n</em> + 1 expressions. The evaluation determines the values of
+all expressions, in order, and then throws away the first <em>n</em>. The value of
+the last expression is the value of the entire <strong>begin</strong>-expression. 
+In general, the first <em>n</em> subexpressions in a <strong>begin</strong>-expression
+change some definitions; only the last one has an interesting value.</p>
+<p>
+We can now rewrite our first sample program with <code class="scheme"><span class="keyword">set!</span></code> into
+a short expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">2</span>))
+       <span class="variable">x</span>)
+</pre></div><p>
+The use of <code class="scheme"><span class="keyword">begin</span></code> not only simplifies the program, it also suggests
+a straight-line ordering of the evaluation. </p>
+<p>
+The hand-evaluation also shows that the evaluation of <strong>set!</strong>-expression introduces
+additional timing constraints. More concretely, the above evaluation
+consists of two parts: the one before and the one after the assignment
+exerted its effect on the state of the definitions. Before we introduced
+assignments, we could replace a variable by its value or a function
+application by the function's body whenever we wished. Now, we must wait
+until we truly need the value of a variable before we perform the
+substitution. After all, definitions may change.</p>
+<p>
+While some partial ordering is always a part of computation, the timing
+constraints of <code class="scheme"><span class="keyword">set!</span></code> are new. By altering a definition, an
+assignment ``destroys'' the current value. Unless the programmer carefully
+plans the arrangement of assignments, such an action may be fatal. The
+exercises illustrate the problem in more detail.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_35.2.1"></a>
+<b>Exercise 35.2.1.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">1</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">1</span>)
+
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>))
+       (<span class="keyword">set!</span> <span class="variable">y</span> (<span class="builtin">-</span> <span class="variable">y</span> <span class="selfeval">1</span>))
+       (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>))       
+</pre></div><p>
+How many time periods can we distinguish in this hand-evaluation?</p>
+<p>
+Compare this with the evaluation of 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a</span> <span class="selfeval">5</span>)
+
+(<span class="builtin">*</span> (<span class="builtin">+</span> <span class="variable">a</span> <span class="selfeval">1</span>) (<span class="builtin">-</span> <span class="variable">a</span> <span class="selfeval">1</span>)))       
+</pre></div><p>
+Does the nesting imply an ordering among our calculations? Does the order
+of addition and subtraction matter?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.2.2"></a>
+<b>Exercise 35.2.2.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y</span>)
+       (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x</span>)
+       (<span class="builtin">list</span> <span class="variable">x</span> <span class="variable">y</span>)) 
+</pre></div><p>
+How many time periods can we distinguish in this hand-evaluation?</p>
+<p>
+Now evaluate the following: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">z</span> <span class="variable">x</span>))
+  (<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y</span>)
+         (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">z</span>)
+         (<span class="builtin">list</span> <span class="variable">x</span> <span class="variable">y</span>)))
+</pre></div><p>
+Is it true that the definition of <code class="scheme"><span class="variable">x</span></code> contains the initial value of
+<code class="scheme"><span class="variable">y</span></code> and <code class="scheme"><span class="variable">y</span></code> contains the initial value of <code class="scheme"><span class="variable">x</span></code> after
+the two <strong>set!</strong>-expressions are evaluated, no matter what the initial
+values are?</p>
+<p>
+Discuss what the two examples teach us about time and ``destruction of
+values'' in definitions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.2.3"></a>
+<b>Exercise 35.2.3.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">begin</span> 
+  (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="keyword">set!</span> <span class="variable">y</span> (<span class="builtin">+</span> <span class="variable">y</span> <span class="selfeval">2</span>))
+  (<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+  (<span class="builtin">list</span> <span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p>
+How many time intervals must we distinguish in this
+hand-evaluation?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_35.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_35.3">35.3&nbsp;&nbsp;Assignments and Functions</a></h2>
+<p></p>
+<p>
+An assignment can also occur in a function body:
+<a name="node_idx_2108"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> (<span class="variable">swap-x-y</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y0</span>)
+    (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x0</span>)))
+
+(<span class="variable">swap-x-y</span> <span class="variable">x</span> <span class="variable">y</span>)
+</pre></div><p>
+Here the function <code class="scheme"><span class="variable">swap-x-y</span></code> consumes two values and performs two
+<code class="scheme"><span class="keyword">set!</span></code>s. </p>
+<p>
+Let us see how the evaluation works. Because <code class="scheme">(<span class="variable">swap-x-y</span> <span class="variable">x</span> <span class="variable">y</span>)</code> is a
+function application, we need to evaluate the arguments, which are plain
+variables here. So we replace the variables with their (current) values:
+<a name="node_idx_2110"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> (<span class="variable">swap-x-y</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y0</span>)
+    (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x0</span>)))
+
+(<span class="variable">swap-x-y</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)
+</pre></div><p>
+From here we proceed with the usual substitution rule for application: 
+<a name="node_idx_2112"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> (<span class="variable">swap-x-y</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y0</span>)
+    (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x0</span>)))
+
+(<span class="keyword">begin</span>
+  (<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">5</span>)
+  (<span class="keyword">set!</span> <span class="variable">y</span> <span class="selfeval">3</span>))
+</pre></div><p>
+That is, the application is now replaced by an assignment of <code class="scheme"><span class="variable">x</span></code> to
+the current value of <code class="scheme"><span class="variable">y</span></code> and of <code class="scheme"><span class="variable">y</span></code> to the current value of
+<code class="scheme"><span class="variable">x</span></code>. </p>
+<p>
+The next two steps are also the last ones and thus they accomplish what the
+name of the function suggests:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">5</span>)
+
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> (<span class="variable">swap-x-y</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y0</span>)
+    (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">x0</span>)))
+
+(void)
+</pre></div><p>
+The value of the application is invisible because the last expression
+evaluated was a <strong>set!</strong>-expression. </p>
+<p>
+In summary, functions with <code class="scheme"><span class="keyword">set!</span></code> have results and effects. The
+result may be invisible. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_35.3.1"></a>
+<b>Exercise 35.3.1.</b>&nbsp;&nbsp; 
+Consider the following function definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="keyword">begin</span> 
+    (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">y</span>)
+    <span class="variable">y</span>))
+</pre></div><p>
+Is it syntactically legal or illegal?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-syntax2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.3.2"></a>
+<b>Exercise 35.3.2.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+<a name="node_idx_2114"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+
+(<span class="keyword">define</span> (<span class="variable">increase-x</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>))
+    <span class="variable">x</span>))
+
+(<span class="variable">increase-x</span>)
+(<span class="variable">increase-x</span>)
+(<span class="variable">increase-x</span>)
+</pre></div><p>
+What is the result? What is <code class="scheme"><span class="variable">increase-x</span></code>'s effect?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.3.3"></a>
+<b>Exercise 35.3.3.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+<a name="node_idx_2116"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+
+(<span class="keyword">define</span> (<span class="variable">switch-x</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="selfeval">1</span>))
+    <span class="variable">x</span>))
+
+(<span class="variable">switch-x</span>)
+(<span class="variable">switch-x</span>)
+(<span class="variable">switch-x</span>)
+</pre></div><p>
+What is the result? What is <code class="scheme"><span class="variable">switch-x</span></code>'s effect?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.3.4"></a>
+<b>Exercise 35.3.4.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+<a name="node_idx_2118"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+
+(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">1</span>)
+
+(<span class="keyword">define</span> (<span class="variable">change-to-3</span> <span class="variable">z</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">y</span> <span class="selfeval">3</span>)
+    <span class="variable">z</span>))
+
+(<span class="variable">change-to-3</span> <span class="variable">x</span>)
+</pre></div><p>
+What is the effect of <code class="scheme"><span class="variable">change-to-3</span></code>? What is its
+result?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-simple6.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_35.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_35.4">35.4&nbsp;&nbsp;A First Useful Example</a></h2>
+<p></p>
+<p>
+Let's take a look at the definitions in figure&nbsp;<a href="#node_fig_Temp_181">98</a>. The function
+<code class="scheme"><span class="variable">add-to-address-book</span></code> consumes a symbol and a number. The former
+represents a name, the latter a phone number.  Its body contains a
+<strong>set!</strong>-expression for <code class="scheme"><span class="variable">address-book</span></code>, a variable <code class="scheme"><span class="keyword">define</span></code>d at
+top-level. The function <code class="scheme"><span class="variable">lookup</span></code> consumes an address book
+and a name; its result is the matching phone number or <code class="scheme"><span class="builtin">false</span></code>, if
+the name is not in <code class="scheme"><span class="variable">address-book</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_181"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2120"></a><a name="node_idx_2122"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+
+<span class="comment">;; <code class="scheme"><span class="variable">add-to-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">phone</span>)
+  (<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">phone</span>) <span class="variable">address-book</span>)))
+</pre></div><p> </p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">lookup</span> <span class="selfeval">:</span> <span class="variable">symbol</span> (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">number</span>)) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+<span class="comment">;; to lookup the phone number for <code class="scheme"><span class="variable">name</span></code> in <code class="scheme"><span class="variable">ab</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">lookup</span> <span class="variable">name</span> <span class="variable">ab</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">ab</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> (<span class="builtin">first</span> <span class="variable">ab</span>)) <span class="variable">name</span>)
+	     (<span class="builtin">second</span> (<span class="builtin">first</span> <span class="variable">ab</span>))]
+	    [<span class="keyword">else</span> (<span class="variable">lookup</span> <span class="variable">name</span> (<span class="builtin">rest</span> <span class="variable">ab</span>))])]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 98:</b>&nbsp;&nbsp;The basic address-book program</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Using <code class="scheme"><span class="variable">lookup</span></code>, we can study the effect of the <code class="scheme"><span class="keyword">set!</span></code>
+expression in <code class="scheme"><span class="variable">add-to-address-book</span></code>. Suppose we evaluate
+<code class="scheme">(<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="variable">address-book</span>)</code> with the given definitions: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="variable">address-book</span>)
+<span class="builtin">=</span> (<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="builtin">empty</span>)
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="builtin">empty</span>) false]
+    [<span class="keyword">else</span> ...])
+<span class="builtin">=</span> false
+</pre></div><p>
+Because <code class="scheme"><span class="variable">address-book</span></code> is <code class="scheme"><span class="builtin">empty</span></code>, we get <code class="scheme"><span class="builtin">false</span></code>, and
+the calculation is straightforward. </p>
+<p>
+Now let's evaluate the following in the <tt>Interactions</tt>
+<a name="node_idx_2124"></a>window:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>))
+</pre></div><p> 
+The first subexpression is a plain function application. So, the first step
+relies on the usual law of substitution:<a name="call_footnote_Temp_182"></a><a href="#footnote_Temp_182"><sup><small>69</small></sup></a>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="variable">address-book</span>))
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>))
+</pre></div><p>
+The next expression to be evaluated is the <strong>set!</strong>-expression that is
+nested in the <strong>begin</strong>-expressions, in particular its right-hand
+side. The first argument to <code class="scheme"><span class="builtin">cons</span></code> is a value, but the second one is
+still a variable whose  current value is <code class="scheme"><span class="builtin">empty</span></code>. With this, we
+can see what happens next:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+
+(<span class="keyword">begin</span> (<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="builtin">empty</span>))
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>))
+</pre></div><p></p>
+<p>
+At this point we are ready to evaluate the <strong>set!</strong>-expression.
+Specifically, we change the definition of <code class="scheme"><span class="variable">address-book</span></code> so that the
+variable now stands for <code class="scheme">(<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>) <span class="builtin">empty</span>)</code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">address-book</span>
+  (<span class="builtin">cons</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+    <span class="builtin">empty</span>))
+
+(<span class="keyword">begin</span> (void)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+       (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>))
+</pre></div><p>
+The <strong>begin</strong>-expression throws away the invisible value.</p>
+<p>
+Evaluating the remaining applications of <code class="scheme"><span class="variable">add-to-address-book</span></code>
+yields 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">address-book</span>
+  (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+	(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)))
+
+(void)
+</pre></div><p>
+In short, the three applications turn <code class="scheme"><span class="variable">address-book</span></code> into a list of
+three pairs. </p>
+<p>
+If we now evaluate <code class="scheme">(<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="variable">address-book</span>)</code> in the
+<tt>Interactions</tt>
+<a name="node_idx_2126"></a>window again, we get <code class="scheme"><span class="selfeval">1</span></code>: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="variable">address-book</span>)
+<span class="builtin">=</span> (<span class="variable">lookup</span> <span class="keyword">'</span><span class="variable">Adam</span> (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">6145384</span>)
+		      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)
+		      (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>))
+<span class="builtin">=</span> ...
+<span class="builtin">=</span> <span class="selfeval">1</span>
+</pre></div><p>
+The comparison of this evaluation and the one at the beginning of the
+section shows how <code class="scheme"><span class="keyword">set!</span></code> changes the meaning of
+<code class="scheme"><span class="variable">address-book</span></code> over time and how the two functions,
+<code class="scheme"><span class="variable">add-to-address-book</span></code> and <code class="scheme"><span class="variable">lookup</span></code>, implement the services
+that we discussed in section&nbsp;<a href="curriculum-Z-H-43.html#node_chap_34">34</a>. The exercises show how
+useful this collaboration of two functions is in the context of a graphical
+user interface.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_35.4.1"></a>
+<b>Exercise 35.4.1.</b>&nbsp;&nbsp; 
+The software for managing address books permits users to remove
+entries. Develop the function  
+<a name="node_idx_2128"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">remove</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">remove</span> <span class="variable">name</span>) ...)
+</pre></div><p>
+which changes <code class="scheme"><span class="variable">address-book</span></code> so that all future <code class="scheme"><span class="variable">lookup</span></code>s for
+<code class="scheme"><span class="variable">name</span></code> yield <code class="scheme">false</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-pb-remove.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_35.4.2"></a>
+<b>Exercise 35.4.2.</b>&nbsp;&nbsp; 
+The teachpack <tt><strong>phone-book.ss</strong></tt> implements a graphical user interface
+based on the model-view pattern discussed in
+section&nbsp;<a href="curriculum-Z-H-28.html#node_sec_22.3">22.3</a>. Figure&nbsp;<a href="curriculum-Z-H-43.html#node_fig_Temp_176">95</a> shows what the graphical
+user interface offers:
+</p>
+<ol>
+<li><p>a text-field for entering a name; 
+</p>
+<li><p>a text-field for displaying the search result and for entering a phone number; 
+</p>
+<li><p>a button for looking up the phone number for a name; 
+</p>
+<li><p>a button for adding a name and a phone number; and 
+</p>
+<li><p>a button for removing the phone number for a name. 
+</p>
+</li></ol><p></p>
+<p>
+Use the teachpack's <code class="scheme"><span class="variable">connect</span></code> function to create a GUI for the
+functions in this section and in exercise&nbsp;<a href="#node_thm_35.4.1">35.4.1</a>. 
+The function has the following contract, purpose, and header: 
+<a name="node_idx_2130"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">model-T</span> <span class="builtin">=</span> (<span class="variable">button%</span> <span class="variable">control-event%</span> &nbsp;<tt>-&gt;</tt>&nbsp; true)</code></span>
+<span class="comment">;; <code class="scheme"><span class="variable">connect</span> <span class="selfeval">:</span> <span class="variable">model-T</span> <span class="variable">model-T</span> <span class="variable">model-T</span> &nbsp;<tt>-&gt;</tt>&nbsp; true</code></span>
+(<span class="keyword">define</span> (<span class="variable">connect</span> <span class="variable">lookup-cb</span> <span class="variable">change-cb</span> <span class="variable">remove-cb</span>) ...)
+</pre></div><p>
+That is, it consumes three model functions and wires them up with the
+GUI. The names of the parameters specify which call-back function goes with
+which button. </p>
+<p>
+A model function may obtain the contents of the name field with
+<code class="scheme">(<span class="variable">name-control</span>)</code> and the contents of the number field with
+<code class="scheme">(<span class="variable">number-field</span>)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/set-pb-gui.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_180"></a><a href="#call_footnote_Temp_180"><sup><small>68</small></sup></a> We have already encountered several kinds of effects:
+drawing to a canvas, changing the text field in a GUI, the creating of
+files by teachpacks, and so on. These effects aren't as complex as those of
+<strong>set!</strong> because they don't affect the program proper.</p>
+<p><a name="footnote_Temp_182"></a><a href="#call_footnote_Temp_182"><sup><small>69</small></sup></a> Because the calculation
+does not affect the function definitions, we do not include them in the
+calculation here. This convention saves space and time, but it should be
+used carefully.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-43.html">previous</a></span><span>, <a href="curriculum-Z-H-45.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-44.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

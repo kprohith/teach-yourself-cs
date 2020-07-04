@@ -1,0 +1,284 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-43.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-42.html">previous</a></span><span>, <a href="curriculum-Z-H-44.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_34"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_34">Section  34</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_34">Memory for Functions</a></h1>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-27.html#node_part_VII"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Advanced<br>
+Student</a>
+</td></tr></table><p></p>
+<p>
+No matter how often we use a function with one and the same argument, we
+always get the same result.  Even an accumulator-style function produces
+the same result every time we apply it to the same argument, as long as the
+accumulator argument is also the same. Functions simply do not have any
+memory about their past uses.</p>
+<p>
+Many programs, though, must remember something about their past
+uses. Recall that a program typically consists of several functions. In the
+past we have always assumed that there is one main function and that all
+others are auxiliary and invisible to the user. In some cases, however, a
+user may expect more than one service from a program, and each service is
+best implemented as a function. When a program provides more than one
+function as a service to the user, it is common that, for sheer convenince
+or possibly because we add a graphical user interface, the functions must
+have memory.</p>
+<p>
+Because this point is difficult to grasp in the abstract, we study some
+examples. The first one concerns a program for managing telephone numbers
+in an address book.  The standard address book software provides at least
+two services: 
+</p>
+<ol>
+<li><p>a service for looking up the phone number of some person; and</p>
+<p>
+</p>
+<li><p>a service for adding a name and a phone number to the address book. 
+</p>
+</li></ol><p>
+Based on our guidelines, the program provides two functions to the
+user. The user can apply those functions in DrScheme's <tt>Interactions</tt>
+<a name="node_idx_2078"></a>window to appropriate data. Or, we can develop a
+graphical user interface with text fields and buttons so that the user
+doesn't need to know anything about programming. Figure&nbsp;<a href="#node_fig_Temp_176">95</a>
+displays such an interface. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_176"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <center><img src="../icons/phonebook.gif"></center></td></tr></table></div></td></tr></table></center>
+ 
+<tr><td align="center"><b>Figure 95:</b>&nbsp;&nbsp;A phonebook GUI</td></tr>
+<tr><td>
+</td></tr><p></p>
+<p></p>
+<p>
+The two services roughly correspond to two functions: 
+<a name="node_idx_2080"></a><a name="node_idx_2082"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">lookup</span> <span class="selfeval">:</span> <span class="variable">list-of-symbol-number-pairs</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp;  <span class="variable">number</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+<span class="comment">;; to lookup the number associated with <code class="scheme"><span class="variable">name</span></code> in <code class="scheme"><span class="variable">pb</span></code></span>
+<span class="comment">;; if it doesn't find <code class="scheme"><span class="variable">name</span></code>, the function produces <code class="scheme"><span class="builtin">false</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">lookup</span> <span class="variable">pb</span> <span class="variable">name</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">add-to-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; to add <code class="scheme"><span class="variable">name</span></code> and <code class="scheme"><span class="variable">number</span></code> to <code class="scheme"><span class="variable">address-book</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">number</span>) ...)
+
+(<span class="keyword">define</span> <span class="variable">ADDRESS-BOOK</span> 
+  (<span class="builtin">list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+        (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)))
+</pre></div><p>
+We also introduce a variable definition for maintaining a list of name-number
+associations.
+<a name="node_idx_2084"></a><a name="node_idx_2086"></a></p>
+<p>
+The first function is a variant of our very first recursive function. A
+user applies it to a list of name-number associations, such as
+<code class="scheme"><span class="variable">ADDRESS-BOOK</span></code>, and a name. It produces a number, if the name is on
+the list, or <code class="scheme"><span class="builtin">false</span></code> otherwise. The second function is radically
+different from what we have seen.  The user would apply it to a name and a
+number; any future lookup of that name would then produce that number.</p>
+<p>
+Let's imagine an interaction in DrScheme: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">lookup</span> <span class="variable">ADDRESS-BOOK</span> <span class="keyword">'</span><span class="variable">Adam</span>)
+<span class="selfeval">1</span> 
+<span class="builtin">&gt;</span> (<span class="variable">lookup</span> <span class="variable">ADDRESS-BOOK</span> <span class="keyword">'</span><span class="variable">Dawn</span>)
+<span class="builtin">false</span>
+<span class="builtin">&gt;</span> (<span class="variable">add-to-address-book</span> <span class="keyword">'</span><span class="variable">Dawn</span> <span class="selfeval">4</span>)
+<span class="builtin">&gt;</span> (<span class="variable">lookup</span> <span class="variable">ADDRESS-BOOK</span> <span class="keyword">'</span><span class="variable">Dawn</span>)
+<span class="selfeval">4</span>
+</pre></div><p>
+The first two confirm that <code class="scheme"><span class="keyword">'</span><span class="variable">Adam</span></code> has the phone number <code class="scheme"><span class="selfeval">1</span></code>
+and that we don't have a phone number for <code class="scheme"><span class="keyword">'</span><span class="variable">Dawn</span></code>. The third one adds
+the phone number <code class="scheme"><span class="selfeval">4</span></code> for <code class="scheme"><span class="keyword">'</span><span class="variable">Dawn</span></code> to
+<code class="scheme"><span class="variable">ADDRESS-BOOK</span></code>. And the last interaction shows that the very same
+use of <code class="scheme"><span class="variable">lookup</span></code> as before now produces the expected phone number. </p>
+<p>
+In the past, the only way we could have achieved this same effect is by
+editing the definition of <code class="scheme"><span class="variable">ADDRESS-BOOK</span></code>. But, we do not wish users
+to edit our programs. Indeed, they shouldn't even have access to our
+programs. We are therefore forced to provide an interface with a function
+that permits such changes. We could go even further and implement the
+graphical interface of figure&nbsp;<a href="#node_fig_Temp_176">95</a>. A dialogue equivalent to the
+above interaction would proceed as follows: 
+</p>
+<ol>
+<li><p>Type <tt>Adam</tt> into the text field, click the <tt>Lookup</tt>
+button, and ``1'' appears in the lower text field. </p>
+<p>
+</p>
+<li><p>Enter <tt>Dawn</tt> into the text field, click the <tt>Lookup</tt>
+button, and some message concerning a missing number appears in the lower
+text field.</p>
+<p>
+</p>
+<li><p>Replace the message with ``4'' and click the <tt>Add</tt> button. </p>
+<p>
+</p>
+<li><p>Erase the ``4'' from the lower text field, click the <tt>Lookup</tt>
+and the ``4'' shows up again. 
+</p>
+</li></ol><p>
+In short, providing a convenient interface to a user forces us to develop a
+program whose functions know about each other's usage history. </p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_177"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td valign="top" align="left"><img src="../icons/next.gif"></td>
+      <td align="left"><img src="../icons/green.gif"></td>
+      <td align="center"><img src="../icons/yellow.gif"></td>
+      <td align="right"><img src="../icons/red.gif"></td>
+ </tr>
+ </table>
+ </td></tr>
+<tr><td align="center"><b>Figure 96:</b>&nbsp;&nbsp;The three stages of a traffic light canvas and its GUI</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The second example, a traffic light simulation, illustrates how a single
+function may need to have some memory.  Recall the function <code class="scheme"><span class="variable">next</span></code>
+from exercise&nbsp;<a href="curriculum-Z-H-9.html#node_thm_6.2.5">6.2.5</a>. It consumes the current color of a
+traffic light and, with the help of <code class="scheme"><span class="variable">clear-bulb</span></code> and
+<code class="scheme"><span class="variable">draw-bulb</span></code>, switches the state of the traffic light on a canvas to
+the next traffic color. The result is the next color. </p>
+<p>
+A user who wishes to switch the traffic light four times in a row must
+enter 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">next</span> (<span class="variable">next</span> (<span class="variable">next</span> (<span class="variable">next</span> <span class="keyword">'</span><span class="variable">red</span>))))
+</pre></div><p>
+into the <tt>Interactions</tt>
+<a name="node_idx_2088"></a>window. An even more convenient user
+interface, however, would provide a button that the user can click. </p>
+<p>
+Providing a button means providing a call-back function that somehow knows
+about the current state of the traffic light and changes it. Let's call
+this function <code class="scheme"><span class="variable">next</span></code>, too, but let's assume that it consumes no
+arguments. Here is an imaginary interaction using this function:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">next</span>)
+<span class="builtin">&gt;</span> (<span class="variable">next</span>)
+<span class="builtin">&gt;</span> (<span class="variable">next</span>)
+</pre></div><p>
+Every time we apply <code class="scheme"><span class="variable">next</span></code> to no arguments, it produces
+the invisible value and simulates the switch of state in the traffic light on
+the canvas. In other words, the canvas cycles through the three states
+depicted in figure&nbsp;<a href="#node_fig_Temp_177">96</a>. Equivalently, we can have a
+user click the ``NEXT'' button three times, which would apply the next
+function and have the same visual effect. To accomplish this effect, 
+the use of <code class="scheme"><span class="variable">next</span></code> must affect its own future uses.</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_178"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left">  <img src="../icons/hang0.gif"></td>
+      <td align="center"><img src="../icons/hang1.gif"></td>
+      <td align="right"> <img src="../icons/hang2.gif"></td>
+ </tr>
+ </table>
+ <hr><p></p>
+<p>
+</p>
+
+ <center><img src="../icons/hang-gui.gif"></center></td></tr></table></div></td></tr></table></center>
+ 
+<tr><td align="center"><b>Figure 97:</b>&nbsp;&nbsp;Three stages in the hangman game and its GUI</td></tr>
+<tr><td>
+</td></tr><p></p>
+<p></p>
+<p>
+The final example concerns the <code class="scheme"><span class="variable">hangman</span></code> game, which is also the
+subject of section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.7">6.7</a>. The game program requires us to
+develop three functions: <code class="scheme"><span class="builtin">make-word</span></code>, <code class="scheme"><span class="variable">reveal</span></code>, and
+<code class="scheme"><span class="variable">draw-next-part</span></code>. We start the game by evaluating
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">hangman</span> <span class="builtin">make-word</span> <span class="variable">reveal</span> <span class="variable">draw-next-part</span>)
+</pre></div><p>
+which picks a word, creates the graphical user interface of the lower half
+of figure&nbsp;<a href="#node_fig_Temp_178">97</a>, and draws the left-most picture in the
+sequence of the upper half of the figure. The player can then choose a
+letter from the choice menu in the GUI and click on the ``Check'' button to
+determine whether the letter occurs in the word. If so, the
+<code class="scheme"><span class="variable">hangman</span></code> function reveals where the letter occurs; if not, it uses
+our <code class="scheme"><span class="variable">draw-next-part</span></code> function to draw the next stage in the hangman
+picture. The more bad guesses the player makes, the more of the stick
+figure appears in the picture (see top-half of
+figure&nbsp;<a href="#node_fig_Temp_178">97</a>).</p>
+<p>
+Our description suggests that the <code class="scheme"><span class="variable">hangman</span></code> function in the
+teachpack employs a callback function for the ``Check'' button. Let's call
+this function <code class="scheme"><span class="variable">check</span></code>. It consumes the letter and produces
+<code class="scheme"><span class="builtin">true</span></code> if the check reveals new knowledge: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">check</span> <span class="keyword">'</span><span class="variable">b</span>)
+<span class="builtin">true</span>
+</pre></div><p>
+If not, because the letter has already been guessed, the function produces
+<code class="scheme"><span class="builtin">false</span></code> to indicate that the player didn't gain new knowledge: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">check</span> <span class="keyword">'</span><span class="variable">b</span>)
+<span class="builtin">false</span>
+</pre></div><p>
+In this case, <code class="scheme"><span class="variable">check</span></code> also employs <code class="scheme"><span class="variable">draw-next-part</span></code> to draw
+another part of the hangman figure. Of course, to accomplish this,
+<code class="scheme"><span class="variable">hangman</span></code> and <code class="scheme"><span class="variable">check</span></code> must have some memory about how often
+the ``Check'' button was used and how often it was used with a negative
+result. </p>
+<p>
+With our current knowledge of Scheme, we cannot formulate functions such as
+<code class="scheme"><span class="variable">add-to-address-book</span></code>, <code class="scheme"><span class="variable">next</span></code>, or <code class="scheme"><span class="variable">check</span></code>. To fill
+this gap in our knowledge, the next section introduces
+<code class="scheme"><span class="keyword">set!</span></code><a name="call_footnote_Temp_179"></a><a href="#footnote_Temp_179"><sup><small>67</small></sup></a>
+expressions. This new form of expression permits functions to change the
+value that a <code class="scheme"><span class="keyword">define</span></code>d variable represents. Using this new
+construct, we can formulate Scheme functions that have memory. That is, we
+can define functions that know something about their history and the
+history of other functions.</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_179"></a><a href="#call_footnote_Temp_179"><sup><small>67</small></sup></a> This keyword is pronounced set-bang.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-42.html">previous</a></span><span>, <a href="curriculum-Z-H-44.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-43.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

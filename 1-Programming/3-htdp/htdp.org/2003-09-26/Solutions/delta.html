@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/delta.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.6; How to Design Programs </title>
+</head>
+<body>
+<a href="guess3.html">9.5.5</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="average-price.html">9.5.7</a><pre>;; delta : list-of-numbers list-of-numbers -&gt; number
+;; calculates the change in value of two lists of prices
+
+#|
+
+The template for this function does not help with the design
+of this function! Instead, it is better to define an auxiliary
+program sum and use that to compute the difference in the
+price lists.
+
+|#
+
+(define (delta a-lon another-lon)
+  (- (sum a-lon) (sum another-lon)))
+
+;; sum : list-of-numbers -&gt; number
+;; calculates the sum of the numbers in the list
+
+#|
+;; Template
+(define (sum a-lon)
+  (cond
+    [(empty a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (sum (rest a-lon)) ...]))
+|#
+
+(define (sum a-lon)
+  (cond
+    [(empty? a-lon) 0]
+    [else (+ (first a-lon)
+             (sum (rest a-lon)))]))
+
+;; examples:
+
+(sum empty) "should be" 0
+(sum (cons 1 empty)) "should be" 1
+(sum (cons 2 (cons 4 (cons 537 empty)))) "should be" 543
+
+(delta empty empty) "should be" 0
+(delta (cons 1 empty) empty) "should be" 1
+(delta empty (cons 1 empty)) "should be" -1
+(delta (cons 1 empty) (cons 1 empty)) "should be" 0
+(delta (cons 2 (cons 4 (cons 537 empty)))
+       (cons 2 (cons 5 (cons 212 empty))))
+"should be"
+324
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/delta.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

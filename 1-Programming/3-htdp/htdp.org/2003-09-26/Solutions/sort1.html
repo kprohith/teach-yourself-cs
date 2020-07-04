@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sort1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 12.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="natnum-list.html">11.5.4</a> | <a href="../Book/curriculum-Z-H-16.html#node_thm_12.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sort2.html">12.2.2</a><pre>;; A mail-message is a structure: 
+;;    (make-mail name n s) 
+;; where name is a string, n is a number, and s is a string.
+(define-struct mail (from date message))
+
+;; A list-of-mail-messages is either:
+;;  - empty, or
+;;  - (cons mail-message list-of-mail-messages)
+
+;; sort-by-date : list-of-mail-messages -&gt; list-of-mail-messages
+;; to sort the list of mail messages by date
+(define (sort-by-date a-lomm)
+  (cond
+    [(empty? a-lomm) empty]
+    [else (insert-by-date (first a-lomm)
+                          (sort-by-date (rest a-lomm)))]))
+
+;; insert : mail-message list-of-mail-messages -&gt; list-of-mail-messages
+;; to insert mm into the proper place in a-lomm,
+;; assuming that a-lomm is sorted
+(define (insert-by-date mm a-lomm)
+  (cond
+    [(empty? a-lomm) (cons mm empty)]
+    [else (cond
+            [(&lt; (mail-date mm) (mail-date (first a-lomm)))
+             (cons mm a-lomm)]
+            [else
+             (cons (first a-lomm)
+                   (insert-by-date mm (rest a-lomm)))])]))
+
+;; EXAMPLES AS TESTS
+
+(insert-by-date
+ (make-mail "Tim" 1911 "hi")
+ empty)
+"should be"
+(cons (make-mail "Tim" 1911 "hi") empty)
+
+(insert-by-date
+ (make-mail "Pola" 1911 "Chocolate")
+ (cons
+  (make-mail "Neo" 1900 "Vanilla")
+  (cons
+   (make-mail "Tin" 1922 "Strawberry")
+   empty)))
+"should be"
+(cons
+ (make-mail "Neo" 1900 "Vanilla")
+ (cons
+  (make-mail "Pola" 1911 "Chocolate")
+  (cons
+   (make-mail "Tin" 1922 "Strawberry")
+   empty)))
+
+(define example-list-of-mail-messages
+  (cons
+   (make-mail "Ronnie" 1980 "Don't forget my number!")
+   (cons
+    (make-mail "Richard" 1960 "I am not a crook")
+    (cons
+     (make-mail "George" 1990 "No new taxes")
+     empty))))
+
+(sort-by-date empty) "should be" empty
+(sort-by-date example-list-of-mail-messages)
+"should be"
+(cons
+ (make-mail "Richard" 1960 "I am not a crook")
+ (cons
+  (make-mail "Ronnie" 1980 "Don't forget my number!")
+  (cons
+   (make-mail "George" 1990 "No new taxes")
+   empty)))
+
+;; sort-by-name : list-of-mail-messages -&gt; list-of-mail-messages
+;; to sort the list of mail messages by date
+(define (sort-by-name a-lomm)
+  (cond
+    [(empty? a-lomm) empty]
+    [else (insert-by-name (first a-lomm)
+                          (sort-by-name (rest a-lomm)))]))
+
+;; insert : mail-message list-of-mail-messages -&gt; list-of-mail-messages
+;; to insert mm into the proper place in a-lomm,
+;; assuming that a-lomm is sorted
+(define (insert-by-name mm a-lomm)
+  (cond
+    [(empty? a-lomm) (cons mm empty)]
+    [else (cond
+            [(string&lt;? (mail-from mm) (mail-from (first a-lomm)))
+             (cons mm a-lomm)]
+            [else
+             (cons (first a-lomm)
+                   (insert-by-name mm (rest a-lomm)))])]))
+
+;; EXAMPLES AS TESTS
+(insert-by-name
+ (make-mail "Tim" 1911 "hi")
+ empty)
+"should be"
+(cons (make-mail "Tim" 1911 "hi") empty)
+
+(insert-by-name
+ (make-mail "Pola" 1911 "Chocolate")
+ (cons
+  (make-mail "Neo" 1900 "Vanilla")
+  (cons
+   (make-mail "Tin" 1922 "Strawberry")
+   empty)))
+"should be"
+(cons
+ (make-mail "Neo" 1900 "Vanilla")
+ (cons
+  (make-mail "Pola" 1911 "Chocolate")
+  (cons
+   (make-mail "Tin" 1922 "Strawberry")
+   empty)))
+
+(sort-by-name empty) "should be" empty
+(sort-by-name example-list-of-mail-messages)
+"should be"
+(cons
+ (make-mail "George" 1990 "No new taxes")
+ (cons
+  (make-mail "Richard" 1960 "I am not a crook")
+  (cons
+   (make-mail "Ronnie" 1980 "Don't forget my number!")
+   empty)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sort1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

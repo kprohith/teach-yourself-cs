@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eqs.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="cond-interval.html">4.2.2</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="test0.html">4.2.4</a><pre>;; equation1 : number -&gt; boolean
+;; determines if n satisfies equation #1
+(define (equation1 n)
+  (= (+ (* 4 n) 2)
+     62))
+
+;; equation2 : number -&gt; boolean
+;; determines if n satisfies equation #2
+(define (equation2 n)
+  (= (* 2 (* n n))
+     102))
+
+;; equation3 : number -&gt; boolean
+;; determines if n satisfies equation #3
+(define (equation3 n)
+  (= (+ (* 4 (* n n)) (* 6 n) 2)
+     462))
+
+(equation1 10) "should be" false
+(equation1 12) "should be" false
+(equation1 14) "should be" false
+(equation2 10) "should be" false
+(equation2 12) "should be" false
+(equation2 14) "should be" false
+(equation3 10) "should be" true
+(equation3 12) "should be" false
+(equation3 14) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eqs.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

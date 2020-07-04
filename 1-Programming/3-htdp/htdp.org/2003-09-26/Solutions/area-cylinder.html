@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/area-cylinder.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="compose-cylinder.html">3.3.2</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="area-pipe.html">3.3.4</a><pre>;; area-cylinder : number number -&gt; number
+;; to determine the area of a cylinder
+(define (area-cylinder radius height)
+  (+ (* (circumference-circle radius) height)
+     (area-circle radius)
+     (area-circle radius)))
+
+;; area-circle : number -&gt; number
+;; to determine the area of a circle
+(define (area-circle radius)
+  (* pi radius radius))
+
+;; circumference-circle : number -&gt; number
+;; to deteremine the circumference of a circle
+(define (circumference-circle radius)
+  (* radius 2 pi))
+
+;; EXAMPLES AS TESTS
+(circumference-circle 2) "should be" (* 4 pi)
+(area-circle 3) "should be" (* pi 9)
+(area-cylinder 2 3) "should be" (* 20 pi)
+(area-cylinder 3 4) "should be" (* 42 pi)
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/area-cylinder.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

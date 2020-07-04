@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/def-struct-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="data-def1.html">6.3.3</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.4.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="time-dd.html">6.4.2</a><pre>;; a movie is a structure:
+;;  (make-movie symbol symbol)
+(define-struct movie (title producer))
+
+;; a boyfriend is a structure:
+;;  (make-boyfriend symbol symbol symbol number)
+(define-struct boyfriend (name hair eyes phone))
+
+;; a cheerleader is a structure:
+;;  (make-cheerleader symbol number)
+(define-struct cheerleader (name number))
+
+;; a CD is a structure:
+;;  (make-CD symbol symbol number)
+(define-struct CD (artist title price))
+
+;; a sweater is a structure
+;;  (make-sweater symbol number symbol)
+(define-struct sweater (material size producer))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/def-struct-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 16.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-21.html#node_thm_16.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="alt-dir1.html">16.2.3</a><pre>;; Language: Beginning Student with List Abbreviations
+
+;16.2.2
+;Data Definition, Model 1:
+#|
+A file is a symbol.
+
+A directory (short: dir) is either
+   1. empty;
+   2. (cons f d) where f is a file and d is a dir; or
+   3. (cons d1 d2) where d1 and d2 are dirs.
+
+;; directory template
+(define (how-many adir)
+  (cond
+    [(empty? adir) ...]
+    [(symbol? (first adir)) ...(first adir)...
+                            ...(how-many (rest adir))...]
+    [else ...(how-many (first adir))...
+          ...(how-many (rest adir))...]))
+|#
+;; how-many: dir -&gt; number
+;; consumes a directory and produces the
+;; number of files in the directory tree
+(define (how-many adir)
+  (cond
+    [(empty? adir)
+     0]
+    [(symbol? (first adir))
+     (+ 1 (how-many (rest adir)))]
+    [else (+ (how-many (first adir)) 
+             (how-many (rest adir)))]))
+
+;Examples as Tests:
+(check-expect (how-many empty) 0)
+(check-expect (how-many (list 'read!)) 1)
+(check-expect (how-many (list 'part1 'part2 'part3)) 3)
+(check-expect (how-many (list (list 'part1 'part2 'part3) 
+                              (list (list 'hang 'draw) 
+                                    (list 'read!))
+                              'read!))
+              7)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

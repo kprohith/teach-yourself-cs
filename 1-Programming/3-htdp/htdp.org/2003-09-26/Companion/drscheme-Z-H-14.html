@@ -1,0 +1,154 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-13.html">previous</a></span><span>, <a href="drscheme-Z-H-15.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_9"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_9">Section  9</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_9">Compound Data, Part 2: Lists</a></h1>
+<p></p>
+<p>
+</p>
+<a name="node_sec_9.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_9.1">9.1&nbsp;&nbsp;Lists</a></h2>
+<p></p>
+<p>
+The <code class="scheme"><span class="builtin">first</span></code> and <code class="scheme"><span class="builtin">rest</span></code> operators work only on
+lists created with <code class="scheme"><span class="builtin">cons</span></code>, i.e., <em>non-empty</em> lists. So
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="builtin">first</span> <span class="builtin">empty</span>)</code></blockquote><br>
+gives the error message:
+<br>
+<blockquote><code class="scheme"><span class="variable">first:</span> <span class="variable">expects</span> <span class="variable">type</span> <span class="variable">&lt;non-empty</span> <span class="variable">list&gt;</span> <span class="variable">as</span> <span class="variable">1st</span> <span class="variable">arg:</span> <span class="variable">given</span> <span class="builtin">empty</span></code></blockquote><br>
+<p>
+</p>
+<a name="node_sec_9.2"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_9.2">9.2&nbsp;&nbsp;Data Definitions for Lists of Arbitrary Length <em>- no notes</em></a></h2>
+<p></p>
+<p>
+<em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<a name="node_sec_9.3"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_9.3">9.3&nbsp;&nbsp;Processing Lists of Arbitrary Length</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Infinite Reductions</strong></p>
+<p>When writing recursive programs, it is easy to create an expression
+that never produces a value. For example, consider the following
+program:
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">los</span>)
+  (<span class="keyword">cond</span>
+   [(<span class="variable">empty?</span> <span class="variable">los</span>) <span class="builtin">false</span>]
+   [<span class="keyword">else</span> (<span class="keyword">cond</span>
+           [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">los</span>) <span class="keyword">'</span><span class="variable">doll</span>) <span class="builtin">true</span>]
+           [<span class="keyword">else</span> (<span class="variable">contains-doll?</span> <span class="variable">los</span>)])]))
+</pre></div>
+</blockquote><br>
+The above program is wrong; it contains the expression
+<code class="scheme">(<span class="variable">contains-doll?_los</span>)</code> instead of
+<code class="scheme">(<span class="variable">contains-doll?_</span>(<span class="builtin">rest</span> <span class="variable">los</span>))</code>.  As a result, the evaluation
+<code class="scheme">(<span class="variable">contains-doll?_</span>(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))</code> proceeds as follows:
+<br>
+<blockquote>
+<div align="left"><pre class="scheme">  (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))
+<span class="variable">=</span> (<span class="keyword">cond</span>
+   [(<span class="variable">empty?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)) <span class="builtin">false</span>]
+   [<span class="keyword">else</span> (<span class="keyword">cond</span>
+           [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)) <span class="keyword">'</span><span class="variable">doll</span>) <span class="builtin">true</span>]
+           [<span class="keyword">else</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))])]))
+<span class="variable">=</span> (<span class="keyword">cond</span> 
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)) <span class="keyword">'</span><span class="variable">doll</span>) <span class="builtin">true</span>]
+    [<span class="keyword">else</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))])]))
+<span class="variable">=</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))
+<span class="variable">=</span> ...
+</pre></div>
+</blockquote><br>
+DrScheme is stuck evaluating the same expression forever -- or until
+the <strong><tt>Break</tt></strong> button is hit.<p>
+When DrScheme takes suspiciously long to evaluate an expression, click
+the <strong><tt>Break</tt></strong> button and inspect your program. Look for a
+missing <code class="scheme"><span class="builtin">rest</span></code> in a recursive call, or for some other bug that
+makes it impossible to reduce an expression to a value.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Infinite Reductions using Infinite Memory</strong></p>
+<p>In the above example, <code class="scheme">(<span class="variable">contains-doll?_</span>(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))</code>
+eventually reduces to itself.  In a few bad programs, an expression
+can ``reduce'' to an ever larger expression. For example, if
+<code class="scheme">(<span class="variable">contains-doll?_los</span>)</code> is changed in the above program to
+<code class="scheme">(<span class="variable">add1</span> (<span class="variable">contains-doll?_los</span>))</code>, then the reduction steps
+include
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme">  (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))
+<span class="variable">=</span> ...
+<span class="variable">=</span> (<span class="variable">add1</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)))
+<span class="variable">=</span> ...
+<span class="variable">=</span> (<span class="variable">add1</span> (<span class="variable">add1</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))))
+<span class="variable">=</span> ...
+</pre></div>
+</blockquote><br>
+In this case, not only does the expression fail to reduce to a value,
+but the overall expression <em>grows</em> forever. Since DrScheme
+performs the reductions very quickly, it can produce an exceedingly
+large expression in a short time, requiring more and more memory from
+your computer to store the expression.<p>
+Eventually, DrScheme would comsume all the memory on your computer,
+and then die. However, before this happens, you would probably notice
+that you machine's disk starts running constantly as DrScheme starts
+to use disk space for memory. If this happens, click the
+<strong><tt>Break</tt></strong> button as soon as possible. </p>
+<p>
+Once DrScheme starts using disk space for memory, it might become
+addicted to using the disk, so that DrScheme continues to use
+the disk even after recovering from <strong><tt>Break</tt></strong>. If that
+happens, quit DrScheme (in the normal way, using the
+<strong><tt>File|Quit</tt></strong> menu) and start over to break DrScheme's
+addiction and get better performance.</p>
+<p>
+</p>
+<a name="node_sec_9.4"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_9.4">9.4&nbsp;&nbsp;Designing Functions for Self-Referential Data Definitions <em>- no notes</em></a></h2>
+<p></p>
+<p>
+<em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<a name="node_sec_9.5"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_9.5">9.5&nbsp;&nbsp;More on Processing Simple Lists <em>- no notes</em></a></h2>
+<p><em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-13.html">previous</a></span><span>, <a href="drscheme-Z-H-15.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

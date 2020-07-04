@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="in2.html">9.1.4</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list6.html">9.2.2</a><pre>#|
+
+1. empty
+
+empty is a list of symbols, from the data definition.
+
+2. (cons 'ball empty)
+
+Since 'ball is a symbol and empty is a list of symbols,
+(cons 'ball empty) is also a list of symbols.
+
+3. (cons 'arrow (cons 'ball empty))
+
+Since 'arrow is a symbol, and (cons 'ball empty) is a list of symbols, from 2., we know that (cons 'arrow (cons 'ball empty)) is a list of symbols.
+
+4. (cons 'clown empty)
+
+Since 'clown is a symbol and empty is a list of symbols, from the data definition, (cons 'clown empty) is a list of symbols.
+
+5. (cons 'bow (cons 'arrow (cons 'ball empty)))
+
+Since 'bow is a symbol and (cons 'arrow (cons 'ball empty)) is
+a list of symbols, from 3., (cons 'bow (cons 'arrow (cons 'ball empty))) is a list of symbols.
+
+6. (cons 'clown (cons 'bow (cons 'arrow (cons 'ball empty))))
+
+Since 'clown is a symbol and (cons 'bow (cons 'arrow (cons 'ball empty))) is a list of symbols, from 5., (cons 'clown (cons 'bow (cons 'arrow (cons 'ball empty)))) is a list of symbols.
+
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

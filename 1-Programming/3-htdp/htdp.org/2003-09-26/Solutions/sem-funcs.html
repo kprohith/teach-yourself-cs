@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-funcs.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 20.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="para-non-empty.html">19.2.4</a> | <a href="../Book/curriculum-Z-H-26.html#node_thm_20.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="syn-funcs.html">20.1.2</a><pre>;; Language: Intermediate Student
+
+#|
+Assume the Definitions window in DrScheme contains
+(define (f x) x). Identify the values among the following expressions:
+
+ (1) (cons f empty)
+ (2) (f f)
+ (3) (cons f (cons 10 (cons (f 10) empty)))
+
+Explain why they are values and why the remaining expressions are not
+values.
+
+Solution. A value is anything of the form
+
+  &lt;val&gt; = &lt;boo&gt; | &lt;sym&gt; | &lt;num&gt; | empty | &lt;lst&gt;
+  | &lt;var&gt; (names of defined functions)
+  | &lt;prm&gt;
+
+where &lt;lst&gt; is of the form
+
+  &lt;lst&gt; = empty | (cons &lt;val&gt; &lt;lst&gt;).
+
+Now we start with (1) and apply a series of substitutions based on the
+definitions we have.
+
+    (cons f empty)
+  = (cons &lt;var&gt; &lt;lst&gt;)  ;; since f is a &lt;var&gt;
+  = (cons &lt;var&gt; &lt;lst&gt;)  ;; since empty is a &lt;lst&gt;
+  = (cons &lt;val&gt; &lt;lst&gt;)  ;; since &lt;var&gt; is a subset of &lt;val&gt;
+  = &lt;lst&gt;               ;; definition of &lt;lst&gt;
+  = &lt;val&gt;               ;; definition of &lt;val&gt;
+
+Therefore (1) is a value.
+
+Next we consider (2). Here's a relevant part of the grammar for (2).
+
+  &lt;exp&gt; = &lt;var&gt;
+  | &lt;prm&gt;
+  | (&lt;exp&gt; &lt;exp&gt; ...&lt;exp&gt;)
+
+Start with (2)...
+
+    (f f)
+  = (&lt;var&gt; &lt;var&gt;) ;; since f is a &lt;var&gt;
+  = (&lt;exp&gt; &lt;exp&gt;) ;; since &lt;var&gt; is a subset of &lt;exp&gt;
+
+Now (&lt;exp&gt; &lt;exp&gt;) is not by definition a value. Expressions may have
+values, but they're not values. (Daniel may have a hat, but Daniel is
+not a hat.)
+
+Therefore (2) is not a value.
+
+Now (3).
+
+    (cons f (cons 10 (cons (f 10) empty)))
+  = (cons &lt;var&gt; (cons &lt;num&gt; (cons (&lt;var&gt; &lt;num&gt;) &lt;lst&gt;)))
+
+The whole expression depends on the application (&lt;exp&gt; &lt;exp&gt;),
+which may or may not have a value. Since we know f, we know it has a value,
+but it /is not/ a value.
+
+Therefore (3) is not a value.
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sem-funcs.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

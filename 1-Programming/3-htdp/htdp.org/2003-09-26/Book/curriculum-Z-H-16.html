@@ -1,0 +1,870 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-16.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-15.html">previous</a></span><span>, <a href="curriculum-Z-H-17.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_12"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_12">Section  12</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_12">Composing Functions, Revisited Again</a></h1>
+<p> 
+</p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-6.html#node_chap_3">3</a> we said that programs were
+collections of function definitions and possibly some variable
+definitions, too. To guide the division of labor among functions, we also
+introduced a rough guideline: 
+</p>
+<blockquote>
+Formulate auxiliary function definitions
+for every dependency between quantities in the problem statement.
+</blockquote>
+So far the guideline has been reasonably effective, but it is now time to
+take a second look at it and to formulate some additional guidance
+concerning auxiliary functions.<p>
+In the first subsection, we refine our original guideline concerning
+auxiliary programs. The suggestions mostly put into words the experiences
+that we made with the exercises. The second and third one illustrate two of
+the ideas in more depth; the last one is an extended exercise.</p>
+<p>
+</p>
+<a name="node_sec_12.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_12.1">12.1&nbsp;&nbsp;Designing Complex Programs</a></h2>
+<p> 
+</p>
+<p>
+When we develop a program, we may hope to implement it with a single
+function definition but we should always be prepared to write auxiliary
+functions. In particular, if the problem statement mentions several
+dependencies, it is natural to express each of them as a function. Others who
+read the problem statement and the program can follow our reasoning more
+easily that way. The movie-theater example in
+section&nbsp;<a href="curriculum-Z-H-6.html#node_sec_3.1">3.1</a> is a good example for this style of
+development. </p>
+<p>
+Otherwise, we should follow the design recipe and start with a thorough
+analysis of the input and output data. Using the data analysis we should
+design a template and attempt to refine the template into a complete
+function definition.  Turning a template into a complete function
+definition means combining the values of the template's subexpressions
+into the final answer. As we do so, we might encounter several situations:
+</p>
+<ol>
+<li><p>If the formulation of an answer requires a case analysis of the
+available values, use a <strong>cond</strong>-expression.</p>
+<p>
+</p>
+<li><p>If a computation requires knowledge of a particular domain of
+application, for example, drawing on (computer) canvases, accounting,
+music, or science, use an auxiliary function.</p>
+<p>
+</p>
+<li><p>If a computation must process a list, a natural number, or some other
+piece of data of arbitrary size, use an auxiliary function.</p>
+<p>
+</p>
+<li><p>If the natural formulation of the function isn't quite what we want,
+it is most likely a generalization of our target. In this case, the main
+function is a short definition that defers the computation to the
+generalized auxiliary program.
+</p>
+</li></ol><p>
+The last two criteria are situations that we haven't discussed yet. The
+following two subsections illustrate them with examples.</p>
+<p>
+After we determine the need for an auxiliary function, we should add a
+contract, a header, and a purpose statement to a <small>W</small><small>I</small><small>S</small><small>H</small> <small>L</small><small>I</small><small>S</small><small>T</small>
+<a name="node_idx_978"></a>of
+functions.<a name="call_footnote_Temp_75"></a><a href="#footnote_Temp_75"><sup><small>36</small></sup></a> </p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Wish Lists
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Maintain a list of functions that must be developed
+to complete a program. Develop each function according to a design
+recipe.
+</p></font></td></tr>
+</table>
+ <p>
+Before we put a function on the wish list, we must check whether
+something like the function already exists or is already on the wish
+list. Scheme provides many primitive operations and functions, and so do
+other languages.
+<a name="node_idx_980"></a>We should find out as much as possible about our working
+language,
+though only when we settle on one. For beginners, a superficial
+knowledge of a language is fine. </p>
+<p>
+If we follow these guidelines, we interleave the development of one
+function with that of others. As we finish a function that does not depend
+on anything on our wish list, we can test it. Once we have tested such
+basic functions, we can work our way backwards and test other functions
+until we have finished the wish list. By testing each function rigorously
+before we test those that depend on it, we greatly reduce the effort of
+searching for logical mistakes.</p>
+<p>
+</p>
+<a name="node_sec_12.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_12.2">12.2&nbsp;&nbsp;Recursive Auxiliary Functions</a></h2>
+<p> 
+</p>
+<p>
+People need to sort things all the time. Investment advisors sort
+portfolios by the profit each holding generates. Doctors sort lists of
+transplant patients. Mail programs sort messages.  More generally, sorting
+lists of values by some criteria is a task that many programs need to
+perform.</p>
+<p>
+Here we study how to sort a list of numbers not because it is important for
+many programming tasks, but also because it provides a good case study of
+the design of auxiliary programs. A sorting function consumes a list and
+produces one. Indeed, the two lists contain the same numbers, though the
+output list contains them in a different order. This is the essence of the
+contract and purpose statement:
+<a name="node_idx_982"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code> </span>
+<span class="comment">;; to create a sorted list of numbers from all the numbers in <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>) ...)
+</pre></div><p></p>
+<p>
+Here is one example per clause in the data definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">sort</span> <span class="builtin">empty</span>)
+<span class="comment">;; expected value: </span>
+<span class="builtin">empty</span>
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">sort</span> (<span class="builtin">cons</span> <span class="selfeval">1297.04</span> (<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>))))
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">1297.04</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+The answer for the input <code class="scheme"><span class="builtin">empty</span></code> is <code class="scheme"><span class="builtin">empty</span></code>, because
+<code class="scheme"><span class="builtin">empty</span></code> contains the same items (none) and in sorted order. </p>
+<p>
+Next we must translate the data definition into a function template. Again,
+we have dealt with lists of numbers before, so this step is easy:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">alon</span>) ... (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) ...]))
+</pre></div><p></p>
+<p>
+Using this template, we can finally turn to the interesting part of the
+program development. We consider each case of the <strong>cond</strong>-expression
+separately, starting with the simple case. If <code class="scheme"><span class="variable">sort</span></code>'s input is
+<code class="scheme"><span class="builtin">empty</span></code>, then the answer is <code class="scheme"><span class="builtin">empty</span></code>, as specified by the
+example.  So let's assume that the input is not <code class="scheme"><span class="builtin">empty</span></code>. That is,
+let's deal with the second <code class="scheme"><span class="keyword">cond</span></code>-clause.  It contains two
+expressions and, following the design recipe, we must understand what they
+compute:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> extracts the first number from the input; </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> produces a sorted version of
+<code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code>, according to the purpose statement of the function. 
+</p>
+</li></ol><p>
+Putting together these two values means inserting the first number into its
+appropriate spot in the sorted rest of the list.</p>
+<p>
+Let's look at the second example in this context.  When <code class="scheme"><span class="variable">sort</span></code>
+consumes <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">1297.04</span> (<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>)))</code>, then
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> evaluates to <code class="scheme"><span class="selfeval">1297.04</span></code>, </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code> is <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>))</code>, and </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> produces <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>))</code>. 
+</p>
+</li></ol><p>
+To produce the desired answer, we must insert <code class="scheme"><span class="selfeval">1297.04</span></code> between the
+two numbers of the last list. More generally, the answer in the second
+<code class="scheme"><span class="keyword">cond</span></code>-line must be an expression that inserts <code class="scheme">(<span class="builtin">first</span>
+ <span class="variable">alon</span>)</code> in its proper place into the sorted list <code class="scheme">(<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code>.</p>
+<p>
+Inserting a number into a sorted list isn't a simple task. We may have to
+search through the entire list before we know what the proper place
+is. Searching through a list, however, can be done only with a function,
+because lists are of arbitrary size and processing such values requires
+recursive functions. Thus we must develop an auxiliary function that
+consumes the first number and a sorted list and creates a sorted list from
+both. Let us call this function <code class="scheme"><span class="variable">insert</span></code> and let us formulate a
+wish-list entry:
+<a name="node_idx_984"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">insert</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to create a list of numbers from <code class="scheme"><span class="variable">n</span></code> and the numbers on <code class="scheme"><span class="variable">alon</span></code> </span>
+<span class="comment">;; that is sorted in descending order; <code class="scheme"><span class="variable">alon</span></code> is already sorted</span>
+(<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">n</span> <span class="variable">alon</span>) ...)
+</pre></div><p></p>
+<p>
+Using <code class="scheme"><span class="variable">insert</span></code>, it is easy to complete the definition of
+<code class="scheme"><span class="variable">sort</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div><p>
+The answer in the second line says that in order to produce the final
+result, <code class="scheme"><span class="variable">sort</span></code> extracts the first item of the non-empty list,
+computes the sorted version of the rest of the list, and <code class="scheme"><span class="variable">insert</span></code>s
+the former into the latter at its appropriate place.</p>
+<p>
+Of course, we are not really finished until we have developed
+<code class="scheme"><span class="variable">insert</span></code>.  We already have a contract, a header, and a purpose
+statement.  Next we need to make up function examples. Since the first input
+of <code class="scheme"><span class="variable">insert</span></code> is atomic, let's make up examples based on the data
+definition for lists. That is, we first consider what <code class="scheme"><span class="variable">insert</span></code>
+should produce when given a number and <code class="scheme"><span class="builtin">empty</span></code>. According to
+<code class="scheme"><span class="variable">insert</span></code>'s purpose statement, the output must be a list, it must
+contain all numbers from the second input, and it must contain the first
+argument. This suggests the following: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">insert</span> <span class="selfeval">5</span> <span class="builtin">empty</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="selfeval">5</span> <span class="builtin">empty</span>)
+</pre></div><p>
+Instead of <code class="scheme"><span class="selfeval">5</span></code>, we could have used any number. </p>
+<p>
+The second example must use a non-empty list, but then, the idea for
+<code class="scheme"><span class="variable">insert</span></code> was suggested by just such an example when we studied how
+<code class="scheme"><span class="variable">sort</span></code> should deal with non-empty lists. Specifically, we said that
+<code class="scheme"><span class="variable">sort</span></code> had to insert <code class="scheme"><span class="selfeval">1297.04</span></code> into <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">20000.00</span>
+(<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>))</code> at its proper place: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">insert</span> <span class="selfeval">1297.04</span> (<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>)))
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="selfeval">20000.00</span> (<span class="builtin">cons</span> <span class="selfeval">1297.04</span> (<span class="builtin">cons</span> <span class="selfeval">-505.25</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+In contrast to <code class="scheme"><span class="variable">sort</span></code>, the function <code class="scheme"><span class="variable">insert</span></code> consumes <em>two</em> inputs. But we know that the first one is a number and atomic.  We
+can therefore focus on the second argument, which is a list of numbers and
+which suggests that we use the list-processing template one more time:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">n</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+    [<span class="keyword">else</span>  ...  (<span class="builtin">first</span> <span class="variable">alon</span>) ... (<span class="variable">insert</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) ...]))
+</pre></div><p>
+The only difference between this template and the one for <code class="scheme"><span class="variable">sort</span></code> is
+that this one needs to take into account the additional argument <code class="scheme"><span class="variable">n</span></code>.</p>
+<p>
+To fill the gaps in the template of <code class="scheme"><span class="variable">insert</span></code>, we again proceed on a
+case-by-case basis.  The first case concerns the empty list. According to
+the purpose statement, <code class="scheme"><span class="variable">insert</span></code> must now construct a list with one
+number: <code class="scheme"><span class="variable">n</span></code>. Hence the answer in the first case is <code class="scheme">(<span class="builtin">cons</span> <span class="variable">n</span> <span class="builtin">empty</span>)</code>.</p>
+<p>
+The second case is more complicated than that. When <code class="scheme"><span class="variable">alon</span></code> is not
+empty, 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> is the first number on <code class="scheme"><span class="variable">alon</span></code>, and </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">insert</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> produces a sorted list consisting of
+<code class="scheme"><span class="variable">n</span></code> and all numbers on <code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code>.
+</p>
+</li></ol><p>
+The problem is how to combine these pieces of data to get the answer. Let
+us consider an example:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">insert</span> <span class="selfeval">7</span> (<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))))
+</pre></div><p>
+Here <code class="scheme"><span class="variable">n</span></code> is <code class="scheme"><span class="selfeval">7</span></code> and larger than any of the numbers in the
+second input. Hence it suffices if we just <code class="scheme"><span class="builtin">cons</span></code> <code class="scheme"><span class="selfeval">7</span></code> onto 
+<code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)))</code>. In contrast, when the
+application is something like 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">-1</span> <span class="builtin">empty</span>)))))
+</pre></div><p>
+<code class="scheme"><span class="variable">n</span></code> must indeed be inserted into the rest of the list. More
+concretely,
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> is <code class="scheme"><span class="selfeval">6</span></code></p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">insert</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))</code> 
+is 
+<code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">-1</span> <span class="builtin">empty</span>))))</code>. 
+</p>
+</li></ol><p>
+By adding <code class="scheme"><span class="selfeval">6</span></code> onto this last list with <code class="scheme"><span class="builtin">cons</span></code>, we get the
+desired answer.</p>
+<p>
+Here is how we generalize from these examples. The problem requires a
+further case distinction. If <code class="scheme"><span class="variable">n</span></code> is larger than (or
+equal to) <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code>, all the items in <code class="scheme"><span class="variable">alon</span></code> are smaller than
+<code class="scheme"><span class="variable">n</span></code>; after all, <code class="scheme"><span class="variable">alon</span></code> is already sorted. The result is
+<code class="scheme">(<span class="builtin">cons</span> <span class="variable">n</span> <span class="variable">alon</span>)</code> for this case. If, however, <code class="scheme"><span class="variable">n</span></code> is
+smaller than <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code>, then we have not yet found the proper place to
+insert <code class="scheme"><span class="variable">n</span></code> into <code class="scheme"><span class="variable">alon</span></code>.  We do know that the first item of
+the result must be the <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code> and that <code class="scheme"><span class="variable">n</span></code> must be
+inserted into <code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code>. The final result in this case is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))
+</pre></div><p>
+because this list contains <code class="scheme"><span class="variable">n</span></code> and all items of <code class="scheme"><span class="variable">alon</span></code> in
+sorted order -- which is what we need.</p>
+<p>
+The translation of this discussion into Scheme requires the formulation of
+a conditional expression that distinguishes between the two possible
+cases:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;=</span> <span class="variable">n</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) ...]
+  [(<span class="builtin">&lt;</span>  <span class="variable">n</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) ...])
+</pre></div><p>
+From here, we just need to put the proper answer expressions into the two
+<code class="scheme"><span class="keyword">cond</span></code>-clauses. Figure&nbsp;<a href="#node_fig_Temp_76">33</a> contains the complete
+definitions of <code class="scheme"><span class="variable">insert</span></code> and <code class="scheme"><span class="variable">sort</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_76"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_986"></a><a name="node_idx_988"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span> (<span class="variable">sorted</span>)</code></span>
+<span class="comment">;; to create a list of numbers with the same numbers as</span>
+<span class="comment">;; <code class="scheme"><span class="variable">alon</span></code> sorted in descending order</span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [(<span class="builtin">cons?</span> <span class="variable">alon</span>) (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">insert</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">list-of-numbers</span> (<span class="variable">sorted</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span> (<span class="variable">sorted</span>)</code></span>
+<span class="comment">;; to create a list of numbers from <code class="scheme"><span class="variable">n</span></code> and the numbers on</span>
+<span class="comment">;; <code class="scheme"><span class="variable">alon</span></code> that is sorted in descending order; <code class="scheme"><span class="variable">alon</span></code> is sorted</span>
+(<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">n</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">cons</span> <span class="variable">n</span> <span class="builtin">empty</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">&gt;=</span> <span class="variable">n</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">n</span> <span class="variable">alon</span>)]
+            [(<span class="builtin">&lt;</span>  <span class="variable">n</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 33:</b>&nbsp;&nbsp;Sorting lists of numbers</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+<a name="node_idx_990"></a></p>
+<p></p>
+<p><strong>Terminology</strong>:  This particular program for sorting is known as
+<small>I</small><small>N</small><small>S</small><small>E</small><small>R</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>S</small><small>O</small><small>R</small><small>T</small> in the programming literature.&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_12.2.1"></a>
+<b>Exercise 12.2.1.</b>&nbsp;&nbsp; 
+Develop a program that sorts lists of mail messages by date. Mail
+structures are defined as follows: 
+<a name="node_idx_992"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">mail</span> (<span class="variable">from</span> <span class="variable">date</span> <span class="variable">message</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_994"></a>A <i>mail-message</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-mail</span> <span class="variable">name</span> <span class="variable">n</span> <span class="variable">s</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">name</span></code> is a string, <code class="scheme"><span class="variable">n</span></code> is a number, and <code class="scheme"><span class="variable">s</span></code> is
+a string.<p>
+Also develop a program that sorts lists of mail messages by
+name. To compare two strings alphabetically, use the <code class="scheme"><span class="builtin">string&lt;?</span></code>
+primitive.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_12.2.2"></a>
+<b>Exercise 12.2.2.</b>&nbsp;&nbsp; 
+Here is the function <code class="scheme"><span class="variable">search</span></code>:
+</p>
+<p></p>
+<p><a name="node_idx_996"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">search</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">search</span> <span class="variable">n</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">false</span>]
+    [<span class="keyword">else</span> (<span class="keyword">or</span> (<span class="builtin">=</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">n</span>) (<span class="variable">search</span> <span class="variable">n</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div><p>
+It determines whether some number occurs in a list of numbers. The function
+may have to traverse the entire list to find out that the number of
+interest isn't contained in the list.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Develop the function <code class="scheme"><span class="variable">search-sorted</span></code>, which determines whether a 
+number occurs in a sorted list of numbers. The function must take advantage
+of the fact that the list is sorted. </p>
+<p>
+<a name="node_idx_998"></a></p>
+<p></p>
+<p><strong>Terminology</strong>:  The function <code class="scheme"><span class="variable">search-sorted</span></code> conducts a
+<small>L</small><small>I</small><small>N</small><small>E</small><small>A</small><small>R</small> <small>S</small><small>E</small><small>A</small><small>R</small><small>C</small><small>H</small>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_12.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_12.3">12.3&nbsp;&nbsp;Generalizing Problems, Generalizing Functions</a></h2>
+<p></p>
+<p>
+Consider the problem of drawing a <i>polygon</i>,
+<a name="node_idx_1000"></a>that is, a geometric
+shape with an arbitrary number of corners.<a name="call_footnote_Temp_77"></a><a href="#footnote_Temp_77"><sup><small>37</small></sup></a> A natural representation for a polygon is a list of
+<code class="scheme"><span class="variable">posn</span></code> structures:</p>
+<p>
+<a name="node_idx_1002"></a>A <i>list-of-posns</i> is either
+</p>
+<ol>
+<li><p>the empty list, <code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">p</span> <span class="variable">lop</span>)</code> where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>
+structure and <code class="scheme"><span class="variable">lop</span></code> is a list of posns.
+</p>
+</li></ol><p></p>
+<p>
+Each <code class="scheme"><span class="variable">posn</span></code> represents one corner of the polygon. For
+example, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">10</span>)
+  (<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">60</span> <span class="selfeval">60</span>)
+    (<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">60</span>)
+      <span class="builtin">empty</span>)))
+</pre></div><p>
+represents a triangle. The question is what <code class="scheme"><span class="builtin">empty</span></code> means as a
+polygon. The answer is that <code class="scheme"><span class="builtin">empty</span></code> does not represent a polygon and
+therefore shouldn't be included in the class of polygon representations. A
+polygon should always have at least one corner, and the lists that represent
+polygons should always contain at least one <code class="scheme"><span class="variable">posn</span></code>. This suggest the
+following data definition:</p>
+<p>
+<a name="node_idx_1004"></a>A <i>polygon</i> is either
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">p</span> <span class="builtin">empty</span>)</code> where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">p</span> <span class="variable">lop</span>)</code> where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>
+structure and <code class="scheme"><span class="variable">lop</span></code> is a polygon.
+</p>
+</li></ol><p></p>
+<p>
+In short, a discussion of how the chosen set of data (lists of
+<code class="scheme"><span class="variable">posn</span></code>s) represents the intended information (geometric polygons)
+reveals that our choice was inadequate. Revising the data definition
+brings us closer to our intentions and makes it easier to design the
+program. </p>
+<p>
+Because our drawing primitives always produce <code class="scheme"><span class="builtin">true</span></code> (if anything),
+it is natural to suggest the following contract and purpose statement: 
+<a name="node_idx_1006"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">draw-polygon</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to draw the polygon specified by <code class="scheme"><span class="variable">a-poly</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">draw-polygon</span> <span class="variable">a-poly</span>) ...)
+</pre></div><p>
+In other words, the function draws the lines between the corners and, if
+all primitive drawing steps work out, it produces <code class="scheme"><span class="builtin">true</span></code>. For
+example, the above list of <code class="scheme"><span class="variable">posn</span></code>s should produce a triangle. </p>
+<p>
+Although the data definition is not just a variant on our well-worn list
+theme, the template is close to that of a list-processing function:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">draw-polygon</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to draw the polygon specified by <code class="scheme"><span class="variable">a-poly</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">draw-polygon</span> <span class="variable">a-poly</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) ... (<span class="builtin">first</span> <span class="variable">a-poly</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-poly</span>) ... 
+        ... (<span class="builtin">second</span> <span class="variable">a-poly</span>) ...
+        ... (<span class="variable">draw-polygon</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) ...]))
+</pre></div><p>
+Given that both clauses in the data definition use <code class="scheme"><span class="builtin">cons</span></code>, the first
+condition must inspect the rest of the list, which is <code class="scheme"><span class="builtin">empty</span></code> for
+the first case and non-empty for the second one. Furthermore, in the first
+clause, we can add <code class="scheme">(<span class="builtin">first</span> <span class="variable">a-poly</span>)</code>; and in the second case, we not
+only have the first item on the list but the second one, too. After all,
+polygons generated according to the second clause consist of at least two
+<code class="scheme"><span class="variable">posn</span></code>s.</p>
+<p>
+Now we can replace the ``<tt>...</tt>'' in the template to obtain a complete
+function definition. For the first clause, the answer must be
+<code class="scheme"><span class="builtin">true</span></code>, because we don't have two <code class="scheme"><span class="variable">posn</span></code>s that we could
+connect to form a line. For the second clause, we have two <code class="scheme"><span class="variable">posn</span></code>s,
+we can draw a line between them, and we know that <code class="scheme">(<span class="variable">draw-polygon</span>
+(<span class="builtin">rest</span> <span class="variable">a-poly</span>))</code> draws all the remaining lines. Put differently, we can
+write
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">draw-solid-line</span> (<span class="builtin">first</span> <span class="variable">a-poly</span>) (<span class="builtin">second</span> <span class="variable">a-poly</span>))
+</pre></div><p>
+in the second clause because we know that <code class="scheme"><span class="variable">a-poly</span></code> has a second
+item. Both <code class="scheme">(<span class="variable">draw-solid-line</span> ...)</code> and <code class="scheme">(<span class="variable">draw-poly</span> ...)</code> produce
+<code class="scheme"><span class="builtin">true</span></code> if everything goes fine. By combining the two expressions
+with <code class="scheme"><span class="keyword">and</span></code>, <code class="scheme"><span class="variable">draw-poly</span></code> draws all lines. </p>
+<p>
+Here is the complete function definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">draw-polygon</span> <span class="variable">a-poly</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) <span class="builtin">true</span>]
+    [<span class="keyword">else</span> (<span class="keyword">and</span> (<span class="variable">draw-solid-line</span> (<span class="builtin">first</span> <span class="variable">a-poly</span>) (<span class="builtin">second</span> <span class="variable">a-poly</span>))
+               (<span class="variable">draw-polygon</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)))]))
+</pre></div><p>
+Unfortunately, testing it with our triangle example immediately reveals a
+flaw. Instead of drawing a polygon with three sides, the function draws
+only an open curve, connecting all the corners but not closing the curve:
+</p>
+<div align="center"><table><tr><td>
+
+
+</td></tr><tr><td>
+<p>
+
+</p>
+</td></tr><tr><td>
+<p>
+
+
+</p>
+</td></tr><tr><td>
+<p>
+</p>
+<img src="curriculum1ba-Z-G-3.gif" border="0" alt="[curriculum1ba-Z-G-3.gif]">
+</td></tr></table></div>
+
+Mathematically put, we have defined a more general function than the one we
+wanted. The function we defined should be called ``connect-the-dots'' and
+not <code class="scheme"><span class="variable">draw-polygon</span></code>. <p>
+To get from the more general function to what we want, we need to figure
+out some way to connect the last dot to the first one. There are several
+ways to accomplish this goal, but all of them mean that we define the main
+function in terms of the function we just defined or something like it. In
+other words, we define one auxiliary function in terms of a more general
+one.</p>
+<p>
+One way to define the new function is to add the first position of a
+polygon to the end and to have this new list drawn. A symmetric method is
+to pick the last one and add it to the front of the polygon. A third
+alternative is to modify the above version of <code class="scheme"><span class="variable">draw-polygon</span></code> so that
+it connects the last <code class="scheme"><span class="variable">posn</span></code> to the first one. Here we discuss the
+second alternative; the exercises cover the other two. </p>
+<p>
+To add the last item of <code class="scheme"><span class="variable">a-poly</span></code> at the beginning, we need something
+like 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="variable">last</span> <span class="variable">a-poly</span>) <span class="variable">a-poly</span>)
+</pre></div><p>
+where <code class="scheme"><span class="variable">last</span></code> is some auxiliary function that extracts the last item
+from a non-empty list. Indeed, this expression is the definition of
+<code class="scheme"><span class="variable">draw-polygon</span></code> assuming we define <code class="scheme"><span class="variable">last</span></code>: see
+figure&nbsp;<a href="#node_fig_Temp_78">34</a>. </p>
+<p>
+Formulating the wish list entry for <code class="scheme"><span class="variable">last</span></code> is straightforward: 
+<a name="node_idx_1008"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">last</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">posn</span></code></span>
+<span class="comment">;; to extract the last <code class="scheme"><span class="variable">posn</span></code> on <code class="scheme"><span class="variable">a-poly</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">last</span> <span class="variable">a-poly</span>) ...)
+</pre></div><p>
+And, because <code class="scheme"><span class="variable">last</span></code> consumes a polygon, we can reuse the template
+from above: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">last</span> <span class="variable">a-poly</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) ... (<span class="builtin">first</span> <span class="variable">a-poly</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-poly</span>) ... 
+        ... (<span class="builtin">second</span> <span class="variable">a-poly</span>) ...
+        ... (<span class="variable">last</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) ...]))
+</pre></div><p></p>
+<p>
+Turning the template into a complete function is a short step. If the list
+is empty except for one item, this item is the desired result. If
+<code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-poly</span>)</code> is not empty, <code class="scheme">(<span class="variable">last</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>))</code>
+determines the last item of <code class="scheme"><span class="variable">a-poly</span></code>. The complete definition of
+<code class="scheme"><span class="variable">last</span></code> is displayed at the bottom of figure&nbsp;<a href="#node_fig_Temp_78">34</a>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_78"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1010"></a><a name="node_idx_1012"></a><a name="node_idx_1014"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">draw-polygon</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to draw the polygon specified by a-poly </span>
+(<span class="keyword">define</span> (<span class="variable">draw-polygon</span> <span class="variable">a-poly</span>)
+  (<span class="variable">connect-dots</span> (<span class="builtin">cons</span> (<span class="variable">last</span> <span class="variable">a-poly</span>) <span class="variable">a-poly</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">connect-dots</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to draw connections between the dots of <code class="scheme"><span class="variable">a-poly</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">connect-dots</span> <span class="variable">a-poly</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) <span class="builtin">true</span>]
+    [<span class="keyword">else</span> (<span class="keyword">and</span> (<span class="variable">draw-solid-line</span> (<span class="builtin">first</span> <span class="variable">a-poly</span>) (<span class="builtin">second</span> <span class="variable">a-poly</span>) <span class="keyword">'</span><span class="variable">red</span>)
+               (<span class="variable">connect-dots</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">last</span> <span class="selfeval">:</span> <span class="variable">polygon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">posn</span></code></span>
+<span class="comment">;; to extract the last <code class="scheme"><span class="variable">posn</span></code> on <code class="scheme"><span class="variable">a-poly</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">last</span> <span class="variable">a-poly</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>)) (<span class="builtin">first</span> <span class="variable">a-poly</span>)]
+    [<span class="keyword">else</span> (<span class="variable">last</span> (<span class="builtin">rest</span> <span class="variable">a-poly</span>))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 34:</b>&nbsp;&nbsp;Drawing a polygon</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+In summary, the development of <code class="scheme"><span class="variable">draw-polygon</span></code> naturally led us to
+consider a more general problem: connecting a list of dots. We solved the
+original problem by defining a function that uses (a variant of) the more
+general function. As we will see again and again, generalizing the purpose
+of a function is often the best method to simplify the problem. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_12.3.1"></a>
+<b>Exercise 12.3.1.</b>&nbsp;&nbsp; 
+Modify <code class="scheme"><span class="variable">draw-polygon</span></code> so that it adds the first item of
+<code class="scheme"><span class="variable">a-poly</span></code> to its end. This requires a different auxiliary function:
+<code class="scheme"><span class="variable">add-at-end</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/draw-poly0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_12.3.2"></a>
+<b>Exercise 12.3.2.</b>&nbsp;&nbsp; 
+Modify <code class="scheme"><span class="variable">connect-dots</span></code> so that it consumes an additional
+<code class="scheme"><span class="variable">posn</span></code> structure to which the last <code class="scheme"><span class="variable">posn</span></code> is connected. </p>
+<p>
+Then modify <code class="scheme"><span class="variable">draw-polygon</span></code> to use this new version of
+<code class="scheme"><span class="variable">connect-dots</span></code>. </p>
+<p>
+<a name="node_idx_1016"></a></p>
+<p></p>
+<p><strong>Accumulator</strong>:  The new version of <code class="scheme"><span class="variable">connect-dots</span></code> is a simple
+instance of an accumulator-style function. In part&nbsp;<a href="curriculum-Z-H-37.html#node_part_VI">VI</a> we will
+discuss an entire class of such problems.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/draw-poly1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_12.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_12.4">12.4&nbsp;&nbsp;Extended Exercise: Rearranging Words</a></h2>
+<p></p>
+<p>
+Newspapers often contain exercises that ask readers to find all possible words
+made up from some letters.  One way to play this game is to form all possible
+arrangements of the letters in a systematic manner and to see which
+arrangements are dictionary words.  Suppose the letters ``a,'' ``d,'' ``e,''
+and ``r'' are given. There are twenty-four possible arrangements of these
+letters:
+</p>
+<blockquote><table border="0"><tr><td valign="top"><table border="0"><tr><td valign="top">ader</td></tr>
+<tr><td valign="top">daer</td></tr>
+<tr><td valign="top">dear</td></tr>
+<tr><td valign="top">dera</td></tr>
+<tr><td valign="top">aedr</td></tr>
+<tr><td valign="top"></td></tr></table></td><td valign="top"><table border="0"><tr><td valign="top">eadr</td></tr>
+<tr><td valign="top">edar</td></tr>
+<tr><td valign="top">edra</td></tr>
+<tr><td valign="top">aerd</td></tr>
+<tr><td valign="top">eard</td></tr>
+<tr><td valign="top"></td></tr></table></td><td valign="top"><table border="0"><tr><td valign="top">erad</td></tr>
+<tr><td valign="top">erda</td></tr>
+<tr><td valign="top">adre</td></tr>
+<tr><td valign="top">dare</td></tr>
+<tr><td valign="top">drae</td></tr>
+<tr><td valign="top"></td></tr></table></td><td valign="top"><table border="0"><tr><td valign="top">drea</td></tr>
+<tr><td valign="top">arde</td></tr>
+<tr><td valign="top">rade</td></tr>
+<tr><td valign="top">rdae</td></tr>
+<tr><td valign="top">rdea</td></tr>
+<tr><td valign="top"></td></tr></table></td><td valign="top"><table border="0"><tr><td valign="top">ared</td></tr>
+<tr><td valign="top">raed</td></tr>
+<tr><td valign="top">read</td></tr>
+<tr><td valign="top">reda</td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"></td></tr></table></td></tr>
+<tr><td valign="top"></td></tr></table>
+</blockquote>
+The three legitimate words in this list are ``read,'' ``dear,'' and
+``dare.''<p>
+The systematic enumeration of all possible arrangements is clearly a task
+for a computer program. It consumes a word and produces a list of the
+word's letter-by-letter rearrangements. </p>
+<p>
+One representation of a word is a list of symbols.  Each item in the
+input represents a letter: <code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">b</span></code>, <tt>...</tt>, <code class="scheme"><span class="keyword">'</span><span class="variable">z</span></code>.
+Here is the data definition for words: </p>
+<p>
+<a name="node_idx_1018"></a>A <i>word</i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>, or</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">a</span> <span class="variable">w</span>)</code> where <code class="scheme"><span class="variable">a</span></code> is a symbol (<code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">b</span></code>, <tt>...</tt>, <code class="scheme"><span class="keyword">'</span><span class="variable">z</span></code>) and <code class="scheme"><span class="variable">w</span></code> is a word. 
+</p>
+</li></ol><p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_12.4.1"></a>
+<b>Exercise 12.4.1.</b>&nbsp;&nbsp; 
+Formulate the data definition for lists of words. Systematically make up
+examples of words and lists of words.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/permutations.html">Solution</a></p>
+<p></p>
+<p>
+Let us call the function <code class="scheme"><span class="variable">arrangements</span></code>.<a name="call_footnote_Temp_79"></a><a href="#footnote_Temp_79"><sup><small>38</small></sup></a> Its template is that of a list-processing
+function:
+<a name="node_idx_1022"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">arrangements</span> <span class="selfeval">:</span> <span class="variable">word</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-words</span></code></span>
+<span class="comment">;; to create a list of all rearrangements of the letters in <code class="scheme"><span class="variable">a-word</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">arrangements</span> <span class="variable">a-word</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-word</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-word</span>) ... (<span class="variable">arrangements</span> (<span class="builtin">rest</span> <span class="variable">a-word</span>)) ...]))
+</pre></div><p></p>
+<p>
+Given the contract, the supporting data definitions, and the examples, we
+can now look at each <code class="scheme"><span class="keyword">cond</span></code>-line in the template:
+</p>
+<ol>
+<li><p>If the input is <code class="scheme"><span class="builtin">empty</span></code>, there is only one possible rearrangement of
+the input: the <code class="scheme"><span class="builtin">empty</span></code> word. Hence the result is <code class="scheme">(<span class="builtin">cons</span>
+<span class="builtin">empty</span> <span class="builtin">empty</span>)</code>, the list that contains the empty list as the only item.</p>
+<p>
+</p>
+<li><p>Otherwise there is a first letter in the word, and <code class="scheme">(<span class="builtin">first</span>
+<span class="variable">a-word</span>)</code> is that letter and the recursion produces the list of all possible
+rearrangements for the rest of the word. For example, if the list is
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">d</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+then the recursion is <code class="scheme">(<span class="variable">arrangements</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span>
+<span class="builtin">empty</span>)))</code>. It will produce the result
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> <span class="builtin">empty</span>))
+  (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> <span class="builtin">empty</span>))
+    <span class="builtin">empty</span>))
+</pre></div><p></p>
+<p>
+To obtain all possible rearrangements for the entire list, we
+must now insert the first item, <code class="scheme"><span class="keyword">'</span><span class="variable">d</span></code> in our case, into all of these
+words between all possible letters and at the beginning and end.
+</p>
+</li></ol><p></p>
+<p>
+The task of inserting a letter into many different words requires
+processing an arbitrarily large list. So, we need another function, call it
+<code class="scheme"><span class="variable">insert-everywhere/in-all-words</span></code>, to complete the definition of
+<code class="scheme"><span class="variable">arrangements</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">arrangements</span> <span class="variable">a-word</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-word</span>) (<span class="builtin">cons</span> <span class="builtin">empty</span> <span class="builtin">empty</span>)]
+    [<span class="keyword">else</span> (<span class="variable">insert-everywhere/in-all-words</span> (<span class="builtin">first</span> <span class="variable">a-word</span>) 
+            (<span class="variable">arrangements</span> (<span class="builtin">rest</span> <span class="variable">a-word</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+<p><a name="node_thm_12.4.2"></a>
+<b>Exercise 12.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">insert-everywhere/in-all-words</span></code>. It consumes a
+symbol and a list of words. The result is a list of words like its second
+argument, but with the first argument inserted between all letters and at
+the beginning and the end of all words of the second argument.</p>
+<p>
+<strong>Hint:</strong>  Reconsider the example from above. We stopped and decided that we
+needed to insert <code class="scheme"><span class="keyword">'</span><span class="variable">d</span></code> into the words <code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span>
+<span class="builtin">empty</span>))</code> and <code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> <span class="builtin">empty</span>))</code>. The following is therefore
+a natural candidate:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">insert-everywhere/in-all-words</span> <span class="keyword">'</span><span class="variable">d</span>
+  (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> <span class="builtin">empty</span>))
+    (<span class="builtin">cons</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">r</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">e</span> <span class="builtin">empty</span>))
+      <span class="builtin">empty</span>)))
+</pre></div><p>
+for the ``function examples'' step. Keep in mind that the second input
+corresponds to the sequence of (partial) words ``er'' and
+``re''. </p>
+<p>
+Also, use the Scheme operation <code class="scheme"><span class="builtin">append</span></code>, which consumes two lists
+and produces the concatenation of the two lists. For example: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">append</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>) (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)) 
+<span class="builtin">=</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">d</span> <span class="keyword">'</span><span class="variable">e</span>)
+</pre></div><p>
+We will discuss the development of functions such as <code class="scheme"><span class="builtin">append</span></code> in
+section&nbsp;<a href="curriculum-Z-H-22.html#node_chap_17">17</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/permutations.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+
+
+<p>
+</p>
+<p>
+
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_75"></a><a href="#call_footnote_Temp_75"><sup><small>36</small></sup></a> The term ``wish list'' in this context is due to Dr.
+ John Stone.</p>
+<p><a name="footnote_Temp_77"></a><a href="#call_footnote_Temp_77"><sup><small>37</small></sup></a> Mr. Paul C. Fisher
+inspired this section.</p>
+<p><a name="footnote_Temp_79"></a><a href="#call_footnote_Temp_79"><sup><small>38</small></sup></a> The mathematical
+term is <i>permutation</i>.
+<a name="node_idx_1020"></a></p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-15.html">previous</a></span><span>, <a href="curriculum-Z-H-17.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-16.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

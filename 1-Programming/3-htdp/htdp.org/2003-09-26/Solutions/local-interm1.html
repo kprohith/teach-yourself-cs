@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.15; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.15">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student
+
+;; STRUCTURE DEFINITION
+(define-struct ir (des price))
+
+;; DATA DEFINITION
+;;
+;; &gt; inventory-record (short: ir)
+;;   an ir is a structure (make-ir symbol number)
+
+;; extract1 : inventory  -&gt;  inventory
+;; to create an inventory from an-inv for all
+;; those items that cost less than $1
+(define (extract1 an-inv)
+  (cond
+    [(empty? an-inv) empty]
+    [else 
+     (local [(define inv-first (first an-inv))
+             (define rest-extracted (extract1 (rest an-inv)))] 
+       (cond
+         [(&lt;= (ir-price inv-first) 1.00)
+          (cons inv-first rest-extracted)]
+         [else rest-extracted]))]))
+
+(check-expect (extract1 empty)
+              empty)
+(check-expect (extract1 (list (make-ir 'balloon .99)))
+              (list (make-ir 'balloon .99)))
+(check-expect (extract1 (list (make-ir 'toy-car 2.99))) 
+              empty)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9" lang="en"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js" lang="en" itemscope itemtype="http://schema.org/Product"> <!--<![endif]-->
+<html>
+<head>
+<title>Download Racket</title>
+<meta name="generator" content="Racket" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<link rel="icon" href="/plticon-1-2.ico" type="image/ico" />
+<link rel="shortcut icon" href="/plticon-1-2.ico" type="image/x-icon" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<link rel="stylesheet" href="/gumby-1-2.css" />
+<script src="/modernizr-2.6.2.min.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-48767493-1', 'racket-lang.org');
+ga('send', 'pageview');</script>
+</head>
+<body><div class="navbar gumby-content" style="position: fixed;" gumby-fixed="top" id="nav1"><div class="row"><a class="toggle" gumby-trigger="#nav1 &gt; .row &gt; ul" href="#"><i class="icon-menu"></i></a>
+<a class="four columns logo" href="https://racket-lang.org/"><img class="logo" src="/logo-and-text-1-2.png" width="198" height="60" alt="Racket" /></a>
+<span class="one colums"></span> <ul class="five columns">
+
+
+</ul></div></div><div style="height: 60px;"></div>
+<div class="row"><div class="ten columns centered text-center"><h3 style="text-align: center">Version 7.7 (May 2020)</h3>
+<div id="download_panel" align="center" style="display: none; margin-bottom: 20px;"><div id="control"></div>
+<br />
+<div class="medium metro info btn icon-left entypo icon-install"><a href="/" id="download_link">Download</a></div>
+<br />
+or <a href="/" id="mirror_link">mirror</a>
+<span id="linux_ppa">or
+<a href="https://launchpad.net/~plt/+archive/ubuntu/racket">Ubuntu PPA</a></span></div></div></div><div class="row"><div class="eight columns centered text-center"><div class="row"><div style="margin: 1ex 4ex;">Release: &nbsp; <a href="/v7.7.html">Announcement</a>&nbsp; &bull; &nbsp;<a href="releases/7.7/doc/release/">Notes</a>&nbsp; &bull; &nbsp;<a href="releases/7.7/doc">Documentation</a>
+<br /> &nbsp; <a href="releases/7.7">More Installers and Checksums</a></div></div><div class="row"><div style="margin: 1ex 4ex;"><a href="/license.html">License</a>&nbsp; &bull; &nbsp;<a href="/all-versions.html">All Versions</a>&nbsp; &bull; &nbsp;<a href="https://snapshot.racket-lang.org/">Snapshot Builds</a></div></div></div></div><div class="row"><div class="six columns centered text-center">  <div id="minimal_racket_explain" style="font-size: 85%; display: none; margin-top: 1ex; padding: 1ex 1ex 1ex 1ex; text-align: left; line-height: 1.5em;  background-color: #edd"><div><b>About Minimal Racket:</b></div> Minimal Racket includes just enough of Racket that you can use <tt>raco pkg</tt> to install more.</div>
+  <div id="linux_explain" style="font-size: 85%; display: none; margin-top: 1ex; padding: 1ex 1ex 1ex 1ex; text-align: left; line-height: 1.5em;  background-color: #edd"><div><b>About the Linux installers:</b></div>
+The Linux build is generic enough that it should work on most
+distributions, including relatively old distributions.</div>
+  
+  <div id="builtpkgs_explain" style="font-size: 85%; display: none; margin-top: 1ex; padding: 1ex 1ex 1ex 1ex; text-align: left; line-height: 1.5em;  background-color: #edd"><div><b>About source distributions:</b></div> The <b>Source + built packages</b>
+   distribution is recommended, instead of the selected <b>Source</b> distribution.
+   The <b>Source + built packages</b> distribution includes pre-built,
+   platform-independent bytecode; it installs much faster than
+   plain source, and it is also compatible with fast installs of
+   additional Racket packages.</div>
+  <div id="source_explain" style="font-size: 85%; display: none; margin-top: 1ex; padding: 1ex 1ex 1ex 1ex; text-align: left; line-height: 1.5em;  background-color: #edd"><div><b>About sources for Windows and Mac OS:</b></div> To build from source for
+   Windows or Mac OS, download and build a <b>Minimal Racket</b> distribution
+   instead of a <b>Racket</b> distribution, then (when on Windows) install the <tt>racket-lib</tt> package
+   with <div>&nbsp; &nbsp; <tt>raco pkg update --auto racket-lib</tt></div>
+   and then (on both Windows and Mac OS) install packages
+   with <div>&nbsp; &nbsp; <tt>raco pkg install -i main-distribution</tt></div></div>
+  <div id="win_source_explain" style="font-size: 85%; display: none; margin-top: 1ex; padding: 1ex 1ex 1ex 1ex; text-align: left; line-height: 1.5em;  background-color: #edd"><div><b>About source builds on Windows:</b></div> After building <b>Minimal Racket</b>
+   from source, install the <tt>racket-lib</tt> package with
+   with <div>&nbsp; &nbsp; <tt>raco pkg update --auto racket-lib</tt></div>
+   before installing other packages.</div>
+<script type="text/javascript">
+//<![CDATA[
+
+// higher-order functions
+
+function map(xs, f) {
+    var result = [];
+    for (var i = 0; i < xs.length; i++) {
+        result.push(f(xs[i], i));
+    }
+    return result;
+}
+
+function forEach(xs, f) {
+    for (var i = 0; i < xs.length; i++) {
+        f(xs[i], i);
+    }
+}
+
+function filter(xs, f) {
+    var result = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i)) {
+            result.push(xs[i]);
+        }
+    }
+    return result;
+}
+
+
+// big-bang for HTML
+
+// bigbang :: (HTMLElement, 'state, ('state -> Elem)) -> void
+
+var bigbang = null;
+
+// elem :: (HTMLType, Props, Array of (Elem or Text)) -> Elem
+//
+// type HTMLType = String
+// type Props = Object; entries whose key starts with 'on' are considered handlers
+
+var elem = null;
+
+(function() {
+    function Elem(type, attrs, children) {
+        this.type = type;
+        this.attrs = attrs;
+        this.children = children;
+        this.node = null;
+        this.handlers = {};
+    }
+
+    function Text(s) {
+        this.s = s;
+        this.node = null;
+    }
+
+    var globalState = null;
+    var rerender = null;
+    var currentTree = null;
+
+    function setAttribute(tree) {
+        for (var key in tree.attrs) {
+            var value = tree.attrs[key];
+            if (key.substring(0, 2) === 'on') {
+                key = key.substring(2);
+                var closure = makeClosure(value);
+                tree.handlers[key] = closure;
+                if (tree.node.addEventListener) {
+                    tree.node.addEventListener(key, closure, false);
+                } else {
+                    tree.node.attachEvent('on' + key, closure);
+                }
+            } else {
+                tree.node.setAttribute(key, value);
+            }
+        }
+    }
+
+    function makeClosure(value) {
+        return function (e) {
+            e.target = e.target || e.srcElement; // IE uses srcElement
+            globalState = value(globalState, e);
+            rerender();
+        };
+    }
+
+    function render(tree) {
+        if (tree instanceof Text) {
+            tree.node = document.createTextNode(tree.s);
+            return tree.node;
+        }
+
+        var e = document.createElement(tree.type);
+        tree.node = e;
+        setAttribute(tree);
+
+        forEach(tree.children, function (child) {
+            e.appendChild(render(child));
+        });
+        return e;
+    }
+
+    // here's a crappy reconciliation algorithm to avoid losing focus
+    // update :: (Elem, Elem) -> void
+    function update(oldTree, newTree) {
+       var i = null;
+       if (oldTree.type === newTree.type) {
+           newTree.node = oldTree.node;
+           for (var key in oldTree.attrs) {
+               var value = oldTree.attrs[key];
+               if (key.substring(0, 2) === 'on') {
+                   key = key.substring(2);
+                   var closure = oldTree.handlers[key];
+                   if (newTree.node.removeEventListener) {
+                       newTree.node.removeEventListener(key, closure, false);
+                   } else {
+                       newTree.node.detachEvent('on' + key, closure);
+                   }
+               } else {
+                   newTree.node.removeAttribute(key);
+               }
+           }
+           setAttribute(newTree);
+           var limit = Math.min(oldTree.children.length, newTree.children.length);
+           for (i = 0; i < limit; i++) {
+               if (oldTree.children[i] instanceof Elem &&
+                   newTree.children[i] instanceof Elem) {
+                   update(oldTree.children[i], newTree.children[i]);
+               } else {
+                   newTree.children[i].node = render(newTree.children[i]);
+                   newTree.node.replaceChild(newTree.children[i].node, oldTree.children[i].node);
+               }
+           }
+           // remove extras
+           for (i = limit; i < oldTree.children.length; i++) {
+               oldTree.children[i].node.parentNode.removeChild(oldTree.children[i].node);
+           }
+           // add extras
+           for (i = limit; i < newTree.children.length; i++) {
+               newTree.children[i].node = render(newTree.children[i]);
+               newTree.node.appendChild(newTree.children[i].node);
+           }
+       } else {
+           newTree.node = render(newTree);
+           oldTree.node.parentNode.replaceChild(newTree.node, oldTree.node);
+       }
+    }
+
+    bigbang = function(elem, initialState, toDraw) {
+        globalState = initialState;
+        currentTree = toDraw(globalState);
+        elem.appendChild(render(currentTree));
+        rerender = function() {
+            var newTree = toDraw(globalState);
+            update(currentTree, newTree);
+            currentTree = newTree;
+        };
+    };
+
+    elem = function (type, attrs, children) {
+        return new Elem(type, attrs, map(children, function (child) {
+            return (typeof child === 'string') ?
+                new Text(child) :
+                child;
+        }));
+    };
+})();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+
+var initialDist = "racket";
+var mirrorUrl = "https://mirror.racket-lang.org/installers/";
+var allInstallers = [{"installers":[{"platform":"i386-win32","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"i386-win32","path":"7.7/racket-7.7-i386-win32.exe","variant":"Regular","size":82154056,"suffix":"exe","mirrorUrl":"/racket-7-7-i386-win32-exe.html","binary":true,"package":"racket","file":"racket-7.7-i386-win32.exe","humanSize":"78M"}],"platformName":"Windows (x86, 32-bit)"},{"platform":"x86_64-win32","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-win32","path":"7.7/racket-7.7-x86_64-win32.exe","variant":"Regular","size":82499856,"suffix":"exe","mirrorUrl":"/racket-7-7-x86_64-win32-exe.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-win32.exe","humanSize":"79M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-win32","path":"7.7/racket-7.7-x86_64-win32-cs.exe","variant":"CS","size":183063952,"suffix":"exe","mirrorUrl":"/racket-7-7-x86_64-win32-cs-exe.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-win32-cs.exe","humanSize":"175M"}],"platformName":"Windows (x64, 64-bit)"},{"platform":"x86_64-linux","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-linux","path":"7.7/racket-7.7-x86_64-linux.sh","variant":"Regular","size":123001690,"suffix":"sh","mirrorUrl":"/racket-7-7-x86_64-linux-sh.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-linux.sh","humanSize":"117M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-linux","path":"7.7/racket-7.7-x86_64-linux-cs.sh","variant":"CS","size":282171775,"suffix":"sh","mirrorUrl":"/racket-7-7-x86_64-linux-cs-sh.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-linux-cs.sh","humanSize":"269M"}],"platformName":"Linux x86_64"},{"platform":"i386-macosx","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"i386-macosx","path":"7.7/racket-7.7-i386-macosx.dmg","variant":"Regular","size":120644419,"suffix":"dmg","mirrorUrl":"/racket-7-7-i386-macosx-dmg.html","binary":true,"package":"racket","file":"racket-7.7-i386-macosx.dmg","humanSize":"115M"}],"platformName":"Mac OS (Intel 32-bit)"},{"platform":"x86_64-macosx","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-macosx","path":"7.7/racket-7.7-x86_64-macosx.dmg","variant":"Regular","size":121509367,"suffix":"dmg","mirrorUrl":"/racket-7-7-x86_64-macosx-dmg.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-macosx.dmg","humanSize":"116M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-macosx","path":"7.7/racket-7.7-x86_64-macosx-cs.dmg","variant":"CS","size":297969348,"suffix":"dmg","mirrorUrl":"/racket-7-7-x86_64-macosx-cs-dmg.html","binary":true,"package":"racket","file":"racket-7.7-x86_64-macosx-cs.dmg","humanSize":"284M"}],"platformName":"Mac OS (Intel 64-bit)"},{"platform":"src-builtpkgs","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"src-builtpkgs","path":"7.7/racket-7.7-src-builtpkgs.tgz","variant":"Regular","size":148403219,"suffix":"tgz","mirrorUrl":"/racket-7-7-src-builtpkgs-tgz.html","binary":false,"package":"racket","file":"racket-7.7-src-builtpkgs.tgz","humanSize":"142M"}],"platformName":"Unix Source + built packages"},{"platform":"src","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"src","path":"7.7/racket-7.7-src.tgz","variant":"Regular","size":31431701,"suffix":"tgz","mirrorUrl":"/racket-7-7-src-tgz.html","binary":false,"package":"racket","file":"racket-7.7-src.tgz","humanSize":"30M"}],"platformName":"Unix Source"}],"distName":"Racket","dist":"racket"},{"installers":[{"platform":"i386-win32","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"i386-win32","path":"7.7/racket-minimal-7.7-i386-win32.exe","variant":"Regular","size":7936648,"suffix":"exe","mirrorUrl":"/racket-minimal-7-7-i386-win32-exe.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-i386-win32.exe","humanSize":"7.6M"}],"platformName":"Windows (x86, 32-bit)"},{"platform":"x86_64-win32","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-win32","path":"7.7/racket-minimal-7.7-x86_64-win32.exe","variant":"Regular","size":8165448,"suffix":"exe","mirrorUrl":"/racket-minimal-7-7-x86_64-win32-exe.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-win32.exe","humanSize":"7.8M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-win32","path":"7.7/racket-minimal-7.7-x86_64-win32-cs.exe","variant":"CS","size":24378736,"suffix":"exe","mirrorUrl":"/racket-minimal-7-7-x86_64-win32-cs-exe.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-win32-cs.exe","humanSize":"23M"}],"platformName":"Windows (x64, 64-bit)"},{"platform":"x86_64-linux","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-linux","path":"7.7/racket-minimal-7.7-x86_64-linux.sh","variant":"Regular","size":9594774,"suffix":"sh","mirrorUrl":"/racket-minimal-7-7-x86_64-linux-sh.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-linux.sh","humanSize":"9.2M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-linux","path":"7.7/racket-minimal-7.7-x86_64-linux-cs.sh","variant":"CS","size":34374917,"suffix":"sh","mirrorUrl":"/racket-minimal-7-7-x86_64-linux-cs-sh.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-linux-cs.sh","humanSize":"33M"}],"platformName":"Linux x86_64"},{"platform":"i386-macosx","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"i386-macosx","path":"7.7/racket-minimal-7.7-i386-macosx.dmg","variant":"Regular","size":12176220,"suffix":"dmg","mirrorUrl":"/racket-minimal-7-7-i386-macosx-dmg.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-i386-macosx.dmg","humanSize":"12M"}],"platformName":"Mac OS (Intel 32-bit)"},{"platform":"x86_64-macosx","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-macosx","path":"7.7/racket-minimal-7.7-x86_64-macosx.dmg","variant":"Regular","size":12301303,"suffix":"dmg","mirrorUrl":"/racket-minimal-7-7-x86_64-macosx-dmg.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-macosx.dmg","humanSize":"12M"},{"release":{"version":"7.7","datestring":"May 2020"},"platform":"x86_64-macosx","path":"7.7/racket-minimal-7.7-x86_64-macosx-cs.dmg","variant":"CS","size":39010473,"suffix":"dmg","mirrorUrl":"/racket-minimal-7-7-x86_64-macosx-cs-dmg.html","binary":true,"package":"racket-minimal","file":"racket-minimal-7.7-x86_64-macosx-cs.dmg","humanSize":"37M"}],"platformName":"Mac OS (Intel 64-bit)"},{"platform":"src-builtpkgs","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"src-builtpkgs","path":"7.7/racket-minimal-7.7-src-builtpkgs.tgz","variant":"Regular","size":21239831,"suffix":"tgz","mirrorUrl":"/racket-minimal-7-7-src-builtpkgs-tgz.html","binary":false,"package":"racket-minimal","file":"racket-minimal-7.7-src-builtpkgs.tgz","humanSize":"20M"}],"platformName":"Source + built packages"},{"platform":"src","installers":[{"release":{"version":"7.7","datestring":"May 2020"},"platform":"src","path":"7.7/racket-minimal-7.7-src.tgz","variant":"Regular","size":14961292,"suffix":"tgz","mirrorUrl":"/racket-minimal-7-7-src-tgz.html","binary":false,"package":"racket-minimal","file":"racket-minimal-7.7-src.tgz","humanSize":"14M"}],"platformName":"Source"}],"distName":"Minimal Racket","dist":"racket-minimal"}];
+
+// returns an ordering for the platform names, an array of regexps
+// note that the entries are sorted in a good order, so return an order
+// that only brings the locally desired entries to the top
+function getPlatformOrder() {
+  var p = navigator.platform;
+  var p2 = navigator.appVersion;
+  var p3 = navigator.userAgent;
+  function l(str) {
+    return (p.indexOf(str) != -1) || (p2.indexOf(str) != -1) || (p3.indexOf(str) != -1);
+  }
+  var Win      = /Windows/,
+      Win64    = /Windows.*64/,
+      Win32    = /Windows.*32/,
+      Mac      = /Mac/,
+      MacIntel = /Mac.*Intel/,
+      MacIntel64 = /Mac.*Intel.*64/,
+      MacIntel32 = /Mac.*Intel.*32/,
+      MacPPC   = /Mac.*PPC/,
+      Linux    = /Linux/,
+      Linux64  = /Linux.*x86_64/,
+      Linux32  = /Linux.*i386/,
+      Unix     = /Unix/,
+      Solaris  = /Solaris/;
+  if (p == null) return [];
+  else if (l("SunOS")) return [Solaris, Unix];
+  else if (l("Win64")) return [Win64, Win];
+  else if (l("WOW64")) return [Win64, Win];
+  else if (l("Win"))   return [Win32, Win];
+  else if (l("Mac"))   return [
+    l("Intel") ? MacIntel64 : MacPPC,
+    l("Intel") ? MacIntel32 : MacPPC,
+    Mac,
+    Unix
+  ];
+  else if (l("Linux")) return [(l("_64") ? Linux64 : Linux32), Linux, Unix];
+  else return [];
+}
+
+function orderPlatform(platforms) {
+  var len = platforms.length;
+  // get the order and a make a sorting function
+  var order = getPlatformOrder();
+  function getOrder(str) {
+    for (var i = 0; i < order.length; i++)
+      if (str.search(order[i]) >= 0) return i;
+    return 999;
+  }
+  function isBetter(opt1, opt2) {
+    // sort first by the order, then by how they were placed originally
+    var ord1 = getOrder(opt1.name), ord2 = getOrder(opt2.name);
+    if (ord1 < ord2) return -1;
+    else if (ord1 > ord2) return +1;
+    else if (opt1.index < opt2.index) return -1;
+    else if (opt1.index > opt2.index) return +1;
+    else return  0;
+  }
+  // sort the options, need to use a temporary array
+  var tmps = map(platforms, function (platform, i) {
+    return {
+      name: platform.platformName,
+      index: i,
+      platform: platform
+    };
+  });
+  tmps.sort(isBetter);
+  forEach(tmps, function (platformData, i) {
+    platforms[i] = platformData.platform;
+  });
+}
+
+forEach(allInstallers, function (dist) {
+  orderPlatform(dist.installers);
+});
+
+function getAllPlatforms(allInstallers, currentDist) {
+  return filter(allInstallers, function (group) {
+    return group.dist === currentDist;
+  })[0].installers;
+}
+
+function getAllVariants(allPlatforms, currentPlatform) {
+  return filter(allPlatforms, function (group) {
+    return group.platform === currentPlatform;
+  })[0].installers;
+}
+
+function getPackage(allVariants, currentVariant) {
+  return filter(allVariants, function (group) {
+    return computeVariant(group) === currentVariant;
+  })[0];
+}
+
+function computeVariant(package) {
+  return package.variant + '+' + package.suffix;
+}
+
+function toDraw(state) {
+  var currentDist = state.dist;
+  var allPlatforms = getAllPlatforms(allInstallers, currentDist);
+  var currentPlatform = state.platform;
+  var allVariants = getAllVariants(allPlatforms, currentPlatform);
+  var currentVariant = state.variant;
+
+  var currentPackage = getPackage(allVariants, currentVariant);
+
+  function handleDistChange(state, e) {
+    var currentDist = e.target.value;
+    var allPlatforms = getAllPlatforms(allInstallers, currentDist);
+    var currentPlatform = allPlatforms[0].platform;
+    var allVariants = getAllVariants(allPlatforms, currentPlatform);
+    var currentVariant = computeVariant(allVariants[0]);
+    return {
+      dist: currentDist,
+      platform: currentPlatform,
+      variant: currentVariant
+    };
+  }
+
+  function handlePlatformChange(state, e) {
+    var currentDist = state.dist;
+    var allPlatforms = getAllPlatforms(allInstallers, currentDist);
+    var currentPlatform = e.target.value;
+    var allVariants = getAllVariants(allPlatforms, currentPlatform);
+    var currentVariant = computeVariant(allVariants[0]);
+    return {
+      dist: currentDist,
+      platform: currentPlatform,
+      variant: currentVariant
+    };
+  }
+
+  function handleVariantChange(state, e) {
+    return {
+      dist: state.dist,
+      platform: state.platform,
+      variant: e.target.value
+    };
+  }
+
+  update(currentPackage);
+
+  var children = [
+    elem('div', {}, [
+      'Distribution: ',
+      elem('select', {onchange: handleDistChange},
+        map(allInstallers, function (group) {
+          return elem('option',
+            group.dist === currentDist ?
+              {selected: 'selected', value: group.dist} :
+              {value: group.dist},
+            [group.distName]);
+        }))
+    ]),
+    elem('div', {}, [
+      'Platform: ',
+      elem('select', {onchange: handlePlatformChange},
+        map(allPlatforms, function (group) {
+          return elem('option',
+            group.platform === currentPlatform ?
+              {selected: 'selected', value: group.platform} :
+              {value: group.platform},
+            [group.platformName]);
+        }))
+    ])
+  ];
+
+  if (allVariants.length !== 1) {
+    children.push(
+      elem('div', {}, [
+        'Variant: ',
+        elem('select', {onchange: handleVariantChange},
+          map(allVariants, function (group) {
+            var theVariant = computeVariant(group);
+            return elem('option',
+              theVariant === currentVariant ?
+                {selected: 'selected', value: theVariant} :
+                {value: theVariant},
+              [group.variant]);
+          }))
+      ]));
+  }
+  return elem('div', {}, children);
+}
+
+function init() {
+  var currentDist = initialDist;
+  var allPlatforms = getAllPlatforms(allInstallers, currentDist);
+  var currentPlatform = allPlatforms[0].platform;
+  var allVariants = getAllVariants(allPlatforms, currentPlatform);
+  var currentVariant = computeVariant(allVariants[0]);
+  bigbang(document.getElementById('control'), {
+    dist: currentDist,
+    platform: currentPlatform,
+    variant: currentVariant
+  }, toDraw);
+}
+
+init();
+
+function showWhen(e, b) {
+  document.getElementById(e).style.display = b ? 'block' : 'none';
+}
+
+function update(package) {
+  var dist = package.package;
+  var platform = package.platform;
+
+  showWhen('minimal_racket_explain', dist === 'racket-minimal');
+
+  showWhen('linux_explain', platform.search(/linux/) >= 0);
+  showWhen('linux_ppa', platform.search(/linux/) >= 0);
+
+  // NOTE: there used to be a condition that there must not be
+  // Windows/Mac source packages in the selector (e.g., no "Windows Source")
+  // to prevent versions prior 5.92 from showing the explanation.
+  // However, this condition is never triggered because it's actually spelled
+  // "Windows source". Nonetheless, it accidentally worked as intended because
+  // the other condition is to match for "Unix Source", but versions prior 5.92
+  // spelled "Unix source". This means the condition only applies to versions
+  // after Racket 5.92 already.
+  showWhen('source_explain',
+           (platform === 'src-builtpkgs' || platform === 'src') &&
+           dist === 'racket');
+
+  showWhen('win_source_explain',
+           (platform === 'src-builtpkgs' || platform === 'src') &&
+           dist === 'racket-minimal');
+
+  // NOTE: there used to be a condition that there must be 'builtpkgs' to show
+  // this explanation. However, this condition is redundant, because 'src'
+  // indicates that it's after 5.92 already (prior 5.92, there would be
+  // 'win', `mac`, and `unix` instead)
+  showWhen('builtpkgs_explain', platform === 'src');
+
+  // NOTE: there used to be a condition that 'x86_64-osx-mac' will also trigger
+  // this explanation, but 'x86_64-osx-mac' only exists before Racket 5.92
+  // which is way before the version with the touchbar bug (6.7)
+
+
+  var download_link = document.getElementById('download_link');
+  var path = mirrorUrl + package.path;
+  download_link.href = path;
+  download_link.innerHTML = path.replace(/.*\//, "") + " (" + package.humanSize + ")";
+  var mirror_link = document.getElementById("mirror_link");
+  mirror_link.href = package.mirrorUrl;
+}
+
+// show the download panel, since JS is obviously working
+showWhen('download_panel', true);
+
+//]]>
+</script>
+<noscript>Installers are available for the following platforms:
+<ul><li><a href="/racket-7-7-i386-win32-exe.html">Windows (x86, 32-bit)</a></li><li><a href="/racket-7-7-x86_64-win32-exe.html">Windows (x64, 64-bit)</a></li><li><a href="/racket-7-7-x86_64-win32-cs-exe.html">Windows (x64, 64-bit)</a></li><li><a href="/racket-7-7-x86_64-linux-sh.html">Linux x86_64</a></li><li><a href="/racket-7-7-x86_64-linux-cs-sh.html">Linux x86_64</a></li><li><a href="/racket-7-7-i386-macosx-dmg.html">Mac OS (Intel 32-bit)</a></li><li><a href="/racket-7-7-x86_64-macosx-dmg.html">Mac OS (Intel 64-bit)</a></li><li><a href="/racket-7-7-x86_64-macosx-cs-dmg.html">Mac OS (Intel 64-bit)</a></li><li><a href="/racket-7-7-src-builtpkgs-tgz.html">Unix Source + built packages</a></li><li><a href="/racket-7-7-src-tgz.html">Unix Source</a></li></ul></noscript></div></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+//<![CDATA[
+window.jQuery || document.write('<script src=/jquery-1.9.1.min.js><\/script>')
+//]]>
+</script>
+<script src="/gumby.min.js"></script>
+<script src="/plugins.js"></script>
+<script src="/main.js"></script>
+</body></html>

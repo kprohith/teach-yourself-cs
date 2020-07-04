@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/name-robot.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.9; How to Design Programs </title>
+</head>
+<body>
+<a href="recall2.html">10.2.8</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.9">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="moving-list-dat.html">10.3.1</a><pre>(define-struct ir (name price))
+
+;; name-robot : inventory -&gt; inventory
+;; changes 'robot to 'r2d2 in inv
+
+#|
+;; Template 
+(define (name-robot inv)
+  (cond
+    [(empty inv) ...]
+    [else (ir-name (first inv))
+          (ir-price (first inv))
+          (name-robot (rest inv))]))
+|#
+
+(define (name-robot inv)
+  (cond
+    [(empty? inv) empty]
+    [else (cond
+            [(eq? 'robot (ir-name (first inv)))
+             (cons (make-ir 'r2d2 (ir-price (first inv)))
+                   (name-robot (rest inv)))]
+            [else
+             (cons (first inv)
+                   (name-robot (rest inv)))])]))
+
+;; examples
+(name-robot empty) "should be" empty
+(name-robot (cons (make-ir 'doll 1.21) empty)) "should be" 
+(cons (make-ir 'doll 1.21) empty)
+
+(name-robot (cons (make-ir 'robot 1.21) empty)) "should be"
+(cons (make-ir 'r2d2 1.21) empty)
+
+(name-robot (cons (make-ir 'robot 1.21)
+                  (cons (make-ir 'doll 2.12)
+                        (cons (make-ir 'robot 2.23)
+                              empty))))
+"should be"
+(cons (make-ir 'r2d2 1.21)
+      (cons (make-ir 'doll 2.12)
+            (cons (make-ir 'r2d2 2.23)
+                  empty)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/name-robot.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/length-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="pi-accu.html">31.3.3</a> | <a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="add-pi-accu.html">31.3.5</a><pre>
+;; how-many : (Listof X) -&gt; Number
+;; how many items are on the list
+(define (how-many lx)
+   (how-many-accu lx 0))
+
+;; how-many-accu : (Listof X) Number -&gt; Number
+;; accumulator: the number of items seen so far
+(define (how-many-accu lx counted)
+   (cond
+     [(empty? lx) counted]
+     [else (how-many-accu (rest lx) (+ counted 1))]))
+
+;; Tests:
+(= (how-many-accu '(a b c) 0) 3)
+
+(= (how-many '(a b c)) 3)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/length-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

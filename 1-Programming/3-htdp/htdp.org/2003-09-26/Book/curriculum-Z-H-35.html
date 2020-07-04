@@ -1,0 +1,537 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-35.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-34.html">previous</a></span><span>, <a href="curriculum-Z-H-36.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_28"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_28">Section  28</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_28">Algorithms that Backtrack</a></h1>
+<p></p>
+<p>
+Solving problems does not always proceed on a direct route to the
+goal. Sometimes we make progress by pursuing one approach only to discover
+that we are stuck because we took a wrong turn. In those cases, we
+backtrack in our exploration and take a different turn at some branch, in
+the hope that it leads us to a solution. Algorithms can proceed like
+that. In the first subsection, we deal with an algorithm that can help us
+traverse a graph, which is of course the situation we just discussed. The
+second subsection is an extended exercise that uses backtracking in the
+context of chess.</p>
+<p>
+</p>
+<a name="node_sec_28.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_28.1">28.1&nbsp;&nbsp;Traversing Graphs</a></h2>
+<p></p>
+<p>
+On occasion, we need to navigate through a maze of one-way streets. Or, we
+may wish to draw a graph of whom we consider a friend, whom they consider a
+friend, and so on. Or, we need to plan a route through a network of
+pipelines. Or, we ask the Internet to find some way to send a message from
+one place to another.</p>
+<p>
+All these situations share a common element: a <i>directed
+graph</i>.<a name="node_idx_1842"></a></p>
+<p>
+Specifically, there is always some collection of <i>nodes</i> 
+<a name="node_idx_1844"></a>and a collection of <i>edges</i>.
+<a name="node_idx_1846"></a>The edges represent one-way connections
+between the nodes.  Consider figure&nbsp;<a href="#node_fig_Temp_153">76</a>. The black bullets are
+the nodes; the arrows between them are the one-way connections. The sample
+graph consists of seven nodes and nine edges.</p>
+<p>
+Now suppose we wish to plan routes in the graph of figure&nbsp;<a href="#node_fig_Temp_153">76</a>. 
+For example, if we plan to go from C to D, the route is simple: it consists
+of the origination node C and the destination node D. In contrast, if we
+wish to travel from E to D, we have two choices: 
+</p>
+<ol>
+<li><p>We either travel from E to F and then to D. 
+</p>
+<li><p>Or, we travel from E to C and then to D. 
+</p>
+</li></ol><p>
+For some nodes, however, it is impossible to connect them. In particular,
+it is impossible in our sample graph to move from C to G by following the
+arrows. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_153"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><img src="curriculum4a-Z-G-33.gif" border="0" alt="[curriculum4a-Z-G-33.gif]"></td></tr>
+<tr><td align="center"><b>Figure 76:</b>&nbsp;&nbsp;A directed graph</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+In the real world, graphs have more than just seven nodes and many more
+edges. Hence it is natural to develop functions that plan routes in
+graphs. Following the general design recipe, we start with a data
+analysis. Here is a compact representation of the graph in
+figure&nbsp;<a href="#node_fig_Temp_153">76</a> using lists:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">Graph</span> 
+  <span class="keyword">'</span>((<span class="variable">A</span> (<span class="variable">B</span> <span class="variable">E</span>))
+    (<span class="variable">B</span> (<span class="variable">E</span> <span class="variable">F</span>))
+    (<span class="variable">C</span> (<span class="variable">D</span>))
+    (<span class="variable">D</span> ())
+    (<span class="variable">E</span> (<span class="variable">C</span> <span class="variable">F</span>))
+    (<span class="variable">F</span> (<span class="variable">D</span> <span class="variable">G</span>))
+    (<span class="variable">G</span> ())))
+</pre></div><p>
+The list contains one list per node. Each of these lists starts with the
+name of a node followed by the list of its <i>neighbors</i>.
+<a name="node_idx_1848"></a>For example, the second list represents node B with its two outgoing edges
+to E and F.</p>
+<p>
+</p>
+<p><a name="node_thm_28.1.1"></a>
+<b>Exercise 28.1.1.</b>&nbsp;&nbsp; 
+Translate the above definition into proper list form using <code class="scheme"><span class="builtin">list</span></code>
+and proper symbols. </p>
+<p>
+The data definition for node is straightforward: 
+<a name="node_idx_1850"></a>A <i>node</i> is a symbol.</p>
+<p>
+Formulate a data definition for graphs with arbitrarily many
+nodes and edges. The data definition must specify a class of data that
+contains <code class="scheme"><span class="variable">Graph</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/represent-graph.html">Solution</a></p>
+<p></p>
+<p>
+Based on the data definitions for <code class="scheme"><span class="variable">node</span></code> and <code class="scheme"><span class="variable">graph</span></code>, we can
+now produce the first draft of a contract for <code class="scheme"><span class="variable">find-route</span></code>, the
+function that searches a route in a graph:
+<a name="node_idx_1852"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-route</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>)</code></span>
+<span class="comment">;; to create a path from <code class="scheme"><span class="variable">origination</span></code> to <code class="scheme"><span class="variable">destination</span></code> in <code class="scheme"><span class="variable">G</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">find-route</span> <span class="variable">origination</span> <span class="variable">destination</span> <span class="variable">G</span>) ...)
+</pre></div><p>
+What this header leaves open is the exact shape of the result. It implies
+that the result is a list of nodes, but it does not say exactly which nodes
+the list contains. To understand this aspect, we must study some examples.</p>
+<p>
+Consider the first problem mentioned above. Here is an expression that
+formulates the problem in Scheme: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Graph</span>)
+</pre></div><p>
+A route from <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code> consists of just two nodes: the
+origination and the destination node. Hence, we should expect the answer
+<code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span>)</code>. Of course, one might argue that since both the
+origination node and the destination node are known, the result should be
+<code class="scheme"><span class="builtin">empty</span></code>. Here we choose the first alternative since it is more
+natural, but it requires only a minor change of the final function
+definition to produce the latter.</p>
+<p>
+Now consider our second problem, going from <code class="scheme"><span class="keyword">'</span><span class="variable">E</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>,
+which is more representative of the kinds of problems we might encounter.
+One natural idea is to inspect all of the neighbors of <code class="scheme"><span class="keyword">'</span><span class="variable">E</span></code> and to
+find a route from one of them to <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>. In our sample graph,
+<code class="scheme"><span class="keyword">'</span><span class="variable">E</span></code> has two neighbors: <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> and <code class="scheme"><span class="keyword">'</span><span class="variable">F</span></code>.  Suppose for a
+moment that we didn't know the route yet. In that case, we could again
+inspect all of the neighbors of <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> and find a route from those to
+our goal. Of course, <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code> has a single neighbor and it is
+<code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>.  Putting together the results of all stages shows that the
+final result is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span>)</code>.</p>
+<p>
+Our final example poses a new problem. Suppose <code class="scheme"><span class="variable">find-route</span></code> is
+given the arguments <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">G</span></code>, and <code class="scheme"><span class="variable">Graph</span></code>. In this
+case, we know from inspecting figure&nbsp;<a href="#node_fig_Temp_153">76</a> that there is no
+connecting route. To signal the lack of a route, <code class="scheme"><span class="variable">find-route</span></code>
+should produce a value that cannot be mistaken for a route. One good
+choice is <code class="scheme">false</code>, a value that isn't a list and naturally denotes the
+failure of a function to compute a proper result. </p>
+<p>
+This new agreement requires another change in our contract: 
+<a name="node_idx_1854"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-route</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="keyword">or</span> false</code></span>
+<span class="comment">;; to create a path from <code class="scheme"><span class="variable">origination</span></code> to <code class="scheme"><span class="variable">destination</span></code> in <code class="scheme"><span class="variable">G</span></code></span>
+<span class="comment">;; if there is no path, the function produces <code class="scheme">false</code></span>
+(<span class="keyword">define</span> (<span class="variable">find-route</span> <span class="variable">origination</span> <span class="variable">destination</span> <span class="variable">G</span>) ...)
+</pre></div><p></p>
+<p>
+Our next step is to understand the four essential pieces of the function:
+the ``trivial problem'' condition, a matching solution, the generation of a
+new problem, and the combination step. The discussion of the three examples
+suggests answers. First, if the <code class="scheme"><span class="variable">origination</span></code> argument of
+<code class="scheme"><span class="variable">find-route</span></code> is equal to its <code class="scheme"><span class="variable">destination</span></code>, the problem is
+trivial; the matching answer is <code class="scheme">(<span class="builtin">list</span> <span class="variable">destination</span>)</code>. Second, if the
+arguments are different, we must inspect all neighbors of
+<code class="scheme"><span class="variable">origination</span></code> in <code class="scheme"><span class="variable">graph</span></code> and determine whether there is a
+route from one of those to <code class="scheme"><span class="variable">destination</span></code>. </p>
+<p>
+Since a node can have an arbitrary number of neighbors, this task is too
+complex for a single primitive. We need an auxiliary function.  The task of
+the auxiliary function is to consume a list of nodes and to determine for
+each one of them whether there is a route to the destination node in the
+given graph.  Put differently, the function is a list-oriented version of
+<code class="scheme"><span class="variable">find-route</span></code>. Let us call this function <code class="scheme"><span class="variable">find-route/list</span></code>.
+Here is a translation of this informal description into a
+contract, header, and purpose statement:
+<a name="node_idx_1856"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-route/list</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="keyword">or</span> false</code></span>
+<span class="comment">;; to create a path from some node on <code class="scheme"><span class="variable">lo-originations</span></code> to <code class="scheme"><span class="variable">destination</span></code></span>
+<span class="comment">;; if there is no path, the function produces <code class="scheme">false</code></span>
+(<span class="keyword">define</span> (<span class="variable">find-route/list</span> <span class="variable">lo-originations</span> <span class="variable">destination</span> <span class="variable">G</span>) ...)
+</pre></div><p></p>
+<p>
+Now we can write a first draft of <code class="scheme"><span class="variable">find-route</span></code> as follows:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">find-route</span> <span class="variable">origination</span> <span class="variable">destination</span> <span class="variable">G</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">origination</span> <span class="variable">destination</span>) (<span class="builtin">list</span> <span class="variable">destination</span>)]
+    [<span class="keyword">else</span> ... (<span class="variable">find-route/list</span> (<span class="variable">neighbors</span> <span class="variable">origination</span> <span class="variable">G</span>) <span class="variable">destination</span> <span class="variable">G</span>) ...]))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">neighbors</span></code> generates a whole list of problems: the
+problems of finding routes from the neighbors of <code class="scheme"><span class="variable">origination</span></code> to
+<code class="scheme"><span class="variable">destination</span></code>. Its definition is a straightforward exercise in
+structural processing.</p>
+<p>
+</p>
+<p><a name="node_thm_28.1.2"></a>
+<b>Exercise 28.1.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">neighbors</span></code>. It consumes a node <code class="scheme"><span class="variable">n</span></code> and a
+graph <code class="scheme"><span class="variable">g</span></code> (see exercise&nbsp;<a href="#node_thm_28.1.1">28.1.1</a>) and produces the
+list of neighbors of <code class="scheme"><span class="variable">n</span></code> in <code class="scheme"><span class="variable">g</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route1.html">Solution</a></p>
+<p> </p>
+<p>
+Next we need to consider what <code class="scheme"><span class="variable">find-route/list</span></code> produces. If it
+finds a route from any of the neighbors, it produces a route from that
+neighbor to the final destination. But, if none of the neighbors is
+connected to the destination, the function produces <code class="scheme">false</code>. Clearly,
+<code class="scheme"><span class="variable">find-route</span></code>'s answer depends on what <code class="scheme"><span class="variable">find-route/list</span></code>
+produces. Hence we should distinguish the answers with a
+<strong>cond</strong>-expression: 
+<a name="node_idx_1858"></a><a name="node_idx_1860"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">find-route</span> <span class="variable">origination</span> <span class="variable">destination</span> <span class="variable">G</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">origination</span> <span class="variable">destination</span>) (<span class="builtin">list</span> <span class="variable">destination</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">possible-route</span> 
+		    (<span class="variable">find-route/list</span> (<span class="variable">neighbors</span> <span class="variable">origination</span> <span class="variable">G</span>) 
+                                     <span class="variable">destination</span> <span class="variable">G</span>)))
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">boolean?</span> <span class="variable">route</span>) ...]
+	      [<span class="keyword">else</span> <span class="comment">; <code class="scheme">(<span class="builtin">cons?</span> <span class="variable">route</span>)</code> </span>
+		...]))]))
+</pre></div><p>
+The two cases reflect the two kinds of answers we might receive: a boolean
+or a list. If <code class="scheme"><span class="variable">find-route/list</span></code> produces <code class="scheme">false</code>, it failed to
+find a route from <code class="scheme"><span class="variable">origination</span></code>'s neighbors, and it is therefore
+impossible to reach <code class="scheme"><span class="variable">destination</span></code> at all. The answer in this case
+must therefore be <code class="scheme">false</code>. In contrast, if <code class="scheme"><span class="variable">find-route/list</span></code>
+produces a list, the answer must be route from <code class="scheme"><span class="variable">origination</span></code> to
+<code class="scheme"><span class="variable">destination</span></code>. Since <code class="scheme"><span class="variable">possible-route</span></code> starts with one of
+<code class="scheme"><span class="variable">origination</span></code>'s neighbors, it suffices to add <code class="scheme"><span class="variable">origination</span></code>
+to the front of <code class="scheme"><span class="variable">possible-route</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_154"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-route</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="keyword">or</span> false</code></span>
+<span class="comment">;; to create a path from <code class="scheme"><span class="variable">origination</span></code> to <code class="scheme"><span class="variable">destination</span></code> in <code class="scheme"><span class="variable">G</span></code></span>
+<span class="comment">;; if there is no path, the function produces <code class="scheme">false</code></span>
+(<span class="keyword">define</span> (<span class="variable">find-route</span> <span class="variable">origination</span> <span class="variable">destination</span> <span class="variable">G</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">origination</span> <span class="variable">destination</span>) (<span class="builtin">list</span> <span class="variable">destination</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">possible-route</span> 
+		    (<span class="variable">find-route/list</span> (<span class="variable">neighbors</span> <span class="variable">origination</span> <span class="variable">G</span>) <span class="variable">destination</span> <span class="variable">G</span>)))
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">boolean?</span> <span class="variable">possible-route</span>) false]
+	      [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="variable">origination</span> <span class="variable">possible-route</span>)]))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">find-route/list</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>) <span class="keyword">or</span> false</code></span>
+<span class="comment">;; to create a path from some node on <code class="scheme"><span class="variable">lo-Os</span></code> to <code class="scheme"><span class="variable">D</span></code></span>
+<span class="comment">;; if there is no path, the function produces <code class="scheme">false</code></span>
+(<span class="keyword">define</span> (<span class="variable">find-route/list</span> <span class="variable">lo-Os</span> <span class="variable">D</span> <span class="variable">G</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">lo-Os</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">possible-route</span> (<span class="variable">find-route</span> (<span class="builtin">first</span> <span class="variable">lo-Os</span>) <span class="variable">D</span> <span class="variable">G</span>)))
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">boolean?</span> <span class="variable">possible-route</span>) (<span class="variable">find-route/list</span> (<span class="builtin">rest</span> <span class="variable">lo-Os</span>) <span class="variable">D</span> <span class="variable">G</span>)]
+	      [<span class="keyword">else</span> <span class="variable">possible-route</span>]))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 77:</b>&nbsp;&nbsp;Finding a route in a graph</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_154">77</a> contains the complete definition of
+<code class="scheme"><span class="variable">find-route</span></code>. It also contains a definition of
+<code class="scheme"><span class="variable">find-route/list</span></code>, which processes its first argument via structural
+recursion. For each node in the list, <code class="scheme"><span class="variable">find-route/list</span></code> uses
+<code class="scheme"><span class="variable">find-route</span></code> to check for a route. If <code class="scheme"><span class="variable">find-route</span></code> indeed
+produces a route, that route is the answer. Otherwise, if
+<code class="scheme"><span class="variable">find-route</span></code> fails and produces <code class="scheme">false</code>, the function recurs. In
+other words, it backtracks its current choice of a starting position,
+<code class="scheme">(<span class="builtin">first</span> <span class="variable">lo-Os</span>)</code>, and instead tries the next one in the list. For
+that reason, <code class="scheme"><span class="variable">find-route</span></code> is often called a <small>B</small><small>A</small><small>C</small><small>K</small><small>T</small><small>R</small><small>A</small><small>C</small><small>K</small><small>I</small><small>N</small><small>G</small> <small>A</small><small>L</small><small>G</small><small>O</small><small>R</small><small>I</small><small>T</small><small>H</small><small>M</small>.</p>
+<p>
+<a name="node_idx_1862"></a><a name="node_idx_1864"></a></p>
+<p></p>
+<p><strong>Backtracking in the Structural World</strong>:  Intermezzo&nbsp;3 discusses
+backtracking in the structural world. A particularly good example is
+exercise <a href="curriculum-Z-H-23.html#node_thm_18.1.13">18.1.13</a>, which concerns a backtracking function for
+family trees. The function first searches one branch of a family tree for a
+blue-eyed ancestor and, if this search produces <code class="scheme"><span class="builtin">false</span></code>, it searches
+the other half of the tree. Since graphs generalize trees, comparing the
+two functions is an instructive exercise.&nbsp;</p>
+<p>
+Last, but not least, we need to understand whether the function produces an
+answer in all situations.  The second one, <code class="scheme"><span class="variable">find-route/list</span></code>, is
+structurally recursive and therefore always produces some value, assuming
+<code class="scheme"><span class="variable">find-route</span></code> always does. For <code class="scheme"><span class="variable">find-route</span></code> the answer is far
+from obvious. For example, when given the graph in figure&nbsp;<a href="#node_fig_Temp_153">76</a>
+and two nodes in the graph, <code class="scheme"><span class="variable">find-route</span></code> always produces some
+answer. For other graphs, however, it does not always terminate.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.1.3"></a>
+<b>Exercise 28.1.3.</b>&nbsp;&nbsp; 
+Test <code class="scheme"><span class="variable">find-route</span></code>. Use it to find a route from A to G in the graph
+of figure&nbsp;<a href="#node_fig_Temp_153">76</a>. Ensure that it produces <code class="scheme">false</code> when asked 
+to find a route from C to G.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route2.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_28.1.4"></a>
+<b>Exercise 28.1.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">test-on-all-nodes</span></code>, which consumes a graph
+<code class="scheme"><span class="variable">g</span></code> and tests <code class="scheme"><span class="variable">find-route</span></code> on all pairs of nodes in
+<code class="scheme"><span class="variable">g</span></code>. Test the function on <code class="scheme"><span class="variable">Graph</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route3.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_155"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><img src="curriculum4a-Z-G-34.gif" border="0" alt="[curriculum4a-Z-G-34.gif]"><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 78:</b>&nbsp;&nbsp;A directed graph with cycle</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Consider the graph in figure&nbsp;<a href="#node_fig_Temp_155">78</a>.  It differs radically
+from the graph in figure&nbsp;<a href="#node_fig_Temp_153">76</a> in that it is possible to start a
+route in a node and to return to the same node. Specifically, it is
+possible to move from B to E to C and back to B. And indeed, if applied
+<code class="scheme"><span class="variable">find-route</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">B</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">D</span></code>, and a representation of
+the graph, it fails to stop. Here is the hand-evaluation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>)
+<span class="builtin">=</span> ... (<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route/list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">F</span>) <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route/list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">F</span>) <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route/list</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span>) <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... (<span class="variable">find-route</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">D</span> <span class="variable">Cyclic-graph</span>) ...
+<span class="builtin">=</span> ... 
+</pre></div><p>
+where <code class="scheme"><span class="variable">Cyclic-Graph</span></code> stands for a Scheme representation of the graph
+in figure&nbsp;<a href="#node_fig_Temp_155">78</a>. The hand-evaluation shows that after
+seven applications of <code class="scheme"><span class="variable">find-route</span></code> and <code class="scheme"><span class="variable">find-route/list</span></code> the
+computer must evaluate the exact same expression from which we
+started. Since the same input produces the same output and the same
+behavior for functions, we know that the function loops forever and does not
+produce a value.</p>
+<p>
+In summary, if some given graph is cycle-free, <code class="scheme"><span class="variable">find-route</span></code> produces
+some output for any given inputs. After all, every route can only contain a
+finite number of nodes, and the number of routes is finite, too. The
+function therefore either exhaustively inspects all solutions starting from
+some given node or finds a route from the origination to the destination
+node. If, however, a graph contains a cycle, that is, a route from some
+node back to itself, <code class="scheme"><span class="variable">find-route</span></code> may not produce a result for some
+inputs.  In the next part, we will study a programming technique that helps
+us finds routes even in the presence of cycles in a graph.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.1.5"></a>
+<b>Exercise 28.1.5.</b>&nbsp;&nbsp; 
+Test <code class="scheme"><span class="variable">find-route</span></code> on <code class="scheme"><span class="keyword">'</span><span class="variable">B</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">C</span></code>, and the graph in
+figure&nbsp;<a href="#node_fig_Temp_155">78</a>. Use the ideas of
+section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to formulate the tests as boolean-valued
+expression.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route4.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_28.1.6"></a>
+<b>Exercise 28.1.6.</b>&nbsp;&nbsp; 
+Organize the <code class="scheme"><span class="variable">find-route</span></code> program as a single function
+definition. Remove parameters from the locally defined
+functions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/find-route5.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<a name="node_sec_28.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_28.2">28.2&nbsp;&nbsp;Extended Exercise: Checking (on) Queens</a></h2>
+<p></p>
+<p>
+A famous problem in the game of chess concerns the placement of queens on a
+board.  For our purposes, a chessboard is a ``square'' of, say,
+eight-by-eight or three-by-three tiles. The queen is a game piece that can
+move in a horizontal, vertical, or diagonal direction arbitrarily far. We say
+that a queen <i>threatens</i> 
+<a name="node_idx_1866"></a>a tile if it is on the tile or can move to
+it. Figure&nbsp;<a href="#node_fig_Temp_156">79</a> shows an example.  The solid disk represents a
+queen in the second column and sixth row. The solid lines radiating from the
+disk go through all those tiles that are threatened by the queen.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_156"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<img src="curriculum4a-Z-G-35.gif" border="0" alt="[curriculum4a-Z-G-35.gif]">
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 79:</b>&nbsp;&nbsp;A chessboard with a single queen</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The queen-placement problem is to place eight queens on a chessboard of
+eight-by-eight tiles such that the queens on the board don't threaten each
+other.  In computing, we generalize the problem of course and ask whether we
+can place <code class="scheme"><span class="variable">n</span></code> queens on some board of arbitrary size <code class="scheme"><span class="variable">m</span></code> by <code class="scheme"><span class="variable">m</span></code>.</p>
+<p>
+Even a cursory glance at the problem suggests that we need a data
+representation of boards and some basic functions on boards before we can
+even think of designing a program that solves the problem. Let's start with
+some basic data and function definitions. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.2.1"></a>
+<b>Exercise 28.2.1.</b>&nbsp;&nbsp; 
+Develop a data definition for chessboards. </p>
+<p>
+<strong>Hint:</strong> Use lists. Represent tiles with <code class="scheme">true</code> and <code class="scheme"><span class="builtin">false</span></code>. A value
+of <code class="scheme"><span class="builtin">true</span></code> should indicate that a position is available for the
+placement of a queen; <code class="scheme">false</code> should indicate that a position is occupied
+by, or threatened by, a queen.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/queen0.html">Solution</a></p>
+<p></p>
+<p>
+Next we need a function for creating a board and another one for checking on
+a specific tile. Following the examples of lists, let's define
+<code class="scheme"><span class="variable">build-board</span></code> and <code class="scheme"><span class="variable">board-ref</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.2.2"></a>
+<b>Exercise 28.2.2.</b>&nbsp;&nbsp; 
+Develop the following two functions on chessboards:
+<a name="node_idx_1868"></a><a name="node_idx_1870"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">build-board</span> <span class="selfeval">:</span> <strong>N</strong> (<strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">board</span></code></span>
+<span class="comment">;; to create a board of size <code class="scheme"><span class="variable">n</span></code> x <code class="scheme"><span class="variable">n</span></code>, </span>
+<span class="comment">;; fill each position with indices <code class="scheme"><span class="variable">i</span></code> and <code class="scheme"><span class="variable">j</span></code> with <code class="scheme">(<span class="variable">f</span> <span class="variable">i</span> <span class="variable">j</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">build-board</span> <span class="variable">n</span> <span class="variable">f</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">board-ref</span> <span class="selfeval">:</span> <span class="variable">board</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to access a position with indices <code class="scheme"><span class="variable">i</span></code>, <code class="scheme"><span class="variable">j</span></code> on a-board</span>
+(<span class="keyword">define</span> (<span class="variable">board-ref</span> <span class="variable">a-board</span> <span class="variable">i</span> <span class="variable">j</span>) ...)
+</pre></div><p>
+Test them rigorously! Use the ideas of section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to
+formulate the tests as boolean-valued expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/queen1.html">Solution</a></p>
+<p></p>
+<p>
+In addition to these generic functions on a chessboard representation, we
+also need at least one function that captures the concept of a ``threat'' as
+mentioned in the problem statement. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.2.3"></a>
+<b>Exercise 28.2.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">threatened?</span></code>, which computes whether a queen
+can reach a position on the board from some given position. That is, the
+function consumes two positions, given as <code class="scheme"><span class="variable">posn</span></code> structures, and
+produces <code class="scheme"><span class="builtin">true</span></code> if a queen on the first position can threaten the
+second position. </p>
+<p>
+<strong>Hint:</strong>  The exercise translate the chess problem of ``threatening queens''
+into the mathematical problem of determining whether in some given grid,
+two positions are on the same vertical, horizontal, or diagonal line. Keep
+in mind that each position belongs to two diagonals and that the slope of a
+diagonal is either <code class="scheme"><span class="selfeval">+1</span></code> or <code class="scheme"><span class="selfeval">-1</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/queen2.html">Solution</a></p>
+<p></p>
+<p>
+Once we have data definitions and functions for the ``language of
+chessboards,'' we can turn our attention to the main task: the algorithm
+for placing a number of queens on some given board.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_28.2.4"></a>
+<b>Exercise 28.2.4.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">placement</span></code>.  The function consumes a natural number and a
+board and tries to place that many queens on the board. If the queens can
+be placed, the function produces an appropriate board. If not, it produces
+<code class="scheme"><span class="builtin">false</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/queen.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+
+
+<p>
+
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-34.html">previous</a></span><span>, <a href="curriculum-Z-H-36.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-35.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

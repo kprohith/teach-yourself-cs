@@ -1,0 +1,335 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-52.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-51.html">previous</a></span><span>, <a href="curriculum-Z-H-53.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_42"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_42">Section  42</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_42">Equality</a></h1>
+<p></p>
+<p>
+</p>
+<p>
+As we mutate structures or vectors, we use words such as ``the vector now
+contains <code class="scheme"><span class="builtin">false</span></code> in its first field'' to describe what
+happens. Behind those words is the idea that the vector itself stays the
+same -- even though its properties change. What this observation suggests is
+that there are really two notions of equality: the one we have used so far
+and a new one based on effects on a structure or vector. Understanding
+these two notions of equality is critically important for a programmer. We
+therefore discuss them in detail in the following two subsections.</p>
+<p>
+</p>
+<a name="node_sec_42.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_42.1">42.1&nbsp;&nbsp;Extensional Equality</a></h2>
+<p></p>
+<p>
+Recall the class of <code class="scheme"><span class="variable">posn</span></code> structures from part&nbsp;<a href="curriculum-Z-H-3.html#node_part_I">I</a>. 
+A <code class="scheme"><span class="variable">posn</span></code> combines two numbers; its fields are called <code class="scheme"><span class="variable">x</span></code> and
+<code class="scheme"><span class="variable">y</span></code>. Here are two examples: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)
+</pre></div></td><td>
+</td><td><div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">8</span> <span class="selfeval">6</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+They are obviously distinct. In contrast, the following two 
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">1</span>)
+</pre></div></td><td>
+</td><td><div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">1</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+are equal. They both contain <code class="scheme"><span class="selfeval">12</span></code> in the <code class="scheme"><span class="variable">x</span></code>-field
+and <code class="scheme"><span class="selfeval">1</span></code> in the <code class="scheme"><span class="variable">y</span></code>-field.<p>
+More generally, we consider two structures to be equal if they contain equal
+components.  This assumes that we know how to compare the components, but
+that's not surprising. It just reminds us that processing structures
+follows the data definition that comes with the structure
+definition. Philosophers refer to this notion of equality as
+<small>E</small><small>X</small><small>T</small><small>E</small><small>N</small><small>S</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small> <small>E</small><small>Q</small><small>U</small><small>A</small><small>L</small><small>I</small><small>T</small><small>Y</small>.
+<a name="node_idx_2522"></a></p>
+<p>
+Section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> introduced extensional equality and discussed
+its use for building tests. As a reminder, let's consider a function for
+determining the extensional equality of <code class="scheme"><span class="variable">posn</span></code> structures:
+<a name="node_idx_2524"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">equal-posn</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether two <code class="scheme"><span class="variable">posn</span></code>s are extensionally equal </span>
+(<span class="keyword">define</span> (<span class="variable">equal-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>)
+  (<span class="keyword">and</span> (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">p1</span>) (<span class="builtin">posn-x</span> <span class="variable">p2</span>))
+       (<span class="builtin">=</span> (<span class="builtin">posn-y</span> <span class="variable">p1</span>) (<span class="builtin">posn-y</span> <span class="variable">p2</span>))))
+</pre></div><p>
+The function consumes two <code class="scheme"><span class="variable">posn</span></code> structures, extracts their field
+values, and then compares the corresponding field values using <code class="scheme"><span class="builtin">=</span></code>,
+the predicate for comparing numbers. Its organization matches that of the
+data definition for <code class="scheme"><span class="variable">posn</span></code> structures; its design is standard. This
+implies that for recursive classes of data, we naturally need recursive
+equality functions. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_42.1.1"></a>
+<b>Exercise 42.1.1.</b>&nbsp;&nbsp; 
+Develop an extensional equality function for the class of <code class="scheme"><span class="variable">child</span></code>
+structures from exercise&nbsp;<a href="curriculum-Z-H-51.html#node_thm_41.3.3">41.3.3</a>. If <code class="scheme"><span class="variable">ft1</span></code> and <code class="scheme"><span class="variable">ft2</span></code>
+are family tree nodes, how long is the maximal abstract running time of the
+function?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eq-extensional1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_42.1.2"></a>
+<b>Exercise 42.1.2.</b>&nbsp;&nbsp; 
+Use exercise&nbsp;<a href="#node_thm_42.1.1">42.1.1</a> to abstract <code class="scheme"><span class="variable">equal-posn</span></code> so
+that its instances can test the extensional equality of any given class of
+structures.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eq-extensional2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_42.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_42.2">42.2&nbsp;&nbsp;Intensional Equality</a></h2>
+<p></p>
+<p>
+Consider the following toy program: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">1</span>))
+(<span class="keyword">define</span> <span class="variable">b</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">1</span>))
+
+(<span class="keyword">begin</span>
+  (<span class="builtin">set-posn-x!</span> <span class="variable">a</span> <span class="selfeval">1</span>)
+  (<span class="variable">equal-posn</span> <span class="variable">a</span> <span class="variable">b</span>))
+</pre></div><p>
+It defines two <code class="scheme"><span class="variable">posn</span></code> structures. The two structures are initially
+equal in the sense of the preceding subsection. Yet when we evaluate the
+<strong>begin</strong>-expression, the result is <code class="scheme"><span class="builtin">false</span></code>.</p>
+<p>
+Even though the two structures initially consist of the same values, they
+are different because the structure mutation in the <strong>begin</strong>-expression changes the
+<code class="scheme"><span class="variable">x</span></code>-field of the first structure and leaves the second one
+alone. More generally, the expression has an effect on one structure but
+not the other.  Now take a look at a slightly different program:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">1</span>))
+(<span class="keyword">define</span> <span class="variable">b</span> <span class="variable">a</span>)
+
+(<span class="keyword">begin</span>
+  (<span class="builtin">set-posn-x!</span> <span class="variable">a</span> <span class="selfeval">1</span>)
+  (<span class="variable">equal-posn</span> <span class="variable">a</span> <span class="variable">b</span>))
+</pre></div><p>
+Here <code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code> are two different names for the same
+structure. Therefore, the evaluation of <code class="scheme">(<span class="builtin">set-posn-x!</span> <span class="variable">a</span> <span class="selfeval">1</span>)</code> affects
+both <code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code>, which means that <code class="scheme">(<span class="variable">equal-posn</span> <span class="variable">a</span> <span class="variable">b</span>)</code>
+is going to yield <code class="scheme"><span class="builtin">true</span></code> this time. </p>
+<p>
+The two observations have a general moral. If the evaluation of an
+expression affects one structure and simultaneously some other structure,
+the two structures are equal in a deeper sense than <code class="scheme"><span class="variable">equal-posn</span></code> can
+determine. Philosophers refer to this notion of equality as
+<small>I</small><small>N</small><small>T</small><small>E</small><small>N</small><small>S</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small> <small>E</small><small>Q</small><small>U</small><small>A</small><small>L</small><small>I</small><small>T</small><small>Y</small>.
+<a name="node_idx_2526"></a>In contrast to extensional equality, this
+notion of equality requires not only that two structures consist of equal
+parts, but that they also simultaneously react to structure mutations. It
+is a direct consequence that two intensionally equal structures are also
+extensionally equal.</p>
+<p>
+Designing a function for determining the intensional equality of structures
+is more work than designing one for determining their extensional
+equality. We start with a precise description:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">eq-posn</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether two <code class="scheme"><span class="variable">posn</span></code> structures </span>
+<span class="comment">;; are affected by the same mutation </span>
+(<span class="keyword">define</span> (<span class="variable">eq-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>) ...)
+</pre></div><p>
+We already have an example, so we move on to a discussion of the template:
+<a name="node_idx_2528"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">eq-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>)
+  ... (<span class="builtin">posn-x</span> <span class="variable">p1</span>) ... (<span class="builtin">posn-x</span> <span class="variable">p2</span>) ...
+  ... (<span class="builtin">posn-y</span> <span class="variable">p1</span>) ... (<span class="builtin">posn-y</span> <span class="variable">p2</span>) ... )
+</pre></div><p>
+The template contains four expressions, each one reminding us of the
+available information and which structure fields we can mutate.</p>
+<p>
+Translating the above observations into a full definition yields the
+following draft: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">eq-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>)
+  (<span class="keyword">begin</span>
+    (<span class="builtin">set-posn-x!</span> <span class="variable">p1</span> <span class="selfeval">5</span>)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">p2</span>) <span class="selfeval">5</span>)))
+</pre></div><p>
+This function sets <code class="scheme"><span class="variable">p1</span></code>'s <code class="scheme"><span class="variable">x</span></code>-field to <code class="scheme"><span class="selfeval">5</span></code> and then
+checks whether <code class="scheme"><span class="variable">p2</span></code>'s <code class="scheme"><span class="variable">x</span></code>-field also became <code class="scheme"><span class="selfeval">5</span></code>. If
+so, both structures reacted to the mutation and are, by definition,
+intensionally equal. </p>
+<p>
+Unfortunately, our reasoning has a problem. Consider the following
+application:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">eq-posn</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">make-posn</span> <span class="selfeval">5</span> <span class="selfeval">6</span>))
+</pre></div><p>
+The two <code class="scheme"><span class="variable">posn</span></code>'s aren't even extensionally equivalent, so they
+should not be intensionally equivalent. But our first version of
+<code class="scheme"><span class="variable">eq-posn</span></code> would produce <code class="scheme"><span class="builtin">true</span></code>, and that is a problem. </p>
+<p>
+We can improve the first version with a second mutation:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">eq-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>)
+  (<span class="keyword">begin</span>
+    (<span class="builtin">set-posn-x!</span> <span class="variable">p1</span> <span class="selfeval">5</span>)
+    (<span class="builtin">set-posn-x!</span> <span class="variable">p2</span> <span class="selfeval">6</span>)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">p1</span>) <span class="selfeval">6</span>)))
+</pre></div><p>
+This function changes <code class="scheme"><span class="variable">p1</span></code> and then <code class="scheme"><span class="variable">p2</span></code>. If the structures
+are intensionally equal, then the mutation of <code class="scheme"><span class="variable">p2</span></code> must affect
+<code class="scheme"><span class="variable">p1</span></code>. Furthermore, we know that <code class="scheme"><span class="variable">p1</span></code>'s <code class="scheme"><span class="variable">x</span></code>-field can't
+coincidentally contain <code class="scheme"><span class="selfeval">6</span></code>, because we first changed it
+to&nbsp;<code class="scheme"><span class="selfeval">5</span></code>. Thus, when <code class="scheme">(<span class="variable">eq-posn</span> <span class="variable">a</span> <span class="variable">b</span>)</code> produces <code class="scheme"><span class="builtin">true</span></code>,
+<code class="scheme"><span class="variable">a</span></code> changes when <code class="scheme"><span class="variable">b</span></code> changes and vice versa, and the
+structures are intensionally equal.</p>
+<p>
+The only problem left now is that <code class="scheme"><span class="variable">eq-posn</span></code> has effects on the
+two structures that it consumes but has no effect statement. Indeed, it
+should not have a visible effect because its only purpose is to determine
+whether two structures are intensionally equal. We can avoid this effect by
+first saving the old values in <code class="scheme"><span class="variable">p1</span></code>'s and <code class="scheme"><span class="variable">p2</span></code>'s <code class="scheme"><span class="variable">x</span></code>
+fields, mutating the fields, and then restoring the old
+values. Figure&nbsp;<a href="#node_fig_Temp_216">125</a> contains a function definition that performs an
+intensional equality check without any visible effects.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_216"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2530"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">eq-posn</span> <span class="selfeval">:</span> <span class="variable">posn</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether two <code class="scheme"><span class="variable">posn</span></code> structures </span>
+<span class="comment">;; are affected by the same mutation </span>
+(<span class="keyword">define</span> (<span class="variable">eq-posn</span> <span class="variable">p1</span> <span class="variable">p2</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; save old <code class="scheme"><span class="variable">x</span></code> values of <code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p2</span></code></span>
+	  (<span class="keyword">define</span> <span class="variable">old-x1</span> (<span class="builtin">posn-x</span> <span class="variable">p1</span>))
+	  (<span class="keyword">define</span> <span class="variable">old-x2</span> (<span class="builtin">posn-x</span> <span class="variable">p2</span>))
+	  <span class="comment">;; modify both <code class="scheme"><span class="variable">x</span></code> fields of <code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p2</span></code></span>
+	  (<span class="keyword">define</span> <span class="variable">effect1</span> (<span class="builtin">set-posn-x!</span> <span class="variable">p1</span> <span class="selfeval">5</span>))
+	  (<span class="keyword">define</span> <span class="variable">effect2</span> (<span class="builtin">set-posn-x!</span> <span class="variable">p2</span> <span class="selfeval">6</span>))
+	  <span class="comment">;; now compare the two fields</span>
+	  (<span class="keyword">define</span> <span class="variable">same</span> (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">p1</span>) (<span class="builtin">posn-x</span> <span class="variable">p2</span>)))
+	  <span class="comment">;; restore old values</span>
+	  (<span class="keyword">define</span> <span class="variable">effect3</span> (<span class="builtin">set-posn-x!</span> <span class="variable">p1</span> <span class="variable">old-x1</span>))
+	  (<span class="keyword">define</span> <span class="variable">effect4</span> (<span class="builtin">set-posn-x!</span> <span class="variable">p2</span> <span class="variable">old-x2</span>)))
+    <span class="variable">same</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 125:</b>&nbsp;&nbsp;Determining the intensional equality of two structures</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The existence of <code class="scheme"><span class="variable">eq-posn</span></code> says that all structures have a unique
+``fingerprint.'' We can inspect two structures (of the same class) for this
+fingerprint if we have access to the mutators. Scheme and many other
+languages
+<a name="node_idx_2532"></a>typically provide built-in functions for comparing two structural values
+extensionally and intensionally. The corresponding Scheme functions are
+<code class="scheme"><span class="builtin">equal?</span></code> and <code class="scheme"><span class="builtin">eq?</span></code>. In Scheme, both functions are applicable
+to all values, whether mutators and selectors are accessible or hidden. The
+existence of <code class="scheme"><span class="builtin">eq?</span></code> suggests a revision for our guideline on
+testing. </p>
+<p>
+<a name="node_idx_2534"></a></p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Testing
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Use <code class="scheme"><span class="builtin">eq?</span></code> for testing when comparing the
+identity of objects matters. Use <code class="scheme"><span class="builtin">equal?</span></code> for testing otherwise.
+</p></font></td></tr>
+</table>
+<p>
+The guideline is general. Still, programmers should use equality
+functions that indicate what kind of values they expect to compare, such as
+<code class="scheme"><span class="builtin">symbol=?</span></code>, <code class="scheme"><span class="builtin">boolean?</span></code>, or <code class="scheme"><span class="builtin">=</span></code>, because the additional
+information helps readers understand the purpose of the program more
+easily.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_42.2.1"></a>
+<b>Exercise 42.2.1.</b>&nbsp;&nbsp; 
+Evaluate the following expressions by hand: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="variable">eq-posn</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))
+
+<span class="variable">2.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)))
+	(<span class="variable">eq-posn</span> <span class="variable">p</span> <span class="variable">p</span>))
+
+<span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))
+	     (<span class="keyword">define</span> <span class="variable">a</span> (<span class="builtin">list</span> <span class="variable">p</span>)))
+	(<span class="variable">eq-posn</span> (<span class="builtin">first</span> <span class="variable">a</span>) <span class="variable">p</span>))
+</pre></div><p>
+Check the answers with DrScheme.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eq1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_42.2.2"></a>
+<b>Exercise 42.2.2.</b>&nbsp;&nbsp; 
+Develop an intensional equality function for the class of <code class="scheme"><span class="variable">child</span></code>
+structures from exercise&nbsp;<a href="curriculum-Z-H-51.html#node_thm_41.3.3">41.3.3</a>. If <code class="scheme"><span class="variable">ft1</span></code> and <code class="scheme"><span class="variable">ft2</span></code>
+are family tree nodes, how long is the maximal abstract running time of the
+function?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eq-intensional1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_42.2.3"></a>
+<b>Exercise 42.2.3.</b>&nbsp;&nbsp; 
+Use exercise&nbsp;<a href="#node_thm_42.2.2">42.2.2</a> to abstract <code class="scheme"><span class="variable">eq-posn</span></code> so that
+its instances can test the intensional equality of any given class of
+structures.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eq-intensional2.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-51.html">previous</a></span><span>, <a href="curriculum-Z-H-53.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-52.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

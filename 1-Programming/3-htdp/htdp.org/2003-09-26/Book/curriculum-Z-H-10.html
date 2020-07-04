@@ -1,0 +1,1141 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-9.html">previous</a></span><span>, <a href="curriculum-Z-H-11.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_7"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_7">Section  7</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_7">The Varieties of Data</a></h1>
+<p> 
+</p>
+<p>
+The previous section significantly expands our world of data.  We must now
+deal with a universe that contains booleans, symbols, and structures of
+many kinds. Let's bring some order to this world.</p>
+<p>
+Up to this point, our functions have always processed subclasses of four
+different kinds of data:<a name="call_footnote_Temp_46"></a><a href="#footnote_Temp_46"><sup><small>24</small></sup></a>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>numbers:</b></dt><dd>  representations of numeric information;
+</dd><dt><b>booleans:</b></dt><dd>  truth and falsity;
+</dd><dt><b>symbols:</b></dt><dd>  representations of symbolic information; and
+</dd><dt><b>structures:</b></dt><dd> representations of compounds of information. 
+</dd></dl><p>
+On occasion, however, a function must process a class of data that includes
+both numbers and structures or structures of several different kinds. We
+learn to design such functions in this section. In addition, we learn how
+to protect functions from bad uses. Here a bad use means that some user can
+accidentally apply a function for drawing circles to a rectangle. Although
+we have agreed that such users violate our data definitions, we should
+nevertheless know how to protect our functions against such uses, when
+necessary. </p>
+<p>
+</p>
+<a name="node_sec_7.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_7.1">7.1&nbsp;&nbsp;Mixing and Distinguishing Data</a></h2>
+<p> 
+</p>
+<p>
+In the preceding section, we used <code class="scheme"><span class="variable">posn</span></code> structures with exactly two
+components to represent pixels. If many of the pixels are on the <em>x</em> axis,
+we can simplify the representation by using plain numbers for those pixels
+and <code class="scheme"><span class="variable">posn</span></code> structures for the remaining ones.</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_47">16</a> contains a sample collection of such points.  Three
+of the five points, namely, <em>C</em>, <em>D</em>, and <em>E</em>, are on the <em>x</em> axis. Only
+two points require two coordinates for an accurate description: <em>A</em>
+and <i>B</i>. Our new idea for representing points permits us to describe
+this class of points succinctly: <code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">6</span> <span class="selfeval">6</span>)</code> for <code class="scheme"><span class="variable">A</span></code>;
+<code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code> for <code class="scheme"><span class="variable">B</span></code>; and 1, 2, and 3 for <code class="scheme"><span class="variable">C</span></code>,
+<code class="scheme"><span class="variable">D</span></code>, and <code class="scheme"><span class="variable">E</span></code>, respectively.</p>
+<p>
+If we now wish to define the function <code class="scheme"><span class="variable">distance-to-0</span></code>, which consumes
+such point representations and produces their distance to the origin, we
+are confronted with a problem. The function may be applied to a number <em>or</em> a <code class="scheme"><span class="variable">posn</span></code>. Depending on the class to which the input belongs,
+<code class="scheme"><span class="variable">distance-to-0</span></code> must employ a different method to calculate the
+distance to the origin. Thus we need to use a <strong>cond</strong>-expression to
+distinguish the two cases. Unfortunately, we don't have any operations to
+formulate the appropriate conditions. </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_47"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+
+
+<img src="curriculum1ab-Z-G-1.gif" border="0" alt="[curriculum1ab-Z-G-1.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 16:</b>&nbsp;&nbsp;A small collection of points</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+To accommodate this kind of function, Scheme provides <small>P</small><small>R</small><small>E</small><small>D</small><small>I</small><small>C</small><small>A</small><small>T</small><small>E</small><small>S</small>,
+<a name="node_idx_594"></a><a name="node_idx_596"></a>which are operations that recognize a particular form of data. The
+predicates for the classes of data we know are:
+</p>
+<dl><dt></dt><dd>
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">number?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a number and <code class="scheme">false</code> otherwise;
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">boolean?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a boolean value and <code class="scheme">false</code> otherwise;
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">symbol?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a symbol and <code class="scheme">false</code> otherwise;
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">struct?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a structure and <code class="scheme">false</code> otherwise.
+</dd></dl><p>
+For each structure definition, 
+<a name="node_idx_598"></a><a name="node_idx_600"></a>Scheme also introduces a separate predicate
+so that we can distinguish between distinct classes of structures. Suppose
+the <tt>Definitions</tt>
+<a name="node_idx_602"></a>window contains the following structure
+definitions:<a name="call_footnote_Temp_48"></a><a href="#footnote_Temp_48"><sup><small>25</small></sup></a>
+<a name="node_idx_604"></a><a name="node_idx_606"></a><a name="node_idx_608"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">posn</span> (<span class="variable">x</span> <span class="variable">y</span>))
+
+(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">last</span> <i>first</i> <span class="variable">dob</span> <span class="variable">ssn</span>))
+
+(<span class="keyword">define-struct</span> <span class="variable">airplane</span> (<span class="variable">kind</span> <span class="variable">max-speed</span> <span class="variable">max-load</span> <span class="variable">price</span>))
+</pre></div><p>
+Then, Scheme also knows the following three predicates: 
+</p>
+<dl><dt></dt><dd>
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">posn?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a <code class="scheme"><span class="variable">posn</span></code> structure and <code class="scheme">false</code> otherwise; 
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">star?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a <code class="scheme"><span class="variable">star</span></code> structure and <code class="scheme">false</code> otherwise;
+</dd><dt></dt><dd><code class="scheme"><span class="builtin">airplane?</span></code>, which consumes an arbitrary value and produces
+<code class="scheme">true</code> if the value is a <code class="scheme"><span class="variable">airplane</span></code> structure and <code class="scheme">false</code> otherwise.
+</dd></dl><p>
+Hence a function can distinguish a structure from a number as well as a
+<code class="scheme"><span class="variable">posn</span></code> structure from an <code class="scheme"><span class="variable">airplane</span></code> structure.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.1.1"></a>
+<b>Exercise 7.1.1.</b>&nbsp;&nbsp; 
+Evaluate the following expressions by hand: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">number?</span> (<span class="builtin">make-posn</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">number?</span> (<span class="builtin">+</span> <span class="selfeval">12</span> <span class="selfeval">10</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">posn?</span> <span class="selfeval">23</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">posn?</span> (<span class="builtin">make-posn</span> <span class="selfeval">23</span> <span class="selfeval">3</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">star?</span> (<span class="builtin">make-posn</span> <span class="selfeval">23</span> <span class="selfeval">3</span>))</code>
+</p>
+</li></ol><p>
+Check the answers in DrScheme.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/predicates.html">Solution</a></p>
+<p></p>
+<p>
+Now we can develop <code class="scheme"><span class="variable">distance-to-0</span></code>. Let's start with a data
+definition: </p>
+<p>
+<a name="node_idx_610"></a>A <i>pixel-2</i> is either
+</p>
+<ol>
+<li><p>a <code class="scheme"><span class="variable">number</span></code>, or
+</p>
+<li><p>a <code class="scheme"><span class="variable">posn</span></code> structure. 
+</p>
+</li></ol><p></p>
+<p>
+Stating the contract, purpose, and header is straightforward: 
+<a name="node_idx_612"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">distance-to-0</span> <span class="selfeval">:</span> <span class="variable">pixel-2</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the distance of <code class="scheme"><span class="variable">a-pixel</span></code> to the origin</span>
+(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-pixel</span>) ...)
+</pre></div><p></p>
+<p>
+As mentioned before, the function must distinguish between its two kinds of
+inputs, which can be accomplished with a <strong>cond</strong>-expression:
+<a name="node_idx_614"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-pixel</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">a-pixel</span>) ...]
+    [(<span class="builtin">posn?</span> <span class="variable">a-pixel</span>) ...]))
+</pre></div><p>
+The two conditions match the two possible inputs of the new
+<code class="scheme"><span class="variable">distance-to-0</span></code> function.  If the first one holds, the input is a
+pixel on the <em>x</em> axis. Otherwise the pixel is a <code class="scheme"><span class="variable">posn</span></code> structure. For
+the second <code class="scheme"><span class="keyword">cond</span></code>-line, we also know that the input contains two
+items: the <em>x</em> and <em>y</em> coordinates. To remind ourselves, we
+annotate the template with two selector expressions:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-pixel</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">a-pixel</span>) ...]
+    [(<span class="builtin">posn?</span> <span class="variable">a-pixel</span>) ... (<span class="builtin">posn-x</span> <span class="variable">a-pixel</span>) ... (<span class="builtin">posn-y</span> <span class="variable">a-pixel</span>) ... ]))
+</pre></div><p></p>
+<p>
+Completing the function is easy. If the input is a number, it <em>is</em> the
+distance to the origin. If it is a structure, we use the old formula for
+determining the distance to the origin:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-pixel</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">a-pixel</span>) <span class="variable">a-pixel</span>]
+    [(<span class="builtin">posn?</span> <span class="variable">a-pixel</span>) (<span class="builtin">sqrt</span>
+		       (<span class="builtin">+</span> (<span class="builtin">sqr</span> (<span class="builtin">posn-x</span> <span class="variable">a-pixel</span>))
+			  (<span class="builtin">sqr</span> (<span class="builtin">posn-y</span> <span class="variable">a-pixel</span>))))]))
+</pre></div><p></p>
+<p>
+Let us consider a second example. Suppose we are to write functions that
+deal with geometric shapes. One function might have to compute the area
+covered by a shape, another one the perimeter, and a third could draw the
+shape.  For the sake of simplicity, let's assume that the class of shapes
+includes only squares and circles and that their description includes their
+location (a <code class="scheme"><span class="variable">posn</span></code>) and their size (a
+<code class="scheme"><span class="variable">number</span></code>).</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+Information about both shapes must be represented with structures, because
+both have several attributes. Here are the structure definitions: 
+<a name="node_idx_616"></a><a name="node_idx_618"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <i>square</i> (<span class="variable">nw</span> <i>length</i>))
+(<span class="keyword">define-struct</span> <span class="variable">circle</span> (<span class="variable">center</span> <span class="variable">radius</span>))
+</pre></div><p>
+and the matching data definition:</p>
+<p>
+<a name="node_idx_620"></a>A <i>shape</i> is either
+</p>
+<ol>
+<li><p>a circle structure: <br>
+</p>
+<div align="left"><pre class="scheme">	   (<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)
+ 	  </pre></div><br>
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number; or
+<li><p>a square structure:<br>
+</p>
+<div align="left"><pre class="scheme">	   (<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)
+ 	  </pre></div><br>
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number.
+</li></ol><p></p>
+<p>
+Together, the two classes make up the class of shapes: </p>
+<p>
+The next step of our design recipe requires that we make up examples. Let's
+start with input examples: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">make-square</span> (<span class="builtin">make-posn</span> <span class="selfeval">20</span> <span class="selfeval">20</span>) <span class="selfeval">3</span>)</code>,
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-square</span> (<span class="builtin">make-posn</span> <span class="selfeval">2</span> <span class="selfeval">20</span>) <span class="selfeval">3</span>)</code>, and
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-circle</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">99</span>) <span class="selfeval">1</span>)</code>.
+</p>
+</li></ol><p>
+To make up examples of input-output relationships, we need to know the
+purpose of the function. So suppose we need the function <code class="scheme"><span class="variable">perimeter</span></code>,
+which computes the <i>perimeter</i> 
+<a name="node_idx_622"></a>of a shape.  From geometry, we know that
+the perimeter of a square is four times its side, and the perimeter of a circle
+is <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> times the diameter, which is twice the radius.<a name="call_footnote_Temp_49"></a><a href="#footnote_Temp_49"><sup><small>26</small></sup></a> Thus, the perimeter
+of the above three examples are: <code class="scheme"><span class="selfeval">12</span></code>, <code class="scheme"><span class="selfeval">12</span></code>, and (roughly)
+<code class="scheme"><span class="selfeval">6.28</span></code>, respectively.</p>
+<p>
+Following the design recipe and the precedent of <code class="scheme"><span class="variable">distance-to-0</span></code>, we
+start with the following skeleton of the function: 
+<a name="node_idx_626"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) ... ]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) ... ]))
+</pre></div><p>
+because the function must first determine to which class <code class="scheme"><span class="variable">a-shape</span></code>
+belongs.</p>
+<p>
+Furthermore, each possible input is a structure, so we can also add two
+selector expressions to each <code class="scheme"><span class="keyword">cond</span></code>-clause:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) 
+     ... (<span class="builtin">square-nw</span> <span class="variable">a-shape</span>) ... (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) ...]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)
+     ... (<span class="builtin">circle-center</span> <span class="variable">a-shape</span>) ... (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>) ...]))
+</pre></div><p>
+The selector expressions remind us of the available data.</p>
+<p>
+Now we are ready to finish the definition.  We fill the gaps in the two
+answers by translating the mathematical formulae into Scheme notation:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) (<span class="builtin">*</span> (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) <span class="selfeval">4</span>)]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) (<span class="builtin">*</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>)) <span class="variable">pi</span>)]))
+</pre></div><p>
+Since the position of a shape does not affect its perimeter, the template's
+selector expressions for <code class="scheme"><span class="variable">nw</span></code> and <code class="scheme"><span class="variable">center</span></code> disappear.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.1.2"></a>
+<b>Exercise 7.1.2.</b>&nbsp;&nbsp; 
+Test <code class="scheme"><span class="variable">perimeter</span></code> with the examples. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circumference-test.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.1.3"></a>
+<b>Exercise 7.1.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">area</span></code>, which consumes either a circle or a
+square and computes the area. Is it possible to reuse the template for
+<code class="scheme"><span class="variable">perimeter</span></code> by changing the name to <code class="scheme"><span class="variable">area</span></code>?
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/shape-area.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_7.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_7.2">7.2&nbsp;&nbsp;Designing Functions for Mixed Data</a></h2>
+<p> 
+<a name="node_idx_628"></a></p>
+<p>
+The function development in the preceding section suggests some amendments
+to our design recipe. Specifically, the data analysis step, the template
+construction step, and the definition of the function's body require
+adjustments. </p>
+<p>
+</p>
+<dl><dt></dt><dd> 
+</dd><dt><b>Data Analysis and Design:</b></dt><dd> When we analyze a problem statement, our
+first task is to determine whether it mentions distinct classes of
+data -- which we call <small>M</small><small>I</small><small>X</small><small>E</small><small>D</small> <small>D</small><small>A</small><small>T</small><small>A</small> 
+<a name="node_idx_630"></a>
+and which is also known as the <small>U</small><small>N</small><small>I</small><small>O</small><small>N</small> of data classes.
+<a name="node_idx_632"></a>
+In other words, the data analysis must take into account several aspects
+now. First, we must determine how many distinct classes of objects are
+mentioned in the problem and what their important attributes are. If there
+are several different classes of objects, we are mixing data. Second, we
+must understand whether the various objects have several properties. If an
+object has several attributes, we use compound data for its
+representation. As a result, the resulting data definition may have
+several clauses that enumerate several possibilities. Indeed, we will see
+that the data analysis may yield a hierarchy of data definitions.<p>
+The example of the preceding section deals with two distinct kinds of
+shapes, each of which has several properties.  We captured this idea with
+the following data definition: </p>
+<p>
+<a name="node_idx_634"></a>A <i>shape</i> is either
+</p>
+<ol>
+<li><p>a circle structure: <br>
+</p>
+<div align="left"><pre class="scheme">	   (<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)
+ 	  </pre></div><br>
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number; or
+<li><p>a square structure:<br>
+</p>
+<div align="left"><pre class="scheme">	   (<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)
+ 	  </pre></div><br>
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number.
+</li></ol><p></p>
+<p>
+It specifies that every <code class="scheme"><span class="variable">shape</span></code> belongs to one of two subclasses of
+data.</p>
+<p>
+For a data definition to make sense, it must be possible to formulate
+conditions that distinguish the various subclasses in a definition. That
+is, if <code class="scheme"><span class="variable">x</span></code> stands for a piece of data in the defined class, we must
+be able to use built-in and user-defined predicates to distinguish the
+enumerated subclasses from each other. In our running example, the two
+conditions would be <code class="scheme">(<span class="builtin">square?</span> <span class="variable">x</span>)</code> and <code class="scheme">(<span class="builtin">circle?</span> <span class="variable">x</span>)</code>.</p>
+<p>
+</p>
+</dd><dt><b>Template:</b></dt><dd> Recall that the template is a translation of the input
+data definition into Scheme. Thus, imagine that we have a data definition
+that enumerates several distinct possibilities. The first step is to write
+down a <strong>cond</strong>-expression with as many clauses as there are
+enumerated possibilities in the data definition.  The second step is to add
+a condition to each line. Each condition should hold if the input belongs
+to the corresponding subclass of data mentioned in the data definition.<p>
+Here is the template for our running example:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) ...]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) ...]))
+</pre></div><p></p>
+<p>
+The output specification and the purpose statement are missing to emphasize
+that a template has no connection to the output or the purpose of a
+function. </p>
+<p>
+Once we have formulated the template for the conditional, we refine the
+template further, <code class="scheme"><span class="keyword">cond</span></code>-line by <code class="scheme"><span class="keyword">cond</span></code>-line. If the purpose
+of a line is to process atomic information, we are done. If a line
+processes compound data, we enrich the template with appropriate selector
+expressions.</p>
+<p>
+Let's illustrate the idea with our running example again:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) 
+     ... (<span class="builtin">square-nw</span> <span class="variable">a-shape</span>) ... (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) ...]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)
+     ... (<span class="builtin">circle-center</span> <span class="variable">a-shape</span>) ... (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>) ...]))
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Body:</b></dt><dd> Using the conditional template, we split the task into
+simpler tasks. Specifically, we can focus on each <code class="scheme"><span class="keyword">cond</span></code>-line
+separately, simply considering the question what is the output if we are
+given this kind of input. All other cases are ignored as we work out one
+particular clause. <p>
+Suppose we want to define a function that computes the perimeter of a
+shape. Then we start from the template and fill in the gaps: 
+<a name="node_idx_636"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) (<span class="builtin">*</span> (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) <span class="selfeval">4</span>)]
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) (<span class="builtin">*</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>)) <span class="variable">pi</span>)]))
+</pre></div><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_50">17</a> summarizes the development of our running
+example. 
+</p>
+</dd></dl><p>
+The remaining steps of the recipes in figures&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a>,
+<a href="curriculum-Z-H-7.html#node_fig_Temp_28">6</a>, and&nbsp;<a href="curriculum-Z-H-9.html#node_fig_Temp_39">12</a> should be followed on an as-is
+basis. Figure&nbsp;<a href="#node_fig_Temp_51">18</a> summarizes the design recipe, with all
+steps included. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_50"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_638"></a><a name="node_idx_640"></a><a name="node_idx_642"></a><div align="left"><pre class="scheme"><span class="comment">;; <u>Data Definition</u>:</span>
+(<span class="keyword">define-struct</span> <span class="variable">circle</span> (<span class="variable">center</span> <span class="variable">radius</span>))
+(<span class="keyword">define-struct</span> <i>square</i> (<span class="variable">nw</span> <i>length</i>))
+<span class="comment">;; A <i>shape</i> is either</span>
+<span class="comment">;; 1. a structure: <code class="scheme">(<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number;</span>
+<span class="comment">;; 2. a structure: <code class="scheme">(<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number.</span>
+
+<span class="comment">;; <u>Contract, Purpose, Header</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+
+<span class="comment">;; <u>Examples</u>: see tests</span>
+
+<span class="comment">;; <u>Template</u>:</span>
+<span class="comment">;; <code class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">a-shape</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp;<code class="scheme">(<span class="keyword">cond</span></code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">[(<span class="builtin">square?</span> <span class="variable">a-shape</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">... (<span class="builtin">square-nw</span> <span class="variable">a-shape</span>) ... (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) ...]</code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">[(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">... (<span class="builtin">circle-center</span> <span class="variable">a-shape</span>) ... (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>) ...]))</code></span>
+
+<span class="comment">;; <u>Definition</u>: </span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)
+     (<span class="builtin">*</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>)) <span class="variable">pi</span>)]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>)
+     (<span class="builtin">*</span> (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) <span class="selfeval">4</span>)]))
+
+<span class="comment">;; <u>Tests</u>: (same as examples)</span>
+(<span class="builtin">=</span> (<span class="variable">perimeter</span> (<span class="builtin">make-square</span> ... <span class="selfeval">3</span>)) <span class="selfeval">12</span>)
+(<span class="builtin">=</span> (<span class="variable">perimeter</span> (<span class="builtin">make-circle</span> ... <span class="selfeval">1</span>)) (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">pi</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 17:</b>&nbsp;&nbsp;The design recipe for mixed data: A complete example</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+<a name="node_idx_644"></a>
+<a name="node_idx_646"></a>
+<a name="node_idx_648"></a>
+<a name="node_idx_650"></a>
+<a name="node_idx_652"></a>
+<a name="node_idx_654"></a>
+<a name="node_idx_656"></a>
+<a name="node_idx_658"></a>
+<a name="node_idx_660"></a>
+<a name="node_idx_662"></a>
+<a name="node_idx_664"></a>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+ 
+
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+ 
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+ 
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+ </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_51"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Data<br>
+&nbsp;&nbsp;Analysis<br>
+&nbsp;&nbsp;and Design
+</div><p>  </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate a data definition </div><p></p>
+</td><td valign="top">
+<p></p>
+<div align="left">determine how many distinct classes of
+``objects'' make up the classes of problem data 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> enumerate the alternatives in a data definition 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> formulate a data definition for each
+alternative, if it is a form of compound data</div><p></p></td></tr>
+<tr><td valign="top">
+<p></p>
+<div align="left">
+Contract<br>
+Purpose and<br>
+Header<br>
+</div><p>
+</p>
+</td><td valign="top">
+<p></p>
+<div align="left">to name the function;<br>
+to specify its classes of<br>
+&nbsp;&nbsp;input data and its<br>
+&nbsp;&nbsp;class of output data;<br>
+to describe its purpose;<br>
+to formulate a header
+</div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">name the function, the classes of input data, the
+class of output data, and
+specify its purpose: <br>
+&nbsp;;; <i>name</i> : <i>in1</i> <i>in2</i> <tt>...</tt>--> <i>out</i> <br>
+&nbsp;;; to compute <tt>...</tt> from <i>x1</i> <tt>...</tt><br>
+&nbsp;(<strong>define</strong> (<i>name x1 x2 <tt>...</tt></i>) <tt>...</tt>)
+</div><p></p></td></tr>
+<tr><td valign="top">Examples &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to characterize the input-<br>
+output relationship via examples </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">create examples of the input-output relationship
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> make sure there is at least one example per subclass</div><p></p></td></tr>
+<tr><td valign="top">Template        
+</td><td valign="top"><p></p>
+<div align="left">to formulate an outline </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">introduce a <strong>cond</strong>-expression with one clause
+per subclass <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> formulate a condition for each case, using built-in
+and predefined predicates</div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define the function </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop a Scheme expression for each
+<strong>cond</strong>-line (an answer), assuming that the condition holds</div><p></p></td></tr>
+<tr><td valign="top">Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to discover mistakes<br>
+&nbsp;&nbsp;(``typos'' and logic) </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">apply the function to the inputs of the examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> check that the outputs are as predicted</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+</td></tr>
+<tr><td align="center"><b>Figure 18:</b>&nbsp;&nbsp;Designing a function for mixed data</td></tr>
+<tr><td> 
+<div align="center">&nbsp;(Refines the recipes in figures&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a>
+(pg.&nbsp;<a href="curriculum-Z-H-5.html">5</a>) and&nbsp;<a href="curriculum-Z-H-9.html#node_fig_Temp_39">12</a> (pg.&nbsp;<a href="curriculum-Z-H-9.html">9</a>))&nbsp;</div>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Even a cursory comparative reading of the design recipes in
+sections&nbsp;<a href="curriculum-Z-H-5.html#node_sec_2.5">2.5</a>, &nbsp;<a href="curriculum-Z-H-7.html#node_sec_4.4">4.4</a>, &nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.5">6.5</a>, and the
+current one suggests that the data analysis and the template design steps
+are becoming more and more important. If we do not understand what kind of
+data a function consumes, we cannot design it and organize it properly. If,
+however, we do understand the structure of the data definition and organize
+our template properly, it is easy to modify or to extend a function. For
+example, if we add new information to the representation of a
+<code class="scheme"><span class="variable">circle</span></code>, then only those <code class="scheme"><span class="keyword">cond</span></code>-clauses related to circles
+may require changes. Similarly, if we add a new kind of shape to our data
+definition, say, rectangles, we must add new <code class="scheme"><span class="keyword">cond</span></code>-clauses to our
+functions.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.2.1"></a>
+<b>Exercise 7.2.1.</b>&nbsp;&nbsp; 
+Develop structure and data definitions for a collection of zoo animals. The
+collection includes 
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>spiders,</b></dt><dd> whose relevant attributes are the number of remaining legs
+(we assume that spiders can lose legs in accidents) and the space they need
+in case of transport; <p>
+</p>
+</dd><dt><b>elephants,</b></dt><dd> whose only attributes are the space they need in case of
+transport; <p>
+</p>
+</dd><dt><b>monkeys,</b></dt><dd> whose attributes are intelligence and space needed for
+transportation. 
+</dd></dl><p>
+Then develop a template for functions that consume zoo animals. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">fits?</span></code>. The function consumes a zoo animal and
+the volume of a cage. It determines whether the cage is large enough for
+the animal.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/animals.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.2.2"></a>
+<b>Exercise 7.2.2.</b>&nbsp;&nbsp;  
+The administrators of metropolitan transportation agencies manage fleets of
+vehicles.  Develop structure and data definitions for a collection of such
+vehicles. The collection should include at least buses, limos, cars, and
+subways. Add at least two attributes per class of vehicle.</p>
+<p>
+Then develop a template for functions that consume vehicles. 
+&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vehicles.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_7.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_7.3">7.3&nbsp;&nbsp;Composing Functions, Revisited</a></h2>
+<p> 
+<a name="node_idx_666"></a></p>
+<p>
+As we analyze a problem statement, we might wish to develop the data
+representation in stages. This is especially true when the problem
+statement mentions several different kinds of objects. It is easier 
+to understand several smaller data definitions than one larger one. </p>
+<p>
+Let's return to our shape problem again. Instead of the class of shapes in
+a single data definition, we could start with two data definitions, one for
+each basic shape:</p>
+<p>
+<a name="node_idx_668"></a>A <i>circle</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number.<p>
+<a name="node_idx_670"></a>A <i>square</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number.<p>
+Once we have developed and understood the basic data definitions, possibly
+by playing with examples and by writing simple functions, we can introduce
+data definitions that combine them. For example, we can introduce a data
+definition for a class of shapes that refers to the two above: </p>
+<p>
+<a name="node_idx_672"></a>A <i>shape</i> is either
+</p>
+<ol>
+<li><p>a <code class="scheme"><span class="variable">circle</span></code>, or 
+</p>
+<li><p>a <code class="scheme"><i>square</i></code>.
+</p>
+</li></ol><p></p>
+<p>
+Now suppose we need a function that consumes <code class="scheme"><span class="variable">shape</span></code>s.
+First, we form a <strong>cond</strong>-expression with conditions for each part of the data
+definition: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) ...]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) ...]))
+</pre></div><p>
+Given our guideline concerning the composition of functions from 
+section&nbsp;<a href="curriculum-Z-H-6.html#node_sec_3.1">3.1</a> and given that the data definition refers
+to two other data definitions, the natural second step is to pass the
+argument to auxiliary functions:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) (<span class="variable">f-for-circle</span> <span class="variable">a-shape</span>)]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) (<span class="variable">f-for-square</span> <span class="variable">a-shape</span>)]))
+</pre></div><p>
+This, in turn, requires that we develop the two auxiliary functions,
+<code class="scheme"><span class="variable">f-for-circle</span></code> and <code class="scheme"><span class="variable">f-for-square</span></code>, including their
+templates. </p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_52"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_674"></a><a name="node_idx_676"></a></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Data Definition</u>:</span>
+(<span class="keyword">define-struct</span> <span class="variable">circle</span> (<span class="variable">center</span> <span class="variable">radius</span>))
+(<span class="keyword">define-struct</span> <i>square</i> (<span class="variable">nw</span> <i>length</i>))
+<span class="comment">;; A <i>shape</i> is either</span>
+<span class="comment">;; 1. a structure: <code class="scheme">(<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number;</span>
+<span class="comment">;; 2. a structure: <code class="scheme">(<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number.</span>
+
+
+
+
+
+
+</pre></div>
+</div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Data Definitions</u>:</span>
+(<span class="keyword">define-struct</span> <span class="variable">circle</span> (<span class="variable">center</span> <span class="variable">radius</span>))
+<span class="comment">;; A <i>circle</i> is a structure:</span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code class="scheme">(<span class="builtin">make-circle</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number;</span>
+
+(<span class="keyword">define-struct</span> <i>square</i> (<span class="variable">nw</span> <i>length</i>))
+<span class="comment">;; A <i>square</i> is a structure:</span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code class="scheme">(<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; &nbsp;&nbsp; where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code>, <code class="scheme"><span class="variable">s</span></code> a number.</span>
+
+<span class="comment">;; A <i>shape</i> is either</span>
+<span class="comment">;; 1. a circle, or</span>
+<span class="comment">;; 2. a square. </span>
+</pre></div>
+</div></td><td>
+</td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+<hr></td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+</td></tr><tr><td>
+<p></p>
+</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Final Definition</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)
+     (<span class="builtin">*</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">circle-radius</span> <span class="variable">a-shape</span>)) <span class="variable">pi</span>)]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>)
+     (<span class="builtin">*</span> (<span class="builtin">square-length</span> <span class="variable">a-shape</span>) <span class="selfeval">4</span>)]))
+
+
+
+
+
+
+
+
+
+
+</pre></div>
+</div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left">
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Final Definitions</u>: </span>
+<span class="comment">;; <code class="scheme"><span class="variable">perimeter</span> <span class="selfeval">:</span> <span class="variable">shape</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-shape</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>)
+     (<span class="variable">perimeter-circle</span> <span class="variable">a-shape</span>)]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>)
+     (<span class="variable">perimeter-square</span> <span class="variable">a-shape</span>)]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">perimeter-circle</span> <span class="selfeval">:</span> <span class="variable">circle</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-circle</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter-circle</span> <span class="variable">a-circle</span>)
+  (<span class="builtin">*</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">circle-radius</span> <span class="variable">a-circle</span>)) <span class="variable">pi</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">perimeter-square</span> <span class="selfeval">:</span> <span class="variable">square</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the perimeter of <code class="scheme"><span class="variable">a-square</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">perimeter-square</span> <span class="variable">a-square</span>)
+  (<span class="builtin">*</span> (<span class="builtin">square-length</span> <span class="variable">a-square</span>) <span class="selfeval">4</span>))
+</pre></div>
+</div></td><td>
+</td></tr></table></div>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 19:</b>&nbsp;&nbsp;Two ways to define <i>perimeter</i></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+If we follow this suggestion, we arrive at a collection of three functions,
+one per data definition. The essential points of the program development
+are summarized in the right column of figure&nbsp;<a href="#node_fig_Temp_52">19</a>.
+For a comparison, the left column contains the corresponding pieces of the
+original program development. In each case, we have as many functions as
+there are data definitions. Furthermore, the references between the
+functions in the right column directly match the references among the
+corresponding data definitions. While this symmetry between data
+definitions and functions may seem trivial now, it becomes more and more
+important as we study more complex ways of defining data.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.3.1"></a>
+<b>Exercise 7.3.1.</b>&nbsp;&nbsp; 
+Modify the two versions of <code class="scheme"><span class="variable">perimeter</span></code> so that they also process
+rectangles.  For our purposes, the description of a rectangle includes its
+upper-left corner, its width, and its height.
+&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/compare-template.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_7.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_7.4">7.4&nbsp;&nbsp;Extended Exercise: Moving Shapes</a></h2>
+<p></p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>, we developed functions for drawing,
+translating, and clearing circles and rectangles. As we have just seen, we
+should think of the two classes of data as subclasses of a class of shapes
+so that we can just draw, translate, and clear shapes.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.4.1"></a>
+<b>Exercise 7.4.1.</b>&nbsp;&nbsp;  
+Provide a data definition for a general class of <i>shape</i>s.
+<a name="node_idx_678"></a>The class
+should at least subsume the classes of colored circles and rectangles from
+section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>. </p>
+<p>
+Develop the template <code class="scheme"><span class="variable">fun-for-shape</span></code>, which outlines functions that
+consume <code class="scheme"><span class="variable">shape</span></code>s.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-dat.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.4.2"></a>
+<b>Exercise 7.4.2.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-shape</span></code> to develop <code class="scheme"><span class="variable">draw-shape</span></code>.
+The function consumes a <code class="scheme"><span class="variable">shape</span></code> and draws it on the
+canvas.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-dr.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.4.3"></a>
+<b>Exercise 7.4.3.</b>&nbsp;&nbsp;  
+Use the template  <code class="scheme"><span class="variable">fun-for-shape</span></code> to develop
+<code class="scheme"><span class="variable">translate-shape</span></code>.  The function consumes a <code class="scheme"><span class="variable">shape</span></code> and a number
+<code class="scheme"><span class="variable">delta</span></code>, and produces a shape whose key position is moved by
+<code class="scheme"><span class="variable">delta</span></code> pixels in the <em>x</em> direction.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-tr.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.4.4"></a>
+<b>Exercise 7.4.4.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-shape</span></code> to develop <code class="scheme"><span class="variable">clear-shape</span></code>.
+The function consumes a <code class="scheme"><span class="variable">shape</span></code>, erases it from the canvas, and
+returns <code class="scheme">true</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-cl.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.4.5"></a>
+<b>Exercise 7.4.5.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">draw-and-clear-shape</span></code>.  The function consumes
+a <code class="scheme"><span class="variable">shape</span></code>, draws it, sleeps for a while, and clears it. If all the
+effects work out, it produces <code class="scheme">true</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-dc.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.4.6"></a>
+<b>Exercise 7.4.6.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">move-shape</span></code>, which moves a shape across the canvas. The
+function consumes a number (delta) and a shape. The function should
+draw-and-clear the shape and return a new shape that has been translated by
+delta pixels. Use this function several times to move a shape across the
+canvas.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/shape-move.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_7.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_7.5">7.5&nbsp;&nbsp;Input Errors</a></h2>
+<p> 
+</p>
+<p>
+Recall our first function:
+<a name="node_idx_680"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">area-of-disk</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the area of a disk with radius <code class="scheme"><span class="variable">r</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">area-of-disk</span> <span class="variable">r</span>) 
+  (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>)))
+</pre></div><p>
+Clearly, our friends may wish to use this function, especially for some of
+their geometry homework. Unfortunately, when our friends use this function,
+they may accidentally apply it to a symbol rather than a number. When that
+happens, the function stops with a whimsical and uninformative error
+message:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">area-of-disk</span> <span class="keyword">'</span><span class="variable">my-disk</span>)
+<span class="variable">*:</span> <span class="variable">expects</span> <span class="variable">type</span> <span class="variable">&lt;number&gt;</span> <span class="variable">as</span> <span class="variable">1st</span> <span class="variable">argument</span><span class="keyword">,</span> <span class="variable">given:</span> <span class="keyword">'</span><span class="variable">my-disk</span><span class="comment">; ... </span>
+</pre></div><p>
+Using predicates, we can do better. </p>
+<p>
+To prevent this kind of accident, we should define checked versions of
+our functions, when we wish to hand them to our friends.  In general, a
+<small>C</small><small>H</small><small>E</small><small>C</small><small>K</small><small>E</small><small>D</small> <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_682"></a><a name="node_idx_684"></a>inputs an arbitrary Scheme value: a number, a
+boolean, a symbol, or a structure. For all those values that are in the
+class of values for which the original function is defined, the checked
+version applies the latter; for all others, it signals an
+error. Concretely, <code class="scheme"><span class="variable">checked-area-of-disk</span></code> consumes an arbitrary
+Scheme value, uses <code class="scheme"><span class="variable">area-of-disk</span></code> to compute the area of the a disk
+if the input is a number, and stops with an error message otherwise.</p>
+<p>
+Based on the enumeration of Scheme's classes of values, the template for a checked
+function is as follows: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">Scheme-value</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">v</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">v</span>) ...]
+    [(<span class="builtin">boolean?</span> <span class="variable">v</span>) ...]
+    [(<span class="builtin">symbol?</span> <span class="variable">v</span>) ...]
+    [(<span class="builtin">struct?</span> <span class="variable">v</span>) ...]))
+</pre></div><p>
+Each line corresponds to one possible class of input. If we need to
+distinguish between the structures, we expand the last line appropriately. </p>
+<p>
+The first clause is the only one where we can use <code class="scheme"><span class="variable">area-of-disk</span></code>.
+For the others, however, we must signal an error. In Scheme we use the
+operation <code class="scheme"><span class="builtin">error</span></code> to do so. It consumes a symbol and a string. Here
+is an example:
+<a name="node_idx_686"></a>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)
+</pre></div><p></p>
+<p>
+Hence the full definition of <code class="scheme"><span class="variable">checked-area-of-disk</span></code> is:
+<a name="node_idx_688"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">checked-area-of-disk</span> <span class="variable">v</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">v</span>) (<span class="variable">area-of-disk</span> <span class="variable">v</span>)]
+    [(<span class="builtin">boolean?</span> <span class="variable">v</span>) (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)]
+    [(<span class="builtin">symbol?</span> <span class="variable">v</span>) (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)]
+    [(<span class="builtin">struct?</span> <span class="variable">v</span>) (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)]))
+</pre></div><p>
+Using <code class="scheme"><span class="keyword">else</span></code> we can greatly simplify the function:
+<a name="node_idx_690"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">checked-area-of-disk</span> <span class="selfeval">:</span> <span class="variable">Scheme-value</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the area of a disk with radius <code class="scheme"><span class="variable">v</span></code>, </span>
+<span class="comment">;; if <code class="scheme"><span class="variable">v</span></code> is a number</span>
+(<span class="keyword">define</span> (<span class="variable">checked-area-of-disk</span> <span class="variable">v</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">number?</span> <span class="variable">v</span>) (<span class="variable">area-of-disk</span> <span class="variable">v</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">checked-area-of-disk</span> <span class="selfeval">&quot;number expected&quot;</span>)]))
+</pre></div><p>
+Of course, such a simplification may not always be possible and may require
+a reordering of the <code class="scheme"><span class="keyword">cond</span></code>-clauses first. </p>
+<p>
+Writing checked functions and simplifying them is important if we
+distribute the programs to others. Designing programs that work properly,
+however, is far more important. The book therefore focuses on the design
+process for the program proper and deemphasizes writing checked versions.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_7.5.1"></a>
+<b>Exercise 7.5.1.</b>&nbsp;&nbsp; 
+A checked version of <code class="scheme"><span class="variable">area-of-disk</span></code> can also enforce that the
+arguments to the function are positive numbers, not just arbitrary numbers. 
+Modify <code class="scheme"><span class="variable">checked-area-of-disk</span></code> in this way.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/checked2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.5.2"></a>
+<b>Exercise 7.5.2.</b>&nbsp;&nbsp; 
+Develop checked versions of the functions 
+<code class="scheme"><span class="variable">profit</span></code> (figure&nbsp;<a href="curriculum-Z-H-6.html#node_fig_Temp_23">5</a>), 
+<code class="scheme"><span class="variable">is-between-5-6?</span></code> (section&nbsp;<a href="curriculum-Z-H-7.html#node_sec_4.2">4.2</a>), 
+<code class="scheme"><span class="variable">reply</span></code> (section&nbsp;<a href="curriculum-Z-H-8.html#node_chap_5">5</a>), 
+<code class="scheme"><span class="variable">distance-to-0</span></code> (section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.1">6.1</a>), 
+and 
+<code class="scheme"><span class="variable">perimeter</span></code> (in the left column of
+figure&nbsp;<a href="#node_fig_Temp_52">19</a>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/checked1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_7.5.3"></a>
+<b>Exercise 7.5.3.</b>&nbsp;&nbsp; 
+Take a look at these structure and data definitions: 
+<a name="node_idx_692"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">vec</span> (<span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_694"></a><a name="node_idx_696"></a>A <i>speed-vector</i> (<i>vec</i>) is a structure: <br>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="builtin">make-vec</span> <span class="variable">x</span> <span class="variable">y</span>)</code> &nbsp;</div>
+
+where both <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="variable">y</span></code> are positive numbers.<p>
+Develop the function <code class="scheme"><span class="variable">checked-make-vec</span></code>, which should be understood
+as a checked version of the primitive operation <code class="scheme"><span class="builtin">make-vec</span></code>. It 
+ensures that the arguments to <code class="scheme"><span class="builtin">make-vec</span></code> are positive numbers, and
+not just arbitrary numbers. In other words, <code class="scheme"><span class="variable">checked-make-vec</span></code>
+enforces our informal data definition.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/checked3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+
+
+<p>
+</p>
+<p>
+
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_46"></a><a href="#call_footnote_Temp_46"><sup><small>24</small></sup></a> We have also discussed images and strings, but
+we ignore these for now.</p>
+<p><a name="footnote_Temp_48"></a><a href="#call_footnote_Temp_48"><sup><small>25</small></sup></a> The <code class="scheme"><span class="variable">posn</span></code> structure is automatically provided
+in DrScheme's teaching languages and should never be defined.</p>
+<p><a name="footnote_Temp_49"></a><a href="#call_footnote_Temp_49"><sup><small>26</small></sup></a> The
+perimeter of a circle is also known as <i>circumference</i>.
+<a name="node_idx_624"></a></p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-9.html">previous</a></span><span>, <a href="curriculum-Z-H-11.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

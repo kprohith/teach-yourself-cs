@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/recall.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.1.7; How to Design Programs </title>
+</head>
+<body>
+<a href="subst.html">10.1.6</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.1.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="quad3.html">10.1.8</a><pre>;; recall : symbol list-of-symbols -&gt; list-of-symbols
+;; removes the symbol ty from the list of symbols lon.
+
+#|
+;; Template
+(define (recall ty lon)
+  (cond
+    [(empty? lon) ...]
+    [else ... (first lon) ...
+          ... (recall ty (rest lon)) ...]))
+|#
+
+(define (recall ty lon)
+  (cond
+    [(empty? lon) empty]
+    [else 
+     (cond 
+       [(eq? (first lon) ty)
+        (recall ty (rest lon))]
+       [else
+        (cons (first lon)
+              (recall ty (rest lon)))])]))
+
+;; Examples
+
+(recall 'doll empty) "should be" empty
+(recall 'doll (cons 'doll empty)) "should be" empty
+(recall 'rocket (cons 'doll empty)) "should be" (cons 'doll empty)
+(recall 'elephant (cons 'doll (cons 'elephant (cons 'rocket empty))))
+"should be"
+(cons 'doll (cons 'rocket empty))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/recall.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

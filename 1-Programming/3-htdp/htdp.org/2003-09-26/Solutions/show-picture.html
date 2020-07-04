@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/show-picture.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="contains-dollp.html">10.2.1</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="price-of.html">10.2.3</a><pre>;; an inventory is either:;;  - empty, or;;  - (cons inventory-record inventory);; an inventory-record is:;;   (make-inventory-record name price picture);; where name is a symbol,;;       price is a number, and;;       picture is a picture(define-struct inventory-record (name price picture));; show-picture : inventory symbol -&gt; picture or false;; finds the picture in an-inv corresponding to a-name,;; or returns false if there is no such picture#|;; TEMPLATE(define (show-picture an-inv a-name)  (cond    [(empty? an-inv) ...]    [else      (inv-name (first an-inv)) ...     (inv-price (first an-inv)) ...     (inv-picture (first an-inv)) ...     (show-picture (rest an-inv) a-name) ...]))|#(define (show-picture an-inv a-name)  (cond    [(empty? an-inv) false]    [else      (cond       [(symbol=? a-name (inventory-record-name (first an-inv)))        (inventory-record-picture (first an-inv))]       [else        (show-picture (rest an-inv) a-name)])]));; EXAMPLES AS TESTS(define lock-picture 'LOCK) ;; use the "Insert Image..." menu item to use a real picture(define lock-inventory   (cons (make-inventory-record 'lock 1.95 lock-picture)        empty))(show-picture empty 'lock) "should be" false(show-picture lock-inventory 'doll) "should be" false(show-picture lock-inventory 'lock) "should be" lock-picture
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/show-picture.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

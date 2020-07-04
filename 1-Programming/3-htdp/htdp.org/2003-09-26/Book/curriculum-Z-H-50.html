@@ -1,0 +1,1195 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-50.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-49.html">previous</a></span><span>, <a href="curriculum-Z-H-51.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_40"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_40">Section  40</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_40">Mutable Structures</a></h1>
+<p></p>
+<p>
+<a name="node_idx_2292"></a><a name="node_idx_2294"></a></p>
+<p>
+Encapsulating and managing state variables is similar to forming and
+managing structures.  When we first apply a function that abstracts over
+state variables we provide initial values for some of the variables. The
+service manager serves the (current) value of these variables, which is
+similar to extracting the values of fields in structures. Not surprisingly
+then, the technique can simulate the constructors
+<a name="node_idx_2296"></a>and selectors
+<a name="node_idx_2298"></a><a name="node_idx_2300"></a>of a
+<code class="scheme"><span class="keyword">define-struct</span></code> definition. This simulation naturally suggests the
+introduction of functions that modify the value in a structure's field. The
+following subsections spell out the details behind this idea; the last
+subsection generalizes it to vectors.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_40.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_40.1">40.1&nbsp;&nbsp;Structures from Functions</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_204"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2302"></a>
+<a name="node_idx_2304"></a><a name="node_idx_2306"></a><a name="node_idx_2308"></a><div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">posn</span> (<span class="variable">x</span> <span class="variable">y</span>))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f-make-posn</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">y0</span>)
+	  (<span class="keyword">define</span> <span class="variable">y</span> <span class="variable">y0</span>)
+	  (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>]
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y</span>]
+	      [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)])))
+    <span class="variable">service-manager</span>))
+
+(<span class="keyword">define</span> (<span class="variable">f-posn-x</span> <span class="variable">p</span>)
+  (<span class="variable">p</span> <span class="keyword">'</span><span class="variable">x</span>))
+
+(<span class="keyword">define</span> (<span class="variable">f-posn-y</span> <span class="variable">p</span>)
+  (<span class="variable">p</span> <span class="keyword">'</span><span class="variable">y</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 116:</b>&nbsp;&nbsp;A functional analog of <i>posn</i></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Take a look at figure&nbsp;<a href="#node_fig_Temp_204">116</a>. The left-hand
+side is the one-line definition of a <code class="scheme"><span class="variable">posn</span></code> structure. The
+right-hand side is a functional definition that provides almost all the
+same services. In particular, the definition provides a
+constructor
+<a name="node_idx_2310"></a>that consumes two values and constructs a compound value, and two selectors for
+extracting the values that went into the construction of a compound value.</p>
+<p>
+To understand why <code class="scheme"><span class="variable">f-make-posn</span></code> is a constructor and why
+<code class="scheme"><span class="variable">f-posn-x</span></code> and <code class="scheme"><span class="variable">f-posn-y</span></code> are selectors, we can discuss how they
+work, and we can confirm that they validate the expected equations. Here we do
+both, because the definitions are unusual.</p>
+<p>
+The definition of <code class="scheme"><span class="variable">f-make-posn</span></code> encapsulates two variable definitions
+and one function definition. The two variables stand for the arguments of
+<code class="scheme"><span class="variable">f-make-posn</span></code> and the function is a service manager; it produces the
+value of <code class="scheme"><span class="variable">x</span></code> when given <code class="scheme"><span class="keyword">'</span><span class="variable">x</span></code> and the value of <code class="scheme"><span class="variable">y</span></code> when
+given <code class="scheme"><span class="keyword">'</span><span class="variable">y</span></code>. In the preceding section, we might have written something
+like
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a-posn</span> (<span class="variable">f-make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="builtin">+</span> (<span class="variable">a-posn</span> <span class="keyword">'</span><span class="variable">x</span>) (<span class="variable">a-posn</span> <span class="keyword">'</span><span class="variable">y</span>))
+</pre></div><p>
+to define and to compute with <code class="scheme"><span class="variable">f-make-posn</span></code>. Since selecting values
+is such a frequent operation, figure&nbsp;<a href="#node_fig_Temp_204">116</a> introduces 
+the functions <code class="scheme"><span class="variable">f-posn-x</span></code> and <code class="scheme"><span class="variable">f-posn-y</span></code>, which perform these
+computations. </p>
+<p>
+When we first introduced structures rigorously in intermezzo&nbsp;1, we said
+that the selectors
+<a name="node_idx_2312"></a><a name="node_idx_2314"></a>and constructors
+<a name="node_idx_2316"></a>can be described with equations. For a
+definition such as that for <code class="scheme"><span class="variable">posn</span></code>, the two relevant equations are:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">posn-x</span> (<span class="builtin">make-posn</span> <span class="variable">V-1</span> <span class="variable">V-2</span>)) 
+<span class="builtin">=</span> <span class="variable">V-1</span>
+<span class="comment">and</span>
+  (<span class="builtin">posn-y</span> (<span class="builtin">make-posn</span> <span class="variable">V-1</span> <span class="variable">V-2</span>)) 
+<span class="builtin">=</span> <span class="variable">V-2</span>
+</pre></div><p>
+where <code class="scheme"><span class="variable">V-1</span></code> and <code class="scheme"><span class="variable">V-2</span></code> are arbitrary values. </p>
+<p>
+To confirm that <code class="scheme"><span class="variable">f-posn-x</span></code> and <code class="scheme"><span class="variable">f-make-posn</span></code> are in the same
+relationship as <code class="scheme"><span class="builtin">posn-x</span></code> and <code class="scheme"><span class="builtin">make-posn</span></code>, we can validate that
+they satisfy the first equation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">f-posn-x</span> (<span class="variable">f-make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+<span class="builtin">=</span> (<span class="variable">f-posn-x</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+		    (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">4</span>)
+		    (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+		      (<span class="keyword">cond</span>
+			[(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>]
+			[(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y</span>]
+			[<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)])))
+	    <span class="variable">service-manager</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">f-posn-x</span> <span class="variable">service-manager</span>)
+  <span class="comment">;; add to top-level definitions:</span>
+  (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">4</span>)
+  (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>]
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y</span>]
+      [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)]))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">service-manager</span> <span class="keyword">'</span><span class="variable">x</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">x</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>]
+    [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">x</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y</span>]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)])
+
+<span class="builtin">=</span> <span class="variable">x</span>
+
+<span class="builtin">=</span> <span class="selfeval">3</span>
+</pre></div><p>
+It is an exercise to show that <code class="scheme"><span class="variable">f-posn-y</span></code> and <code class="scheme"><span class="variable">f-make-posn</span></code>
+satisfy the analogous equation. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_40.1.1"></a>
+<b>Exercise 40.1.1.</b>&nbsp;&nbsp; 
+Which function does the simulation of structures not provide? Why
+not?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/func-struct0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.1.2"></a>
+<b>Exercise 40.1.2.</b>&nbsp;&nbsp; 
+Here is yet another implementation of <code class="scheme"><span class="variable">posn</span></code> structures:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">ff-make-posn</span> <span class="variable">x</span> <span class="variable">y</span>)
+  (<span class="keyword">lambda</span> (<span class="variable">select</span>)
+    (<span class="variable">select</span> <span class="variable">x</span> <span class="variable">y</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">ff-posn-x</span> <span class="variable">a-ff-posn</span>)
+  (<span class="variable">a-ff-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) <span class="variable">x</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">ff-posn-y</span> <span class="variable">a-ff-posn</span>)
+  (<span class="variable">a-ff-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span>) <span class="variable">y</span>)))
+</pre></div><p>
+Evaluate <code class="scheme">(<span class="variable">ff-posn-x</span> (<span class="variable">ff-make-posn</span> <span class="variable">V-1</span> <span class="variable">V2</span>))</code> in this context. What
+does the calculation demonstrate?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/func-struct1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.1.3"></a>
+<b>Exercise 40.1.3.</b>&nbsp;&nbsp; 
+Show how to implement the following structure definitions as functions: 
+<a name="node_idx_2318"></a><a name="node_idx_2320"></a><a name="node_idx_2322"></a><a name="node_idx_2324"></a><a name="node_idx_2326"></a></p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sweater</span> (<span class="variable">material</span> <span class="variable">size</span> <span class="variable">producer</span>))</code>
+</p>
+</li></ol><p>
+Pick one and demonstrate that the expected laws
+hold.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/func-struct.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_40.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_40.2">40.2&nbsp;&nbsp;Mutable Functional Structures</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_205"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2328"></a><a name="node_idx_2330"></a><a name="node_idx_2332"></a><a name="node_idx_2334"></a><a name="node_idx_2336"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fm-make-posn</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">y0</span>)
+	  (<span class="keyword">define</span> <span class="variable">y</span> <span class="variable">y0</span>)
+	  (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x</span>]
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y</span>]
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">set-x</span>) (<span class="keyword">lambda</span> (<span class="variable">x-new</span>) (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">x-new</span>))]
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">set-y</span>) (<span class="keyword">lambda</span> (<span class="variable">y-new</span>) (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">y-new</span>))]
+	      [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)])))
+    <span class="variable">service-manager</span>))
+
+(<span class="keyword">define</span> (<span class="variable">fm-posn-x</span> <span class="variable">p</span>)
+  (<span class="variable">p</span> <span class="keyword">'</span><span class="variable">x</span>))
+
+(<span class="keyword">define</span> (<span class="variable">fm-posn-y</span> <span class="variable">p</span>)
+  (<span class="variable">p</span> <span class="keyword">'</span><span class="variable">y</span>))
+
+(<span class="keyword">define</span> (<span class="variable">fm-set-posn-x!</span> <span class="variable">p</span> <span class="variable">new-value</span>)
+  ((<span class="variable">p</span> <span class="keyword">'</span><span class="variable">set-x</span>) <span class="variable">new-value</span>))
+
+(<span class="keyword">define</span> (<span class="variable">fm-set-posn-y!</span> <span class="variable">p</span> <span class="variable">new-value</span>)
+  ((<span class="variable">p</span> <span class="keyword">'</span><span class="variable">set-y</span>) <span class="variable">new-value</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 117:</b>&nbsp;&nbsp;An implementation of <i>posn</i>s with mutators</td></tr>
+<tr><td>
+ 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Together, sections&nbsp;<a href="curriculum-Z-H-49.html#node_chap_39">39</a>
+and&nbsp;<a href="#node_sec_40.1">40.1</a> suggest that structures are mutable. That is, we
+should be able to change the values of some field in a structure. After
+all, we introduced the service managers in section&nbsp;<a href="curriculum-Z-H-49.html#node_chap_39">39</a> to
+hide state variables, not just ordinary variable definitions.</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_205">117</a> shows how a small change to the
+definitions of figure&nbsp;<a href="#node_fig_Temp_204">116</a> turns the <code class="scheme"><span class="keyword">local</span></code>ly
+hidden variables into state variables. The modified service manager offers
+two services per state variable: one for looking up the current value and
+one for changing it. </p>
+<p>
+Consider the following definition and expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">a-posn</span> (<span class="variable">fm-make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">fm-set-posn-x!</span> <span class="variable">a-posn</span> <span class="selfeval">5</span>)
+  (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+</pre></div><p>
+Evaluating them by hand shows how structures change. Here is the first
+step:
+</p>
+<div align="left"><pre class="scheme">  ... 
+<span class="builtin">=</span> 
+  (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="keyword">define</span> (<span class="variable">service-manager-for-a-posn</span> <span class="variable">msg</span>)
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">x</span>) <span class="variable">x-for-a-posn</span>]
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">y</span>) <span class="variable">y-for-a-posn</span>]
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">set-x</span>)
+       (<span class="keyword">lambda</span> (<span class="variable">x-new</span>) (<span class="keyword">set!</span> <span class="variable">x-for-a-posn</span> <span class="variable">x-new</span>))]
+      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">set-y</span>)
+       (<span class="keyword">lambda</span> (<span class="variable">y-new</span>) (<span class="keyword">set!</span> <span class="variable">y-for-a-posn</span> <span class="variable">y-new</span>))]
+      [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">posn</span> <span class="selfeval">&quot;...&quot;</span>)]))
+  (<span class="keyword">define</span> <span class="variable">a-posn</span> <span class="variable">service-manager-for-a-posn</span>)
+
+  (<span class="keyword">begin</span>
+    (<span class="variable">fm-set-posn-x!</span> <span class="variable">a-posn</span> <span class="selfeval">5</span>)
+    (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+</pre></div><p>
+It renames and lifts the local definitions from inside of
+<code class="scheme"><span class="variable">fm-make-posn</span></code>. Because the function definition doesn't change for
+the rest of the evaluation, we focus on just the variable definitions: 
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="keyword">begin</span>
+    (<span class="variable">fm-set-posn-x!</span> <span class="variable">a-posn</span> <span class="selfeval">5</span>)
+    (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="keyword">begin</span>
+    (<span class="variable">fm-set-posn-x!</span> <span class="variable">service-manager-for-a-posn</span> <span class="selfeval">5</span>)
+    (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="keyword">begin</span>
+    ((<span class="variable">service-manager-for-a-posn</span> <span class="keyword">'</span><span class="variable">set-x</span>) <span class="selfeval">5</span>)
+    (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">3</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">5</span>)
+    (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">x-for-a-posn</span> <span class="selfeval">5</span>)
+  (<span class="keyword">define</span> <span class="variable">y-for-a-posn</span> <span class="selfeval">4</span>)
+  (<span class="builtin">+</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">8</span>) 
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+At this point, the definition of <code class="scheme"><span class="variable">x-for-a-posn</span></code> has been modified in
+the expected manner. From now on every reference to this state variable,
+which represents the (simulated) <code class="scheme"><span class="variable">x</span></code> field <code class="scheme"><span class="variable">a-posn</span></code>, stands
+for <code class="scheme"><span class="selfeval">5</span></code>. Every further reference to <code class="scheme"><span class="variable">x-for-a-posn</span></code> produces
+<code class="scheme"><span class="selfeval">5</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_40.2.1"></a>
+<b>Exercise 40.2.1.</b>&nbsp;&nbsp; 
+Develop a functional representation for the following structure definition: 
+<a name="node_idx_2338"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))
+</pre></div><p>
+such that the fields of the simulated structure can be changed.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/imp-struct2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.2.2"></a>
+<b>Exercise 40.2.2.</b>&nbsp;&nbsp; 
+Here is a modification of the function-based implementation of
+<code class="scheme"><span class="variable">posn</span></code> structures in exercise&nbsp;<a href="#node_thm_40.1.2">40.1.2</a>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">ffm-make-posn</span> <span class="variable">x0</span> <span class="variable">y0</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> <span class="variable">x0</span>)
+	  (<span class="keyword">define</span> (<span class="variable">set-x</span> <span class="variable">new-x</span>) (<span class="keyword">set!</span> <span class="variable">x</span> <span class="variable">new-x</span>))
+	  (<span class="keyword">define</span> <span class="variable">y</span> <span class="variable">y0</span>)
+	  (<span class="keyword">define</span> (<span class="variable">set-y</span> <span class="variable">new-y</span>) (<span class="keyword">set!</span> <span class="variable">y</span> <span class="variable">new-y</span>)))
+  (<span class="keyword">lambda</span> (<span class="variable">select</span>)
+    (<span class="variable">select</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">set-x</span> <span class="variable">set-y</span>))))
+
+(<span class="keyword">define</span> (<span class="variable">ffm-posn-x</span> <span class="variable">a-ffm-posn</span>)
+  (<span class="variable">a-ffm-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">sx</span> <span class="variable">sy</span>) <span class="variable">x</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">ffm-posn-y</span> <span class="variable">a-ffm-posn</span>)
+  (<span class="variable">a-ffm-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">sx</span> <span class="variable">sy</span>) <span class="variable">y</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">ffm-set-posn-x!</span> <span class="variable">a-ffm-posn</span> <span class="variable">new-value</span>)
+  (<span class="variable">a-ffm-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">sx</span> <span class="variable">sy</span>) (<span class="variable">sx</span> <span class="variable">new-value</span>))))
+
+(<span class="keyword">define</span> (<span class="variable">ffm-set-posn-y!</span> <span class="variable">a-ffm-posn</span> <span class="variable">new-value</span>)
+  (<span class="variable">a-ffm-posn</span> (<span class="keyword">lambda</span> (<span class="variable">x</span> <span class="variable">y</span> <span class="variable">sx</span> <span class="variable">sy</span>) (<span class="variable">sy</span> <span class="variable">new-value</span>))))
+</pre></div><p>
+Demonstrate how to modify a structure like <code class="scheme">(<span class="variable">ffm-make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)</code> so
+that its <code class="scheme"><span class="variable">y</span></code> field contains <code class="scheme"><span class="selfeval">5</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/imp-struct3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_40.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_40.3">40.3&nbsp;&nbsp;Mutable Structures</a></h2>
+<p></p>
+<p>
+Scheme structures are mutable. In <tt>Advanced Student</tt> Scheme, a structure
+definition such as 
+<a name="node_idx_2340"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">posn</span> (<span class="variable">x</span> <span class="variable">y</span>))
+</pre></div><p>
+introduces six primitives, not just four: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">make-posn</span></code>, the constructor; 
+</p>
+<li><p><code class="scheme"><span class="builtin">posn-x</span></code> and <code class="scheme"><span class="builtin">posn-y</span></code>, the selectors; 
+</p>
+<li><p><code class="scheme"><span class="builtin">posn?</span></code>, the predicate; and 
+</p>
+<li><p><code class="scheme"><span class="builtin">set-posn-x!</span></code> and <code class="scheme"><span class="builtin">set-posn-y!</span></code>, the <small>M</small><small>U</small><small>T</small><small>A</small><small>T</small><small>O</small><small>R</small><small>S</small>. 
+<a name="node_idx_2342"></a><a name="node_idx_2344"></a></p>
+</li></ol><p>
+The mutators are operations that change the contents of a structure. </p>
+<p>
+</p>
+<p>
+Recall that we think of a structure as a box with compartments. For example,
+the structure 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)
+</pre></div><p>
+should be visualized as a box with two compartments: 
+</p>
+<div align="center"><table><tr><td>
+
+
+<img src="curriculum7-Z-G-1.gif" border="0" alt="[curriculum7-Z-G-1.gif]">
+</td></tr></table></div>
+
+A constructor
+<a name="node_idx_2346"></a>creates a box; a selector
+<a name="node_idx_2348"></a><a name="node_idx_2350"></a>extracts the value from a particular
+compartment; the predicate recognizes it; and the mutator
+<a name="node_idx_2352"></a><a name="node_idx_2354"></a>changes the content
+of a compartment. That is, a mutator has an effect on its arguments; its
+result is the invisible value. Pictorially, we should imagine an
+evaluation step for an expression such as
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+(<span class="builtin">set-posn-x!</span> <span class="variable">p</span> <span class="selfeval">5</span>)
+</pre></div><p>
+as a box with the old <code class="scheme"><span class="variable">x</span></code> value deleted and a new one inserted into
+the same box: 
+
+
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum7-Z-G-2.gif" border="0" alt="[curriculum7-Z-G-2.gif]">
+</td></tr></table></div>
+<p>
+Consider the following definitions: 
+<a name="node_idx_2356"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+
+(<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+</pre></div><p>
+Let's consider the effect and computation of the following expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span>
+  (<span class="variable">set-star-instrument!</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>)))
+</pre></div><p>
+According to our explanation, the first subexpression modifies the
+<code class="scheme"><span class="variable">instrument</span></code> field of the <code class="scheme"><span class="variable">star</span></code> structure named <code class="scheme"><span class="variable">p</span></code>;
+the second one produces a list of one item, the current value the
+<code class="scheme"><span class="variable">instrument</span></code> field in the structure named <code class="scheme"><span class="variable">p</span></code>.  By analogy to
+section&nbsp;<a href="#node_sec_40.2">40.2</a>, the evaluation proceeds as follows:
+<a name="node_idx_2358"></a></p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">begin</span>
+    (void)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+</pre></div><p>
+The first step changes one part of the value in the definition of
+<code class="scheme"><span class="variable">p</span></code>, but not the entire value. The second one extracts the current
+value of the <code class="scheme"><span class="variable">instrument</span></code> field and places it in a list.</p>
+<p>
+The introduction of mutators
+<a name="node_idx_2360"></a>
+<a name="node_idx_2362"></a><a name="node_idx_2364"></a>for structures requires two changes to our
+system of evaluation rules:
+</p>
+<ol>
+<li><p>Every constructor expression adds a definition with a new, unique
+name to the top level, unless it already occurs in a
+definition.<a name="call_footnote_Temp_206"></a><a href="#footnote_Temp_206"><sup><small>75</small></sup></a></p>
+<p>
+</p>
+<li><p>A name that stands for a structure is a value. 
+</p>
+</li></ol><p>
+We can understand these changes if we think of each structure as a function
+that manages services such as looking up the current value of a field and
+modifying the field. After all, <code class="scheme"><span class="keyword">local</span></code> function definitions also
+create top-level definitions with unique names. And the names of functions
+are values, too.</p>
+<p>
+Using these two new rules we can study the unusual behavior of mutators in
+more depth. Here is a first example: 
+<a name="node_idx_2366"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+
+(<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+
+(<span class="keyword">define</span> <span class="variable">q</span> <span class="variable">p</span>)
+
+(<span class="keyword">begin</span>
+  (<span class="variable">set-star-instrument!</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">q</span>)))
+</pre></div><p>
+It differs from the first in two ways. First, it defines <code class="scheme"><span class="variable">q</span></code> to be
+<code class="scheme"><span class="variable">p</span></code>. Second, the second subexpression of the
+<strong>begin</strong>-expression refers to <code class="scheme"><span class="variable">q</span></code>, not <code class="scheme"><span class="variable">p</span></code>. Let's
+check our understanding of the evaluation process:
+<a name="node_idx_2368"></a></p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> <span class="variable">p</span>)
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">q</span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> <span class="variable">p</span>)
+  (<span class="keyword">begin</span>
+    (void)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">q</span>)))
+</pre></div><p>
+As before, the first step changes one part of the definition of
+<code class="scheme"><span class="variable">p</span></code>. The second step is to look up <code class="scheme"><span class="variable">q</span></code>'s current value: 
+</p>
+<div align="left"><pre class="scheme">   ...
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> <span class="variable">p</span>)
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> <span class="variable">p</span>)
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+</pre></div><p>
+Because <code class="scheme"><span class="variable">q</span></code> is <code class="scheme"><span class="variable">p</span></code> and the current value of the
+<code class="scheme"><span class="variable">instrument</span></code> field of <code class="scheme"><span class="variable">p</span></code> instrument is <code class="scheme"><span class="keyword">'</span><span class="variable">vocals</span></code>, the
+result is again <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)</code>.</p>
+<p>
+What we have just seen is the effect of <small>S</small><small>H</small><small>A</small><small>R</small><small>I</small><small>N</small><small>G</small>
+<a name="node_idx_2370"></a>(the effects of
+mutators), which means that a modification of a struture affects the
+program in more than one place. Sharing is also visible inside lists as our
+second example shows:
+<a name="node_idx_2372"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+
+(<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>)))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+</pre></div><p>
+Here, the right-hand side of the definition of <code class="scheme"><span class="variable">q</span></code> is an
+expression whose only subexpression isn't a value. More
+precisely, it is a structure expression that must be evaluated:
+</p>
+<div align="left"><pre class="scheme">  ... 
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+</pre></div><p>
+Thus the first step is to introduce a new definition, for which we choose
+<code class="scheme"><span class="variable">p</span></code> as the name. The second step replaces <code class="scheme">(<span class="builtin">first</span> <span class="variable">q</span>)</code> by
+<code class="scheme"><span class="variable">p</span></code>, because <code class="scheme"><span class="variable">q</span></code> is  a list of one item: <code class="scheme"><span class="variable">p</span></code>. The rest 
+proceeds almost as above: 
+</p>
+<div align="left"><pre class="scheme">... 
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">begin</span>
+    (void)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+</pre></div><p></p>
+<p>
+Finally, effects can be shared among items in different lists. Take a look
+at this third variant of our program: 
+<a name="node_idx_2374"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+
+(<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>)))
+
+(<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> (<span class="builtin">first</span> <span class="variable">q</span>) (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">r</span>))))
+</pre></div><p>
+The new definition introduces the variable <code class="scheme"><span class="variable">r</span></code>, which stands for a
+list that contains two items. Let's use our new rules to determine the
+values and the effects of this program: 
+</p>
+<div align="left"><pre class="scheme">... 
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> (<span class="builtin">first</span> <span class="variable">q</span>) (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">q</span>))))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">r</span>))))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> <span class="variable">p</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">r</span>))))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-star-instrument!</span> (<span class="builtin">first</span> <span class="variable">q</span>) <span class="keyword">'</span><span class="variable">vocals</span>)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">r</span>))))
+</pre></div><p>
+As above, the first step introduces a definition for the new <code class="scheme"><span class="variable">star</span></code>
+structure. The second and third step create the list named <code class="scheme"><span class="variable">r</span></code>,
+which contains <code class="scheme"><span class="variable">p</span></code>, the newly created structure, and
+<code class="scheme"><span class="keyword">'</span><span class="variable">vocals</span></code>, its current <code class="scheme"><span class="variable">instrument</span></code> value. </p>
+<p>
+The next step selects the first item from <code class="scheme"><span class="variable">q</span></code> and modifies its
+<code class="scheme"><span class="variable">instrument</span></code> field: 
+</p>
+<div align="left"><pre class="scheme">... 
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="keyword">begin</span>
+    (void)
+    (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> (<span class="builtin">first</span> <span class="variable">r</span>))))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="builtin">list</span> (<span class="builtin">star-instrument</span> <span class="variable">p</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">PhilCollins</span> <span class="keyword">'</span><span class="variable">vocals</span>))
+  (<span class="keyword">define</span> <span class="variable">q</span> (<span class="builtin">list</span> <span class="variable">p</span>))
+  (<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">list</span> <span class="variable">p</span> <span class="keyword">'</span><span class="variable">drums</span>))
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)
+</pre></div><p>
+Because <code class="scheme"><span class="variable">r</span></code> contains <code class="scheme"><span class="variable">p</span></code> as the first item and because the
+instrument field of <code class="scheme"><span class="variable">p</span></code> is still <code class="scheme"><span class="keyword">'</span><span class="variable">vocals</span></code>, the result is 
+<code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">vocals</span>)</code> here, too. But, this program still has some
+knowledge of <code class="scheme"><span class="keyword">'</span><span class="variable">drums</span></code>, the original value of the <code class="scheme"><span class="variable">star</span></code>
+structure. </p>
+<p>
+In summary, mutators give us more power than constructors and
+selectors. Instead of just creating new structures and revealing their
+contents, we can now change their contents, while the structures remain the
+same. Next we must contemplate what this means for the design of programs. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_40.3.1"></a>
+<b>Exercise 40.3.1.</b>&nbsp;&nbsp; 
+Name the mutators that the following structure definitions introduce: 
+<a name="node_idx_2376"></a><a name="node_idx_2378"></a><a name="node_idx_2380"></a><a name="node_idx_2382"></a><a name="node_idx_2384"></a></p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sweater</span> (<span class="variable">material</span> <span class="variable">size</span> <span class="variable">producer</span>))</code>&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mutate-syn.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.3.2"></a>
+<b>Exercise 40.3.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">swap-posn</span></code>, which consumes a <code class="scheme"><span class="variable">posn</span></code>
+structure and swaps the values in the two fields. Its result is
+<code class="scheme">(void)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mutate-swap.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.3.3"></a>
+<b>Exercise 40.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">one-more-date</span></code>, which consumes a
+<code class="scheme"><span class="variable">girlfriends</span></code> structure and increases the contents of the
+<code class="scheme"><span class="variable">number-past-dates</span></code> field by <code class="scheme"><span class="selfeval">1</span></code>. The structure definition is
+<a name="node_idx_2386"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">girlfriends</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">number-past-dates</span>))
+</pre></div><p>
+The result of <code class="scheme"><span class="variable">one-more-date</span></code> is <code class="scheme">(void)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mutate-incr.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.3.4"></a>
+<b>Exercise 40.3.4.</b>&nbsp;&nbsp; 
+Evaluate the following program, step by step: 
+<a name="node_idx_2388"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))
+
+(<span class="keyword">define</span> <span class="variable">A</span> (<span class="builtin">make-cheerleader</span> <span class="keyword">'</span><span class="variable">JoAnn</span> <span class="selfeval">2</span>))
+
+(<span class="keyword">define</span> <span class="variable">B</span> (<span class="builtin">make-cheerleader</span> <span class="keyword">'</span><span class="variable">Belle</span> <span class="selfeval">1</span>))
+
+(<span class="keyword">define</span> <span class="variable">C</span> (<span class="builtin">make-cheerleader</span> <span class="keyword">'</span><span class="variable">Krissy</span> <span class="selfeval">1</span>)) 
+
+(<span class="keyword">define</span> <span class="variable">all</span> (<span class="builtin">list</span> <span class="variable">A</span> <span class="variable">B</span> <span class="variable">C</span>))
+
+(<span class="builtin">list</span>
+  (<span class="variable">cheerleader-number</span> (<span class="builtin">second</span> <span class="variable">all</span>))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-cheerleader-number!</span> (<span class="builtin">second</span> <span class="variable">all</span>) <span class="selfeval">17</span>)
+    (<span class="variable">cheerleader-number</span> (<span class="builtin">second</span> <span class="variable">all</span>))))
+</pre></div><p>
+Underline in the last program where definitions differ from the initial
+program. 
+&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mutate-eval1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.3.5"></a>
+<b>Exercise 40.3.5.</b>&nbsp;&nbsp; 
+Evaluate the following program: 
+<a name="node_idx_2390"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))
+
+(<span class="keyword">define</span> <span class="variable">in-stock</span>
+  (<span class="builtin">list</span>
+    ((<span class="variable">make-CD</span> <span class="keyword">'</span><span class="variable">R.E.M</span> <span class="selfeval">&quot;New Adventures in Hi-fi&quot;</span> <span class="selfeval">0</span>)
+     (<span class="variable">make-CD</span> <span class="keyword">'</span><span class="variable">France</span> <span class="selfeval">&quot;simple je&quot;</span> <span class="selfeval">0</span>)
+     (<span class="variable">make-CD</span> <span class="keyword">'</span><span class="variable">Cranberries</span> <span class="selfeval">&quot;no need to argue&quot;</span> <span class="selfeval">0</span>))))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">set-CD-price!</span> (<span class="builtin">first</span> <span class="variable">in-stock</span>) <span class="selfeval">12</span>)
+  (<span class="variable">set-CD-price!</span> (<span class="builtin">second</span> <span class="variable">in-stock</span>) <span class="selfeval">19</span>)
+  (<span class="variable">set-CD-price!</span> (<span class="builtin">third</span> <span class="variable">in-stock</span>) <span class="selfeval">11</span>)
+  (<span class="builtin">+</span> (<span class="variable">CD-price</span> (<span class="builtin">first</span> <span class="variable">in-stock</span>))
+     (<span class="variable">CD-price</span> (<span class="builtin">second</span> <span class="variable">in-stock</span>))
+     (<span class="variable">CD-price</span> (<span class="builtin">third</span> <span class="variable">in-stock</span>))))
+</pre></div><p>
+Show every step.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mutate-eval2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_40.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_40.4">40.4&nbsp;&nbsp;Mutable Vectors</a></h2>
+<p></p>
+<p>
+Recall from intermezzo&nbsp;<a href="curriculum-Z-H-36.html#node_chap_29">29</a> that vectors, like structures,
+are compound values. To extract a value from a structure, programs use
+selector operations. To extract a value from a vector, programs use natural
+numbers as indices. Hence functions that process vectors defer to
+auxiliary functions that process vectors and natural numbers.</p>
+<p>
+Not surprisingly, vectors, like structures, are mutable compound
+values.
+<a name="node_idx_2392"></a>
+The only mutator for vectors is <code class="scheme"><span class="builtin">vector-set!</span></code>, a function
+that consumes a vector, an index, and a value. Thus, for example, the
+following program evaluates to <code class="scheme"><span class="keyword">'</span><span class="variable">blank</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">X</span> (<span class="builtin">vector</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span> <span class="keyword">'</span><span class="variable">d</span>))
+
+(<span class="keyword">begin</span>
+  (<span class="builtin">vector-set!</span> <span class="variable">X</span> <span class="selfeval">0</span> <span class="keyword">'</span><span class="variable">blank</span>)
+  (<span class="builtin">vector-set!</span> <span class="variable">X</span> <span class="selfeval">1</span> <span class="keyword">'</span><span class="variable">blank</span>)
+  (<span class="builtin">vector-set!</span> <span class="variable">X</span> <span class="selfeval">2</span> <span class="keyword">'</span><span class="variable">blank</span>)
+  (<span class="builtin">vector-set!</span> <span class="variable">X</span> <span class="selfeval">3</span> <span class="keyword">'</span><span class="variable">blank</span>)
+  (<span class="builtin">vector-ref</span> <span class="variable">X</span> <span class="selfeval">2</span>))
+</pre></div><p>
+The four <code class="scheme"><span class="builtin">vector-set!</span></code> expressions change <code class="scheme"><span class="variable">X</span></code> so that all of
+its four fields contain <code class="scheme"><span class="keyword">'</span><span class="variable">blank</span></code>. The last expression extracts the
+value of one of the fields.</p>
+<p>
+In general, an evaluation concerning mutable vectors
+<a name="node_idx_2394"></a>
+proceeds just like an
+evaluation for mutable structures. In particular, a <code class="scheme"><span class="builtin">vector</span></code>
+expression introduces a new definition:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">list</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+<span class="builtin">=</span> (<span class="builtin">list</span> <span class="variable">v</span>)
+  <span class="comment">;; add to top-level definitions: </span>
+  (<span class="keyword">define</span> <span class="variable">v</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+</pre></div><p>
+The variable name <code class="scheme"><span class="variable">v</span></code> is new and unique. Similarly, a
+<code class="scheme"><span class="builtin">vector-set!</span></code>  expression modifies a part of a vector definition:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">set-vector!</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) <span class="selfeval">0</span> <span class="keyword">'</span><span class="variable">a</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">v</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+  (<span class="variable">set-vector!</span> <span class="variable">v</span> <span class="selfeval">0</span> <span class="keyword">'</span><span class="variable">a</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">v</span> (<span class="builtin">vector</span> <span class="keyword">'</span><span class="variable">a</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+  (void)
+</pre></div><p>
+Finally, effects to vectors are shared just like effects to structures.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_40.4.1"></a>
+<b>Exercise 40.4.1.</b>&nbsp;&nbsp; 
+Evaluate the following program: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">X</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">0</span>))
+
+(<span class="keyword">define</span> <span class="variable">Y</span> <span class="variable">X</span>)
+
+(<span class="keyword">begin</span>
+  (<span class="builtin">vector-set!</span> <span class="variable">X</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)
+  (<span class="builtin">vector-set!</span> <span class="variable">Y</span> <span class="selfeval">1</span> (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">Y</span> <span class="selfeval">0</span>) (<span class="builtin">vector-ref</span> <span class="variable">Y</span> <span class="selfeval">1</span>)))
+  (<span class="builtin">vector-ref</span> <span class="variable">Y</span> <span class="selfeval">1</span>))
+</pre></div><p>
+Show all steps.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-vec-eval1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.4.2"></a>
+<b>Exercise 40.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">clear</span></code>, which consumes a vector with three
+slots and sets them to <code class="scheme"><span class="selfeval">0</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-vec-0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.4.3"></a>
+<b>Exercise 40.4.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">swap</span></code>, which consumes a vector with two
+slots and swaps the values in these slots.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-vec-1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_40.4.4"></a>
+<b>Exercise 40.4.4.</b>&nbsp;&nbsp; 
+Extend the board representation of exercise&nbsp;<a href="curriculum-Z-H-36.html#node_thm_29.3.14">29.3.14</a> with the
+function 
+<a name="node_idx_2396"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">board-flip!</span> <span class="selfeval">:</span> <span class="variable">board</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to negate the board position with indices <code class="scheme"><span class="variable">i</span></code>, <code class="scheme"><span class="variable">j</span></code> on <code class="scheme"><span class="variable">a-board</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">board-flip!</span> <span class="variable">a-board</span> <span class="variable">i</span> <span class="variable">j</span>) ...)
+</pre></div><p>
+Don't forget to develop examples and tests for the function.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-vec-2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_40.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_40.5">40.5&nbsp;&nbsp;Changing Variables, Changing Structures</a></h2>
+<p></p>
+<p>
+Structure mutators and <strong>set!</strong>-expressions are related. Indeed, in
+section&nbsp;<a href="#node_sec_40.2">40.2</a> we explained the effects of the first
+with the second. Still, there are also important differences that a
+programmer must understand. Let's start with the syntax: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable"><tt>&lt;variable&gt;</tt></span> <span class="variable"><tt>&lt;expression&gt;</tt></span>)
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="variable"> set</span><span class="builtin">-</span><span class="variable"><tt>&lt;structure-tag&gt;</tt></span><span class="builtin">-</span><span class="variable"><tt>&lt;field&gt;</tt></span><span class="variable">!</span>
+</pre></div></td><td>
+</td></tr></table></div>
+
+A <strong>set!</strong>-expression is an expression that consists of two pieces: a variable and
+an expression. The variable is fixed; it is never evaluated. The expression
+is evaluated. In contrast, a structure mutator is a function. As such, it
+is a value that the program can apply (to two arguments), pass to other
+functions, store inside of structures, and so on. Structure mutators are
+created in response to structure definitions, just as structure
+constructors and selectors.<p>
+Next we must consider lexical scope issues (see section&nbsp;<a href="curriculum-Z-H-23.html#node_sec_18.2">18.2</a>).
+A <strong>set!</strong>-expression contains a variable. For the <strong>set!</strong>-expression to be valid, this
+variable must be bound. The connection between a <strong>set!</strong>-expression's variable and
+its binding occurrence is static and can never be changed.</p>
+<p>
+The scope of a mutator is that of its corresponding <code class="scheme"><span class="keyword">define-struct</span></code>. Thus, 
+in the following program 
+<a name="node_idx_2398"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">aaa</span> (<span class="variable">xx</span> <span class="variable">yy</span>))
+
+(<span class="keyword">define</span> <span class="variable">UNIQUE</span> 
+  (<span class="keyword">local</span> (<span class="variable"><u><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">aaa</span> (<span class="variable">xx</span> <span class="variable">yy</span>))</code></u></span>)
+    (<span class="builtin">make-aaa</span> <span class="keyword">'</span><span class="variable">my</span> <span class="keyword">'</span><span class="variable">world</span>)))
+
+...
+</pre></div><p>
+the underlined occurrence of <code class="scheme"><span class="keyword">define-struct</span></code> has a limited lexical
+scope, and its scope is a hole in the scope of the top-level
+<code class="scheme"><span class="keyword">define-struct</span></code>. A result of this scoping is that the mutator for
+the top-level <code class="scheme"><span class="keyword">define-struct</span></code> cannot mutate the structure called
+<code class="scheme"><span class="variable">UNIQUE</span></code>. The two mutators are unrelated functions that
+coincidentally have the same name; the rules for the evaluation of
+<strong>local</strong>-expression dictate that we rename one consistently. </p>
+<p>
+To highlight the differences in syntax and lexical scope, take a look at
+the following two, apparently similar programs: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="keyword">set!</span> <span class="variable">x</span> <span class="selfeval">17</span>)
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="builtin">set-posn-x!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+The one on the left is illegal, because the <code class="scheme"><span class="variable">x</span></code> in the <strong>set!</strong>-expression is
+an unbound variable. The program on the right is perfectly legal; it refers
+to the field <code class="scheme"><span class="variable">x</span></code> of a <code class="scheme"><span class="variable">posn</span></code> structure. <p>
+The largest difference between <strong>set!</strong>-expressions and mutators concerns their
+semantics. Let's study two examples to understand the differences once and
+for all. The first illustrates how similar looking expressions evaluate in
+a radically different manner:
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="keyword">set!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="builtin">set-posn-x!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+The program on the left consists of a definition for <code class="scheme"><span class="variable">the-point</span></code> and
+an assignment to <code class="scheme"><span class="variable">the-point</span></code>; the one on the right starts with the
+same definition for <code class="scheme"><span class="variable">the-point</span></code> followed by an application of the
+mutator. The evaluation of both affects the variable definition but in
+different ways: 
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+
+(void)
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">17</span> <span class="selfeval">4</span>))
+
+(void)
+</pre></div></td><td>
+</td></tr></table></div>
+
+On the left, <code class="scheme"><span class="variable">the-point</span></code> now stands for a number; on the right, it
+is still a <code class="scheme"><span class="variable">posn</span></code> structure but with a new value in the
+<code class="scheme"><span class="variable">x</span></code>-field. More generally, a <strong>set!</strong>-expression changes the value on the
+right-hand side of a definition, and the application of a mutator changes
+the value of just one field in a structure that occurs on the right-hand
+side of a definition. <p>
+The second example shows how an application of mutator evaluates the
+arguments, which is not the case for <strong>set!</strong>-expressions: 
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+(<span class="keyword">define</span> <span class="variable">an-other</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">5</span>))
+
+(<span class="keyword">set!</span> (<span class="keyword">cond</span>
+	[(<span class="builtin">zero?</span> (<span class="builtin">point-x</span> <span class="variable">the-point</span>))
+	 <span class="variable">the-point</span>]
+	[<span class="keyword">else</span>
+	 <span class="variable">an-other</span>])
+      <span class="selfeval">1</span>)
+
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+(<span class="keyword">define</span> <span class="variable">an-other</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> <span class="selfeval">5</span>))
+
+(<span class="builtin">set-posn-x!</span>
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> (<span class="builtin">point-x</span> <span class="variable">the-point</span>))
+     <span class="variable">the-point</span>]
+    [<span class="keyword">else</span>
+     <span class="variable">an-other</span>])
+  <span class="selfeval">1</span>)
+</pre></div></td><td>
+</td></tr></table></div>
+
+Whereas the program on the left is illegal, because a <strong>set!</strong>-expression must
+contain a fixed variable in the second position, the one on the right is
+legitimate. The evaluation of the program on the right changes the
+<code class="scheme"><span class="variable">x</span></code>-field in <code class="scheme"><span class="variable">an-other</span></code> to <code class="scheme"><span class="selfeval">1</span></code>.<p>
+Finally, <code class="scheme"><span class="variable">mutators</span></code> are values, which means a function can consume a
+mutator and apply it: 
+<a name="node_idx_2400"></a><a name="node_idx_2402"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">set-to-2</span> <span class="selfeval">:</span> <span class="variable">S-mutator</span> <span class="variable">S-structure</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; to change a field in <code class="scheme"><span class="variable">s</span></code> to <code class="scheme"><span class="selfeval">2</span></code> via <code class="scheme"><span class="variable">mutator</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">set-to-2</span> <span class="variable">mutator</span> <span class="variable">s</span>)
+  (<span class="variable">mutator</span> <span class="variable">s</span> <span class="selfeval">2</span>))
+
+(<span class="keyword">define-struct</span> <span class="variable">bbb</span> (<span class="variable">zz</span> <span class="variable">ww</span>))
+
+(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">s</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+	(<span class="keyword">define</span> <span class="variable">t</span> (<span class="builtin">make-bbb</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">set-to-2</span> <span class="builtin">set-posn-x!</span> <span class="variable">s</span>)
+    (<span class="variable">set-to-2</span> <span class="builtin">set-bbb-ww!</span> <span class="variable">t</span>)))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">set-to-2</span></code> consumes a mutator and a structure that the
+mutator can modify. The program uses it to change the <code class="scheme"><span class="variable">x</span></code>-field in a
+<code class="scheme"><span class="variable">posn</span></code> structure and the <code class="scheme"><span class="variable">ww</span></code>-field in a <code class="scheme"><span class="variable">bbb</span></code>
+structure. In contrast, if we were to apply a function to a <strong>set!</strong>-expression, it
+would receive <code class="scheme">(void)</code> and nothing else. </p>
+<p>
+<a name="node_idx_2404"></a>
+<a name="node_idx_2406"></a>
+</p>
+<p></p>
+<p><strong>Mixing set! and Structure Mutators</strong>:   When
+a program uses both <strong>set!</strong>-expressions and structure mutators, our evaluation
+rules fail for some cases. Specifically, they don't explain sharing
+<a name="node_idx_2408"></a>properly. Consider this program fragment:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+(<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">the-point</span>)
+
+(<span class="keyword">begin</span>
+  (<span class="keyword">set!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+  (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>))
+</pre></div><p>
+According to our rules, the two definitions refer to the same
+structure. The second one does so by indirection. The <strong>set!</strong>-expression changes what
+<code class="scheme"><span class="variable">the-point</span></code> stands for, but it shouldn't affect the second
+definition. In particular, the program should produce <code class="scheme"><span class="builtin">true</span></code>. 
+If we were to use our rules in a naive manner, we would not be able to
+validate this point. </p>
+<p>
+A proper explanation of structures must introduce a new definition for
+every application of a structure constructor, including those on the
+right-hand side of definitions in the original program. We will place the
+new definitions at the beginning of the sequence of
+definitions. Furthermore, the variable in the new definition must be unique
+so that it cannot occur in a <strong>set!</strong>-expression. We will use variables such as
+<code class="scheme"><span class="variable">struct-1</span></code>, <code class="scheme"><span class="variable">struct-2</span></code>, and so on, and agree to use them for
+this purpose only. These names, and only these names, are values.</p>
+<p>
+Using the minor changes to our rules, we can evaluate the program fragment
+properly: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">the-point</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">the-point</span>)
+
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>))
+</pre></div><p></p>
+<p>
+</p>
+
+
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">struct-1</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+  (<span class="keyword">define</span> <span class="variable">the-point</span> <span class="variable">struct-1</span>)
+  <span class="comment">;; <strong>evaluate from here:</strong></span>
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">the-point</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">struct-1</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+  (<span class="keyword">define</span> <span class="variable">the-point</span> <span class="variable">struct-1</span>)
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">struct-1</span>)
+  <span class="comment">;; <strong>evaluate from here:</strong></span>
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>))
+</pre></div><p>
+At this point, the structure is created, and both of the original variables
+refer to the new structure. The rest of the evaluation changes the
+definition of <code class="scheme"><span class="variable">the-point</span></code> but not <code class="scheme"><span class="variable">another-point</span></code>: 
+</p>
+<div align="left"><pre class="scheme">  ...
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">struct-1</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+  (<span class="keyword">define</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">struct-1</span>)
+  <span class="comment">;; <strong>evaluate from here:</strong></span>
+  (<span class="keyword">begin</span>
+    (void)
+    (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">struct-1</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+  (<span class="keyword">define</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">struct-1</span>)
+  <span class="comment">;; <strong>evaluate from here:</strong></span>
+  (<span class="builtin">=</span> (<span class="builtin">posn-x</span> <span class="variable">another-point</span>) <span class="selfeval">3</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">struct-1</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+  (<span class="keyword">define</span> <span class="variable">the-point</span> <span class="selfeval">17</span>)
+  (<span class="keyword">define</span> <span class="variable">another-point</span> <span class="variable">struct-1</span>)
+  <span class="comment">;; <strong>evaluate from here:</strong></span>
+  (<span class="builtin">=</span> <span class="selfeval">3</span> <span class="selfeval">3</span>)
+</pre></div><p>
+The final result is <code class="scheme"><span class="builtin">true</span></code>, as expected. </p>
+<p>
+The modified evaluation rules are a bit more cumbersome than the old
+ones. But they fully explain the difference between the effects of
+<strong>set!</strong>-expressions and those of structure mutation, which, for programming in
+modern languages, 
+<a name="node_idx_2410"></a>is an essential concept.&nbsp;</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_206"></a><a href="#call_footnote_Temp_206"><sup><small>75</small></sup></a> For simplicity, we use this simple approximation. When
+a program also uses <strong>set!</strong>-expression, we must rely on the refinement of
+intermezzo&nbsp;8.3 to understand its behavior completely. Also see the note on
+this topic on page&nbsp;<a href="">50</a>.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-49.html">previous</a></span><span>, <a href="curriculum-Z-H-51.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-50.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

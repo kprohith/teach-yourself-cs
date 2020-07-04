@@ -1,0 +1,114 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 6</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+<p>Develop a function that consumes two 
+<tt>Posn</tt> structures -- one representing the
+center of a circle and the other representing a point on its
+circumference -- and produces the area of the
+disk enclosed by the circle. 
+Area of a disk = PI * <em>r</em><sup>2</sup>.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Provide a structure definition and a data definition for a paycheck
+with check number, name, date, and amount properties.
+<p>
+Develop a function to produce a paycheck given
+the following information: check number, name, date, hours worked,
+wage, and percent tax reported as a decimal. The amount of the check
+is calculated by multiplying the hours worked by the wage less any
+taxes.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+Provide a structure definition and a data definition for a game
+score. A game score is characterized by two pieces of information: a
+symbol representing the name of the team and a number
+representing the points that were scored by that team. 
+<p>
+Develop a function that consumes two scores from a 
+particular game and returns
+the name of the team that won or 'Tie if the scores were
+equal.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+Provide a structure definition and a data definition for an online
+auction entry, which is characterized by four pieces of information:
+the item number, the highest bidder, the current bid, and 'Open or 'Closed.
+<p>
+Develop a function that consumes a bidder, a bid amount, and an auction
+entry then returns a new entry. If the bid amount is less than the
+current bid or if the auction is closed, then the original entry is
+returned.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+<p>
+Provide a structure definition and a data definition for ice cubes
+with mass and velocity properties. 
+</p>
+<p>
+Develop a function that produces a
+single ice cube from two colliding 
+ice cubes with the following assumptions.
+</p>
+<p>
+Simultaneously, two ice cubes are sent towards each other along a horizontal 
+track.
+Because they are traveling in opposite directions, 
+one cube has a positive velocity and the other a negative
+one.
+Because the cubes are made of ice, you can assume that the friction between
+the cubes and the track is zero.
+However, the cubes are designed to stick together when they meet, 
+resulting in a single cube.
+</p>
+<p>
+Momentum is conserved: meaning that the sum of the momenta
+of the original cubes will equal the momentum of the combined cube.
+Momentum is computed by multiplying an object's mass by its velocity.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM5">Solution</a></p></div><div><hr><a name="6"><font color="red">Problem 6: </font></a><blockquote>
+<p>The goal of the exercise is to draw a picture with baloons.</p>
+
+<p>Develop the function <code>pick-color</code>. The function consumes the
+numbers 0, 1, 2, and 3. For 0, it produces 'red, for 1 'green, for 2 'blue,
+and for 3 'yellow.</p>
+
+<p>Develop the function <code>draw-baloon</code>.  The function consumes
+two numbers, between 0 and WIDTH and 0 and HEIGHT, respectively, and a
+color symbol ('red, 'green, 'blue, 'yellow). It draws a baloon on a canvas
+of size WIDTH x HEIGHT. A baloon consists of a disk, which is described by
+RADIUS, and a line, which is described by length. Experiment with different
+values for WIDTH, HEIGHT, RADIUS, and LENGTH to find pleasing proportions.
+</p>
+
+<p>Develop a function that consumes a symbol and draws a baloon at a random
+place and with a random color (one of: 'red, 'green, 'blue, 'yellow). Use
+<code>pick-color</code> and <code>draw-baloon</code>.
+
+<br>Note: (random N) computes a random number between 0 and N-1.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM6">Solution</a></p></div><div><hr><a name="7"><font color="red">Problem 7: </font></a><blockquote>Develop the function <code>draw-bar-chart</code>. The function
+accepts four integers between 0 and HEIGHT-20 and draws a bar chart (see
+picture below).
+
+<p>The dimensions of the canvas are WIDTH x HEIGHT. The base-line's
+y-coordinate is at HEIGHT-20. The width of the bar chart is WIDTH-20. The
+bars are centered in the remaining space; each of the bars occupies a
+quarter of the remaining space. Hint: define global constants that compute
+the fixed parts of the four bars: the x-coordinates of their northwest
+corner and their width. Here are the first two: 
+<pre><code>
+(define X1 10)
+(define X2 (+ X1 BAR-WIDTH))
+</code>
+</pre>
+
+<p>Picture: </p>
+<center>
+<img alt="bc" src="bc.jpg" width="200">
+</center>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM7">Solution</a></p></div><div><hr><a name="8"><font color="red">Problem 8: </font></a><blockquote>
+<p>Design a function that draws a Japanese flag. The function consumes the
+size of the rising sun and produces true. It draws a Japanese flag.</p>
+
+<p>Design a function that draws a German flag. It consumes the location the
+width of the flag, and the height of the stripes. Its result is true; its
+effect is to draw the canvas.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol6.html#PROBLEM8">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#f98b98809496979db99a9a8ad7979c8cd79c9d8c">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/6.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

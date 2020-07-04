@@ -1,0 +1,1074 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-4.html">previous</a></span><span>, <a href="curriculum-Z-H-6.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_2"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_2">Section  2</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_2">Numbers, Expressions, Simple Programs</a></h1>
+<p> 
+</p>
+<p>
+In the beginning, people thought of computers as number crunchers. And
+indeed, computers are very good at working with numbers. Since teachers
+start their first-graders on computing with numbers, we start with numbers,
+too. Once we know how computers deal with numbers, we can develop simple
+programs in no time; we just translate common sense into our programming
+notation. Still, even developing such simple programs requires discipline,
+and so we introduce the outline of the most fundamental design recipe and
+the basic programming guideline at the end of this section.</p>
+<p>
+</p>
+<a name="node_sec_2.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_2.1">2.1&nbsp;&nbsp;Numbers and Arithmetic</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Computing</a>
+</td></tr></table><p></p>
+<p>
+Numbers come in many different flavors: positive and negative integers,
+fractions (also known as rationals), and reals are the most widely known
+classes of numbers:
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="selfeval">5</span></code>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">-5</span></code>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">2/3</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">17/3</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">#i1.4142135623731</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></div>
+
+The first is an integer, the second one a negative integer, the next two
+are fractions, and the last one is an inexact representation of a real
+number.<p>
+Like a pocket calculator, the simplest of computers, Scheme permits
+programmers to add, subtract, multiply, and divide numbers:
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme">(<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">5</span>)</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">(<span class="builtin">+</span> <span class="selfeval">-5</span> <span class="selfeval">5</span>)</code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">(<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">-5</span>)</code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">(<span class="builtin">-</span> <span class="selfeval">5</span> <span class="selfeval">5</span>)</code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)</code>  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme">(<span class="builtin">/</span> <span class="selfeval">8</span> <span class="selfeval">12</span>)</code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></div>
+
+The first three ask Scheme to perform additions; the last three demand a
+subtraction, a multiplication, and a division. All arithmetic expressions
+<a name="node_idx_58"></a><a name="node_idx_60"></a>are parenthesized and mention the operation first; the numbers follow the
+operation and are separated by spaces.<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Stepper</a>
+</td></tr></table><p>
+As in arithmetic or algebra, we can nest expressions:
+<a name="node_idx_62"></a></p>
+<div align="left"><pre class="scheme">  (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">2</span> <span class="selfeval">2</span>) (<span class="builtin">/</span> (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">3</span> <span class="selfeval">5</span>) (<span class="builtin">/</span> <span class="selfeval">30</span> <span class="selfeval">10</span>)) <span class="selfeval">2</span>))
+</pre></div><p>
+Scheme evaluates these expressions exactly as we do. It first reduces the
+innermost parenthesized expressions to numbers, then the next layer, and so
+on: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">2</span> <span class="selfeval">2</span>) (<span class="builtin">/</span> (<span class="builtin">*</span> (<span class="builtin">+</span> <span class="selfeval">3</span> <span class="selfeval">5</span>) (<span class="builtin">/</span> <span class="selfeval">30</span> <span class="selfeval">10</span>)) <span class="selfeval">2</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">4</span> (<span class="builtin">/</span> (<span class="builtin">*</span> <span class="selfeval">8</span> <span class="selfeval">3</span>) <span class="selfeval">2</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">4</span> (<span class="builtin">/</span> <span class="selfeval">24</span> <span class="selfeval">2</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">4</span> <span class="selfeval">12</span>)
+<span class="builtin">=</span> <span class="selfeval">48</span>
+</pre></div><p>
+Because every Scheme expression has the shape<br>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">operation</span> <span class="variable">A</span> ... <span class="variable">B</span>)
+</pre></div><p>
+there is never any question about which part has to be evaluated first.
+Whenever <code class="scheme"><span class="variable">A</span> ... <span class="variable">B</span></code> are numbers, the expression can be evaluated;
+otherwise, <code class="scheme"><span class="variable">A</span> ... <span class="variable">B</span></code> are evaluated first.  Contrast this with
+</p>
+<div align="center"><img src="curriculum1a-Z-G-1.gif" border="0" alt="[curriculum1a-Z-G-1.gif]"></div><p>
+which is an expression that we encounter in grade school.  Only a
+substantial amount of practice guarantees that we remember to evaluate the
+multiplication first and the addition afterwards.<a name="call_footnote_Temp_13"></a><a href="#footnote_Temp_13"><sup><small>4</small></sup></a></p>
+<p>
+Finally, Scheme not only provides simple arithmetical operations but a whole
+range of advanced mathematical operations on numbers. Here are five
+examples: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">sqrt</span> <span class="variable">A</span>)</code> computes (<em>A</em>)<sup>1/2</sup>;
+</p>
+<li><p><code class="scheme">(<span class="builtin">expt</span> <span class="variable">A</span> <span class="variable">B</span>)</code> computes <em>A</em><sup><em>B</em></sup>;
+</p>
+<li><p><code class="scheme">(<span class="builtin">remainder</span> <span class="variable">A</span> <span class="variable">B</span>)</code> computes the remainder of the integer division <em>A</em>/<em>B</em>; 
+</p>
+<li><p><code class="scheme">(<span class="builtin">log</span> <span class="variable">A</span>)</code> computes the natural logarithm of <code class="scheme"><span class="variable">A</span></code>;
+and
+</p>
+<li><p><code class="scheme">(<span class="builtin">sin</span> <span class="variable">A</span>)</code> computes the sine of <em>A</em> radians.
+</p>
+</li></ol><p>
+When in doubt whether a primitive operation
+<a name="node_idx_64"></a><a name="node_idx_66"></a>exists or how it works, use DrScheme to test whether an operation is
+available with a simple example. </p>
+<p>
+</p>
+<p></p>
+<p><strong>A Note on Numbers</strong>:  
+Scheme computes with <small>E</small><small>X</small><small>A</small><small>C</small><small>T</small>
+<a name="node_idx_68"></a><a name="node_idx_70"></a>integers and rationals as long as we
+use primitive operations
+<a name="node_idx_72"></a>that produce exact results. Thus, it displays the
+result of <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">44</span> <span class="selfeval">14</span>)</code> as <code class="scheme"><span class="selfeval">22/7</span></code>. Unfortunately, Scheme and
+other programming languages
+<a name="node_idx_74"></a>compromise as far as real numbers are
+concerned. For example, since the square root of <code class="scheme"><span class="selfeval">2</span></code> is not a
+rational but a real number, Scheme uses an <small>I</small><small>N</small><small>E</small><small>X</small><small>A</small><small>C</small><small>T</small>
+<small>N</small><small>U</small><small>M</small><small>B</small><small>E</small><small>R</small>:
+<a name="node_idx_76"></a><a name="node_idx_78"></a></p>
+<div align="left"><pre class="scheme">  (<span class="builtin">sqrt</span> <span class="selfeval">2</span>)
+<span class="builtin">=</span> <span class="selfeval">#i1.4142135623731</span>
+</pre></div><p>
+The <code class="scheme"><span class="selfeval">#i</span></code> notation warns the programmer that the result is an
+approximation of the true number. Once an inexact number has become a part
+of a calculation, the process continues in an approximate manner. To wit:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">-</span> <span class="selfeval">#i1.0</span> <span class="selfeval">#i0.9</span>)
+<span class="builtin">=</span> <span class="selfeval">#i0.09999999999999998</span>
+</pre></div><p>
+but 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">-</span> <span class="selfeval">#i1000.0</span> <span class="selfeval">#i999.9</span>)
+<span class="builtin">=</span> <span class="selfeval">#i0.10000000000002274</span>
+</pre></div><p>
+even though we know from mathematics that both differences should be
+<code class="scheme"><span class="selfeval">0.1</span></code> and equal. Once numbers are inexact, caution is necessary. </p>
+<p>
+This imprecision is due to the common simplification of writing down
+numbers like the square root of 2 or <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> as rational numbers. Recall that
+the decimal representations of these numbers are infinitely long (without
+repetition).  A computer, however, has a finite size, and therefore can
+only represent a portion of such a number. If we choose to represent these
+numbers as rationals with a fixed number of digits, the representation is
+necessarily inexact. Intermezzo&nbsp;6 will explain how inexact numbers work.</p>
+<p>
+To focus our studies on the important concepts of computing and not on 
+these details, the teaching languages of DrScheme deal as much as possible
+with numbers as precise numbers. When we write <code class="scheme"><span class="selfeval">1.25</span></code>, DrScheme
+interprets this number as a precise fraction, not as an inexact number.
+When DrScheme's <tt>Interactions</tt>
+<a name="node_idx_80"></a>window displays a number such as
+<code class="scheme"><span class="selfeval">1.25</span></code> or <code class="scheme"><span class="selfeval">22/7</span></code>, it is the result of a computation with
+precise rationals and fractions. Only numbers prefixed by <code class="scheme"><span class="selfeval">#i</span></code> are
+inexact representations.&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_2.1.1"></a>
+<b>Exercise 2.1.1.</b>&nbsp;&nbsp; </p>
+<p>
+Find out whether DrScheme has operations for squaring a number; for
+computing the sine of an angle; and for determining the maximum of two
+numbers.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/discover2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_2.1.2"></a>
+<b>Exercise 2.1.2.</b>&nbsp;&nbsp; 
+Evaluate <code class="scheme">(<span class="builtin">sqrt</span> <span class="selfeval">4</span>)</code>, <code class="scheme">(<span class="builtin">sqrt</span> <span class="selfeval">2</span>)</code>, and <code class="scheme">(<span class="builtin">sqrt</span> <span class="selfeval">-1</span>)</code> in
+DrScheme. Then, find out whether DrScheme knows an operation for
+determining the tangent of an angle.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/discover1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_2.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_2.2">2.2&nbsp;&nbsp;Variables and Programs</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Programming</a>
+</td></tr></table><p></p>
+<p>
+In algebra we learn to formulate dependencies between quantities using
+<small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>B</small><small>L</small><small>E</small> <small>E</small><small>X</small><small>P</small><small>R</small><small>E</small><small>S</small><small>S</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_82"></a><a name="node_idx_84"></a>A variable is a placeholder that stands for
+an unknown quantity. For example, a disk of radius <em>r</em> has the approximate
+area<a name="call_footnote_Temp_14"></a><a href="#footnote_Temp_14"><sup><small>5</small></sup></a>
+</p>
+<div align="center"><img src="curriculum1a-Z-G-2.gif" border="0" alt="[curriculum1a-Z-G-2.gif]"></div><p>
+In this expression, <em>r</em> stands for any positive number.  If we now
+come across a disk with radius 5, we can determine its area by
+substituting 5 for <em>r</em> in the above formula and reducing the resulting
+expression to a number:
+</p>
+<div align="center"><img src="curriculum1a-Z-G-3.gif" border="0" alt="[curriculum1a-Z-G-3.gif]"></div><p>
+More generally, expressions that contain variables are rules that describe
+how to compute a number <em>when</em> we are given values for the variables.</p>
+<p>
+</p>
+<p>
+A program is such a rule. It is a rule that tells us and the
+computer how to produce data from some other data. Large programs consist
+of many small programs and combine them in some manner. It is therefore
+important that programmers name each rule as they write it down. A good
+name for our sample expression is <code class="scheme"><span class="variable">area-of-disk</span></code>. Using this name,
+we would express the rule for computing the area of a disk as
+follows:
+
+<a name="node_idx_86"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-disk</span> <span class="variable">r</span>) 
+  (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>)))
+</pre></div><p>
+The two lines say that <code class="scheme"><span class="variable">area-of-disk</span></code> is a rule, that it consumes
+a single <small>I</small><small>N</small><small>P</small><small>U</small><small>T</small>,
+<a name="node_idx_88"></a>called <code class="scheme"><span class="variable">r</span></code>, and that the result, or <small>O</small><small>U</small><small>T</small><small>P</small><small>U</small><small>T</small>,
+<a name="node_idx_90"></a>is going to be <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="variable">r</span> <span class="variable">r</span>))</code> once we know what number <code class="scheme"><span class="variable">r</span></code>
+represents.</p>
+<p>
+Programs combine basic operations. In our example, <code class="scheme"><span class="variable">area-of-disk</span></code>
+uses only one basic operation, multiplication, but <code class="scheme"><span class="keyword">define</span></code>d
+programs may use as many operations as necessary. Once we have defined a
+program, we may use it as if it were a primitive operation.
+<a name="node_idx_92"></a><a name="node_idx_94"></a>For each
+variable listed to the right of the program name, we must supply one
+input. That is, we may write expressions whose operation is
+<code class="scheme"><span class="variable">area-of-disk</span></code> followed by a number:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">area-of-disk</span> <span class="selfeval">5</span>)
+</pre></div><p>
+We also say that we <small>A</small><small>P</small><small>P</small><small>L</small><small>Y</small>
+<a name="node_idx_96"></a><code class="scheme"><span class="variable">area-of-disk</span></code> to <code class="scheme"><span class="selfeval">5</span></code>. </p>
+<p>
+The application
+<a name="node_idx_98"></a>of a <code class="scheme"><span class="keyword">define</span></code>d operation is evaluated by copying the
+expression named <code class="scheme"><span class="variable">area-of-disk</span></code> and by replacing the variable
+(<code class="scheme"><span class="variable">r</span></code>) with the number we supplied (<code class="scheme"><span class="selfeval">5</span></code>):
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">area-of-disk</span> <span class="selfeval">5</span>) 
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="selfeval">5</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> <span class="selfeval">25</span>)
+<span class="builtin">=</span> <span class="selfeval">78.5</span>
+</pre></div><p></p>
+<p>
+</p>
+<p>
+Many programs consume more than one input. Say we wish to define a program
+that computes the area of a ring, that is, a disk with a hole in the center:</p>
+<p>
+
+
+</p>
+
+<center><img src="../icons/disk.gif" align="center"></center>
+
+<p></p>
+<p>
+</p>
+<p>
+The area of the ring is that of the outer disk minus the area of
+the inner disk, which means that the program requires <em>two</em> unknown
+quantities: the outer and the inner radii.  Let us call these unknown
+numbers <code class="scheme"><span class="variable">outer</span></code> and <code class="scheme"><span class="variable">inner</span></code>. Then the
+program that computes the area of a ring is defined as follows:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) 
+  (<span class="builtin">-</span> (<span class="variable">area-of-disk</span> <span class="variable">outer</span>)
+     (<span class="variable">area-of-disk</span> <span class="variable">inner</span>)))
+</pre></div><p>
+The three lines express that <code class="scheme"><span class="variable">area-of-ring</span></code> is a program, that the
+program accepts two inputs, called <code class="scheme"><span class="variable">outer</span></code> and <code class="scheme"><span class="variable">inner</span></code>, and that the result is going to be the difference
+between <code class="scheme">(<span class="variable">area-of-disk</span> <span class="variable">outer</span>)</code> and <code class="scheme">(<span class="variable">area-of-disk</span>
+<span class="variable">inner</span>)</code>. In other words, we have used both basic Scheme operations
+and <code class="scheme"><span class="keyword">define</span></code>d programs in the definition of <code class="scheme"><span class="variable">area-of-ring</span></code>.</p>
+<p>
+When we wish to use <code class="scheme"><span class="variable">area-of-ring</span></code>, we must supply two inputs: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">area-of-ring</span> <span class="selfeval">5</span> <span class="selfeval">3</span>) 
+</pre></div><p>
+The expression is evaluated in the same manner as <code class="scheme">(<span class="variable">area-of-disk</span>
+<span class="selfeval">5</span>)</code>.  We copy the expression from the definition of the program and replace
+the variable with the numbers we supplied:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">area-of-ring</span> <span class="selfeval">5</span> <span class="selfeval">3</span>) 
+
+<span class="builtin">=</span> (<span class="builtin">-</span> (<span class="variable">area-of-disk</span> <span class="selfeval">5</span>)
+     (<span class="variable">area-of-disk</span> <span class="selfeval">3</span>))
+
+<span class="builtin">=</span> (<span class="builtin">-</span> (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="selfeval">5</span> <span class="selfeval">5</span>))
+     (<span class="builtin">*</span> <span class="selfeval">3.14</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">3</span>)))
+<span class="builtin">=</span> ...
+</pre></div><p>
+The rest is plain arithmetic.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_2.2.1"></a>
+<b>Exercise 2.2.1.</b>&nbsp;&nbsp; 
+Define the program <code class="scheme"><i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i></code>,<a name="call_footnote_Temp_15"></a><a href="#footnote_Temp_15"><sup><small>6</small></sup></a> which consumes a temperature measured
+in Fahrenheit and produces the Celsius equivalent. Use a chemistry or
+physics book to look up the conversion formula. </p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Teachpacks</a>
+</td></tr></table><p>
+When the function is fully developed, test it using the teachpack
+<tt><strong>convert.ss</strong></tt>. The teachpack provides three functions:
+<code class="scheme"><span class="variable">convert-gui</span></code>, <code class="scheme"><span class="variable">convert-repl</span></code>, and <code class="scheme"><span class="variable">convert-file</span></code>.
+The first creates a graphical user interface. Use it with 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">convert-gui</span> <i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i>)
+</pre></div><p>
+The expression will create a new window in which users can manipulate
+a slider and buttons. </p>
+<p>
+The second emulates the <tt>Interactions</tt>
+<a name="node_idx_100"></a>window. Users are asked to
+enter a Fahrenheit temperature, which the program reads, evaluates, and
+prints. Use it via 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">convert-repl</span> <i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i>)
+</pre></div><p>
+The last operation processes entire files. To use it, create a file with
+those numbers that are to be converted. Separate the numbers with blank
+spaces or new lines. The function reads the entire file, converts the
+numbers, and writes the results into a new file. Here is the expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">convert-file</span> <span class="selfeval">&quot;in.dat&quot;</span> <i>Fahrenheit</i><tt>-&gt;</tt><i>Celsius</i> <span class="selfeval">&quot;out.dat&quot;</span>)
+</pre></div><p>
+This assumes that the name of the newly created file is <tt>in.dat</tt> and
+that we wish the results to be written to the file <tt>out.dat</tt>. For more
+information, use DrScheme's Help Desk to look up the teachpack
+<tt><strong>convert.ss</strong></tt>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/f2c.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_2.2.2"></a>
+<b>Exercise 2.2.2.</b>&nbsp;&nbsp; 
+Define the program <code class="scheme"><i>dollar</i><tt>-&gt;</tt><i>euro</i></code>, which consumes a number of
+dollars and produces the euro equivalent. Use the currency table in the
+newspaper to look up the current exchange rate. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/us-dm.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_2.2.3"></a>
+<b>Exercise 2.2.3.</b>&nbsp;&nbsp;  
+Define the program <code class="scheme"><span class="variable">triangle</span></code>. It consumes the length of a
+triangle's side and the perpendicular height. The program produces the
+area of the triangle. Use a geometry book to look up the formula for
+computing the area of a triangle. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/triangle.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_2.2.4"></a>
+<b>Exercise 2.2.4.</b>&nbsp;&nbsp;  
+Define the program <code class="scheme"><span class="variable">convert3</span></code>. It consumes three digits, starting
+with the least significant digit, followed by the next most significant
+one, and so on. The program produces the corresponding number. For
+example, the expected value of 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">convert3</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) 
+</pre></div><p>
+is <code class="scheme"><span class="selfeval">321</span></code>. Use an algebra book to find out how such a conversion
+works.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/convert3.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_2.2.5"></a>
+<b>Exercise 2.2.5.</b>&nbsp;&nbsp;    
+A typical exercise in an algebra book asks the reader to evaluate an expression
+like 
+</p>
+<div align="center"><img src="curriculum1a-Z-G-4.gif" border="0" alt="[curriculum1a-Z-G-4.gif]"></div><p>
+for <em>n</em>  =  2, <em>n</em>  =  5, and <em>n</em>  =  9. Using Scheme, we can formulate such an
+expression as a program and use the program as many times as
+necessary. Here is the program that corresponds to the above
+expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">n</span>)
+  (<span class="builtin">+</span> (<span class="builtin">/</span> <span class="variable">n</span> <span class="selfeval">3</span>) <span class="selfeval">2</span>))
+</pre></div><p>
+First determine the result of the expression at <em>n</em>  =  2, <em>n</em>  =  5, and <em>n</em>  = 
+9 by hand, then with DrScheme's stepper.</p>
+<p>
+Also formulate the following three expressions as programs: 
+</p>
+<ol>
+<li><p><em>n</em><sup>2</sup>  +  10
+</p>
+<li><p>(1/2)  &middot;  <em>n</em><sup>2</sup>  +  20
+</p>
+<li><p>2  <tt>-</tt>  (1/<em>n</em>)
+</p>
+</li></ol><p>
+Determine their results for <em>n</em>  =  2 and <em>n</em>  =  9 by hand and with DrScheme.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/algebra1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_2.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_2.3">2.3&nbsp;&nbsp;Word Problems</a></h2>
+<p> 
+</p>
+<p>
+Programmers are rarely handed mathematical expressions to turn into
+programs. Instead they typically receive informal problem descriptions that
+often contain irrelevant and sometimes ambiguous information. The
+programmers' first task is to extract the relevant information and then to
+formulate appropriate expressions.</p>
+<p>
+Here is a typical example:
+</p>
+<blockquote>
+Company XYZ &amp; Co. pays all its employees $12 per hour. A typical
+employee works between 20 and 65 hours per week. Develop a program
+that determines the wage of an employee from the number of hours of work.
+</blockquote>
+The last sentence is the first to mention the actual task: to write a
+program that determines one quantity based on some other quantity. More
+specifically, the program consumes one quantity, the number of hours of
+work, and produces another one, the wage in dollars.  The first sentence
+implies how to compute the result, but doesn't state it explicitly. In this
+particular example, though, this poses no problem. If an employee works <em>h</em>
+hours, the wage is
+<div align="center"><img src="curriculum1a-Z-G-5.gif" border="0" alt="[curriculum1a-Z-G-5.gif]"></div><p>
+Now that we have a rule, we can formulate a Scheme program:
+<a name="node_idx_102"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">wage</span> <span class="variable">h</span>)
+  (<span class="builtin">*</span> <span class="selfeval">12</span> <span class="variable">h</span>))
+</pre></div><p>
+The program is called <code class="scheme"><span class="variable">wage</span></code>; its parameter <code class="scheme"><span class="variable">h</span></code> stands for
+the hours an employee works; and its result is <code class="scheme">(<span class="builtin">*</span> <span class="selfeval">12</span> <span class="variable">h</span>)</code>, the
+corresponding wage. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_2.3.1"></a>
+<b>Exercise 2.3.1.</b>&nbsp;&nbsp;  
+Utopia's tax accountants always use programs that compute income taxes even
+though the tax rate is a solid, never-changing 15%.  Define the program
+<code class="scheme"><span class="variable">tax</span></code>, which determines the tax on the gross pay.</p>
+<p>
+Also define <code class="scheme"><span class="variable">netpay</span></code>.  The program determines the net pay of an
+employee from the number of hours worked. Assume an hourly rate of
+$12.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/taxed-wage.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_2.3.2"></a>
+<b>Exercise 2.3.2.</b>&nbsp;&nbsp; 
+The local supermarket needs a program that can compute the value of a bag
+of coins. Define the program <code class="scheme"><span class="variable">sum-coins</span></code>. It consumes four numbers:
+the number of pennies, nickels, dimes, and quarters in the bag; it produces
+the amount of money in the bag.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sum-coins.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_2.3.3"></a>
+<b>Exercise 2.3.3.</b>&nbsp;&nbsp; 
+An old-style movie theater has a simple profit function. Each customer pays
+$5 per ticket. Every performance costs the theater $20, plus $.50 per
+attendee. Develop the function <code class="scheme"><span class="variable">total-profit</span></code>. It consumes the number
+of attendees (of a show) and produces how much income the attendees
+produce.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/movie-theater.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_2.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_2.4">2.4&nbsp;&nbsp;Errors</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.4"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Errors</a>
+</td></tr></table><p></p>
+<p>
+When we write Scheme programs, we must follow a few carefully designed
+rules, which are a compromise between a computer's capabilities and human
+behavior.<a name="call_footnote_Temp_16"></a><a href="#footnote_Temp_16"><sup><small>7</small></sup></a> Fortunately, forming Scheme definitions and
+expressions is intuitive. Expressions are either <small>A</small><small>T</small><small>O</small><small>M</small><small>I</small><small>C</small>,
+<a name="node_idx_106"></a>that is,
+numbers and variables; or they are <small>C</small><small>O</small><small>M</small><small>P</small><small>O</small><small>U</small><small>N</small><small>D</small> 
+<a name="node_idx_108"></a>expressions, in which
+case they start with ``('', followed by an operation, some more
+expressions, and terminated by ``)''. Each expression in a compound
+expression should be preceded by at least one space; line breaks are
+permissible, and sometimes increase readability.</p>
+<p>
+Definitions have the following schematic shape:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span> ... <span class="variable">y</span>)
+  <span class="variable">an-expression</span>)
+</pre></div><p>
+That is, a definition is a sequence of several words and expressions:
+``('', the word ``define'', ``('', a non-empty sequence of names separated
+by spaces, ``)'', an expression, and a closing ``)''. The embedded sequence
+of names, <code class="scheme"><span class="variable">f</span> <span class="variable">x</span> ... <span class="variable">y</span></code>, introduces the name of the program and the
+names of its parameters.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_110"></a></p>
+<p>
+<strong>Syntax Errors:<a name="call_footnote_Temp_17"></a><a href="#footnote_Temp_17"><sup><small>8</small></sup></a></strong> Not all parenthesized expressions are Scheme expressions. For
+example, <code class="scheme">(<span class="selfeval">10</span>)</code> is a parenthesized expression, but Scheme does not
+accept it as a legal Scheme expression because numbers are not supposed to
+be included in parentheses. Similarly, a sentence like <code class="scheme">(<span class="selfeval">10</span> <span class="builtin">+</span> <span class="selfeval">20</span>)</code>
+is also ill formed; Scheme's rules demand that the operator is mentioned
+first. Finally, the following two definitions are not well formed:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">P</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="variable">x</span>) <span class="selfeval">10</span>))
+
+(<span class="keyword">define</span> (<span class="variable">Q</span> <span class="variable">x</span>)
+  <span class="variable">x</span> <span class="selfeval">10</span>)
+</pre></div><p>
+The first one contains an extra pair of parentheses around the variable
+<code class="scheme"><span class="variable">x</span></code>, which is not a compound expression; the second contains two
+atomic expressions, <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="selfeval">10</span></code>, instead of one.</p>
+<p>
+When we click DrScheme's <tt>Execute</tt> button, the programming
+environment first determines whether the definitions are formed according
+to Scheme's rules. If some part of the program in the
+<tt>Definitions</tt>
+<a name="node_idx_112"></a>window is ill formed, DrScheme signals a <small>S</small><small>Y</small><small>N</small><small>T</small><small>A</small><small>X</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small>
+with an
+appropriate error message and highlights the offending part. Otherwise it
+permits the user to evaluate expressions in the
+<tt>Interactions</tt>
+<a name="node_idx_114"></a>window.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.4"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Errors</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p><a name="node_thm_2.4.1"></a>
+<b>Exercise 2.4.1.</b>&nbsp;&nbsp;  
+Evaluate the following sentences in DrScheme, one at a time:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="selfeval">10</span>) <span class="selfeval">20</span>)
+(<span class="selfeval">10</span> <span class="builtin">+</span> <span class="selfeval">20</span>)
+(<span class="builtin">+</span> <span class="builtin">+</span>)
+</pre></div><p>
+Read and understand the error messages.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-error-exp.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_2.4.2"></a>
+<b>Exercise 2.4.2.</b>&nbsp;&nbsp; 
+Enter the following sentences, one by one, into DrScheme's
+<tt>Definitions</tt>
+<a name="node_idx_116"></a>window and click <tt>Execute</tt>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="selfeval">1</span>)
+  (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">10</span>))
+
+(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span>)
+  <span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">10</span>)
+
+(<span class="keyword">define</span> <span class="variable">h</span>(<span class="variable">x</span>) 
+  (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">10</span>))
+</pre></div><p>
+Read the error messages, fix the offending definition in an appropriate
+manner, and repeat until all definitions are legal.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-error-def.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+<a name="node_idx_118"></a><strong>Run-time Errors:</strong> The evaluation of Scheme expressions
+proceeds according to the intuitive laws of algebra and arithmetic.
+<a name="node_idx_120"></a><a name="node_idx_122"></a><a name="node_idx_124"></a>When we
+encounter new operations, we will extend these laws, first intuitively and
+then, in section&nbsp;<a href="curriculum-Z-H-11.html#node_chap_8">8</a>, rigorously. For now, it is more important
+to understand that not all legal Scheme expressions have a result. One
+obvious example is <code class="scheme">(<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)</code>. Similarly, if we define
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">n</span>)
+  (<span class="builtin">+</span> (<span class="builtin">/</span> <span class="variable">n</span> <span class="selfeval">3</span>) <span class="selfeval">2</span>))
+</pre></div><p>
+we cannot ask DrScheme to evaluate <code class="scheme">(<span class="variable">f</span> <span class="selfeval">5</span> <span class="selfeval">8</span>)</code>. </p>
+<p>
+When the evaluation of a legal Scheme expression demands a division by zero
+or similarly nonsensical arithmetic operations,
+<a name="node_idx_126"></a>
+or when a program is
+applied to the wrong number of inputs, DrScheme stops the evaluation and
+signals a <small>R</small><small>U</small><small>N</small>-<small>T</small><small>I</small><small>M</small><small>E</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small>.
+<a name="node_idx_128"></a>Typically it prints an explanation in
+the <tt>Interactions</tt>
+<a name="node_idx_130"></a>window and highlights the faulty expression. The
+highlighted expression triggered the error signal.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_2.4.3"></a>
+<b>Exercise 2.4.3.</b>&nbsp;&nbsp;  
+Evaluate the following grammatically legal Scheme expressions in DrScheme's
+<tt>Interactions</tt> window:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> <span class="selfeval">5</span> (<span class="builtin">/</span> <span class="selfeval">1</span> <span class="selfeval">0</span>))
+
+(<span class="builtin">sin</span> <span class="selfeval">10</span> <span class="selfeval">20</span>)
+
+(<span class="variable">somef</span> <span class="selfeval">10</span>)
+</pre></div><p>
+Read the error messages.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem-error.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_2.4.4"></a>
+<b>Exercise 2.4.4.</b>&nbsp;&nbsp; 
+Enter the following grammatically legal Scheme program into the
+<tt>Definitions</tt>
+<a name="node_idx_132"></a>window and click the <tt>Execute</tt> button: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">somef</span> <span class="variable">x</span>)
+  (<span class="builtin">sin</span> <span class="variable">x</span> <span class="variable">x</span>))
+</pre></div><p>
+Then, in the <tt>Interactions</tt>
+<a name="node_idx_134"></a>window, evaluate the expressions:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">somef</span> <span class="selfeval">10</span> <span class="selfeval">20</span>)
+
+(<span class="variable">somef</span> <span class="selfeval">10</span>)
+</pre></div><p>
+and read the error messages. Also observe what DrScheme
+highlights.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem-error2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+<a name="node_idx_136"></a></p>
+<p>
+<strong>Logical Errors:</strong> A good programming environment assists the
+programmer in finding syntax and runtime errors. The exercises in this
+section illustrate how DrScheme catches syntax and run-time errors. A
+programmer, however, can also make <small>L</small><small>O</small><small>G</small><small>I</small><small>C</small><small>A</small><small>L</small> <small>E</small><small>R</small><small>R</small><small>O</small><small>R</small><small>S</small>.
+<a name="node_idx_138"></a>A logical
+mistake does not trigger any error messages; instead, the program computes
+incorrect results. Consider the <code class="scheme"><span class="variable">wage</span></code> program from the preceding
+section. If the programmer had accidentally defined it as 
+<a name="node_idx_140"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">wage</span> <span class="variable">h</span>)
+  (<span class="builtin">+</span> <span class="selfeval">12</span> <span class="variable">h</span>))
+</pre></div><p>
+the program would still produce a number every time it is used. Indeed, if
+we evaluate <code class="scheme">(<span class="variable">wage</span> <span class="selfeval">12/11</span>)</code>, we even get the correct result. A
+programmer can catch such mistakes only by designing programs carefully and
+systematically.</p>
+<p>
+</p>
+<a name="node_sec_2.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_2.5">2.5&nbsp;&nbsp;Designing Programs</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-6.html#node_sec_2.5"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Designing <br>
+Programs</a>
+</td></tr></table><p>
+<a name="node_idx_142"></a></p>
+<p>
+The preceding sections show that the development of a program requires many
+steps. We need to determine what's relevant in the problem statement and
+what we can ignore. We need to understand what the program consumes, what
+it produces, and how it relates inputs to outputs. We must know, or find
+out, whether Scheme provides certain basic operations for the data that our
+program is to process. If not, we might have to develop auxiliary programs
+that implement these operations. Finally, once we have a program, we must
+check whether it actually performs the intended computation. This might
+reveal syntax errors, run-time problems, or even logical errors.</p>
+<p>
+To bring some order to this apparent chaos, it is best to set up and to
+follow a <small>D</small><small>E</small><small>S</small><small>I</small><small>G</small><small>N</small> <small>R</small><small>E</small><small>C</small><small>I</small><small>P</small><small>E</small>,
+<a name="node_idx_144"></a>that is, a step-by-step prescription of
+what we should do and the order<a name="call_footnote_Temp_18"></a><a href="#footnote_Temp_18"><sup><small>9</small></sup></a> in which we
+should do things. Based on what we have experienced thus far, the
+development of a program requires at least the following four activities:</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_19"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_146"></a><div align="left"><pre class="scheme"><span class="comment">;; <u>Contract</u>: <code class="scheme"><span class="variable">area-of-ring</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+
+<span class="comment">;; <u>Purpose</u>: to compute the area of a ring whose radius is</span>
+<span class="comment">;; <code class="scheme"><span class="variable">outer</span></code> and whose hole has a radius of <code class="scheme"><span class="variable">inner</span></code></span>
+
+<span class="comment">;; <u>Example</u>: <code class="scheme">(<span class="variable">area-of-ring</span> <span class="selfeval">5</span> <span class="selfeval">3</span>)</code> should produce 50.24</span>
+
+<span class="comment">;; <u>Definition</u>: [refines the header]</span>
+(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>)
+  (<span class="builtin">-</span> (<span class="variable">area-of-disk</span> <span class="variable">outer</span>)
+     (<span class="variable">area-of-disk</span> <span class="variable">inner</span>)))
+  
+<span class="comment">;; <u>Tests</u>:</span>
+(<span class="variable">area-of-ring</span> <span class="selfeval">5</span> <span class="selfeval">3</span>) 
+<span class="comment">;; expected value</span>
+<span class="selfeval">50.24</span>
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 3:</b>&nbsp;&nbsp;The design recipe: A complete example</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Understanding the Program's Purpose:</b></dt><dd> The goal of designing a
+program is to create a mechanism that consumes and produces data. We
+therefore start every program development by giving the program a
+meaningful name and by stating what kind of information it consumes and
+produces. We call this a <small>C</small><small>O</small><small>N</small><small>T</small><small>R</small><small>A</small><small>C</small><small>T</small>.
+<a name="node_idx_148"></a><p>
+Here is how we write down a contract for <code class="scheme"><span class="variable">area-of-ring</span></code>, one of our
+first programs:<a name="call_footnote_Temp_20"></a><a href="#footnote_Temp_20"><sup><small>10</small></sup></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">area-of-ring</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+</pre></div><p></p>
+<p>
+The semicolons indicate that this line is a <small>C</small><small>O</small><small>M</small><small>M</small><small>E</small><small>N</small><small>T</small>.
+<a name="node_idx_150"></a><a name="node_idx_152"></a>The contract consists of two parts. The first, to the left of the colon,
+states the program's name. The second, to the right of the colon, specifies
+what kind of data the program consumes and what it produces; the inputs are
+separated from the output by an arrow.</p>
+<p>
+Once we have a contract, we can add the <small>H</small><small>E</small><small>A</small><small>D</small><small>E</small><small>R</small>.
+<a name="node_idx_154"></a>It restates the program's name and gives each input a distinct
+name. These names are (algebraic) variables and are referred to as the
+program's 
+<a name="node_idx_156"></a>
+<small>P</small><small>A</small><small>R</small><small>A</small><small>M</small><small>E</small><small>T</small><small>E</small><small>R</small><small>S</small>.<a name="call_footnote_Temp_21"></a><a href="#footnote_Temp_21"><sup><small>11</small></sup></a></p>
+<p>
+Let's take a look at the contract and header for <code class="scheme"><span class="variable">area-of-ring</span></code>: 
+<a name="node_idx_162"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">area-of-ring</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) ...)
+</pre></div><p></p>
+<p>
+It says that we will refer to the first input as <code class="scheme"><span class="variable">outer</span></code> and the
+second one as <code class="scheme"><span class="variable">inner</span></code>.</p>
+<p>
+Finally, using the contract and the parameters, we should formulate a short
+<small>P</small><small>U</small><small>R</small><small>P</small><small>O</small><small>S</small><small>E</small> <small>S</small><small>T</small><small>A</small><small>T</small><small>E</small><small>M</small><small>E</small><small>N</small><small>T</small> 
+<a name="node_idx_164"></a>for the program, that is, a brief comment of
+<em>what</em> the program is to compute. For most of our programs, one or
+two lines will suffice; as we develop larger and larger programs, we may
+need to add more information to explain a program's purpose.</p>
+<p>
+Here is the complete starting-point for our running example: 
+<a name="node_idx_166"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">area-of-ring</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the area of a ring whose radius is</span>
+<span class="comment">;; <code class="scheme"><span class="variable">outer</span></code> and whose hole has a radius of <code class="scheme"><span class="variable">inner</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) ...)
+</pre></div><p></p>
+<p>
+<strong>Hints:</strong>  If the problem statement provides a mathematical formula, the
+number of distinct variables in the formula suggests how many inputs
+the program consumes.</p>
+<p>
+For other word problems, we must inspect the problem to separate the
+given facts from what is to be computed.  If a given is a fixed number,
+it shows up in the program. If it is an unknown number that is to be
+fixed by someone else later, it is an input.  The question (or the
+imperative) in the problem statement suggests a name for the program.</p>
+<p>
+</p>
+<p>
+</p>
+</dd><dt><b>Program Examples:</b></dt><dd> To gain a better understanding of what the program
+should compute, we make up examples of inputs and determine what the output
+should be. For example, <code class="scheme"><span class="variable">area-of-ring</span></code> should produce <code class="scheme"><span class="selfeval">50.24</span></code>
+for the inputs <code class="scheme"><span class="selfeval">5</span></code> and <code class="scheme"><span class="selfeval">3</span></code>, because it is the difference
+between the area of the outer disk and the area of the inner disk. <p>
+We add examples to the purpose statement:
+<a name="node_idx_168"></a></p>
+<div align="left"><pre class="scheme">  <span class="comment">;; <code class="scheme"><span class="variable">area-of-ring</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+  <span class="comment">;; to compute the area of a ring whose radius is</span>
+  <span class="comment">;; <code class="scheme"><span class="variable">outer</span></code> and whose hole has a radius of <code class="scheme"><span class="variable">inner</span></code></span>
+  <span class="comment">;; example: <code class="scheme">(<span class="variable">area-of-ring</span> <span class="selfeval">5</span> <span class="selfeval">3</span>) <span class="variable">should</span> <span class="variable">produce</span> <span class="selfeval">50.24</span></code></span>
+  (<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>) ...)
+</pre></div><p></p>
+<p>
+Making up examples -- <strong>before we write down the program's body</strong> -- helps
+in many ways.  First, it is the only sure way to discover logical errors
+with testing. If we use the finished program to make up examples, we are
+tempted to trust the program because it is so much easier to run the program
+than to predict what it does. Second, examples force us to think through the
+computational process, which, for the complicated cases we will encounter
+later, is critical to the development of the function body. Finally,
+examples illustrate the informal prose of a purpose statement. Future
+readers of the program, such as teachers, colleagues, or buyers, greatly
+appreciate illustrations of abstract concepts. </p>
+<p>
+</p>
+</dd><dt><b>The Body:</b></dt><dd> Finally, we must formulate the program's body. That is,
+<strong>we must replace the ``<tt>...</tt>'' in our header with an expression</strong>. The
+expression computes the answer from the parameters, using Scheme's basic
+operations and Scheme programs that we already <code class="scheme"><span class="keyword">define</span></code>d or intend
+to <code class="scheme"><span class="keyword">define</span></code>.<p>
+We can only formulate the program's body if we understand how the program
+computes the output from the given inputs. If the input-output relationship
+is given as a mathematical formula, we just translate mathematics into
+Scheme. If, instead, we are given a word problem, we must craft the
+expression carefully. To this end, it is helpful to revisit the examples
+from the second step and to understand <em>how</em> we computed the outputs
+for specific inputs.</p>
+<p>
+In our running example, the computational task was given via an informally
+stated formula that reused <code class="scheme"><span class="variable">area-of-disk</span></code>, a previously
+<code class="scheme"><span class="keyword">define</span></code>d program. Here is the translation into Scheme: 
+<a name="node_idx_170"></a></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">area-of-ring</span> <span class="variable">outer</span> <span class="variable">inner</span>)
+  (<span class="builtin">-</span> (<span class="variable">area-of-disk</span> <span class="variable">outer</span>)
+     (<span class="variable">area-of-disk</span> <span class="variable">inner</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Testing:</b></dt><dd> After we have completed the program definition, we must
+still test the program. At a minimum, we should ensure that the program
+computes the expected outputs for the program examples. To facilitate
+testing, we may wish to add the examples to the bottom of the
+<tt>Definitions</tt>
+<a name="node_idx_172"></a>window as if they were equations. Then, when we click
+the <tt>Execute</tt> button, they are evaluated, and we see whether the
+program works properly on them.<p>
+Testing cannot show that a program produces the correct outputs for all
+possible inputs -- because there are typically an infinite number of
+possible inputs. But testing can reveal syntax errors, run-time problems,
+and logical mistakes.</p>
+<p>
+For faulty outputs, we must pay special attention to our program
+examples. It is possible that the examples are wrong; that the program
+contains a logical mistake; or that both the examples and the program are
+wrong. In either case, we may have to step through the entire program
+development again.
+</p>
+</dd></dl><p>
+Figure&nbsp;<a href="#node_fig_Temp_19">3</a> shows what we get after we have developed
+the program according to our recipe.  Figure&nbsp;<a href="#node_fig_Temp_22">4</a> summarizes
+the recipe in tabular form.  It should be consulted whenever we design a
+program.</p>
+<p>
+</p>
+<p>
+<a name="node_idx_174"></a>
+<a name="node_idx_176"></a>
+<a name="node_idx_178"></a>
+<a name="node_idx_180"></a>
+<a name="node_idx_182"></a>
+<a name="node_idx_184"></a></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_22"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Contract<br>
+Purpose and<br>
+Header<br>
+</div><p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+</td><td valign="top">
+<p></p>
+<div align="left">to name the function;<br>
+to specify its classes of<br>
+&nbsp;&nbsp;input data and its<br>
+&nbsp;&nbsp;class of output data;<br>
+to describe its purpose;<br>
+to formulate a header
+</div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">
+choose a <i>name</i> that fits the problem 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> study the problem for clues on how many unknown ``givens'' the function consumes
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> pick one variable per input; if possible, use names that are mentioned for
+the ``givens'' in the problem statement
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> describe what the function should produce using the chosen variables names
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> formulate the contract and header: <br>
+&nbsp;;; <i>name</i> : <i>number</i> <tt>...</tt>--> <i>number</i> <br>
+&nbsp;;; to compute <tt>...</tt> from <i>x1</i> <tt>...</tt><br>
+&nbsp;(<strong>define</strong> (<i>name x1 <tt>...</tt></i>) <tt>...</tt>)
+</div><p></p></td></tr>
+<tr><td valign="top">Examples &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to characterize the input-<br>
+output relationship via examples </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">search the problem statement for examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> work through the examples <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> validate the results, if possible
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> make up examples</div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define the function </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">formulate how the function computes its results <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> develop a Scheme expression that uses Scheme's primitive operations, other
+functions, and the variables <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> translate the mathematical expressions in
+the problem statement, when available</div><p></p></td></tr>
+<tr><td valign="top">Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to discover mistakes<br>
+&nbsp;&nbsp;(``typos'' and logic) </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">apply the function to the inputs of the examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> check that the outputs are as predicted</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 4:</b>&nbsp;&nbsp;The design recipe at a glance</td></tr>
+<tr><td>  
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The design recipe is not a magic bullet for the problems we encounter
+during the design of a program. It provides some guidance for a process
+that can often appear to be overwhelming. The most creative and most
+difficult step in our recipe concerns the design of the program's
+body. At this point, it relies heavily on our ability to read and
+understand written material, on our ability to extract mathematical
+relationships, and on our knowledge of basic facts. None of these skills
+is specific to the development of computer programs; the knowledge we
+exploit is specific to the application domain in which we are
+working. The remainder of the book will show what and how much computing
+can contribute to this most complicated step.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_186"></a></p>
+<p></p>
+<p><strong>Domain Knowledge</strong>:  Formulating the body of a program often requires
+knowledge about the area, also known as domain, from which the problem is
+drawn. This form of knowledge is called <small>D</small><small>O</small><small>M</small><small>A</small><small>I</small><small>N</small>
+<small>K</small><small>N</small><small>O</small><small>W</small><small>L</small><small>E</small><small>D</small><small>G</small><small>E</small>.
+<a name="node_idx_188"></a>It may have to be drawn from simple mathematics, such as arithmetic, from
+complex mathematics, such as differential equations, or from
+non-mathematical disciplines: music, biology, civil engineering, art, and
+so on.</p>
+<p>
+Because programmers cannot know all of the application domains of
+computing, they must be prepared to understand the language
+<a name="node_idx_190"></a>of a variety
+of application areas so that they can discuss problems with domain
+experts. The language is often that of mathematics, but in some cases, the
+programmers must invent a language, especially a data language for the
+application area. For that reason, it is imperative that programmers have
+a solid understanding of the full possibilities of computer languages.&nbsp;</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_13"></a><a href="#call_footnote_Temp_13"><sup><small>4</small></sup></a> Another
+advantage of Scheme's notation is that we always know where to place an
+operator or where to find it: to the immediate right of the opening
+parenthesis. This is important in computing because we need many more
+operators than just the few numerical operators that we use in arithmetic
+and algebra.</p>
+<p><a name="footnote_Temp_14"></a><a href="#call_footnote_Temp_14"><sup><small>5</small></sup></a> It is common to speak of the area of a circle, but
+mathematically speaking, the circle is only the disk's outer edge.</p>
+<p><a name="footnote_Temp_15"></a><a href="#call_footnote_Temp_15"><sup><small>6</small></sup></a> An arrow is keyed
+in as <tt>-</tt> followed by <tt>&gt;</tt>.</p>
+<p><a name="footnote_Temp_16"></a><a href="#call_footnote_Temp_16"><sup><small>7</small></sup></a> This statement is true for any other programming
+language 
+<a name="node_idx_104"></a>as well, for example, spreadsheet languages, C, word processor
+macro. Scheme is simpler than most of these and easy to understand for
+computers. Unfortunately, to human beings who grow up on infix expressions
+such as 5  +  4, Scheme prefix expressions such as <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">5</span> <span class="selfeval">4</span>)</code>
+initially appear to be complicated. A bit of practice will quickly
+eliminate this misconception.</p>
+<p><a name="footnote_Temp_17"></a><a href="#call_footnote_Temp_17"><sup><small>8</small></sup></a> We will find out in
+section&nbsp;<a href="curriculum-Z-H-11.html#node_chap_8">8</a> why such errors are called <em>syntax</em>
+errors.</p>
+<p><a name="footnote_Temp_18"></a><a href="#call_footnote_Temp_18"><sup><small>9</small></sup></a> As we will see later, the order is
+not completely fixed. It is possible, and for a number of reasons,
+desirable to switch the order of some steps in some cases.</p>
+<p><a name="footnote_Temp_20"></a><a href="#call_footnote_Temp_20"><sup><small>10</small></sup></a> An arrow is keyed in as <tt>-</tt> followed by <tt>&gt;</tt>.</p>
+<p><a name="footnote_Temp_21"></a><a href="#call_footnote_Temp_21"><sup><small>11</small></sup></a> Others also call  them 
+<small>F</small><small>O</small><small>R</small><small>M</small><small>A</small><small>L</small> <small>A</small><small>R</small><small>G</small><small>U</small><small>M</small><small>E</small><small>N</small><small>T</small><small>S</small> 
+<a name="node_idx_158"></a>or <small>I</small><small>N</small><small>P</small><small>U</small><small>T</small> <small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>B</small><small>L</small><small>E</small><small>S</small>.
+<a name="node_idx_160"></a></p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-4.html">previous</a></span><span>, <a href="curriculum-Z-H-6.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

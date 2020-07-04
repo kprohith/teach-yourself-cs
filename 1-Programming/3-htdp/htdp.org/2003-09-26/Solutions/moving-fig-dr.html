@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-fig-dr.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.4.2; How to Design Programs </title>
+</head>
+<body>
+<a href="moving-fig-dat.html">7.4.1</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.4.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="moving-fig-tr.html">7.4.3</a><pre>;; a shape is either:
+;;   - (make-circle C P N)
+;;   - (make-rectangle C P N N)
+;; where C is a color,
+;;       P is a posn, and
+;;       N is a number.
+
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+#|
+;; TEMPLATE
+(define (prog-for-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (circle-color a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]
+    [(rectangle? a-shape)
+     (rectangle-color a-shape) ...
+     (rectangle-nw-corner a-shape) ...
+     (rectangle-width a-shape) ...
+     (rectangle-height a-shape) ...]))
+|#
+
+; -------------------------------------------------------------------------
+
+;; draw-shape : shape -&gt; true
+;; draws a-shape
+(define (draw-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      (circle-color a-shape))]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      (rectangle-color a-shape))]))
+
+;; EXAMPLES AS TESTS
+(start 200 200)
+(draw-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-fig-dr.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

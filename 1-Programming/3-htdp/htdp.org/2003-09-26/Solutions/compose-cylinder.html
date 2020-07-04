@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose-cylinder.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="compose1.html">3.3.1</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="area-cylinder.html">3.3.3</a><pre>;; volume-cylinder : number number -&gt; number
+;; to determine to volume of a cylinder from its radius and height
+(define (volume-cylinder radius height)
+  (* (area-circle radius) height))
+
+;; area-circle : number -&gt; number
+;; to determine the area of a circle
+(define (area-circle radius)
+  (* radius radius pi))
+
+;; EXAMPLES AS TESTS
+(area-circle 1) "should be" pi
+(volume-cylinder 3 2) "should be" (* 18 pi)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/compose-cylinder.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

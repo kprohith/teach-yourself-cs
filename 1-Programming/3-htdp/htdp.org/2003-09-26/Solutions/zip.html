@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/zip.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="weekly-wage.html">17.2.1</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-ref.html">17.3.1</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.2.2 zip
+------------------------------------------------------------
+;Data Definition:
+a name is a symbol
+
+a list-of-names is either
+  1. empty or
+  2. (cons n lon)
+  where n is a name and lon is a list-of-names
+
+a phone-number is a number
+
+a list-of-phone-numbers is either
+  1. empty or
+  2. (cons pn lopn)
+  where pn is a phone-number and 
+        lopn is a list-of-phone-numbers
+
+a phone-record is a structure:
+     (make-phone-record n pn)
+where n is a symbol and pn is a number
+|#
+(define-struct phone-record (name number))
+
+#|
+a list-of-phone-records is either
+  1. empty or
+  2. (cons pr lopr)
+  where pr is a phone-record and 
+        lopr is a list-of-phone-records
+
+;Template:
+(define (zip names numbers)
+  (cond
+    [(empty? names) ...]
+    [else ...(first names)...(first numbers)...
+          ...(zip (rest names) (rest numbers))...]))
+|#
+
+;;zip: list-of-names list-of-phone-numbers 
+;;    -&gt; list-of-phone-records
+;;consumes a list of names and a list of phone numbers and 
+;;combines them into a list-of-phone-records
+;;ASSUMPTION: the two lists are of equal length and 
+;;in the same order
+(define (zip names numbers)
+  (cond
+    [(empty? names) 
+     empty]
+    [else 
+     (cons (make-phone-record (first names) (first numbers))
+           (zip (rest names) (rest numbers)))]))
+
+;Examples as Tests:
+(check-expect 
+ (zip empty empty)
+ empty)
+
+(check-expect
+ (zip (list 'john) (list 8739287))
+ (list (make-phone-record 'john 8739287)))
+
+(check-expect
+ (zip (list 'john 'mary 'carol) 
+      (list 8739287 4569354 4159654))
+ (list (make-phone-record 'john 8739287)
+       (make-phone-record 'mary 4569354)
+       (make-phone-record 'carol 4159654)))
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/zip.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

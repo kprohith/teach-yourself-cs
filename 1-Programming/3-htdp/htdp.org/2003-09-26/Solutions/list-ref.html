@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-ref.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="zip.html">17.2.2</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="replace-eol-simp.html">17.4.1</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.3.1 list-pick0
+------------------------------------------------------------
+;Data Definition:
+A natural-number is either
+   1. 0 or
+   2. (add1 n) if n is a natural-number.
+
+A list-of-symbols is either
+   1. the empty list, empty, or
+   2. (cons s los) 
+   where s is a symbol and los is a list-of-symbols.
+
+;combination template:
+(define (list-pick alos n)
+  (cond
+    [(and (= n 0) (empty? alos))
+     ...]
+    [(and (&gt; n 0) (empty? alos))
+     ... (sub1 n) ...]
+    [(and (= n 0) (cons? alos))
+     ... (first alos) ... (rest alos)...]
+    [(and (&gt; n 0) (cons? alos)) 
+     ... (sub1 n) ... (first alos) ... (rest alos) ...]))
+|#
+
+;;list-pick0 : list-of-symbols natural-number  -&gt;  symbol
+;;to determine the nth symbol from alos, counting 
+;;from 0 signals an error if there is no nth item
+(define (list-pick0 alos n)
+  (cond
+    [(and (= n 0) (empty? alos))
+     (error 'list-pick0 "the list is too short")]
+    [(and (&gt; n 0) (empty? alos))
+     (error 'list-pick0 "the list is too short")]
+    [(and (= n 0) (cons? alos))
+     (first alos)]
+    [(and (&gt; n 0) (cons? alos)) 
+     (list-pick0 (rest alos) (sub1 n))]))
+
+;Examples as Tests:
+(check-error
+ (list-pick0 empty 0) 
+ "list-pick0: the list is too short")
+
+(check-error 
+ (list-pick0 empty 3) 
+ "list-pick0: the list is too short")
+
+(check-expect 
+ (list-pick0 (list 'a) 0) 
+ 'a)
+
+(check-expect 
+ (list-pick0 (list 'a 'b 'c 'd) 1)
+ 'b)
+
+(check-expect 
+ (list-pick0 (list 'a 'b 'c 'd) 3)
+ 'd)
+
+(check-error 
+ (list-pick0 (list 'a 'b 'c 'd) 4)
+ "list-pick0: the list is too short")
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-ref.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,1786 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-9.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-8.html">previous</a></span><span>, <a href="curriculum-Z-H-10.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_6"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_6">Section  6</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_6">Compound Data, Part 1: Structures</a></h1>
+<p> 
+</p>
+<p>
+</p>
+<p>
+The input of a function is seldom a single measurement (number), a single
+switch position (boolean), or a single name (symbol). Instead, it is
+almost always a piece of data that represents an object with many
+properties. Each property is a piece of information. For example, a
+function may consume a record about a CD; the relevant information might
+include the artist's name, the CD title, and the price. Similarly, if we
+are to model the movement of an object across a plane with a function, we
+must represent the position of the object in the plane, its speed in each
+direction, and possibly its color. In both cases, we refer to several
+pieces of information as if they were one: <em>one</em> record and <em>one</em> point.  In short, we <small>C</small><small>O</small><small>M</small><small>P</small><small>O</small><small>U</small><small>N</small><small>D</small> 
+<a name="node_idx_394"></a>several pieces of data into
+a single piece of data.</p>
+<p>
+Scheme provides many different methods for compounding data. In this
+section, we deal with <i>structures</i>.
+<a name="node_idx_396"></a>A structure combines a fixed
+number of values into a single piece of data. In section&nbsp;<a href="curriculum-Z-H-13.html#node_chap_9">9</a>,
+we will encounter a method for combining an arbitrarily large number of
+values into a single piece of data.</p>
+<p>
+</p>
+<a name="node_sec_6.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.1">6.1&nbsp;&nbsp;Structures</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Structures</a>
+</td></tr></table><p></p>
+<p>
+Suppose we wish to represent the <i>pixels</i> 
+<a name="node_idx_398"></a>(colored dots) on our
+computer monitors. A pixel is very much like a Cartesian point. It has an
+<em>x</em> coordinate, which tells us where the pixel is in the horizontal
+direction, and it has a <em>y</em> coordinate, which tells us where the pixel is
+located in the downwards vertical direction. Given the two numbers, we can
+locate a pixel on the monitor, and so can a computer program.</p>
+<p>
+DrScheme's teachpacks represent pixels with <code class="scheme"><span class="variable">posn</span></code> structures. A
+<code class="scheme"><span class="variable">posn</span></code> structure combines two numbers. That is, a <code class="scheme"><span class="variable">posn</span></code> is
+a single value that contains two values. We can create a <code class="scheme"><span class="variable">posn</span></code>
+structure with the operation <code class="scheme"><span class="builtin">make-posn</span></code>, which consumes two
+numbers and makes a <code class="scheme"><span class="variable">posn</span></code>. For example,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)
+
+(<span class="builtin">make-posn</span> <span class="selfeval">8</span> <span class="selfeval">6</span>)
+
+(<span class="builtin">make-posn</span> <span class="selfeval">5</span> <span class="selfeval">12</span>)
+</pre></div><p>
+are <code class="scheme"><span class="variable">posn</span></code> structures. Each of these structures has the same status
+as a number as far as computations are concerned.  Both primitive
+operations
+<a name="node_idx_400"></a>and functions can consume and produce structures.</p>
+<p>
+Now consider a function that computes how far some pixel is from the
+origin. The contract, header, and purpose statement are easy to formulate:
+<a name="node_idx_402"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">distance-to-0</span> <span class="selfeval">:</span> <span class="variable">posn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the distance of <code class="scheme"><span class="variable">a-posn</span></code> to the origin </span>
+(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-posn</span>) ...)
+</pre></div><p>
+In other words, <code class="scheme"><span class="variable">distance-to-0</span></code> consumes a single value, a
+<code class="scheme"><span class="variable">posn</span></code> structure, and produces a single value, a number.</p>
+<p>
+We already have some input examples, namely, the three <code class="scheme"><span class="variable">posn</span></code>
+structures mentioned above. What we need next are examples that relate
+inputs and outputs. For points with <code class="scheme"><span class="selfeval">0</span></code> as one of the coordinates,
+the result is the other coordinate:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">0</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> <span class="selfeval">5</span>
+<span class="comment">and</span>
+  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">7</span> <span class="selfeval">0</span>))
+<span class="builtin">=</span> <span class="selfeval">7</span>
+</pre></div><p>
+In general, we know from geometry that the distance from the origin to a
+position with coordinates <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="variable">y</span></code> is distance
+</p>
+<div align="center"><img src="curriculum1aa-Z-G-16.gif" border="0" alt="[curriculum1aa-Z-G-16.gif]"></div><p>
+Thus, 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+<span class="builtin">=</span> <span class="selfeval">5</span>
+
+  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">8</span> <span class="selfeval">6</span>))
+<span class="builtin">=</span> <span class="selfeval">10</span>
+
+  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">5</span> <span class="selfeval">12</span>))
+<span class="builtin">=</span> <span class="selfeval">13</span>  
+</pre></div><p></p>
+<p>
+Once we have examples, we can turn our attention to the definition of the
+function. The examples imply that the design of <code class="scheme"><span class="variable">distance-to-0</span></code>
+doesn't need to distinguish between different situations. Still, we are
+stuck now, because <code class="scheme"><span class="variable">distance-to-0</span></code> has a single parameter that
+represents the entire pixel but we need the two coordinates to compute the
+distance.  Put differently, we know how to combine two numbers into a
+<code class="scheme"><span class="variable">posn</span></code> structure using <code class="scheme"><span class="builtin">make-posn</span></code> and we don't know how to
+extract these numbers from a <code class="scheme"><span class="variable">posn</span></code> structure.</p>
+<p>
+Scheme provides operations for extracting values from
+structures.<a name="call_footnote_Temp_32"></a><a href="#footnote_Temp_32"><sup><small>18</small></sup></a> For <code class="scheme"><span class="variable">posn</span></code> structures, Scheme
+supports two such operations: <code class="scheme"><span class="builtin">posn-x</span></code> and <code class="scheme"><span class="builtin">posn-y</span></code>. The
+former operation extracts the <em>x</em> coordinate; the latter extracts the
+<em>y</em> coordinate.</p>
+<p>
+To describe how <code class="scheme"><span class="builtin">posn-x</span></code>, <code class="scheme"><span class="builtin">posn-y</span></code>, and <code class="scheme"><span class="builtin">make-posn</span></code>
+are related, we can use equations that are roughly analogous to the
+equations that govern addition and subtraction:
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">posn-x</span> (<span class="builtin">make-posn</span> <span class="selfeval">7</span> <span class="selfeval">0</span>)) 
+<span class="builtin">=</span> <span class="selfeval">7</span>
+</pre></div><p>
+and  
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">posn-y</span> (<span class="builtin">make-posn</span> <span class="selfeval">7</span> <span class="selfeval">0</span>))
+<span class="builtin">=</span> <span class="selfeval">0</span>
+</pre></div><p>
+The equations only confirm what we already know. But suppose we introduce
+the following definition: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> <span class="variable">a-posn</span> (<span class="builtin">make-posn</span> <span class="selfeval">7</span> <span class="selfeval">0</span>))
+</pre></div><p>
+Then we can use the two operations as follows in the
+<tt>Interactions</tt> 
+<a name="node_idx_404"></a>window: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) 
+<span class="builtin">=</span> <span class="selfeval">7</span>
+
+  (<span class="builtin">posn-y</span> <span class="variable">a-posn</span>)
+<span class="builtin">=</span> <span class="selfeval">0</span>
+</pre></div><p>
+Naturally, we can nest such expressions:
+<a name="node_idx_406"></a></p>
+<div align="left"><pre class="scheme">  (<span class="builtin">*</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) <span class="selfeval">7</span>)
+<span class="builtin">=</span> <span class="selfeval">49</span>
+
+  (<span class="builtin">+</span> (<span class="builtin">posn-y</span> <span class="variable">a-posn</span>) <span class="selfeval">13</span>)
+<span class="builtin">=</span> <span class="selfeval">13</span>
+</pre></div><p></p>
+<p>
+Now we know enough to complete the definition of <code class="scheme"><span class="variable">distance-to-0</span></code>. We
+know that the function's <code class="scheme"><span class="variable">a-posn</span></code> parameter is a <code class="scheme"><span class="variable">posn</span></code>
+structure and that the structure contains two numbers, which we can extract
+with <code class="scheme">(<span class="builtin">posn-x</span> <span class="variable">a-posn</span>)</code> and <code class="scheme">(<span class="builtin">posn-y</span> <span class="variable">a-posn</span>)</code>. Let us add
+this knowledge to our function outline:
+<a name="node_idx_408"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-posn</span>)
+  ... (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>) ...
+  ... (<span class="builtin">posn-y</span> <span class="variable">a-posn</span>) ...)
+</pre></div><p>
+Using this outline and the examples, the rest is easy:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">distance-to-0</span> <span class="variable">a-posn</span>)
+  (<span class="builtin">sqrt</span>
+    (<span class="builtin">+</span> (<span class="builtin">sqr</span> (<span class="builtin">posn-x</span> <span class="variable">a-posn</span>))
+       (<span class="builtin">sqr</span> (<span class="builtin">posn-y</span> <span class="variable">a-posn</span>)))))
+</pre></div><p>
+The function squares <code class="scheme">(<span class="builtin">posn-x</span> <span class="variable">a-posn</span>)</code> and <code class="scheme">(<span class="builtin">posn-y</span> <span class="variable">a-posn</span>)</code>,
+which represent the <em>x</em> and <em>y</em> coordinates, sums up the results, and takes
+the square root.  With DrScheme, we can also quickly check that our new
+function produces the proper results for our examples.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.1.1"></a>
+<b>Exercise 6.1.1.</b>&nbsp;&nbsp; 
+Evaluate the following expressions:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))</code> 
+</p>
+<li><p><code class="scheme">(<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="selfeval">4</span>)))</code> 
+</p>
+<li><p><code class="scheme">(<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="selfeval">12</span> (<span class="builtin">-</span> <span class="selfeval">6</span> <span class="selfeval">1</span>)))</code> 
+</p>
+</li></ol><p>
+by hand. Show all steps. Assume that <code class="scheme"><span class="builtin">sqr</span></code> performs its
+computation in a single step.  Check the results with DrScheme's
+stepper.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eval-distance-to-0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_6.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.2">6.2&nbsp;&nbsp;Extended Exercise: Drawing Simple Pictures</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Drawing</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p>
+DrScheme provides the graphics teachpack <tt><strong>draw.ss</strong></tt>, which introduces 
+simple graphics operations:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">draw-solid-line</span></code>, which consumes two <code class="scheme"><span class="variable">posn</span></code>
+structures, the beginning and the end of the line on the canvas, and a
+color. </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">draw-solid-rect</span></code>, which consumes four arguments: 
+a <code class="scheme"><span class="variable">posn</span></code> structure for the upper-left corner of the rectangle, 
+a number for the width of the rectangle, another number for its height, and
+a color. </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">draw-solid-disk</span></code>, which consumes three arguments: 
+a <code class="scheme"><span class="variable">posn</span></code> structure for the center of the disk, a number for the
+radius of the disk, and a color. </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">draw-circle</span></code>, which consumes three arguments: 
+a <code class="scheme"><span class="variable">posn</span></code> structure for the center of the circle, a number for the
+radius, and a color. 
+</p>
+</li></ol><p>
+Each of the operation produces <code class="scheme"><span class="builtin">true</span></code>, if it succeeds in changing
+the canvas as specified. We refer to the action to the canvas as an
+<small>E</small><small>F</small><small>F</small><small>E</small><small>C</small><small>T</small>,
+<a name="node_idx_410"></a>but we will ignore studying the precise nature of effects
+until part&nbsp;<a href="curriculum-Z-H-42.html#node_part_VII">VII</a>. Also, if anything goes wrong with the
+operation, it stops the evaluation
+<a name="node_idx_412"></a>with an error.</p>
+<p>
+Each drawing operation also comes with a matching <code class="scheme"><span class="variable">clear-</span></code>
+operation: <code class="scheme"><span class="variable">clear-solid-line</span></code>, <code class="scheme"><span class="variable">clear-solid-rect</span></code>,
+<code class="scheme"><span class="variable">clear-solid-disk</span></code>, and <code class="scheme"><span class="variable">clear-circle</span></code>. If these functions
+are applied to the same arguments as their matching <code class="scheme"><span class="variable">draw-</span></code>
+function, they clear the corresponding shapes of the
+canvas.<a name="call_footnote_Temp_33"></a><a href="#footnote_Temp_33"><sup><small>19</small></sup></a></p>
+<p>
+Drawing operations on computers interpret the screen as follows: 
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum1aa-Z-G-17.gif" border="0" alt="[curriculum1aa-Z-G-17.gif]">
+</td></tr></table></div>
+
+First, the origin of the plane is in the upper-left corner. Second, <em>y</em>
+coordinates grow in the downwards direction.  Understanding the difference
+between this picture and the more conventional Cartesian plane is critical
+for drawing shapes with programs. <p>
+</p>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Drawing</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p><a name="node_thm_6.2.1"></a>
+<b>Exercise 6.2.1.</b>&nbsp;&nbsp;  
+Evaluate the following expressions in order:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">300</span>)</code>, which opens a canvas; </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">draw-solid-line</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">10</span>) (<span class="builtin">make-posn</span> <span class="selfeval">110</span> <span class="selfeval">10</span>) <span class="keyword">'</span><span class="variable">red</span>)</code>, which
+draws a red line close to, and parallel to, the upper end of the canvas;  </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">draw-solid-rect</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">30</span>) <span class="selfeval">100</span> <span class="selfeval">50</span> <span class="keyword">'</span><span class="variable">blue</span>)</code>, which draws
+a blue rectangle of width 100 and height 50 parallel to the red line; </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">draw-circle</span> (<span class="builtin">make-posn</span> <span class="selfeval">110</span> <span class="selfeval">30</span>) <span class="selfeval">30</span> <span class="keyword">'</span><span class="variable">yellow</span>)</code>, which draws a yellow
+circle of radius 30 centered at the upper right corner of the rectangle;  </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">draw-solid-disk</span> (<span class="builtin">make-posn</span> <span class="selfeval">10</span> <span class="selfeval">80</span>) <span class="selfeval">50</span> <span class="keyword">'</span><span class="variable">green</span>)</code>, which draws a
+green disk of radius 50 centered at the lower left corner of the rectangle;
+and</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">stop</span>)</code>, which closes the canvas.  
+</p>
+</li></ol><p>
+Read the documentation for <tt><strong>draw.ss</strong></tt> in DrScheme's HelpDesk.&nbsp;</p>
+<p></p>
+<p>
+The definitions and expressions in figure&nbsp;<a href="#node_fig_Temp_34">8</a> draw a
+traffic light. The program fragment illustrates the use of global
+definitions for specifying and computing constants. Here, the constants
+represent the dimensions of the canvas, which is the outline of the traffic
+light, and the positions of three light bulbs.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_34"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+<p>
+
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; dimensions of traffic light &nbsp;&nbsp;&nbsp;<img src="curriculum1aa-Z-G-18.gif" border="0" alt="[curriculum1aa-Z-G-18.gif]"></span>
+(<span class="keyword">define</span> <span class="variable">WIDTH</span> <span class="selfeval">50</span>)
+(<span class="keyword">define</span> <span class="variable">HEIGHT</span> <span class="selfeval">160</span>)
+(<span class="keyword">define</span> <span class="variable">BULB-RADIUS</span> <span class="selfeval">20</span>)
+(<span class="keyword">define</span> <span class="variable">BULB-DISTANCE</span> <span class="selfeval">10</span>)
+
+<span class="comment">;; the positions of the bulbs </span>
+(<span class="keyword">define</span> <span class="variable">X-BULBS</span> (<span class="builtin">quotient</span> <span class="variable">WIDTH</span> <span class="selfeval">2</span>))
+(<span class="keyword">define</span> <span class="variable">Y-RED</span> (<span class="builtin">+</span> <span class="variable">BULB-DISTANCE</span> <span class="variable">BULB-RADIUS</span>))
+(<span class="keyword">define</span> <span class="variable">Y-YELLOW</span> (<span class="builtin">+</span> <span class="variable">Y-RED</span> <span class="variable">BULB-DISTANCE</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">BULB-RADIUS</span>)))
+(<span class="keyword">define</span> <span class="variable">Y-GREEN</span> (<span class="builtin">+</span> <span class="variable">Y-YELLOW</span> <span class="variable">BULB-DISTANCE</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">BULB-RADIUS</span>)))
+
+<span class="comment">;; draw the light with the red bulb turned on</span>
+(<span class="variable">start</span> <span class="variable">WIDTH</span> <span class="variable">HEIGHT</span>)
+(<span class="variable">draw-solid-disk</span> (<span class="builtin">make-posn</span> <span class="variable">X-BULBS</span> <span class="variable">Y-RED</span>) <span class="variable">BULB-RADIUS</span> <span class="keyword">'</span><span class="variable">red</span>)
+(<span class="variable">draw-circle</span> (<span class="builtin">make-posn</span> <span class="variable">X-BULBS</span> <span class="variable">Y-YELLOW</span>) <span class="variable">BULB-RADIUS</span> <span class="keyword">'</span><span class="variable">yellow</span>)
+(<span class="variable">draw-circle</span> (<span class="builtin">make-posn</span> <span class="variable">X-BULBS</span> <span class="variable">Y-GREEN</span>) <span class="variable">BULB-RADIUS</span> <span class="keyword">'</span><span class="variable">green</span>)
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 8:</b>&nbsp;&nbsp;Drawing a traffic light</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_6.2.2"></a>
+<b>Exercise 6.2.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">clear-bulb</span></code>. It consumes a symbol that denotes
+one of the possible colors: <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, or
+<code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and it produces <code class="scheme">true</code>.  Its effect is ``to turn off''
+the matching bulb in the traffic light. Specifically, it should clear the
+disk and display a circle of the matching color instead.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Choice of Design Recipe</strong>:  See section&nbsp;<a href="curriculum-Z-H-8.html#node_chap_5">5</a> for designing functions
+that consume one of an enumeration of symbols.  
+<a name="node_idx_414"></a></p>
+<p>
+</p>
+<p></p>
+<p><strong>Testing</strong>:  When testing functions that draw shapes into a canvas, we
+ignore test expressions. Although it is possible to implement appropriate 
+test suites, the problem is beyond the scope of this book.</p>
+<p>
+<a name="node_idx_416"></a></p>
+<p></p>
+<p><strong>Combining Effects</strong>:  The primitive operations
+<a name="node_idx_418"></a><a name="node_idx_420"></a>for drawing and
+clearing disks and circles produce <code class="scheme"><span class="builtin">true</span></code> if they successfully
+complete their task.  The natural way to combine the values and the effects
+of these functions is to use an <strong>and</strong>-expression.
+<a name="node_idx_422"></a><a name="node_idx_424"></a>In particular, if
+<code class="scheme"><span class="variable">exp1</span></code> and <code class="scheme"><span class="variable">exp2</span></code> produce effects and we wish to see the
+effects of <code class="scheme"><span class="variable">exp2</span></code> after those of <code class="scheme"><span class="variable">exp1</span></code>, we write 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">and</span> <span class="variable">exp1</span> <span class="variable">exp2</span>)
+</pre></div><p>
+Later we will study effects in more detail and learn different ways to
+combine effects.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/traffic-draw3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.2.3"></a>
+<b>Exercise 6.2.3.</b>&nbsp;&nbsp; 
+Develop a function <code class="scheme"><span class="variable">draw-bulb</span></code>. It consumes a symbol that denotes
+one of the possible colors: <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, or
+<code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and produces <code class="scheme">true</code>. Its effect is ``to turn on'' the
+matching bulb in the traffic light.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/traffic-draw2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.2.4"></a>
+<b>Exercise 6.2.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">switch</span></code>. It consumes two symbols, each of
+which stands for a traffic light color, and produces <code class="scheme">true</code>. Its
+effects are to clear the bulb for the first color and then to draw the
+second bulb.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/traffic-draw4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.2.5"></a>
+<b>Exercise 6.2.5.</b>&nbsp;&nbsp; 
+Here is the function <code class="scheme"><span class="variable">next</span></code>: 
+<a name="node_idx_426"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span></code></span>
+<span class="comment">;; to switch a traffic light's current color and to return the next one </span>
+(<span class="keyword">define</span> (<span class="variable">next</span> <span class="variable">current-color</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="keyword">and</span> (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>) (<span class="variable">switch</span> <span class="keyword">'</span><span class="variable">red</span> <span class="keyword">'</span><span class="variable">green</span>))
+     <span class="keyword">'</span><span class="variable">green</span>]
+    [(<span class="keyword">and</span> (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">yellow</span>) (<span class="variable">switch</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="keyword">'</span><span class="variable">red</span>))
+     <span class="keyword">'</span><span class="variable">red</span>]
+    [(<span class="keyword">and</span> (<span class="builtin">symbol=?</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">green</span>) (<span class="variable">switch</span> <span class="keyword">'</span><span class="variable">green</span> <span class="keyword">'</span><span class="variable">yellow</span>))
+     <span class="keyword">'</span><span class="variable">yellow</span>]))
+</pre></div><p>    
+It consumes the current color of a traffic light (as a symbol) and produces
+the next color that the traffic light shows. That is, if the input is
+<code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, it produces <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>; if it is <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>,
+it produces <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>; and if it is <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, it produces
+<code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>.  Its effect is to switch the traffic light from the input
+color to the next color.</p>
+<p>
+Replace the last three lines of the program fragment in
+figure&nbsp;<a href="#node_fig_Temp_34">8</a> with <code class="scheme">(<span class="variable">draw-bulb</span> <span class="keyword">'</span><span class="variable">red</span>)</code>. This creates
+a traffic light that is red. Then use <code class="scheme"><span class="variable">next</span></code> to switch the traffic
+light four times.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/traffic-draw5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_6.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.3">6.3&nbsp;&nbsp;Structure Definitions</a></h2>
+<p>
+<a name="node_idx_428"></a><a name="node_idx_430"></a></p>
+<p>
+In the preceding section we explored one particular class of structures:
+the <code class="scheme"><span class="variable">posn</span></code> structures. A <code class="scheme"><span class="variable">posn</span></code> structure combines two
+numbers, and it is useful to represent pixels. If we wish to represent
+employee records or points in three-dimensional space, however,
+<code class="scheme"><span class="variable">posn</span></code>s are useless.  DrScheme therefore permits programmers to
+define their own structures so that they can represent all kinds of
+objects with a fixed number of properties.  
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.2"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Using and<br>
+Defining<br>
+Structures</a>
+</td></tr></table><p></p>
+<p>
+A <small>S</small><small>T</small><small>R</small><small>U</small><small>C</small><small>T</small><small>U</small><small>R</small><small>E</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_432"></a>is, as the term says, a new form of
+definition. Here is DrScheme's definition of <code class="scheme"><span class="variable">posn</span></code>:
+<a name="node_idx_434"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">posn</span> (<span class="variable">x</span> <span class="variable">y</span>))  
+</pre></div><p>
+When DrScheme evaluates this structure definition, it creates three
+operations for us, which we can use to create data and to program: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">make-posn</span></code>, the <small>C</small><small>O</small><small>N</small><small>S</small><small>T</small><small>R</small><small>U</small><small>C</small><small>T</small><small>O</small><small>R</small>,
+<a name="node_idx_436"></a><a name="node_idx_438"></a>which creates
+<code class="scheme"><span class="variable">posn</span></code> structures;</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="builtin">posn-x</span></code>, a <small>S</small><small>E</small><small>L</small><small>E</small><small>C</small><small>T</small><small>O</small><small>R</small>,
+<a name="node_idx_440"></a><a name="node_idx_442"></a>which extracts the <em>x</em> coordinate; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="builtin">posn-y</span></code>, also a selector, which extracts the <em>y</em> coordinate.
+</p>
+</li></ol><p>
+In general, the names of these new operations are created by prefixing the
+name of the structure with ``make-'' and by postfixing the name with all
+the field names. This naming convention appears to be complicated but, with
+some practice, it is easy to remember.</p>
+<p>
+Now consider the following example: 
+<a name="node_idx_444"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">entry</span> (<span class="variable">name</span> <span class="variable">zip</span> <span class="variable">phone</span>))
+</pre></div><p>
+The structure represents a simplified entry into an address book.  Each
+<code class="scheme"><span class="variable">entry</span></code> combines three values. We also say that each <code class="scheme"><span class="variable">entry</span></code>
+structure has <em>three</em> fields: <code class="scheme"><span class="variable">name</span></code>, <code class="scheme"><span class="variable">zip</span></code>, and
+<code class="scheme"><span class="variable">phone</span></code>.  Because there are three fields, the constructor
+<code class="scheme"><span class="builtin">make-entry</span></code> consumes three values. For example,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">PeterLee</span> <span class="selfeval">15270</span> <span class="keyword">'</span><span class="variable">606-7771</span>)
+</pre></div><p>
+creates an <code class="scheme"><span class="variable">entry</span></code> structure with <code class="scheme"><span class="keyword">'</span><span class="variable">PeterLee</span></code> in the
+<code class="scheme"><span class="variable">name</span></code>-field, <code class="scheme"><span class="selfeval">15270</span></code> in the <code class="scheme"><span class="variable">zip</span></code>-field, and
+<code class="scheme"><span class="keyword">'</span><span class="variable">606-7771</span></code> in the <code class="scheme"><span class="variable">phone</span></code>-field. </p>
+<p>
+One way to think of a structure is as a box with as many compartments as
+there are fields:
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+
+<p><center>
+<table border="1" bgcolor="tan">
+<tr>
+<td><font size="-1"><i>name</i></font></td>
+<td><font size="-1"><i>zip</i></font></td>
+<td><font size="-1"><i>phone</i></font></td>
+</tr><tr>
+<td><tt>'PeterLee</tt></td>
+<td><tt>15270</tt></td>
+<td><tt>'606-7771</tt></td>
+</tr></table>
+</center>
+
+<code class="scheme"><span class="keyword">'</span><span class="variable">PeterLee</span></code><code class="scheme"><span class="selfeval">15270</span></code><code class="scheme"><span class="keyword">'</span><span class="variable">606-7771</span></code>
+</p></td></tr></table></div>
+
+The italicized labels name the fields. By putting values in the
+compartments, we illustrate specific <code class="scheme"><span class="variable">entry</span></code> structures.<p>
+The <code class="scheme"><span class="keyword">define-struct</span></code> definition of <code class="scheme"><span class="variable">entry</span></code> also introduces new
+selectors:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">entry-name</span>    <span class="builtin">entry-zip</span>    <span class="builtin">entry-phone</span>
+</pre></div><p>
+Here is how we can use the first one: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">entry-name</span> (<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">PeterLee</span> <span class="selfeval">15270</span> <span class="keyword">'</span><span class="variable">606-7771</span>))
+<span class="builtin">=</span> <span class="keyword">'</span><span class="variable">PeterLee</span>
+</pre></div><p>
+If we give the structure a name, 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">phonebook</span> (<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">PeterLee</span> <span class="selfeval">15270</span> <span class="keyword">'</span><span class="variable">606-7771</span>))
+</pre></div><p>
+then we can use the selectors in the <tt>Interactions</tt>
+<a name="node_idx_446"></a>window to extract the data from the three fields: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">entry-name</span> <span class="variable">phonebook</span>)
+<span class="builtin">=</span> <span class="keyword">'</span><span class="variable">PeterLee</span>
+
+  (<span class="builtin">entry-zip</span> <span class="variable">phonebook</span>)
+<span class="builtin">=</span> <span class="selfeval">15270</span>
+
+  (<span class="builtin">entry-phone</span> <span class="variable">phonebook</span>)
+<span class="builtin">=</span> <span class="keyword">'</span><span class="variable">606-7771</span>
+</pre></div><p>
+Put more graphically, a constructor
+<a name="node_idx_448"></a>creates a box with several compartments
+and puts values in it.  A selector
+<a name="node_idx_450"></a><a name="node_idx_452"></a>reveals the contents of a particular
+compartment, but leaves the box alone. </p>
+<p>
+Here is one final example, a structure for representing rock stars: 
+<a name="node_idx_454"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">last</span> <i>first</i> <span class="variable">instrument</span> <span class="variable">sales</span>))
+</pre></div><p>
+It defines the class of <code class="scheme"><span class="variable">star</span></code> structures, each of which has four
+fields. Accordingly, we get five new primitive operations:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">make-star</span>   <span class="builtin">star-last</span>   <span class="builtin">star-first</span>    <span class="builtin">star-instrument</span>    <span class="builtin">star-sales</span>
+</pre></div><p>
+The first is for constructing <code class="scheme"><span class="variable">star</span></code> structures; the others are
+selector operations for extracting values from a <code class="scheme"><span class="variable">star</span></code> structure. </p>
+<p>
+To create a <code class="scheme"><span class="variable">star</span></code> structure, we apply <code class="scheme"><span class="builtin">make-star</span></code> to three
+symbols and a positive integer:
+<a name="node_idx_456"></a><a name="node_idx_458"></a><a name="node_idx_460"></a></p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Friedman</span> <span class="keyword">'</span><span class="variable">Dan</span> <span class="keyword">'</span><span class="variable">ukelele</span> <span class="selfeval">19004</span>)
+
+(<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Talcott</span> <span class="keyword">'</span><span class="variable">Carolyn</span> <span class="keyword">'</span><span class="variable">banjo</span> <span class="selfeval">80000</span>)
+
+(<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Harper</span> <span class="keyword">'</span><span class="variable">Robert</span> <span class="keyword">'</span><span class="variable">bagpipe</span> <span class="selfeval">27860</span>)
+</pre></div><p>
+To select the first name of a star structure called <code class="scheme"><span class="variable">E</span></code>, we use 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">star-first</span> <span class="variable">E</span>)
+</pre></div><p>
+Other fields are extracted with other selectors. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.3.1"></a>
+<b>Exercise 6.3.1.</b>&nbsp;&nbsp; 
+Consider the following structure definitions:
+<a name="node_idx_462"></a><a name="node_idx_464"></a><a name="node_idx_466"></a><a name="node_idx_468"></a><a name="node_idx_470"></a></p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sweater</span> (<span class="variable">material</span> <span class="variable">size</span> <span class="variable">producer</span>))</code>
+</p>
+</li></ol><p>
+What are the names of the constructors and the selectors that each of them
+adds to Scheme? Draw box representations for each of these
+structures.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/def-struct-names.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.3.2"></a>
+<b>Exercise 6.3.2.</b>&nbsp;&nbsp;  
+Consider the following structure definition
+<a name="node_idx_472"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))
+</pre></div><p>
+and evaluate the following expressions:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">movie-title</span> (<span class="builtin">make-movie</span> <span class="keyword">'</span><span class="variable">ThePhantomMenace</span> <span class="keyword">'</span><span class="variable">Lucas</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">movie-producer</span> (<span class="builtin">make-movie</span> <span class="keyword">'</span><span class="variable">TheEmpireStrikesBack</span> <span class="keyword">'</span><span class="variable">Lucas</span>))</code>
+</p>
+</li></ol><p></p>
+<p>
+Now evaluate the following expressions, assuming <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="variable">y</span></code>
+stand for arbitrary symbols:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">movie-title</span> (<span class="builtin">make-movie</span> <span class="variable">x</span> <span class="variable">y</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">movie-producer</span> (<span class="builtin">make-movie</span> <span class="variable">x</span> <span class="variable">y</span>))</code>
+</p>
+</li></ol><p></p>
+<p>
+Formulate equations that state general laws concerning the relationships of
+<code class="scheme"><span class="builtin">movie-title</span></code> and <code class="scheme"><span class="builtin">movie-producer</span></code> and
+<code class="scheme"><span class="builtin">make-movie</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eval-cp-x.html">Solution</a></p>
+<p></p>
+<p>
+Functions both consume and produce structures. Suppose we need to record an
+increase of sales for one of our stars. This act should be recorded in the
+star's record.  To do so, we should have a function that consumes a
+<code class="scheme"><span class="variable">star</span></code> structure and produces a <code class="scheme"><span class="variable">star</span></code> structure with the
+same information except for the sales component. Let's assume for now that
+the function adds 20000 to the star's sales.</p>
+<p>
+First, we write down a basic description of the function, using our
+contract, header, and purpose format:
+<a name="node_idx_474"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increment-sales</span> <span class="selfeval">:</span> <span class="variable">star</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">star</span></code></span>
+<span class="comment">;; to produce a <code class="scheme"><span class="variable">star</span></code> record like <code class="scheme"><span class="variable">a-star</span></code> with <code class="scheme"><span class="selfeval">20000</span></code> more sales </span>
+(<span class="keyword">define</span> (<span class="variable">increment-sales</span> <span class="variable">a-star</span>) ...)
+</pre></div><p>
+Here is an example of how the function should process <code class="scheme"><span class="variable">star</span></code> structures: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">increment-sales</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Abba</span> <span class="keyword">'</span><span class="variable">John</span> <span class="keyword">'</span><span class="variable">vocals</span> <span class="selfeval">12200</span>))
+<span class="comment">should produce</span>
+  (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Abba</span> <span class="keyword">'</span><span class="variable">John</span> <span class="keyword">'</span><span class="variable">vocals</span> <span class="selfeval">32200</span>))
+</pre></div><p>
+The three sample <code class="scheme"><span class="variable">star</span></code> structures from above are also good
+examples of potential inputs. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_35"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_476"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increment-sales</span> <span class="selfeval">:</span> <span class="variable">star</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">star</span></code></span>
+<span class="comment">;; to produce a <code class="scheme"><span class="variable">star</span></code> record like <code class="scheme"><span class="variable">a-star</span></code> with <code class="scheme"><span class="selfeval">20000</span></code> more sales</span>
+(<span class="keyword">define</span> (<span class="variable">increment-sales</span> <span class="variable">a-star</span>)
+  (<span class="builtin">make-star</span> (<span class="builtin">star-last</span> <span class="variable">a-star</span>)
+             (<span class="builtin">star-first</span> <span class="variable">a-star</span>)
+	     (<span class="builtin">star-instrument</span> <span class="variable">a-star</span>)
+	     (<span class="builtin">+</span> (<span class="builtin">star-sales</span> <span class="variable">a-star</span>) <span class="selfeval">20000</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 9:</b>&nbsp;&nbsp;The complete definition of <i>increment-sales</i></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The <code class="scheme"><span class="variable">increment-sales</span></code> function must construct a new <code class="scheme"><span class="variable">star</span></code>
+structure with <code class="scheme"><span class="builtin">make-star</span></code>, but to do so, it must also extract the
+data in <code class="scheme"><span class="variable">a-star</span></code>. After all, almost all of the data in
+<code class="scheme"><span class="variable">a-star</span></code> is a part of the <code class="scheme"><span class="variable">star</span></code> structure produced by
+<code class="scheme"><span class="variable">increment-sales</span></code>.  This suggests that the definition of
+<code class="scheme"><span class="variable">increment-sales</span></code> contains expressions that extract the four
+fields of <code class="scheme"><span class="variable">a-star</span></code>:
+<a name="node_idx_478"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">increment-sales</span> <span class="variable">a-star</span>) 
+  ... (<span class="builtin">star-last</span> <span class="variable">a-star</span>) ...
+  ... (<span class="builtin">star-first</span> <span class="variable">a-star</span>) ...
+  ... (<span class="builtin">star-instrument</span> <span class="variable">a-star</span>) ...
+  ... (<span class="builtin">star-sales</span> <span class="variable">a-star</span>) ... )
+</pre></div><p>
+As we have seen with the examples, the function adds <code class="scheme"><span class="selfeval">20000</span></code> to
+<code class="scheme">(<span class="builtin">star-sales</span> <span class="variable">a-star</span>)</code> and assembles the four pieces of data into a
+<code class="scheme"><span class="variable">star</span></code> structure with
+<code class="scheme"><span class="builtin">make-star</span></code>. Figure&nbsp;<a href="#node_fig_Temp_35">9</a> contains the complete
+definition.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.3.3"></a>
+<b>Exercise 6.3.3.</b>&nbsp;&nbsp;  
+Provide a structure definition that represents an airforce's jet fighters.
+Assume that a fighter has four essential properties: designation
+(<code class="scheme"><span class="keyword">'</span><span class="variable">f22</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">tornado</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">mig22</span></code>), acceleration,
+top-speed, and range.  Then develop the function <code class="scheme"><span class="variable">within-range</span></code>. The
+function consumes a fighter record and the distance of a target from the
+(fighter's) base. It determines whether the fighter can reach the intended
+target. Also develop the function <code class="scheme"><span class="variable">reduce-range</span></code>. The function
+consumes a fighter record and produces one in which the <code class="scheme"><span class="variable">range</span></code>
+field is reduced to 80% of the original value.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/data-def1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_6.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.4">6.4&nbsp;&nbsp;Data Definitions</a></h2>
+<p> </p>
+<p>
+</p>
+<p>
+Consider the following expression: 
+<a name="node_idx_480"></a></p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>)
+</pre></div><p>
+It constructs a <code class="scheme"><span class="variable">posn</span></code> structure from two symbols. If we now apply
+<code class="scheme"><span class="variable">distance-to-0</span></code> to this structure, the computation fails miserably: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">distance-to-0</span> (<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>))
+
+<span class="builtin">=</span> (<span class="builtin">sqrt</span>
+    (<span class="builtin">+</span> (<span class="builtin">sqr</span> (<span class="builtin">posn-x</span> (<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>)))
+       (<span class="builtin">sqr</span> (<span class="builtin">posn-y</span> (<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>)))))
+
+<span class="builtin">=</span> (<span class="builtin">sqrt</span>
+    (<span class="builtin">+</span> (<span class="builtin">sqr</span> <span class="keyword">'</span><span class="variable">Albert</span>)
+       (<span class="builtin">sqr</span> (<span class="builtin">posn-y</span> (<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>)))))
+
+<span class="builtin">=</span> (<span class="builtin">sqrt</span>
+    (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Albert</span>)
+       (<span class="builtin">sqr</span> (<span class="builtin">posn-y</span> (<span class="builtin">make-posn</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span>)))))
+</pre></div><p>
+That is, it requires us to multiply <code class="scheme"><span class="keyword">'</span><span class="variable">Albert</span></code> with itself. Similarly,
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Albert</span> <span class="keyword">'</span><span class="variable">Meyer</span> <span class="selfeval">10000</span> <span class="keyword">'</span><span class="variable">electric-organ</span>)
+</pre></div><p>
+does not produce a <code class="scheme"><span class="variable">star</span></code> structure according to our intentions. In
+particular, the structure is not suitable for processing by
+<code class="scheme"><span class="variable">increment-sales</span></code>. </p>
+<p>
+To avoid such problems and to assist with the development of functions, we
+must add a data definition to each structure
+definition.</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.4"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Data<br>
+Definitions</a>
+</td></tr></table><p> 
+<a name="node_idx_482"></a><a name="node_idx_484"></a>A <small>D</small><small>A</small><small>T</small><small>A</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small> 
+<a name="node_idx_486"></a><a name="node_idx_488"></a><a name="node_idx_490"></a><a name="node_idx_492"></a>states, in a mixture of English and Scheme, how we intend to use
+a class of structures and how we construct elements of this class of
+data. For example, here is a data definition for <code class="scheme"><span class="variable">posn</span></code> structures:</p>
+<p>
+<a name="node_idx_494"></a></p>
+<p>
+A <i>posn</i> is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-posn</span> <span class="variable">x</span> <span class="variable">y</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">x</span></code> and <code class="scheme"><span class="variable">y</span></code> are numbers.<p>
+It says that a valid <code class="scheme"><span class="variable">posn</span></code> structure always contains two
+numbers, and nothing else. Hence, when we use <code class="scheme"><span class="builtin">make-posn</span></code> to create
+a <code class="scheme"><span class="variable">posn</span></code> structure, we must apply it to two numbers; when a function
+contains selector expressions for <code class="scheme"><span class="variable">posn</span></code> structures, we may now
+assume that their result is a number. </p>
+<p>
+The data definition for <code class="scheme"><span class="variable">star</span></code> structures is only slightly more
+complicated: </p>
+<p>
+<a name="node_idx_496"></a>A <i>star</i> is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-star</span> <span class="variable">last</span> <i>first</i> <span class="variable">instrument</span> <span class="variable">sales</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">last</span></code>, <code class="scheme"><i>first</i></code>, and <code class="scheme"><span class="variable">instrument</span></code> are symbols
+and <code class="scheme"><span class="variable">sales</span></code> is a number.<p>
+This data definition says that valid <code class="scheme"><span class="variable">star</span></code> structures
+contain symbols in the fields for <code class="scheme"><span class="variable">last</span></code> name, <code class="scheme"><i>first</i></code> name,
+and <code class="scheme"><span class="variable">instrument</span></code>, and a number in the <code class="scheme"><span class="variable">sales</span></code> field.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_36"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<img src="curriculum1aa-Z-G-19.gif" border="0" alt="[curriculum1aa-Z-G-19.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 10:</b>&nbsp;&nbsp;The meaning of data definitions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+In general, a data definition identifies a subclass of Scheme's universe of
+values: see figure&nbsp;<a href="#node_fig_Temp_36">10</a>. As we have seen so far, Scheme's
+universe contains numbers, symbols, images, strings, chars, booleans, and
+many different classes of structures. Our functions, however, are intended
+to work only for a subclass of values. For example, <code class="scheme"><span class="variable">area-of-disk</span></code>
+consumes only numbers; <code class="scheme"><span class="variable">reply</span></code> from section&nbsp;<a href="curriculum-Z-H-8.html#node_chap_5">5</a> consumes
+only symbols.  A few subclasses, such as <code class="scheme"><span class="variable">number</span></code>, already have
+names, because they are useful for all kinds of programming tasks. Others
+are only interesting in the context of a specific problem.  For those
+cases, a programmer should introduce a data definition.</p>
+<p>
+The most important role of a data definition is that of a covenant between
+programmers and users. We expect both groups to respect such data
+definitions, and we expect the programmer to exploit it for the function
+construction. For example, when the programmer of <code class="scheme"><span class="variable">distance-to-0</span></code>
+specifies that all <code class="scheme"><span class="variable">posn</span></code>s contain two numbers, a user must always
+apply <code class="scheme"><span class="variable">distance-to-0</span></code> to a <code class="scheme"><span class="variable">posn</span></code> structure with two
+numbers. Furthermore, as we will discuss over the next few sections, we
+expect a programmer to exploit data definitions for function
+developments. Naturally, a data definition in English and Scheme does not
+prevent us from abusing <code class="scheme"><span class="builtin">make-posn</span></code>.  It is, however, a written
+statement of intent, and a person who willingly violates or ignores this
+covenant must face the consequences of ill-behaving
+computations.<a name="call_footnote_Temp_37"></a><a href="#footnote_Temp_37"><sup><small>20</small></sup></a></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.4.1"></a>
+<b>Exercise 6.4.1.</b>&nbsp;&nbsp; 
+Provide data definitions for the following structure definitions:
+<a name="node_idx_498"></a><a name="node_idx_500"></a><a name="node_idx_502"></a><a name="node_idx_504"></a><a name="node_idx_506"></a></p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sweater</span> (<span class="variable">material</span> <span class="variable">size</span> <span class="variable">producer</span>))</code>
+</p>
+</li></ol><p>
+Make appropriate assumptions about what data goes with which
+field.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/def-struct-dd.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.4.2"></a>
+<b>Exercise 6.4.2.</b>&nbsp;&nbsp; 
+Provide a structure definition and a data definition for representing
+points in time since midnight. A point in time consists of three numbers:
+hours, minutes, and seconds.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/time-dd.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.4.3"></a>
+<b>Exercise 6.4.3.</b>&nbsp;&nbsp;  
+Provide a structure definition and a data definition for representing
+three-letter <code class="scheme"><span class="variable">word</span></code>s. A word consists of letters, which we
+represent with the symbols <code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code> through
+<code class="scheme"><span class="keyword">'</span><span class="variable">z</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/word-dd.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<a name="node_sec_6.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.5">6.5&nbsp;&nbsp;Designing Functions for Compound Data</a></h2>
+<p> 
+<a name="node_idx_508"></a></p>
+<p>
+Sections&nbsp;<a href="#node_sec_6.1">6.1</a> through&nbsp;<a href="#node_sec_6.4">6.4</a> suggest
+that the design of functions for compound data proceeds in a regular
+manner. First, a programmer must recognize that structures are needed.  We
+follow the simple rule of using structures whenever the description of some
+object specifies several pieces of information. If we don't use structures
+in these cases, we quickly lose track of which data belongs to which
+object, especially when we write large functions that process massive
+amounts of data.</p>
+<p>
+Second, a programmer can use the structure and data definitions for the
+organization of a function. We use the term template when we
+design functions. As we will see in this and many future sections, the
+template matches the data definition, and the template is <em>the</em>
+essential step in the careful design of functions.</p>
+<p>
+To emphasize this point, we modify our function design recipe from
+section&nbsp;<a href="curriculum-Z-H-5.html#node_sec_2.5">2.5</a> to accommodate compound data.  Most importantly,
+working with compound data requires adjustments in a few of the basic
+design steps and two new steps: data analysis and template design: </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_38"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_510"></a><a name="node_idx_512"></a><div align="left"><pre class="scheme"><span class="comment">;; <u>Data Analysis &amp; Definitions</u>:</span>
+(<span class="keyword">define-struct</span> <span class="variable">student</span> (<span class="variable">last</span> <i>first</i> <span class="variable">teacher</span>))
+<span class="comment">;; A <code class="scheme"><span class="variable">student</span></code> is a structure: <code class="scheme">(<span class="builtin">make-student</span> <span class="variable">l</span> <span class="variable">f</span> <span class="variable">t</span>)</code> where <code class="scheme"><span class="variable">f</span></code>, <code class="scheme"><span class="variable">l</span></code>, and <code class="scheme"><span class="variable">t</span></code> are symbols.</span>
+
+<span class="comment">;; <u>Contract</u>: <code class="scheme"><span class="variable">subst-teacher</span> <span class="selfeval">:</span> <span class="variable">student</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">student</span></code></span>
+
+<span class="comment">;; <u>Purpose</u>: to create a <code class="scheme"><span class="variable">student</span></code> structure with a new </span>
+<span class="comment">;; teacher name if the teacher's name matches <code class="scheme"><span class="keyword">'</span><span class="variable">Fritz</span></code></span>
+
+<span class="comment">;; <u>Examples</u>:</span>
+<span class="comment">;; <code class="scheme">(<span class="variable">subst-teacher</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Fritz</span>) <span class="keyword">'</span><span class="variable">Elise</span>)</code></span>
+<span class="comment">;; = </span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Elise</span>)</code></span>
+<span class="comment">;; <code class="scheme">(<span class="variable">subst-teacher</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Amanda</span>) <span class="keyword">'</span><span class="variable">Elise</span>)</code></span>
+<span class="comment">;; = </span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Amanda</span>)</code></span>
+
+<span class="comment">;; <u>Template</u>:</span>
+<span class="comment">;; <code class="scheme">(<span class="keyword">define</span> (<span class="variable">process-student</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) </code></span>
+<span class="comment">;; <code class="scheme">... (<span class="builtin">student-last</span> <span class="variable">a-student</span>) ...</code></span>
+<span class="comment">;; <code class="scheme">... (<span class="builtin">student-first</span> <span class="variable">a-student</span>) ...</code></span>
+<span class="comment">;; <code class="scheme">... (<span class="builtin">student-teacher</span> <span class="variable">a-student</span>) ...)</code></span>
+
+<span class="comment">;; <u>Definition</u>: </span>
+(<span class="keyword">define</span> (<span class="variable">subst-teacher</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">student-teacher</span> <span class="variable">a-student</span>) <span class="keyword">'</span><span class="variable">Fritz</span>) 
+     (<span class="builtin">make-student</span> (<span class="builtin">student-last</span> <span class="variable">a-student</span>)
+                   (<span class="builtin">student-first</span> <span class="variable">a-student</span>)
+		   <span class="variable">a-teacher</span>)]
+    [<span class="keyword">else</span> <span class="variable">a-student</span>]))
+  
+<span class="comment">;; <u>Tests</u>:</span>
+(<span class="variable">subst-teacher</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Fritz</span>) <span class="keyword">'</span><span class="variable">Elise</span>)
+<span class="comment">;; expected value:</span>
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Elise</span>)
+
+(<span class="variable">subst-teacher</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Amanda</span>) <span class="keyword">'</span><span class="variable">Elise</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Find</span> <span class="keyword">'</span><span class="variable">Matthew</span> <span class="keyword">'</span><span class="variable">Amanda</span>)
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 11:</b>&nbsp;&nbsp;The design recipe for compound data: A complete example</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Data Analysis and Design:</b></dt><dd> Before we can develop a function, we must
+understand how to represent the information in our problem statement within
+our chosen programming language.
+<a name="node_idx_514"></a>To do so, we search the problem statement
+for descriptions of (relevant) objects and then design a data
+representation based on the results of our analysis.<p>
+Until now we could use Scheme's classes of atomic data (numbers, symbols,
+images, etc.) to represent information. But they are not enough.  If we
+discover that an object has <em>N</em> properties, we introduce a structure
+definition with <em>N</em> fields and supply a data definition that specifies what
+kind of data the fields may contain.</p>
+<p>
+Let us consider functions that process student records at a school.  If a
+student's interesting properties for a school are
+</p>
+<ol>
+<li><p>the first name,
+</p>
+<li><p>the last name,
+and
+</p>
+<li><p>the name of the home-room teacher, 
+</p>
+</li></ol><p>
+then we should represent information about a student as a structure:</p>
+<p>
+<a name="node_idx_516"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">student</span> (<span class="variable">last</span> <i>first</i> <span class="variable">teacher</span>))
+</pre></div><p></p>
+<p>
+Here is the data definition that specifies the class of student
+structures as precisely as possible: </p>
+<p>
+<a name="node_idx_518"></a>A <i>student</i> is a structure:<br>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="builtin">make-student</span> <span class="variable">l</span> <span class="variable">f</span> <span class="variable">t</span>)</code> &nbsp;</div>
+ 
+where <code class="scheme"><span class="variable">l</span></code>, <code class="scheme"><span class="variable">f</span></code>, and <code class="scheme"><span class="variable">t</span></code> are symbols.<p>
+The corresponding data class contains structures like these:</p>
+<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">findler</span> <span class="keyword">'</span><span class="variable">kathi</span> <span class="keyword">'</span><span class="variable">matthias</span>)
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">fisler</span> <span class="keyword">'</span><span class="variable">sean</span> <span class="keyword">'</span><span class="variable">matthias</span>)
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">flatt</span> <span class="keyword">'</span><span class="variable">shriram</span> <span class="keyword">'</span><span class="variable">matthias</span>)
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Contract:</b></dt><dd> For the formulation of contracts, we can use the names of
+the atomic classes of data, such as <code class="scheme"><span class="variable">number</span></code> and <code class="scheme"><span class="variable">symbol</span></code>,
+and those names that we introduced in data definitions, such as
+<code class="scheme"><span class="variable">student</span></code>.<p>
+</p>
+</dd><dt><b>Template:</b></dt><dd> A function that consumes compound data is likely to compute
+its result from the components of its input. To remind ourselves of the
+components, we first design a template. For compound data, a
+<small>T</small><small>E</small><small>M</small><small>P</small><small>L</small><small>A</small><small>T</small><small>E</small> 
+<a name="node_idx_520"></a>consists of a header and a body that lists all possible
+selector expressions.
+<a name="node_idx_522"></a><a name="node_idx_524"></a>Each selector expression is the application of an
+appropriate selector primitive to a parameter that stands for a structure.<p>
+In other words, a template expresses what we know about the inputs, and
+nothing about the outputs. We can therefore use the same template for all
+functions that consume the same kind of structure.  Also, because a
+template does not express anything about the purpose of the function, <strong>we can formulate it before or after we have developed examples.</strong></p>
+<p>
+Consider a function that consumes a <code class="scheme"><span class="variable">student</span></code> structure and a teacher
+name: 
+<a name="node_idx_526"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">process-student</span> <span class="selfeval">:</span>  <span class="variable">student</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">process-student</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) ...)
+</pre></div><p> 
+Then <code class="scheme"><span class="variable">a-student</span></code> is a parameter that stands for a structure and
+<code class="scheme"><span class="variable">a-teacher</span></code> stands for just a symbol. The template therefore has the
+following shape:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">process-student</span> <span class="selfeval">:</span>  <span class="variable">student</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">process-student</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) 
+  ... (<span class="builtin">student-last</span> <span class="variable">a-student</span>) ...
+  ... (<span class="builtin">student-first</span> <span class="variable">a-student</span>) ...
+  ... (<span class="builtin">student-teacher</span> <span class="variable">a-student</span>) ...)
+</pre></div><p> 
+The <code class="scheme"><span class="variable">???</span></code> output reminds us that we don't assume anything about the
+output of the function. We design every function that consumes a
+<code class="scheme"><span class="variable">student</span></code> structure using this template. </p>
+<p>
+</p>
+</dd><dt><b>Examples:</b></dt><dd> Let us study two examples of functions that consume
+<code class="scheme"><span class="variable">student</span></code> structures. The first function, <code class="scheme"><span class="variable">check</span></code>, is supposed
+to return the last name of the student if the teacher's name is equal to
+<code class="scheme"><span class="variable">a-teacher</span></code> and <code class="scheme"><span class="keyword">'</span><span class="variable">none</span></code> otherwise: <p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">check</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Wilson</span> <span class="keyword">'</span><span class="variable">Fritz</span> <span class="keyword">'</span><span class="variable">Harper</span>) <span class="keyword">'</span><span class="variable">Harper</span>)
+<span class="comment">;; expected value:</span>
+<span class="keyword">'</span><span class="variable">Wilson</span>
+
+(<span class="variable">check</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Wilson</span> <span class="keyword">'</span><span class="variable">Fritz</span> <span class="keyword">'</span><span class="variable">Lee</span>) <span class="keyword">'</span><span class="variable">Harper</span>)
+<span class="comment">;; expected value</span>
+<span class="keyword">'</span><span class="variable">none</span>
+</pre></div><p></p>
+<p>
+The second function, <code class="scheme"><span class="variable">transfer</span></code>, is supposed to produce a student
+structure that contains the same information as <code class="scheme"><span class="variable">a-student</span></code> except
+for the teacher field, which should be <code class="scheme"><span class="variable">a-teacher</span></code>: </p>
+<p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">transfer</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Wilson</span> <span class="keyword">'</span><span class="variable">Fritz</span> <span class="keyword">'</span><span class="variable">Harper</span>) <span class="keyword">'</span><span class="variable">Lee</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Wilson</span> <span class="keyword">'</span><span class="variable">Fritz</span> <span class="keyword">'</span><span class="variable">Lee</span>)
+
+(<span class="variable">transfer</span> (<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Woops</span> <span class="keyword">'</span><span class="variable">Helen</span> <span class="keyword">'</span><span class="variable">Flatt</span>) <span class="keyword">'</span><span class="variable">Fisler</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">make-student</span> <span class="keyword">'</span><span class="variable">Woops</span> <span class="keyword">'</span><span class="variable">Helen</span> <span class="keyword">'</span><span class="variable">Fisler</span>)
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Body:</b></dt><dd> The template provides as many clues for the definition of the
+function as the examples. As before, the goal of this step is to formulate
+an expression that computes the answer from the available data using other
+functions or Scheme's primitive. The template reminds us that the available
+data are the parameters and the data computed by the selector expressions.
+To determine what the selectors produce, we read the data definition for
+the structure. <p>
+Let us return to our first example, <code class="scheme"><span class="variable">check</span></code>:
+<a name="node_idx_528"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">check</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">student-teacher</span> <span class="variable">a-student</span>) <span class="variable">a-teacher</span>) 
+     (<span class="builtin">student-last</span> <span class="variable">a-student</span>)]
+    [<span class="keyword">else</span> <span class="keyword">'</span><span class="variable">none</span>]))
+</pre></div><p>
+This particular function uses two of the three selector expressions from the
+template. Specifically, it compares the result of the selector expression 
+<code class="scheme">(<span class="builtin">student-teacher</span> <span class="variable">a-student</span>)</code> with <code class="scheme"><span class="variable">a-teacher</span></code> and, if they
+are equal, produces the result of <code class="scheme">(<span class="builtin">student-last</span> <span class="variable">a-student</span>)</code>. Just
+naming the results of the selector expressions and reading the problem
+statement makes the definition obvious. </p>
+<p>
+Similarly, the <code class="scheme"><span class="variable">transfer</span></code> function is easy to define using the
+template and the examples: 
+<a name="node_idx_530"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">transfer</span> <span class="variable">a-student</span> <span class="variable">a-teacher</span>) 
+  (<span class="builtin">make-student</span> (<span class="builtin">student-last</span> <span class="variable">a-student</span>) 
+                (<span class="builtin">student-first</span> <span class="variable">a-student</span>)
+		<span class="variable">a-teacher</span>))
+</pre></div><p>
+This second function uses the same two selector expressions as the first
+example, but in a different way. The key observation, however, is that the
+template reminds us of all the information that we have available. <strong>When we define the function, we must use and combine the available
+information.</strong> 
+</p>
+</dd></dl><p>
+Figure&nbsp;<a href="#node_fig_Temp_39">12</a> presents the recipe for compound data in tabular
+form. In practice, though, a function contains many functions that all work
+on the same class of input data.  It is therefore normal to reuse the
+template many times, which means that examples are often constructed after
+the template is set up.  Compare it with the design recipes in
+figures&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> and&nbsp;<a href="curriculum-Z-H-7.html#node_fig_Temp_28">6</a>.</p>
+<p>
+</p>
+<p>
+<a name="node_idx_532"></a>
+<a name="node_idx_534"></a>
+<a name="node_idx_536"></a>
+<a name="node_idx_538"></a>
+<a name="node_idx_540"></a>
+<a name="node_idx_542"></a>
+<a name="node_idx_544"></a>
+<a name="node_idx_546"></a>
+<a name="node_idx_548"></a></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_39"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Data<br>
+&nbsp;&nbsp;Analysis<br>
+&nbsp;&nbsp;and Design
+</div><p>  </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate a data definition </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">determine how many pieces of data describe the
+``interesting'' aspects of the objects mentioned in the problem
+statement <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> add a structure definition and a data definition (for each
+class of problem object) </div><p></p></td></tr>
+<tr><td valign="top">
+<p></p>
+<div align="left">
+Contract<br>
+Purpose and<br>
+Header<br>
+</div><p>
+</p>
+</td><td valign="top">
+<p></p>
+<div align="left">to name the function;<br>
+to specify its classes of<br>
+&nbsp;&nbsp;input data and its<br>
+&nbsp;&nbsp;class of output data;<br>
+to describe its purpose;<br>
+to formulate a header
+</div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">name the function, the classes of input data, the
+class of output data, and
+specify its purpose: <br>
+&nbsp;;; <i>name</i> : <i>in1</i> <i>in2</i> <tt>...</tt>--> <i>out</i> <br>
+&nbsp;;; to compute <tt>...</tt> from <i>x1</i> <tt>...</tt><br>
+&nbsp;(<strong>define</strong> (<i>name x1 x2 <tt>...</tt></i>) <tt>...</tt>)
+</div><p></p></td></tr>
+<tr><td valign="top">Examples &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to characterize the input-<br>
+output relationship via examples </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">search the problem statement for examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> work through the examples <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> validate the results, if possible
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> make up examples</div><p></p></td></tr>
+<tr><td valign="top">Template        
+</td><td valign="top"><p></p>
+<div align="left">to formulate an outline </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">for those parameters that stand for compound values, annotate the body with selector expressions
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> if the function is conditional, annotate all appropriate branches </div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define the function </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop a Scheme expression that uses Scheme's
+primitive operations, other functions, selector expressions, and the variables</div><p></p></td></tr>
+<tr><td valign="top">Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to discover mistakes<br>
+&nbsp;&nbsp;(``typos'' and logic) </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">apply the function to the inputs of the examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> check that the outputs are as predicted</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 12:</b>&nbsp;&nbsp;Designing a function for compound data</td></tr>
+<tr><td> 
+<div align="center">&nbsp;(Refines the recipe in figure&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> (pg.&nbsp;<a href="curriculum-Z-H-5.html">5</a>))&nbsp;</div>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.5.1"></a>
+<b>Exercise 6.5.1.</b>&nbsp;&nbsp;  
+Develop templates for functions that consume the following structures: 
+<a name="node_idx_550"></a><a name="node_idx_552"></a><a name="node_idx_554"></a><a name="node_idx_556"></a><a name="node_idx_558"></a></p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">movie</span> (<span class="variable">title</span> <span class="variable">producer</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">boyfriend</span> (<span class="variable">name</span> <span class="variable">hair</span> <span class="variable">eyes</span> <span class="variable">phone</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">number</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">artist</span> <span class="variable">title</span> <span class="variable">price</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sweater</span> (<span class="variable">material</span> <span class="variable">size</span> <span class="variable">producer</span>))</code> .&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/data-def-ex1.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.5.2"></a>
+<b>Exercise 6.5.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><i>time</i><tt>-&gt;</tt><i>seconds</i></code>, which consumes a <code class="scheme"><span class="keyword">time</span></code>
+structure (see exercise&nbsp;<a href="#node_thm_6.4.2">6.4.2</a>) and produces the number of seconds
+since midnight that the <code class="scheme"><span class="keyword">time</span></code> structure represents. </p>
+<p>
+Example: 
+</p>
+<div align="left"><pre class="scheme">(<i>time</i><tt>-&gt;</tt><i>seconds</i> (<span class="builtin">make-time</span> <span class="selfeval">12</span> <span class="selfeval">30</span> <span class="selfeval">2</span>))  
+<span class="comment">;; expected value: </span>
+<span class="selfeval">45002</span> 
+</pre></div><p>
+Explain the example.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/time.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_6.6"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.6">6.6&nbsp;&nbsp;Extended Exercise: Moving Circles and Rectangles</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.6"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Use <tt><strong>draw.ss</strong></tt></a>
+</td></tr></table><p></p>
+<p>
+Implementing a computer game often requires moving a picture across a
+computer monitor. In figure&nbsp;<a href="#node_fig_Temp_41">13</a>, for example, a simplistic
+face is moved from the left part of the canvas toward the right border.
+For simplicity, our pictures consist of many colored circles and
+rectangles. From section&nbsp;<a href="#node_sec_6.2">6.2</a>, we already know, for
+example, how to draw and erase a circle. Here we learn to translate a
+circle, that is, to move its representation along some line. In
+sections&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>, <a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>, and&nbsp;<a href="curriculum-Z-H-27.html#node_sec_21.4">21.4</a>
+we learn to move entire pictures with compact programs.<a name="call_footnote_Temp_40"></a><a href="#footnote_Temp_40"><sup><small>21</small></sup></a></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_41"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <center>
+ <table cellspacing="20" bgcolor="beige">
+   <tr><td align="center"><img src="../icons/moving1.gif"></td></tr>
+   <tr><td align="center"><img src="../icons/moving2.gif"></td></tr>
+ </table>
+ </center>
+ </td></tr>
+<tr><td align="center"><b>Figure 13:</b>&nbsp;&nbsp;A moving face</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Following the design recipe, we start with structure and data definitions, then
+move on to templates, and finally write the necessary functions. The first
+sequence of exercises covers circles; the second one is about rectangles. </p>
+<p>
+</p>
+<p></p>
+<p><strong>A First Note on Iterative Refinement</strong>:  This method of developing
+<a name="node_idx_560"></a>large programs is our first taste of <small>I</small><small>T</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>V</small><small>E</small> <small>R</small><small>E</small><small>F</small><small>I</small><small>N</small><small>E</small><small>M</small><small>E</small><small>N</small><small>T</small>.  The
+basic idea behind iterative refinement is to start with a simple version of
+the program, that is, a version that deals with the most important part of
+the problem. In this section, we start with functions that move the most
+basic shapes: circles and rectangles. Then we refine the program to deal
+with more and more complex situations.  For example, in
+section&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a> we learn to deal with pictures that consist of
+an arbitrary number of circles and rectangles. Once we have a complete
+program, we edit it so that others can easily read and modify it,
+too. Section&nbsp;<a href="curriculum-Z-H-27.html#node_sec_21.4">21.4</a> covers this aspect of the example.</p>
+<p>
+Refining a program in this manner is the most prevalent method of designing
+complex programs.  Of course, we must know the eventual goal for this method to
+succeed, and we must always keep it in mind. It is therefore a good idea to
+write down an action plan, and to reconsider the plan after each refinement
+step. We will discuss this process again in section&nbsp;<a href="curriculum-Z-H-21.html#node_chap_16">16</a>.&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.6.1"></a>
+<b>Exercise 6.6.1.</b>&nbsp;&nbsp; 
+Provide a structure definition and a data definition for representing
+colored circles.  A <i>circle</i> 
+<a name="node_idx_562"></a>is characterized by three pieces of
+information: its center, its radius, and the color of its perimeter. The
+first is a <code class="scheme"><span class="variable">posn</span></code> structure, the second a number, and the third a
+(color) symbol. </p>
+<p>
+Develop the template <code class="scheme"><span class="variable">fun-for-circle</span></code>, which outlines a function
+that consumes <code class="scheme"><span class="variable">circle</span></code>s. Its result is
+undetermined.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-descr.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_6.6.2"></a>
+<b>Exercise 6.6.2.</b>&nbsp;&nbsp;  
+Use <code class="scheme"><span class="variable">fun-for-circle</span></code> to develop <code class="scheme"><span class="variable">draw-a-circle</span></code>. The function
+consumes a <code class="scheme"><span class="variable">circle</span></code> structure and draws the corresponding circle on
+the screen. Use <code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">300</span>)</code> to create the canvas before
+testing the function.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-draw.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.3"></a>
+<b>Exercise 6.6.3.</b>&nbsp;&nbsp; 
+Use the template <code class="scheme"><span class="variable">fun-for-circle</span></code> to develop
+<code class="scheme"><span class="variable">in-circle?</span></code>. The function consumes a <code class="scheme"><span class="variable">circle</span></code> structure and
+a <code class="scheme"><span class="variable">posn</span></code> and determines whether or not the pixel is inside the
+circle. All pixels whose distance to the center is less or equal to the
+radius are inside the circle; the others are outside.</p>
+<p>
+Consider the circle in figure&nbsp;<a href="#node_fig_Temp_42">14</a>.  The circle's center is
+<code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">6</span> <span class="selfeval">2</span>)</code>, its radius is <code class="scheme"><span class="selfeval">1</span></code>. The pixel labeled
+<code class="scheme"><span class="variable">A</span></code>, located at <code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">6</span> <span class="selfeval">1.5</span>)</code>, is inside the
+circle. The pixel labeled <code class="scheme"><span class="variable">B</span></code>, located at <code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">8</span> <span class="selfeval">6</span>)</code>,
+is outside.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-in.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.4"></a>
+<b>Exercise 6.6.4.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-circle</span></code> to develop
+<code class="scheme"><span class="variable">translate-circle</span></code>. The function consumes a <code class="scheme"><span class="variable">circle</span></code>
+structure and a number <code class="scheme"><span class="variable">delta</span></code>. The result is a <code class="scheme"><span class="variable">circle</span></code>
+whose center is <code class="scheme"><span class="variable">delta</span></code> pixels to the right of the input. 
+<strong>The function has no effect on the canvas.</strong></p>
+<p>
+<a name="node_idx_564"></a></p>
+<p></p>
+<p><strong>Geometric Translation</strong>:  Moving a geometric shape along a straight line is
+referred to as a 
+<a name="node_idx_566"></a><i>translation</i>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-trans.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.5"></a>
+<b>Exercise 6.6.5.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-circle</span></code> to develop
+<code class="scheme"><span class="variable">clear-a-circle</span></code>. The function consumes a <code class="scheme"><span class="variable">circle</span></code> structure
+and clears the corresponding circle on the
+canvas.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-clear.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.6"></a>
+<b>Exercise 6.6.6.</b>&nbsp;&nbsp;  
+Define the function <code class="scheme"><span class="variable">draw-and-clear-circle</span></code>, which draws a <code class="scheme"><span class="variable">circle</span></code>
+structure, waits for a short time, and clears it. To implement a waiting
+period, the teachpack <tt><strong>draw.ss</strong></tt> provides the function
+<code class="scheme"><span class="variable">sleep-for-a-while</span></code>. It consumes a number and puts the program to
+sleep for that many seconds; its result is <code class="scheme"><span class="builtin">true</span></code>. For example,
+<code class="scheme">(<span class="variable">sleep-for-a-while</span> <span class="selfeval">1</span>)</code> waits for one second.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/circ-draw-and-clear.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+The following function is the key ingredient for moving a circle across a
+canvas, one step at a time:  
+<a name="node_idx_568"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move-circle</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">circle</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">circle</span></code></span>
+<span class="comment">;; to draw and clear a circle, translate it by <code class="scheme"><span class="variable">delta</span></code> pixels</span>
+(<span class="keyword">define</span> (<span class="variable">move-circle</span> <span class="variable">delta</span> <span class="variable">a-circle</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">draw-and-clear-circle</span> <span class="variable">a-circle</span>) (<span class="variable">translate-circle</span> <span class="variable">a-circle</span> <span class="variable">delta</span>)]
+    [<span class="keyword">else</span> <span class="variable">a-circle</span>]))
+</pre></div><p>
+It draws and clears the circle on the canvas and then produces the new
+<code class="scheme"><span class="variable">circle</span></code> structure so that another draw-and-clear effect 
+displays the circle at a new position:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="selfeval">200</span> <span class="selfeval">100</span>)
+
+(<span class="variable">draw-a-circle</span> 
+  (<span class="variable">move-circle</span> <span class="selfeval">10</span>
+    (<span class="variable">move-circle</span> <span class="selfeval">10</span>
+      (<span class="variable">move-circle</span> <span class="selfeval">10</span>
+	(<span class="variable">move-circle</span> <span class="selfeval">10</span> ... <span class="variable">a</span> <span class="variable">circle</span> ...)))))
+</pre></div><p>
+This expression moves the circle four times, by 10 pixels each, and also
+shows this movement on the canvas. The last <code class="scheme"><span class="variable">draw-a-circle</span></code> is
+necessary because we wouldn't otherwise see the last move on the screen. </p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_42"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_570"></a><a name="node_idx_572"></a><a name="node_idx_574"></a><a name="node_idx_576"></a><div align="center"><table><tr><td>
+
+
+<img src="curriculum1aa-Z-G-20.gif" border="0" alt="[curriculum1aa-Z-G-20.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 14:</b>&nbsp;&nbsp;Circles, rectangles, and pixels</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.7"></a>
+<b>Exercise 6.6.7.</b>&nbsp;&nbsp; 
+Provide a structure definition and a data definition for representing
+colored rectangles.  A <i>rectangle</i> 
+<a name="node_idx_578"></a>is characterized by four
+pieces of information: its upper-left corner, its width, its height, and its
+fill color. The first is a <code class="scheme"><span class="variable">posn</span></code> structure, the second and third
+quantities are plain numbers, and the last one is a color.</p>
+<p>
+Develop the template <code class="scheme"><span class="variable">fun-for-rect</span></code>, which outlines a function that
+consumes <code class="scheme"><span class="variable">rectangle</span></code>s. Its result is
+undetermined.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-descr.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_6.6.8"></a>
+<b>Exercise 6.6.8.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-rect</span></code> to develop
+<code class="scheme"><span class="variable">draw-a-rectangle</span></code>. The function consumes a <code class="scheme"><span class="variable">rectangle</span></code>
+structure and draws the corresponding rectangle on the screen. In contrast
+to circles, the entire rectangle is painted in the matching color. Remember
+to use <code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">300</span>)</code> to create the canvas before testing the
+function.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-draw.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.9"></a>
+<b>Exercise 6.6.9.</b>&nbsp;&nbsp; 
+Use the template <code class="scheme"><span class="variable">fun-for-rect</span></code> to develop <code class="scheme"><span class="variable">in-rectangle?</span></code>. The
+function consumes a <code class="scheme"><span class="variable">rectangle</span></code> structure and a <code class="scheme"><span class="variable">posn</span></code> and
+determines whether or not the pixel is inside the rectangle.  A pixel is within a
+rectangle if its horizontal and vertical distances to the upper-left corner are
+positive and smaller than the width and height of the rectangle,
+respectively. </p>
+<p>
+Consider the rectangle in figure&nbsp;<a href="#node_fig_Temp_42">14</a>. This rectangle's key
+parameters are <code class="scheme">(<span class="builtin">make-posn</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)</code>, <code class="scheme"><span class="selfeval">3</span></code>, and <code class="scheme"><span class="selfeval">2</span></code>. The
+pixel labeled <code class="scheme"><span class="variable">C</span></code> is inside of the rectangle, <code class="scheme"><span class="variable">B</span></code> is
+outside.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-in.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.10"></a>
+<b>Exercise 6.6.10.</b>&nbsp;&nbsp; 
+Use the template <code class="scheme"><span class="variable">fun-for-rect</span></code> to develop
+<code class="scheme"><span class="variable">translate-rectangle</span></code>. The function consumes a <code class="scheme"><span class="variable">rectangle</span></code>
+structure and a number <code class="scheme"><span class="variable">delta</span></code>. The result is a <code class="scheme"><span class="variable">rectangle</span></code>
+whose upper-left corner is <code class="scheme"><span class="variable">delta</span></code> pixels to the right of the
+input. <strong>The function has no effect on the
+canvas.</strong>&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-trans.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.11"></a>
+<b>Exercise 6.6.11.</b>&nbsp;&nbsp;  
+Use the template <code class="scheme"><span class="variable">fun-for-rect</span></code> to develop
+<code class="scheme"><span class="variable">clear-a-rectangle</span></code>. It consumes a <code class="scheme"><span class="variable">rectangle</span></code> structure and
+clears the corresponding rectangle on the canvas.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-clear.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_6.6.12"></a>
+<b>Exercise 6.6.12.</b>&nbsp;&nbsp;   
+Here is the <code class="scheme"><span class="variable">move-rectangle</span></code> function: 
+<a name="node_idx_580"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move-rectangle</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">rectangle</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">rectangle</span></code></span>
+<span class="comment">;; to draw and clear a rectangle, translate it by <code class="scheme"><span class="variable">delta</span></code> pixels</span>
+(<span class="keyword">define</span> (<span class="variable">move-rectangle</span> <span class="variable">delta</span> <span class="variable">a-rectangle</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">draw-and-clear-rectangle</span> <span class="variable">a-rectangle</span>) 
+     (<span class="variable">translate-rectangle</span> <span class="variable">a-rectangle</span> <span class="variable">delta</span>)]
+    [<span class="keyword">else</span> <span class="variable">a-rectangle</span>]))
+</pre></div><p>
+It draws and clears a rectangle circle on the canvas and then produces a
+translated version. </p>
+<p>
+Develop <code class="scheme"><span class="variable">draw-and-clear-rectangle</span></code>, which draws a rectangle, sleeps
+for a while, and then clears the rectangle. Finally, create a rectangle
+and use the functions of this exercise set to move it four
+times.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rect-move.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_6.7"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_6.7">6.7&nbsp;&nbsp;Extended Exercise: Hangman</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-10.html#node_sec_6.7"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Use <tt><strong>draw.ss</strong></tt>, <br>
+<tt><strong>hangman.ss</strong></tt></a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_43"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left">  <img src="../icons/hang0.gif"></td>
+      <td align="center"><img src="../icons/hang1.gif"></td>
+      <td align="right"> <img src="../icons/hang2.gif"></td>
+ </tr>
+ </table>
+ </td></tr>
+<tr><td align="center"><b>Figure 15:</b>&nbsp;&nbsp;Three stages of the hangman picture</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Hangman is a two-player, word-guessing game. One player thinks of a
+three-letter<a name="call_footnote_Temp_44"></a><a href="#footnote_Temp_44"><sup><small>22</small></sup></a> word and draws the noose of a gallows
+(see figure&nbsp;<a href="#node_fig_Temp_43">15</a>); the other player tries to guess the word,
+one letter at a time. For every wrong guess, the first player adds another
+part to the drawing (see figure&nbsp;<a href="#node_fig_Temp_43">15</a>): first the head, then
+the body, the arms, and the legs. If, however, a guess agrees with one or
+two letters in the chosen word, the first player reveals the position(s)
+where this letter occurs. The game is over when the second player guesses
+the complete word or when the first player has completed the stick figure.</p>
+<p>
+Let's design a program that plays the role of the first player.  The
+program consists of two parts: one for drawing the figure, and another
+for determining whether a guess occurs in the chosen word and where.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.7.1"></a>
+<b>Exercise 6.7.1.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">draw-next-part</span></code>, which draws the pieces of a
+hangman figure. The function consumes one of the seven symbols:
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="keyword">'</span><span class="variable">right-leg</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">left-leg</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">left-arm</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">right-arm</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">body</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">head</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">noose</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></div>
+
+It always returns <code class="scheme">true</code> and draws the matching part of the figure.
+See figure&nbsp;<a href="#node_fig_Temp_43">15</a> for three snapshots of intermediate
+stages.<a name="call_footnote_Temp_45"></a><a href="#footnote_Temp_45"><sup><small>23</small></sup></a><p>
+<strong>Hints:</strong>  Add <code class="scheme">(<span class="variable">start</span> <span class="selfeval">200</span> <span class="selfeval">200</span>)</code> to the top of the definition window.
+Start with the noose and develop one component at a time. If a component
+of the stick figure requires more than one drawing operation, combine the
+operations using an <strong>and</strong>-expression,
+<a name="node_idx_582"></a>which evaluates the two expressions and
+ensure that both results are <code class="scheme">true</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/draw-next.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+The second task of the first player is to determine whether a guess is
+among the letters of the chosen word and, if so, where it occurs. Our
+recipe requires that, before we design a function for this task, we need to
+analyze our data and provide data definitions. The key objects of the
+game are words and letters. A <i>word</i> 
+<a name="node_idx_584"></a>consists of three letters. A
+<i>letter</i> 
+<a name="node_idx_586"></a>is represented with the symbols <code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code> through
+<code class="scheme"><span class="keyword">'</span><span class="variable">z</span></code>. Using just those letters, however, is not enough because the
+program also needs to maintain a word that records how much the second
+player has guessed. The solution is to add one extra ``letter'' to our
+alphabet that is distinct from the others; the hangman teachpack uses
+<code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code> for this purpose.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_6.7.2"></a>
+<b>Exercise 6.7.2.</b>&nbsp;&nbsp;  
+Provide a structure definition and a data definition for representing
+three-letter words. &nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-dd.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_6.7.3"></a>
+<b>Exercise 6.7.3.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">reveal</span></code>. It consumes three arguments: 
+</p>
+<ol>
+<li><p>the <i>chosen</i> 
+<a name="node_idx_588"></a>word, which is the word that we have to guess; </p>
+<p>
+</p>
+<li><p>the <i>status</i> 
+<a name="node_idx_590"></a>word, which shows which portion of the word has been revealed so far; and</p>
+<p>
+</p>
+<li><p>a letter, which is our current <i>guess</i>.
+<a name="node_idx_592"></a></p>
+</li></ol><p>
+The function produces a new status word, that is, a word that contains
+ordinary letters and <code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code>. The fields in the new status word are
+determined by comparing the guess with each pair of letters from the status
+word and the chosen word:
+</p>
+<ol>
+<li><p>If the guess is equal to the letter in the chosen word, the guess is
+the corresponding letter in the new status word.</p>
+<p>
+</p>
+<li><p>Otherwise, the new letter is the corresponding letter from the status
+word.
+</p>
+</li></ol><p></p>
+<p>
+Test the function with the following examples:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">reveal</span> (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">t</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">a</span>) (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">_</span>) <span class="keyword">'</span><span class="variable">u</span>)
+<span class="comment">;; expected value</span>
+(<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">e</span> <span class="keyword">'</span><span class="variable">_</span>)
+
+(<span class="variable">reveal</span> (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">e</span>) (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">_</span>  <span class="keyword">'</span><span class="variable">_</span>) <span class="keyword">'</span><span class="variable">e</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">e</span>)
+
+(<span class="variable">reveal</span> (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>) (<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>) <span class="keyword">'</span><span class="variable">l</span>)
+<span class="comment">;; expected value</span>
+(<span class="builtin">make-word</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+The first one shows what happens when the <code class="scheme"><span class="variable">guess</span></code> does not occur in
+the word; the second one shows what happens when it does occur; and the
+last one shows what happens when it occurs twice. </p>
+<p>
+<strong>Hints:</strong>  (1) Remember to develop auxiliary functions when a definition
+becomes too large or too complex to manage.</p>
+<p>
+(2) The function <code class="scheme"><span class="variable">reveal</span></code> consumes two structures and one atomic
+value (a letter). This suggests that we use the design recipe for compound
+data (figure&nbsp;<a href="#node_fig_Temp_39">12</a>). For the template, it is best to write down
+the selector expressions in a two-column format, one column per
+word.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-simple.html">Solution</a></p>
+<p></p>
+<p>
+When the functions <code class="scheme"><span class="variable">draw-next-part</span></code> and <code class="scheme"><span class="variable">reveal</span></code> are properly
+tested, set teachpack to <tt><strong>hangman.ss</strong></tt> and play the game by evaluating
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">hangman</span> <span class="builtin">make-word</span> <span class="variable">reveal</span> <span class="variable">draw-next-part</span>)
+</pre></div><p>
+The <code class="scheme"><span class="variable">hangman</span></code> function chooses a three-letter word randomly and
+displays a window with a pop-up menu for letters. Choose letters and, when
+ready, click the <tt>Check</tt> button to see whether the guess is correct.
+Comment out the test cases for exercise&nbsp;<a href="#node_thm_6.7.1">6.7.1</a> so that their
+drawing effects don't interfere with those of <code class="scheme"><span class="variable">hangman</span></code>.</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_32"></a><a href="#call_footnote_Temp_32"><sup><small>18</small></sup></a> An alternative terminology is ``to access the fields
+of a record.'' We prefer to think of structure values as containers from
+which we can extract other values.</p>
+<p><a name="footnote_Temp_33"></a><a href="#call_footnote_Temp_33"><sup><small>19</small></sup></a> For more documentation, see DrScheme's Help Desk.</p>
+<p><a name="footnote_Temp_37"></a><a href="#call_footnote_Temp_37"><sup><small>20</small></sup></a> DrScheme provides an optional tool that permits
+programmers to check whether users and programmers respect the data
+definition for a particular structure. To do so, a programmer must state
+data definitions in a special language. Although checking the adherence to
+data definitions is important for large programs, an introductory course
+can avoid this topic.</p>
+<p><a name="footnote_Temp_40"></a><a href="#call_footnote_Temp_40"><sup><small>21</small></sup></a> This
+series of sections was inspired by Ms. Karen Buras and her son.</p>
+<p><a name="footnote_Temp_44"></a><a href="#call_footnote_Temp_44"><sup><small>22</small></sup></a> In reality, we would want to play the game with
+words of arbitrary length, but a game based on three-letter words is
+easier to implement for now. We return to the problem in
+exercise&nbsp;<a href="curriculum-Z-H-22.html#node_thm_17.6.2">17.6.2</a>.</p>
+<p><a name="footnote_Temp_45"></a><a href="#call_footnote_Temp_45"><sup><small>23</small></sup></a> Thanks to Mr. John Clements for the artistic version of
+<i>draw-next-part</i>.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-8.html">previous</a></span><span>, <a href="curriculum-Z-H-10.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-9.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,802 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-49.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-48.html">previous</a></span><span>, <a href="curriculum-Z-H-50.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_39"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_39">Section  39</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_39">Encapsulation</a></h1>
+<p></p>
+<p>
+When we design a program to control a traffic light, we probably don't want
+to control just one traffic light, but several. Similarly, when we design a
+program to manage names and phone numbers, we might wish to manage several
+address books, not just one. Of course, we could copy the code for a
+traffic light controller (or an address book manager) and rename the state
+variables, but copying code is bad.  Furthermore, we might wish to create
+so many traffic lights that copying code is plain impractical.</p>
+<p>
+The proper solution is to use the power of abstraction. Here we abstract
+over several instances of the address book program and the traffic light
+program and so on. This differs from the notion of abstraction in
+part&nbsp;<a href="curriculum-Z-H-24.html#node_part_IV">IV</a> because it involves state variables, but the idea
+and even the technique is the same. We encapsulate the state variables and
+the functions in a <strong>local</strong>-expression
+<a name="node_idx_2250"></a><a name="node_idx_2252"></a>and thus give ourselves the power to create
+as many versions as necessary.  We learn how to encapsulate state variables
+in the first subsection, and practice it in the second one.</p>
+<p>
+</p>
+<a name="node_sec_39.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_39.1">39.1&nbsp;&nbsp;Abstracting with State Variables</a></h2>
+<p></p>
+<p>
+Suppose we wish to turn the program in figure&nbsp;<a href="curriculum-Z-H-45.html#node_fig_Temp_185">100</a>
+(page&nbsp;<a href="curriculum-Z-H-45.html">45</a>) into a program for managing
+(simulated) traffic lights. An operator of the simulation should be able to
+control each traffic light independently of the others. Indeed, the
+operator should be able to add or shut down traffic lights while the rest
+of the system remains unchanged and running. </p>
+<p>
+Based on our experience, we know that each traffic light in the simulation
+requires two definitions: 
+</p>
+<ol>
+<li><p>a state variable, <code class="scheme"><span class="variable">current-color</span></code>, which keeps track of the
+light's current color; and </p>
+<p>
+</p>
+<li><p>a service function, <code class="scheme"><span class="variable">next</span></code>, which switches the traffic light
+to the next color according to the traffic laws. 
+</p>
+</li></ol><p>
+For a graphical simulation, the service function would also redraw the
+traffic light so that users can view the current color. Finally, each
+traffic light has a unique location on the canvas:</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+
+</p>
+
+  <center><img src="../icons/multiple-traffic.gif" alt="[Multiple Traffic Lights]"></center>
+ <p>
+The sample program of figure&nbsp;<a href="curriculum-Z-H-45.html#node_fig_Temp_185">100</a> deals with a
+single traffic light and lacks the drawing operation.  The problem now is
+to turn this into a program that can create as many traffic lights as
+needed, each with its own state variables and switching functions and at
+its own location. If we were to copy the definitions in
+figure&nbsp;<a href="curriculum-Z-H-45.html#node_fig_Temp_185">100</a> and add definitions for dealing with
+the canvas, the various instances would differ in only one aspect: the
+data concerning the location of the traffic light. This thought experiment
+suggests that we should develop an abstract function that creates and
+manages traffic lights at various locations.</p>
+<p>
+Because the original program consists of several top-level definitions, we
+use the recipe of section&nbsp;<a href="curriculum-Z-H-28.html#node_sec_22.2">22.2</a>, which suggests
+wrapping the definitions in a <strong>local</strong>-expression inside a function. When local
+definitions include state variables, as in this example, we prefer to say
+that we <small>E</small><small>N</small><small>C</small><small>A</small><small>P</small><small>S</small><small>U</small><small>L</small><small>A</small><small>T</small><small>E</small>
+<a name="node_idx_2254"></a>definitions. This terminology emphasizes
+that the abstract function hides the state variables from other parts of
+the program. In particular, it implies that by putting a state variable in
+a <strong>local</strong>-expression we  guarantee that it can change only according to the
+managed services, not by arbitrary assignments. Still,
+the definition encapsulates and abstracts at the same time, and a
+programmer must keep this in mind.</p>
+<p>
+
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_201"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2256"></a><a name="node_idx_2258"></a><div align="left"><pre class="scheme"><span class="comment">;; <u>View:</u></span>
+<span class="comment">;; <code class="scheme"><span class="variable">draw-light</span> <span class="selfeval">:</span> <span class="variable">TL-color</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to (re)draw the traffic light on the canvas </span>
+(<span class="keyword">define</span> (<span class="variable">draw-light</span> <span class="variable">current-color</span> <span class="variable">x-posn</span>) ...))
+
+<span class="comment">;; <u>Model:</u></span>
+<span class="comment">;; <code class="scheme"><span class="variable">make-traffic-light</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (&nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span>)</code></span>
+<span class="comment">;; to create a red light with <code class="scheme">(<span class="builtin">make-posn</span> <span class="variable">x-posn</span> <span class="selfeval">0</span>)</code> as the upper-left corner</span>
+<span class="comment">;; effect: draw the traffic light on the canvas</span>
+(<span class="keyword">define</span> (<span class="variable">make-traffic-light</span> <span class="variable">street</span> <span class="variable">x-posn</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">current-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span></code></span>
+          <span class="comment">;; to keep track of the current color of the traffic light</span>
+          (<span class="keyword">define</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)
+	  
+	  <span class="comment">;; <code class="scheme"><span class="variable">init-traffic-light</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+	  <span class="comment">;; to (re)set <code class="scheme"><span class="variable">current-color</span></code> to red and to (re)create the view </span>
+	  (<span class="keyword">define</span> (<span class="variable">init-traffic-light</span>)
+	    (<span class="keyword">begin</span>
+	      (<span class="keyword">set!</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)
+	      (<span class="variable">draw-light</span> <span class="variable">current-color</span> <span class="variable">x-posn</span>)))
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+          <span class="comment">;; effect: to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+          <span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">next</span>)
+            (<span class="keyword">begin</span>
+              (<span class="keyword">set!</span> <span class="variable">current-color</span> (<span class="variable">next-color</span> <span class="variable">current-color</span>))
+              (<span class="variable">draw-light</span> <span class="variable">current-color</span> <span class="variable">x-posn</span>)))
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">next-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">TL-color</span></code></span>
+          <span class="comment">;; to compute the successor of <code class="scheme"><span class="variable">current-color</span></code> based on the traffic laws</span>
+          (<span class="keyword">define</span> (<span class="variable">next-color</span> <span class="variable">current-color</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">green</span> <span class="variable">current-color</span>) <span class="keyword">'</span><span class="variable">yellow</span>]
+              [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">yellow</span> <span class="variable">current-color</span>) <span class="keyword">'</span><span class="variable">red</span>]
+              [(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">red</span> <span class="variable">current-color</span>) <span class="keyword">'</span><span class="variable">green</span>])))
+    (<span class="keyword">begin</span>
+      <span class="comment">;; Initialize and produce <code class="scheme"><span class="variable">next</span></code></span>
+      (<span class="variable">init-traffic-light</span>)
+      <span class="variable">next</span>)))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 113:</b>&nbsp;&nbsp;Managing multiple traffic lights</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The next step is to consider what this function should do, that is, what it
+should consume, what it should produce, and what effects it should have, if
+any. Let's start with the name. We call the new function
+<code class="scheme"><span class="variable">make-traffic-light</span></code>; after all, making a simulated traffic light is
+the purpose of the abstracted program. Furthermore, according to our
+abstraction recipes, an abstraction must consume values that represent the
+unique aspects of an instance.  The unique aspect of a traffic light is its
+position on the canvas; for clarity, let's add a physical address, too. </p>
+<p>
+Every use of <code class="scheme"><span class="variable">make-traffic-light</span></code> should create a traffic light and
+enable the operator to switch it from one state to the next. The first part
+suggests an effect. Specifically, the function should initialize the state
+variable and draw the initial state of the traffic light at the designated
+position on the canvas. The second part of the statement suggests a result:
+a function for switching the state of the traffic light. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_201">113</a> contains the outline of the traffic simulator,
+including the complete definition of <code class="scheme"><span class="variable">make-traffic-light</span></code>. The
+simulator consists of a model and a view. The model is
+<code class="scheme"><span class="variable">make-traffic-light</span></code>. The view is called <code class="scheme"><span class="variable">draw-light</span></code> and is
+only sketched; the full definition of the view is left as an exercise.</p>
+<p>
+The definition of <code class="scheme"><span class="variable">make-traffic-light</span></code> is an ordinary function
+definition. It uses a <code class="scheme"><span class="keyword">local</span></code> definition to set up the single state
+variable, the initializer, and the state-changing function. The body of the
+<strong>local</strong>-expression uses the initializer and then produces <code class="scheme"><span class="variable">next</span></code> as the
+function's value. </p>
+<p>
+Using <code class="scheme"><span class="variable">make-traffic-light</span></code> we can create several individual traffic
+lights or entire collections of them. We could also add lights as time goes
+by. First, we create a sufficiently large canvas:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; create the canvas first </span>
+(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">160</span>)
+</pre></div><p>
+Second, we apply <code class="scheme"><span class="variable">make-traffic-light</span></code> as often as needed:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">lights</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">traffic-light</span>)</code></span>
+<span class="comment">;; to manage the lights along Sunrise </span>
+(<span class="keyword">define</span> <span class="variable">lights</span>
+  (<span class="builtin">list</span> (<span class="variable">make-traffic-light</span> <span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="ea999f849883998faa9883898f">[email&#160;protected]</a></span> <span class="selfeval">50</span>)
+        (<span class="variable">make-traffic-light</span> <span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="fe8d8b908c978d9bbe9d938b">[email&#160;protected]</a></span> <span class="selfeval">150</span>)))
+</pre></div><p>
+Here we define <code class="scheme"><span class="variable">lights</span></code> to be a list of two traffic lights. Each
+traffic light is a function, so <code class="scheme"><span class="variable">lights</span></code> stands for a list of two
+functions.</p>
+<p>
+After creating the traffic lights, we can change their states as desired. 
+To do so, we must keep in mind that each traffic light is represented by a
+function that consumes nothing and produces <code class="scheme"><span class="builtin">true</span></code>. Its effect is to
+change the hidden state variable and the drawing on the canvas. In our
+running example, we could use the <tt>Interactions</tt>
+<a name="node_idx_2260"></a>window as follows: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> ((<span class="builtin">second</span> <span class="variable">lights</span>)) 
+<span class="builtin">true</span>
+<span class="builtin">&gt;</span> (<span class="builtin">andmap</span> (<span class="keyword">lambda</span> (<span class="variable">a-light</span>) (<span class="variable">a-light</span>)) <span class="variable">lights</span>)
+<span class="builtin">true</span>
+</pre></div><p>
+The first interaction extracts the second item from <code class="scheme"><span class="variable">lights</span></code> and
+applies it. This sets the light at <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="6f1c1a011d061c0a2f0c021a">[email&#160;protected]</a></span></code> to green.  The
+second one switches the state of all items on <code class="scheme"><span class="variable">lights</span></code>.</p>
+<p>
+Each application of <code class="scheme"><span class="variable">make-traffic-light</span></code> turns variants of the
+<code class="scheme"><span class="keyword">local</span></code> definitions into top-level definitions, after renaming
+them. Because the above <code class="scheme"><span class="keyword">define</span></code> contains two applications of
+<code class="scheme"><span class="variable">make-traffic-light</span></code>, it creates two copies of each <code class="scheme"><span class="keyword">local</span></code>ly
+defined function and state variable during an evaluation:
+<a name="node_idx_2262"></a><a name="node_idx_2264"></a><a name="node_idx_2266"></a><a name="node_idx_2268"></a><a name="node_idx_2270"></a><a name="node_idx_2272"></a></p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme"><span class="comment">;; definitions for <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="fc8f89928e958f99bc8e959f99">[email&#160;protected]</a></span></code></span>
+(<span class="keyword">define</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="d1b2a4a3a3b4bfa5fcb2bebdbea391a3b8b2b4">[email&#160;protected]</a></span> <span class="keyword">'</span><span class="variable">red</span>)
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="365f585f421b42445750505f551b5a5f515e4276445f5553">[email&#160;protected]</a></span>) 
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="6407111616010a1049070b080b1624160d0701">[email&#160;protected]</a></span> <span class="keyword">'</span><span class="variable">red</span>)
+    (<span class="variable">draw-light</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="7a190f08081f140e5719151615083a0813191f">[email&#160;protected]</a></span> <span class="selfeval">50</span>)))
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="6a040f121e2a1803090f">[email&#160;protected]</a></span>) ...)
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="1a747f626e3779757675685a6873797f">[email&#160;protected]</a></span> <span class="variable">current-color</span>) ...)
+
+<span class="comment"></span>
+<span class="comment"><hr></span>
+<span class="comment"></span>
+
+<span class="comment">;; definitions for <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="0172746f7368726441626c74">[email&#160;protected]</a></span></code></span>
+(<span class="keyword">define</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="0b687e79796e657f2668646764794b68667e">[email&#160;protected]</a></span> <span class="keyword">'</span><span class="variable">red</span>)
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="ddb4b3b4a9f0a9afbcbbbbb4bef0b1b4bab5a99dbeb0a8">[email&#160;protected]</a></span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="f192848383949f85dc929e9d9e83b1929c84">[email&#160;protected]</a></span> <span class="keyword">'</span><span class="variable">red</span>)
+    (<span class="variable">draw-light</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="6a091f18180f041e4709050605182a09071f">[email&#160;protected]</a></span> <span class="selfeval">150</span>)))
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="b1dfd4c9c5f1d2dcc4">[email&#160;protected]</a></span>) ...)
+
+(<span class="keyword">define</span> (<span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="751b100d0158161a191a0735161800">[email&#160;protected]</a></span> <span class="variable">current-color</span>) ...)
+
+(<span class="keyword">define</span> <span class="variable">lights</span>
+  (<span class="builtin">list</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="dcb2b9a4a89caeb5bfb9">[email&#160;protected]</a></span>
+        <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="0f616a777b4f6c627a">[email&#160;protected]</a></span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>The new top-level definitions of <code class="scheme"><span class="variable">init-traffic-light</span></code> show how the
+renaming ensures that one of them takes care of <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="6c1f19021e051f092c1e050f09">[email&#160;protected]</a></span></code> and
+the other one of <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="0e7d7b607c677d6b4e6d637b">[email&#160;protected]</a></span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_39.1.1"></a>
+<b>Exercise 39.1.1.</b>&nbsp;&nbsp; 
+What is the effect of the second interaction above?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-tl-dd.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.1.2"></a>
+<b>Exercise 39.1.2.</b>&nbsp;&nbsp; 
+Fill in the bodies of <code class="scheme"><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="adc3c8d5d9eddfc4cec8">[email&#160;protected]</a></span></code> and <code class="scheme"><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="dcb2b9a4a89cbfb1a9">[email&#160;protected]</a></span></code> in the
+hand-evaluated program. Then evaluate <code class="scheme">((<span class="builtin">second</span> <span class="variable">lights</span>))</code> in the
+context of these definitions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-tl-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.1.3"></a>
+<b>Exercise 39.1.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">draw-light</span></code>. It realizes the view part of the
+traffic light simulation in figure&nbsp;<a href="#node_fig_Temp_201">113</a>. Each traffic
+light should be as tall as the canvas, delineated by solid lines on the
+left and right. The suggested dimensions of a single light are
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">WIDTH</span> <span class="selfeval">50</span>)
+(<span class="keyword">define</span> <span class="variable">RADIUS</span> <span class="selfeval">20</span>)
+(<span class="keyword">define</span> <span class="variable">DISTANCE-BETWEEN-BULBS</span> <span class="selfeval">10</span>)
+<span class="comment">;; the minimum canvas height</span>
+(<span class="keyword">define</span> <span class="variable">HEIGHT</span> 
+  (<span class="builtin">+</span> <span class="variable">DISTANCE-BETWEEN-BULBS</span>
+     (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>)
+     <span class="variable">DISTANCE-BETWEEN-BULBS</span>
+     (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>)
+     <span class="variable">DISTANCE-BETWEEN-BULBS</span>
+     (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">RADIUS</span>)
+     <span class="variable">DISTANCE-BETWEEN-BULBS</span>))
+</pre></div><p>
+Develop the necessary definitons separate from the rest of the traffic
+light program, then create a single function definition using
+<code class="scheme"><span class="keyword">local</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-tl-draw.html">Solution</a></p>
+<p></p>
+<p>
+Now suppose we wish to provide the additional service of resetting an
+individual traffic light. That is, in addition to switching from the
+current color to the next, an operator should be able to set a traffic
+light to red. The function for doing so already exists:
+<code class="scheme"><span class="variable">init-traffic-light</span></code>. It sets <code class="scheme"><span class="variable">current-color</span></code> to
+<code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> and redraws the image on the canvas. But,
+<code class="scheme"><span class="variable">init-traffic-light</span></code> is inaccessible because it is defined within
+the <strong>local</strong>-expression of <code class="scheme"><span class="variable">make-traffic-light</span></code>.  If we wish the function to
+be visible, it must be the result of <code class="scheme"><span class="variable">make-traffic-light</span></code> just like
+<code class="scheme"><span class="variable">next</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_202"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p></p>
+<p><a name="node_idx_2274"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">make-traffic-light</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span>)</code></span>
+<span class="comment">;; to create a red light with <code class="scheme">(<span class="builtin">make-posn</span> <span class="variable">x-posn</span> <span class="selfeval">0</span>)</code> as the upper-left corner</span>
+<span class="comment">;; effect: draw the traffic light on the canvas</span>
+(<span class="keyword">define</span> (<span class="variable">make-traffic-light</span> <span class="variable">street</span> <span class="variable">x-posn</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <u>Model:</u></span>
+          <span class="comment">;; <code class="scheme"><span class="variable">current-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span></code></span>
+          <span class="comment">;; to keep track of the current color of the traffic light</span>
+          (<span class="keyword">define</span> <span class="variable">current-color</span> <span class="keyword">'</span><span class="variable">red</span>)
+	  
+	  <span class="comment">;; <code class="scheme"><span class="variable">init-traffic-light</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+	  <span class="comment">;; to (re)set <code class="scheme"><span class="variable">current-color</span></code> to red and to (re)create the view </span>
+	  (<span class="keyword">define</span> (<span class="variable">init-traffic-light</span>) ...)
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+          <span class="comment">;; effect: to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+          <span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">next</span>) ...)
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">next-color</span> <span class="selfeval">:</span> <span class="variable">TL-color</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">TL-color</span></code></span>
+          <span class="comment">;; to compute the successor of <code class="scheme"><span class="variable">current-color</span></code> based on the traffic laws</span>
+          (<span class="keyword">define</span> (<span class="variable">next-color</span> <span class="variable">current-color</span>) ...)
+	  <span class="comment">;; <code class="scheme"><span class="variable">service-manager</span> <span class="selfeval">:</span> (<span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span>)</code></span>
+	  <span class="comment">;; to apply either <code class="scheme"><span class="variable">next</span></code> or <code class="scheme"><span class="variable">init-traffic-light</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">next</span>) (<span class="variable">next</span>)]
+	      [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">reset</span>) (<span class="variable">init-traffic-light</span>)]
+	      [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">traffic-light</span> <span class="selfeval">&quot;message not understood&quot;</span>)])))
+    (<span class="keyword">begin</span>
+      <span class="comment">;; Initialize and produce <code class="scheme"><span class="variable">service-manager</span></code></span>
+      (<span class="variable">init-traffic-light</span>)
+      <span class="variable">service-manager</span>)))
+</pre></div><p>
+</p>
+<p></p>
+<p></p>
+</td></tr>
+<tr><td align="center"><b>Figure 114:</b>&nbsp;&nbsp;Managing multiple traffic lights with a reset service</td></tr>
+<tr><td>
+ 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+To make both <code class="scheme"><span class="variable">next</span></code> and <code class="scheme"><span class="variable">init-traffic-light</span></code> a result of
+<code class="scheme"><span class="variable">make-traffic-light</span></code> requires some way of combining the two
+functions into a single value. Since functions are values in Scheme, we
+could combine the two functions in a list, a structure, or even a vector.
+Another possibility is to combine the two functions in a third function. 
+Here we discuss this third possibility because it is an important technique
+in the context of managing state variables and services. </p>
+<p>
+We call the new kind of function <code class="scheme"><span class="variable">service-manager</span></code>, because it hides
+and manages functions that implement services. The function accepts two 
+symbols: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">next</span></code>, which indicates that <code class="scheme">(<span class="variable">next</span>)</code> should be
+evaluated, and </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">reset</span></code>, which indicates that <code class="scheme">(<span class="variable">reset</span>)</code> should be
+evaluated. 
+</p>
+</li></ol><p>
+Furthermore, the function is the result of the revised version of
+<code class="scheme"><span class="variable">make-traffic-light</span></code>. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_202">114</a> contains the modified definition of
+<code class="scheme"><span class="variable">make-traffic-light</span></code>.  Since an operator may mistakenly apply
+functions to inappropriate arguments, <code class="scheme"><span class="variable">service-manager</span></code> is a checked
+function in the sense of section&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.5">7.5</a>. It signals an
+error if the input is a symbol other than <code class="scheme"><span class="keyword">'</span><span class="variable">next</span></code> or
+<code class="scheme"><span class="keyword">'</span><span class="variable">reset</span></code>.</p>
+<p>
+We use the new <code class="scheme"><span class="variable">make-traffic-light</span></code> function exactly like the old one:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; create the canvas first </span>
+(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">160</span>)
+
+<span class="comment">;; <code class="scheme"><span class="variable">lights</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">traffic-light</span>)</code></span>
+<span class="comment">;; to manage the lights along Sunrise </span>
+(<span class="keyword">define</span> <span class="variable">lights</span>
+  (<span class="builtin">list</span> (<span class="variable">make-traffic-light</span> <span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="37444259455e445277455e5452">[email&#160;protected]</a></span> <span class="selfeval">50</span>)
+        (<span class="variable">make-traffic-light</span> <span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="5a292f342833293f1a39372f">[email&#160;protected]</a></span> <span class="selfeval">150</span>)))
+</pre></div><p>
+The result, however, is that now every traffic light is represented as a
+function on symbols: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> ((<span class="builtin">second</span> <span class="variable">lights</span>) <span class="keyword">'</span><span class="variable">next</span>) 
+<span class="builtin">true</span>
+<span class="builtin">&gt;</span> (<span class="builtin">andmap</span> (<span class="keyword">lambda</span> (<span class="variable">a-light</span>) (<span class="variable">a-light</span> <span class="keyword">'</span><span class="variable">reset</span>)) <span class="variable">lights</span>)
+<span class="builtin">true</span>
+</pre></div><p>
+The first interaction switches the initially red light labeled
+<code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="5221273c203b213712313f27">[email&#160;protected]</a></span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>. The second one changes the state
+of every light back to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> skipping the <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> stage
+for the light at <code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="2f5c5a415d465c4a6f4c425a">[email&#160;protected]</a></span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_39.1.4"></a>
+<b>Exercise 39.1.4.</b>&nbsp;&nbsp; 
+Complete the definition of the program in
+figure&nbsp;<a href="#node_fig_Temp_202">114</a>, using the function from
+exercise&nbsp;<a href="#node_thm_39.1.3">39.1.3</a>. Then use DrScheme's
+<tt>Interactions</tt>
+<a name="node_idx_2276"></a>window to switch and reset traffic
+lights.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-tl-repl.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.1.5"></a>
+<b>Exercise 39.1.5.</b>&nbsp;&nbsp; 
+Evaluate the above program by hand and confirm that the light labeled
+<code class="scheme"><span class="keyword">'</span><span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="790a0c170b100a1c390b101a1c">[email&#160;protected]</a></span></code> switches from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> directly back to
+<code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-tl-eval2.html">Solution</a></p>
+<p></p>
+<p>
+For the address-book example from part&nbsp;<a href="curriculum-Z-H-42.html#node_part_VII">VII</a>, the need for
+managing two services is even more apparent. After all, the motivating idea
+behind the example is that users can access one state variable with two
+different services: <code class="scheme"><span class="variable">add-to-address-book</span></code> for adding new entries and
+<code class="scheme"><span class="variable">lookup</span></code> for looking up the phone number for a given name. Following
+our encapsulation recipe, we must
+</p>
+<ol>
+<li><p>define a function <code class="scheme"><span class="variable">make-address-book</span></code> whose body is a
+<strong>local</strong>-expression; </p>
+<p>
+</p>
+<li><p>place the definitions in this <strong>local</strong>-expression; and</p>
+<p>
+</p>
+<li><p>introduce a function called <code class="scheme"><span class="variable">service-manager</span></code> to manage the
+two services.  
+</p>
+</li></ol><p>
+By now, we have the first two steps firmly under control; the last one,
+however, is complex here, because unlike in the previous case, the two
+functions that implement the services consume different numbers of
+arguments and produce different kinds of results.</p>
+<p>
+Let's first agree on the inputs for <code class="scheme"><span class="variable">service-manager</span></code>. Two good
+mnemonic symbols are <code class="scheme"><span class="keyword">'</span><span class="variable">add</span></code> for adding phone numbers and
+<code class="scheme"><span class="keyword">'</span><span class="variable">search</span></code> for looking up the number for some given name. This
+suggests the following template:
+<a name="node_idx_2278"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">add</span>) ... <span class="variable">A</span> ...]
+    [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">search</span>) ... <span class="variable">B</span> ...]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">address-book</span> <span class="selfeval">&quot;message not understood&quot;</span>)]))
+</pre></div><p>
+The problem is that it is not clear how to replace <code class="scheme"><span class="variable">A</span></code> and
+<code class="scheme"><span class="variable">B</span></code> with valid Scheme expressions that compute the appropriate value
+and effect. For <code class="scheme"><span class="variable">A</span></code>, we need not only <code class="scheme"><span class="variable">msg</span></code> but also a name
+and a phone number. For <code class="scheme"><span class="variable">B</span></code>, we need the name.</p>
+<p>
+One solution is to produce functions that consume the additional arguments
+and then perform the appropriate computation. In other words,
+<code class="scheme"><span class="variable">service-manager</span></code> is now a function that produces a function for two
+symbols. Since we have not encountered this kind of result before, we
+introduce a new form of data definition: </p>
+<p>
+<a name="node_idx_2280"></a>An <i>address-book</i> is an interface: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">add</span></code> :: <code class="scheme"><span class="variable">symbol</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">search</span></code> :: <code class="scheme"><span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code>
+</p>
+</li></ol><p>
+</p>
+<p>
+The data definition refers to the concept of <small>I</small><small>N</small><small>T</small><small>E</small><small>R</small><small>F</small><small>A</small><small>C</small><small>E</small>,
+<a name="node_idx_2282"></a>which is a function that consumes a finite number of symbols and produces 
+functions with different types in return. Because this kind of function is
+radically different from what we have seen before, we use a different
+name. </p>
+<p>
+Now it is possible to write a contract and a purpose statement:
+<a name="node_idx_2284"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">service-manager</span> <span class="selfeval">:</span> <span class="variable">address-book</span></code></span>
+<span class="comment">;; to manage addition to, and searches in, the address book </span>
+(<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>) ...)
+</pre></div><p>
+To define the function, we distinguish the two cases. In the case of
+<code class="scheme"><span class="keyword">'</span><span class="variable">add</span></code>, it is obvious what we produce:
+<code class="scheme"><span class="variable">add-to-address-book</span></code>. </p>
+<p>
+In the case of <code class="scheme"><span class="keyword">'</span><span class="variable">search</span></code>, we need a function that consumes a symbol
+and then applies <code class="scheme"><span class="variable">lookup</span></code> to this symbol and the <code class="scheme"><span class="keyword">local</span></code>ly
+defined <code class="scheme"><span class="variable">address-book</span></code>. Using <code class="scheme"><span class="keyword">lambda</span></code>, we can create such a
+function on the fly:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">lambda</span> (<span class="variable">name</span>) 
+  (<span class="variable">lookup</span> <span class="variable">name</span> <span class="variable">address-book</span>))
+</pre></div><p>
+Since the function is a value, it is the natural answer to <code class="scheme"><span class="keyword">'</span><span class="variable">search</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_203"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2286"></a><a name="node_idx_2288"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">make-address-book</span> <span class="selfeval">:</span> <span class="variable">string</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">address-book</span></code></span>
+<span class="comment">;; to create a function that manages all the services for a hidden address book</span>
+(<span class="keyword">define</span> (<span class="variable">make-address-book</span> <span class="variable">title</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define-struct</span> <span class="variable">entry</span> (<span class="variable">name</span> <span class="variable">number</span>))
+	  <span class="comment">;; <code class="scheme"><span class="variable">address-book</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">name</span> <span class="variable">number</span>))</code></span>
+	  <span class="comment">;; to maintain a list of name-phone number associations</span>
+	  (<span class="keyword">define</span> <span class="variable">address-book</span> <span class="builtin">empty</span>)
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">add-to-address-book</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> <span class="variable">void</span></code></span>
+	  <span class="comment">;; effect: to add a name-phone number association to <code class="scheme"><span class="variable">address-book</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">add-to-address-book</span> <span class="variable">name</span> <span class="variable">phone</span>)
+            (<span class="keyword">set!</span> <span class="variable">address-book</span> (<span class="builtin">cons</span> (<span class="builtin">make-entry</span> <span class="variable">name</span> <span class="variable">phone</span>) <span class="variable">address-book</span>)))
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">lookup</span> <span class="selfeval">:</span> <span class="variable">symbol</span> (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">number</span>)) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+          <span class="comment">;; to lookup the phone number for <code class="scheme"><span class="variable">name</span></code> in <code class="scheme"><span class="variable">address-book</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">lookup</span> <span class="variable">name</span> <span class="variable">ab</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">ab</span>) false]
+              [<span class="keyword">else</span> (<span class="keyword">cond</span>
+                      [(<span class="builtin">symbol=?</span> (<span class="builtin">entry-name</span> (<span class="builtin">first</span> <span class="variable">ab</span>)) <span class="variable">name</span>)
+		       (<span class="builtin">entry-number</span> (<span class="builtin">first</span> <span class="variable">ab</span>))]
+                      [<span class="keyword">else</span> (<span class="variable">lookup</span> <span class="variable">name</span> (<span class="builtin">rest</span> <span class="variable">ab</span>))])]))
+          
+          <span class="comment">;; <code class="scheme"><span class="variable">service-manager</span> <span class="selfeval">:</span> <span class="variable">address-book</span> <span class="variable">object</span></code></span>
+          <span class="comment">;; to manage addition to, and searches in, the address book </span>
+          (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">add</span>)
+	       <span class="variable">add-to-address-book</span>]
+              [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">search</span>)
+	       (<span class="keyword">lambda</span> (<span class="variable">name</span>)
+		 (<span class="variable">lookup</span> <span class="variable">name</span> <span class="variable">address-book</span>))]
+              [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">address-book</span> <span class="selfeval">&quot;message not understood&quot;</span>)])))
+    <span class="variable">service-manager</span>))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 115:</b>&nbsp;&nbsp;Managing multiple address books</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_203">115</a> shows the complete definition of
+<code class="scheme"><span class="variable">make-address-book</span></code>. The definition is standard by now. It consists
+of a <strong>local</strong>-expression, which in turn produces the <code class="scheme"><span class="keyword">local</span></code>ly defined
+<code class="scheme"><span class="variable">service-manager</span></code> as the result. There is no need for an initializer
+because the only state variable is immediately initialized and there is no
+graphical view. </p>
+<p>
+To use an address book, we first create it with <code class="scheme"><span class="variable">make-address-book</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">friends</span> <span class="selfeval">:</span> <span class="variable">an</span> <span class="variable">address</span> <span class="variable">book</span></code></span>
+<span class="comment">;; to maintain an address book for friends </span>
+(<span class="keyword">define</span> <span class="variable">friends</span>
+  (<span class="variable">make-address-book</span> <span class="selfeval">&quot;Friends of Charles&quot;</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">business</span> <span class="selfeval">:</span> <span class="variable">an</span> <span class="variable">address</span> <span class="variable">book</span></code></span>
+<span class="comment">;; to maintain an address book for business colleagues</span>
+(<span class="keyword">define</span> <span class="variable">business</span>
+  (<span class="variable">make-address-book</span> <span class="selfeval">&quot;Colleagues @ Rice, Inc.&quot;</span>))
+</pre></div><p>
+The two definitions create two distinct address books, one for a
+collection of friends and a second one for business acquaintances. </p>
+<p>
+Second, we add names and phone numbers to the address book, or we retrieve
+numbers as desired:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> ((<span class="variable">friends</span> <span class="keyword">'</span><span class="variable">add</span>) <span class="keyword">'</span><span class="variable">Bill</span> <span class="selfeval">2</span>)
+<span class="builtin">&gt;</span> ((<span class="variable">friends</span> <span class="keyword">'</span><span class="variable">add</span>) <span class="keyword">'</span><span class="variable">Sally</span> <span class="selfeval">3</span>)
+<span class="builtin">&gt;</span> ((<span class="variable">friends</span> <span class="keyword">'</span><span class="variable">add</span>) <span class="keyword">'</span><span class="variable">Dave</span> <span class="selfeval">4</span>)
+<span class="builtin">&gt;</span> ((<span class="variable">business</span> <span class="keyword">'</span><span class="variable">add</span>) <span class="keyword">'</span><span class="variable">Emil</span> <span class="selfeval">5</span>)
+<span class="builtin">&gt;</span> ((<span class="variable">business</span> <span class="keyword">'</span><span class="variable">add</span>) <span class="keyword">'</span><span class="variable">Faye</span> <span class="selfeval">18</span>)
+</pre></div><p>
+In this case, we added three entries to the address book named
+<code class="scheme"><span class="variable">friends</span></code> and two to the one called <code class="scheme"><span class="variable">business</span></code>. </p>
+<p>
+An addition to, say, <code class="scheme"><span class="variable">friends</span></code> works in two steps. The first step is
+to apply <code class="scheme"><span class="variable">friends</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">add</span></code>. This yields the (hidden) function 
+<code class="scheme"><span class="variable">add-to-address-book</span></code>. The second step is to apply this resulting
+function to a name and a number. In a similar vein, looking up a phone number
+also works in two steps. The application of, say, <code class="scheme"><span class="variable">friends</span></code> to
+<code class="scheme"><span class="keyword">'</span><span class="variable">search</span></code> yields a function that consumes a name. This function is then
+applied to a symbol: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> ((<span class="variable">friends</span> <span class="keyword">'</span><span class="variable">search</span>) <span class="keyword">'</span><span class="variable">Bill</span>)
+<span class="selfeval">2</span>
+<span class="builtin">&gt;</span> ((<span class="variable">business</span> <span class="keyword">'</span><span class="variable">search</span>) <span class="keyword">'</span><span class="variable">Bill</span>)
+<span class="builtin">false</span>
+</pre></div><p>
+The two applications show that the number for <code class="scheme"><span class="keyword">'</span><span class="variable">Bill</span></code> in
+<code class="scheme"><span class="variable">friends</span></code> is <code class="scheme"><span class="selfeval">2</span></code> and that there is no number for <code class="scheme"><span class="keyword">'</span><span class="variable">Bill</span></code>
+in colleagues. According to the above additions, that's exactly what we should
+expect. Of course, we could also co-mingle the two actions in the
+<tt>Interactions</tt>
+<a name="node_idx_2290"></a>window, adding and searching for phone numbers at will.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_39.1.6"></a>
+<b>Exercise 39.1.6.</b>&nbsp;&nbsp; 
+Develop an interface definition for the results of the revised version of
+<code class="scheme"><span class="variable">make-traffic-light</span></code> (see
+figure&nbsp;<a href="#node_fig_Temp_202">114</a>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-ab-eval-13.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.1.7"></a>
+<b>Exercise 39.1.7.</b>&nbsp;&nbsp; 
+Show the top-level definitions that the evaluation of <code class="scheme"><span class="variable">friends</span></code> and
+<code class="scheme"><span class="variable">colleagues</span></code> creates.</p>
+<p>
+What is the state of these definitions after the five <code class="scheme"><span class="keyword">'</span><span class="variable">add</span></code>
+expressions have been evaluated?  Evaluate <code class="scheme">((<span class="variable">friends</span> <span class="keyword">'</span><span class="variable">search</span>) <span class="keyword">'</span><span class="variable">Bill</span>)</code>
+in this context.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-ab-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.1.8"></a>
+<b>Exercise 39.1.8.</b>&nbsp;&nbsp; 
+Design <code class="scheme"><span class="variable">gui-for-address-book</span></code>. The function consumes a list
+of strings and creates a new address book for each one of them. It also
+creates and displays a graphical user interface for an address book with a
+choice menu that lets users choose to which address book they want to add an
+entry and in which address book the program should search for a
+number.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/multipl-ab-gui.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_39.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_39.2">39.2&nbsp;&nbsp;Practice with Encapsulation</a></h2>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.2.1"></a>
+<b>Exercise 39.2.1.</b>&nbsp;&nbsp; 
+Develop the program <code class="scheme"><span class="variable">make-city</span></code>. It manages a collection of traffic
+lights. The program should provide four services:
+</p>
+<ol>
+<li><p>adding a traffic light with a label (string); 
+</p>
+<li><p>removing a traffic light by label; 
+</p>
+<li><p>switching the state of a traffic light with some given label; and 
+</p>
+<li><p>resetting a traffic light to red with some given label. 
+</p>
+</li></ol><p>
+<strong>Hint:</strong> The first two services are provided directly; the last two are
+implemented by the simulated traffic lights. </p>
+<p>
+After the development of the program is completed, develop a graphical user
+interface.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-traffic.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.2.2"></a>
+<b>Exercise 39.2.2.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">make-master</span></code>. The program consumes nothing, creates an
+instance of the color-guessing game of section&nbsp;<a href="curriculum-Z-H-46.html#node_sec_37.1">37.1</a>, and
+produces the <code class="scheme"><span class="variable">master-check</span></code> function as the only result. After the
+player has guessed the answer, the function should simply respond with
+``game over.'' A typical dialog would proceed as follows:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="keyword">define</span> <span class="variable">master1</span> (<span class="variable">make-master</span>))
+<span class="builtin">&gt;</span> (<span class="variable">master-check</span> <span class="keyword">'</span><span class="variable">red</span> <span class="keyword">'</span><span class="variable">red</span>)
+<span class="keyword">'</span><span class="variable">NothingCorrect</span>
+<span class="builtin">&gt;</span> (<span class="variable">master-check</span> <span class="keyword">'</span><span class="variable">black</span> <span class="keyword">'</span><span class="variable">pink</span>)
+<span class="keyword">'</span><span class="variable">OneColorOccurs</span>
+... 
+</pre></div><p>
+Compare this with the first dialogue in section&nbsp;<a href="curriculum-Z-H-46.html#node_sec_37.1">37.1</a>.</p>
+<p>
+Add a service to <code class="scheme"><span class="variable">make-master</span></code> that reveals the hidden colors. That
+way a player who is tired of playing the game can find out the
+answer.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-master.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.2.3"></a>
+<b>Exercise 39.2.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">make-hangman</span></code>. The program consumes a list of words,
+creates a hangman game using the list, and produces the
+<code class="scheme"><span class="variable">hangman-guess</span></code> function as a result. A player would use the dialogue
+as follows:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="keyword">define</span> <span class="variable">hangman-easy</span> (<span class="variable">make-hangman</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">an</span> <span class="keyword">'</span><span class="keyword">and</span> <span class="keyword">'</span><span class="variable">able</span> <span class="keyword">'</span><span class="variable">adler</span>)))
+<span class="builtin">&gt;</span> (<span class="keyword">define</span> <span class="variable">hangman-difficult</span> (<span class="variable">make-hangman</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">ardvark</span> ...)))
+<span class="builtin">&gt;</span> (<span class="variable">hangman-easy</span> <span class="keyword">'</span><span class="variable">a</span>)
+<span class="selfeval">&quot;You won&quot;</span>
+<span class="builtin">&gt;</span> (<span class="variable">hangman-difficult</span> <span class="keyword">'</span><span class="variable">a</span>)
+(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">head</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>))
+<span class="builtin">&gt;</span> ... 
+</pre></div><p>
+Compare this with the first dialogue in section&nbsp;<a href="curriculum-Z-H-46.html#node_sec_37.2">37.2</a>. </p>
+<p>
+Add a service to <code class="scheme"><span class="variable">make-master</span></code> that reveals the chosen word.</p>
+<p>
+An optional extension is to equip the program with a graphical user
+interface and a graphical view of the stick figure. Reuse existing 
+solutions as much as possible.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-hangman.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.2.4"></a>
+<b>Exercise 39.2.4.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">make-player</span></code>. The program abstracts over the functions of
+section&nbsp;<a href="curriculum-Z-H-46.html#node_sec_37.5">37.5</a>. Using the program, we can create several
+players that wander through the campus: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">player1</span> (<span class="variable">make-player</span> <span class="keyword">'</span><span class="variable">BioEngineering</span>))
+(<span class="keyword">define</span> <span class="variable">player2</span> (<span class="variable">make-player</span> <span class="keyword">'</span><span class="variable">MuddBuilding</span>))
+...
+</pre></div><p>
+The argument to <code class="scheme"><span class="variable">make-player</span></code> specifies the initial position of the
+player. </p>
+<p>
+Each instance should be able to produce
+</p>
+<ol>
+<li><p>a picture of the current surroundings; 
+</p>
+<li><p>a list of the available building connections; and 
+</p>
+<li><p>a move from one place to another through an available connection. 
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Extension</strong>:  Two players may be in the same building at the same time,
+but they cannot interact. Extend the game so that two players in the same
+building can interact in some form.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-campus-tours.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_39.2.5"></a>
+<b>Exercise 39.2.5.</b>&nbsp;&nbsp; 
+Develop the program <code class="scheme"><span class="variable">moving-pictures</span></code>. It consumes a position and a
+picture, that is, a list of shapes as defined in
+sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>, and&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>,
+and&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>. (Also see&nbsp;<a href="curriculum-Z-H-27.html#node_sec_21.4">21.4</a> for functions on
+moving pictures.) It supports two services. First, it can place the shape
+at a specific position. Second, it can reset the picture to the initially
+given position.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/localmoving.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-48.html">previous</a></span><span>, <a href="curriculum-Z-H-50.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-49.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

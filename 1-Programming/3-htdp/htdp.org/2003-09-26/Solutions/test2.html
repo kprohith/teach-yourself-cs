@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/test2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.10; How to Design Programs </title>
+</head>
+<body>
+<a href="web-2.html">17.8.9</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.10">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.10 test-replace-eol-with
+------------------------------------------------------------
+;Data Definition:
+a list-of-numbers is either
+  1. empty or
+  2. (cons n lon)
+  where n is a number and lon is a list-of-numbers
+|#
+;;test-replace-eol-with: 
+;;  list-of-numbers list-of-numbers list-of-numbers 
+;;    -&gt; boolean
+;;consumes three list-of-numbers. The first two are used
+;;as arguments to replace-eol-with. The third list-of-numbers
+;;is compared to the result of this call to replace-eol-with.
+;;If they are the same, true is returned. If they are 
+;;different, false is returned
+(define (test-replace-eol-with arg1 arg2 result)
+  (cond
+    [(equal? (replace-eol-with arg1 arg2) result)
+     true]
+    [else
+     (list "bad test result: " arg1 arg2 result)]))
+
+#| replace-eol-with from 17.1
+------------------------------------------------------------
+;template:
+(define (replace-eol-with alon1 alon2)
+  (cond
+    ((empty? alon1) ...)
+    (else ... (first alon1) ... 
+          ... (replace-eol-with (rest alon1) alon2) ... )))
+|#
+;; replace-eol-with : list-of-numbers list-of-numbers  -&gt;  list-of-numbers
+;; to construct a new list by replacing empty in alon1 with alon2
+(define (replace-eol-with alon1 alon2)
+  (cond
+    ((empty? alon1) alon2)
+    (else (cons (first alon1) (replace-eol-with (rest alon1) alon2)))))
+
+;Test replace-eol-with test-replace-eol-with:
+(define L (cons 4 (cons 8 (cons 12 empty))))
+
+(test-replace-eol-with empty L L)
+
+(test-replace-eol-with (cons 1 empty) L (cons 1 L))
+
+(test-replace-eol-with 
+ (cons 2 (cons 1 empty)) 
+ L 
+ (cons 2 (cons 1 L)))
+
+(test-replace-eol-with 
+ (cons 2 (cons 11 (cons 1 empty))) 
+ L
+ (cons 2 (cons 11 (cons 1 L)))) 
+
+(test-replace-eol-with 
+ (cons 2 (cons 11 (cons 1 empty))) 
+ L
+ (cons 2 (cons 11 (cons 29 L))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/test2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

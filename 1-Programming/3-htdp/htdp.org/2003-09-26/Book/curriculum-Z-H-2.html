@@ -1,0 +1,899 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-1.html">previous</a></span><span>, <a href="curriculum-Z-H-3.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_part_Temp_2"></a>
+<h1 class="part" align="center"><div class="partheading">&nbsp;</div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_part_Temp_2">Preface</a></h1>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<div align="right"><table width="60%"><tr><td>
+<span class="epigraph">
+
+<p></p>
+<div align="left">
+<em>It goes against the grain of modern education to teach children to
+program. What fun is there in making plans, acquiring discipline in
+organizing thoughts, devoting attention to detail and learning to be
+self-critical? <br>
+ </em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Alan Perlis, <em>Epigrams in Programming</em>
+</div><p>
+</p>
+
+</span>
+</td></tr></table>
+</div>
+<p></p>
+<p>
+Many professions require some form of computer
+programming. Accountants program spreadsheets and word processors;
+photographers program photo editors; musicians program synthesizers; and
+professional programmers instruct plain computers. Programming has become a
+required skill.</p>
+<p>
+Yet programming is more than just a vocational skill. Indeed, <em>good
+programming</em> is a fun activity, a creative outlet, and a way to express
+abstract ideas in a tangible form. And designing programs teaches a variety
+of skills that are important in all kinds of professions: critical reading,
+analytical thinking, creative synthesis, and attention to detail.</p>
+<p>
+We therefore believe that the study of program design deserves the same
+central role in general education as mathematics and English. Or, put more
+succinctly,
+</p>
+<div align="center"><table><tr><td>
+ 
+<strong>everyone should learn how to design programs.</strong>
+</td></tr></table></div>
+
+On one hand, program design teaches the same analytical skills as
+mathematics. But, unlike mathematics, working with programs is an active
+approach to learning. Interacting with software provides immediate feedback
+and thus leads to exploration, experimentation, and
+self-evaluation. Furthermore, designing programs produces useful and fun
+things, which vastly increases the sense of accomplishment when compared to
+drill exercises in mathematics. On the other hand, program design teaches
+the same analytical reading and writing skills as English.  Even the
+smallest programming tasks are formulated as word problems. Without
+critical reading skills, a student cannot design programs that match the
+specification. Conversely, good program design methods force a student to
+articulate thoughts about programs in proper English.<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_3"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+
+</p>
+
+<table align="center" bgcolor="lightgreen">
+
+<tr><th align="center"><font size="+1">
+ The Design Recipe for Functions
+</font></th></tr>
+
+<tr><td bgcolor="beige"><font size="+1" color="red">
+ Problem Analysis & Data Definition 
+</font></td></tr></table></td>
+
+</tr><tr><td bgcolor="beige"><font size="+1" color="red">
+ Contract, Purpose & Effect Statements, Header 
+</font></td></tr></table></div></td>
+
+</tr><tr><td bgcolor="beige"><font size="+1" color="red">
+ Examples
+</font></td></tr>
+
+<tr><td bgcolor="beige"><font size="+1" color="red">
+ Function Template
+</font></td></tr>
+
+<tr><td bgcolor="beige"><font size="+1" color="red">
+ Function Definition 
+</font></td></tr>
+
+<tr><td bgcolor="beige"><font size="+1" color="red">
+ Tests 
+</font></td></tr>
+</table>
+<p>
+</p>
+
+<tr><td align="center"><b>Figure 1:</b>&nbsp;&nbsp;The basic steps of a program design recipe</td></tr>
+<tr><td>
+
+</td></tr><p></p>
+</center><p></p>
+<p>
+This book is the first book on programming as the core subject of a liberal
+arts education. Its main focus is <em>the design process</em> that leads
+from problem statements to well-organized solutions; it deemphasizes the
+study of programming language details, algorithmic minutiae, and specific
+application domains.  Our desire to focus on the design process requires
+two radical innovations for introductory courses.  The first innovation is
+a set of <em>explicit design guidelines</em>. Existing curricula tend to
+provide vague and ill-defined suggestions, such as ``design from top to
+bottom'' or ``make the program structural.'' We have instead developed
+design guidelines that lead students from a problem statement to a
+computational solution in step-by-step fashion with well-defined
+intermediate products. In the process they learn to read, to analyze, to
+organize, to experiment, to think in a systematic manner.  The second
+innovation is a radically new programming environment.  In the past, texts
+on programming ignored the role of the programming environment in the
+learning process; they simply assumed that students had access to a
+professional environment. This book provides a <em>programming environment
+for beginners</em>. It also grows with the students as they master more and
+more of the material until it supports a full-fledged language for the
+whole spectrum of programming tasks: large-scale programming as well as
+scripting.</p>
+<p>
+<a name="node_idx_2"></a>Our guidelines are formulated as a number of <em>program design
+recipes</em>.<a name="call_footnote_Temp_4"></a><a href="#footnote_Temp_4"><sup><small>1</small></sup></a> A
+design recipe guides a beginning programmer through the entire
+problem-solving process. With design recipes, a beginner almost never again
+stares at a blank piece of paper or a blank computer screen. Instead, the
+student will check the design recipe and use the question-and-answer
+guidelines to make some progress.</p>
+<p>
+</p>
+<p>
+We created the design recipes by identifying categories of problems. The
+identification of a problem category is based on the classes of data that
+are used to represent the relevant information. Starting from the structure
+of this class description students derive the programs with a checklist.
+Figure&nbsp;<a href="#node_fig_Temp_3">1</a> shows the basic six steps of a design
+recipe checklist. Each step produces a well-defined intermediate product:
+</p>
+<ol>
+<li><p>the description of the class of problem data; 
+</p>
+<li><p>the informal specification of a program's behavior; 
+</p>
+<li><p>the illustration of the behavior with examples; 
+</p>
+<li><p>the development of a program template or layout; 
+</p>
+<li><p>the transformation of the template into a complete definition; and 
+</p>
+<li><p>the discovery of errors through testing. 
+</p>
+</li></ol><p>
+The major difference concerns the relationship of steps&nbsp;1 and&nbsp;4.</p>
+<p>
+Design recipes help beginners and teachers alike. Teachers can use the
+recipes to inspect a beginner's problem-solving skills, to diagnose
+weaknesses, and to suggest specific remedial steps. After all, each stage
+of the design recipe yields a well-defined, checkable product.  If a
+beginner is stuck, a teacher can inspect the intermediate products and
+determine what the problem is. Based on this analysis, the teacher can then
+provide guidance for a specific step in the recipe, raise appropriate
+questions, and recommend additional practice exercises.
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_Temp_5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_5">Why Everyone Should Learn to Program</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<div align="right"><table width="60%"><tr><td>
+<span class="epigraph">
+
+<p></p>
+<div align="left">
+<em>And as imagination bodies forth<br>
+The forms of things to unknown, and the poet's pen<br>
+Turns them to shapes, and gives to airy nothing<br>
+A local habitation and a name.<br>
+ </em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Shakespeare, <em>A Midsummer Night's Dream</em> V(i)
+</div><p>
+</p>
+
+</span>
+</td></tr></table>
+</div>
+<p></p>
+<p>
+Our claim that everyone programs or should learn to program might
+appear strange considering that, at first glance, fewer and fewer people
+seem to program these days. Instead, the majority of people use application
+packages, which don't seem to require any programming.  Even programmers
+use ``program generators,'' packages that create programs from, say,
+business rules. So why should anyone learn to program?</p>
+<p>
+The answer consists of two parts. First, it is indeed true that <em>traditional forms of programming</em> are useful for just a few people. But,
+programming <em>as we the authors understand it</em> is useful for everyone:
+the administrative secretary who uses spreadsheets as well as the high-tech
+programmer. In other words, we have a broader notion of programming in mind
+than the traditional one. We explain our notion in a moment. Second, we
+teach our idea of programming with a technology that is based on the
+principle of minimal intrusion. Hence our notion of programming teaches
+problem-analysis and problem-solving skills <em>without</em> imposing the
+overhead of traditional programming notations and tools.</p>
+<p>
+To get a better understanding of modern programming, take a closer look at
+spreadsheets, one of today's popular application packages. A user enters
+formulas into a spreadsheet. The formulas describe how a cell <em>A</em> depends
+on another cell <em>B</em>. Then, as the user enters a number into <em>B</em>, the
+spreadsheet automatically calculates the contents of cell <em>A</em>.  For
+complicated spreadsheets, a cell may depend on many other cells, not just
+one.</p>
+<p>
+Other application packages require similar activities. Consider word
+processors and style sheets. A style sheet specifies how to create a (part
+of a) document from yet-to-be-determined words or sentences. When someone
+provides specific words and a style sheet, the word processor creates the
+document by replacing names in the style sheet with specific
+words. Similarly, someone who conducts a Web search may wish to specify
+what words to look for, what words should be next to each other, and what
+words should not occur in the page. In this case, the output depends on the
+search engine's cache of Web pages and the user's search expression.</p>
+<p>
+Finally, using a program generator in many ways relies on the same skills
+as those necessary for application packages. A program generator creates a
+program in a traditional programming language, such as C++ or Java, from
+high-level descriptions, such as business rules or scientific laws. Such
+rules typically relate quantities, sales, and inventory records and thus
+specify computations. The other parts of the program, especially how it
+interacts with a user and how it stores data in the computer's disk,
+are generated with little or no human intervention. </p>
+<p>
+All of these activities instruct some computer software to do something for
+us. Some use scientific notation, some may use stylized English, some use a
+concrete programming notation. All of them are some form of programming. 
+The essence of these activities boils down to two concepts: 
+</p>
+<ol>
+<li><p>relating one quantity to another quantity, and </p>
+<p>
+</p>
+<li><p>evaluating a relationship by substituting values for names. 
+</p>
+</li></ol><p>
+Indeed, the two concepts characterize programming at the lowest level, the
+computer's native language, and in a modern fashionable language such as
+Java. A program relates its inputs to outputs; and, when a program is used
+for specific inputs, the evaluation substitutes concrete values for names.</p>
+<p>
+No one can predict what kind of application packages will exist five or ten
+years from now. But application packages will continue to require some form
+of programming. To prepare students for these kinds of programming
+activities, schools can either force them to study algebra, which is the
+mathematical foundation of programming, or expose them to some form of
+programming. Using modern programming languages and environments, schools
+can do the latter, they can do it effectively, and they can make algebra
+fun.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_Temp_6"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_6">Design Recipes</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<div align="right"><table width="60%"><tr><td>
+<span class="epigraph">
+
+<p></p>
+<div align="left">
+<em>Cooking is at once child's play and adult joy.
+And cooking done with care is an act of love. <br>
+</em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Craig Claiborne (1920-2000), Food Editor, <i>New York Times</i> 
+</div><p>
+</p>
+
+</span>
+</td></tr></table>
+</div>
+<p></p>
+<p>
+<a name="node_idx_4"></a></p>
+<p>
+Learning to design programs is like learning to play soccer.  A
+player must learn to trap a ball, to dribble with a ball, to pass, and to
+shoot a ball. Once the player knows those basic skills, the next goals are
+to learn to play a position, to play certain strategies, to choose among
+feasible strategies, and, on occasion, to create variations of a strategy
+because none of the existing strategies fits.</p>
+<p>
+A programmer is also very much like an architect, a composer, or a writer.
+They are creative people who start with ideas in their heads and blank
+pieces of paper. They conceive of an idea, form a mental outline, and
+refine it on paper until their writings reflect their mental image as much
+as possible. As they bring their ideas to paper, they employ basic
+drawing, writing, and instrumental skills to express certain style
+elements of a building, to describe a person's character, or to formulate
+portions of a melody. They can practice their trade because they have
+honed their basic skills for a long time and can use them on an
+instinctive level.</p>
+<p>
+Programmers also form outlines, translate them into first designs, and
+iteratively refine
+<a name="node_idx_6"></a>them until they truly match the initial idea. Indeed, the best programmers
+edit and rewrite their programs many times until they meet certain
+aesthetic standards. And just like soccer players, architects, composers,
+or writers, programmers must practice the basic skills of their trade for
+a long time before they can be truly creative.</p>
+<p>
+Design recipes are the equivalent of soccer ball handling techniques,
+writing techniques, techniques of arrangements, and drawing skills.  A
+single design recipe represents a point of the program design space. We
+have studied this space and have identified many important categories.
+This book selects the most fundamental and the most practical recipes and
+presents them in increasing order of difficulty.<a name="call_footnote_Temp_7"></a><a href="#footnote_Temp_7"><sup><small>2</small></sup></a></p>
+<p>
+About half the design recipes focus on the connection between input data
+and programs. More specifically, they show how the template of a program
+is derived from the description of the input data. We call this <em>data-driven</em> program design, and it is the most frequently used form of
+design. Data-driven designs are easy to create, easy to understand, and
+easy to extend and modify. Other design recipes introduce the notion of
+<em>generative recursion</em>, <em>accumulation</em>, and <em>history
+sensitivity</em>. The first one produces recursive programs that generate
+new instances of problems as they recur; accumulator-style programs
+collect data as they process inputs; and history-sensitive programs
+remember information between successive applications. Last, but not least,
+we also introduce a design recipe for <em>abstracting</em> over
+programs. Abstracting is the act of generalizing two (or more) similar
+designs into one and of deriving the original instances from it.</p>
+<p>
+On many occasions, a problem naturally suggests one design recipe.  On
+others, a programmer must choose from among several possibilities; each
+choice may produce programs with vastly different organizations.  Making
+choices is natural for a creative programmer. But, unless a programmer is
+thoroughly familiar with the bag of design recipes to choose from and
+completely understands the consequences of choosing one over the other,
+the process is necessarily <em>ad hoc</em> and leads to whimsical, bad
+designs. We hope that by mapping out a collection of design recipes, we
+can help programmers understand what to choose from and how to choose.</p>
+<p>
+Now that we have explained what we mean by ``programming'' and ``program
+design,'' the reader can see why and how teaching program design instills 
+thinking skills that are important in a variety of professions. To design a
+program properly, a student must:
+</p>
+<ol>
+<li><p>analyze a problem statement, typically stated as a word problem; 
+</p>
+<li><p>express its essence, abstractly and with examples; 
+</p>
+<li><p>formulate statements and comments in a precise language;
+</p>
+<li><p>evaluate and revise these activities in light of checks and tests;  and 
+</p>
+<li><p>pay attention to details. 
+</p>
+</li></ol><p>
+All of these are activities that are useful for a businessman, a lawyer, a
+journalist, a scientist, an engineer, and many others.</p>
+<p>
+While traditional programming requires these skills, too, beginners often
+don't understand this connection. The problem is that traditional
+programming languages and traditional forms of programming force students
+to perform a large amount of book-keeping work and to memorize a large
+number of language-specific facts.  In short, <em>menial work drowns the
+teaching of essential skills</em>.  To avoid this problem, teachers must use
+a programming environment that imposes as little overhead as possible and
+that accommodates beginners. Because such tools didn't exist when we
+started, we developed them. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_Temp_8"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_8">The Choice of Scheme and DrScheme</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<div align="right"><table width="60%"><tr><td>
+<span class="epigraph">
+
+<p></p>
+<div align="left">
+<em>We ascribe beauty to that which is simple,<br>
+which has no superfluous parts;<br>
+which exactly answers its end,<br>
+which stands related to all things,<br>
+which is the mean of many extremes.<br>
+ </em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Ralph Waldo Emerson, <em>The Conduct of Life</em>
+</div><p>
+</p>
+
+</span>
+</td></tr></table>
+</div>
+<p></p>
+<p>
+We have chosen Scheme as the programming language for this book,
+and we have designed and implemented DrScheme, a programming environment
+for the language with special assistance for beginning students. The
+programming environment is freely available at the book's official Web
+site.<a name="call_footnote_Temp_9"></a><a href="#footnote_Temp_9"><sup><small>3</small></sup></a></p>
+<p>
+Still, the book it is not about programming in Scheme. We only use a small
+number of Scheme constructs in this book. Specifically, we use six
+constructs (function definition and application, conditional expressions,
+structure definition, local definitions, and assignments) plus a dozen
+or so basic functions. This tiny subset of the language is all that is
+needed to teach the principles of computing and programming. Someone who
+wishes to use Scheme as a tool will need to read additional material.</p>
+<p>
+The choice of Scheme for beginners is natural. First, the core of Scheme
+permits programmers to focus on just those two elements of programming
+that we pointed out at the beginning of the preface: programs as relations
+between quantities and evaluating programs for specific inputs.  Using
+just this core language, students can develop complete programs <em>during the first session</em> with a teacher.</p>
+<p>
+<a name="node_idx_20"></a>Second, Scheme can easily be arranged as a tower of language levels. This
+property is crucial for beginners who make simple notational mistakes that
+generate obscure error messages about advanced features of a language. The
+result is often a wasteful search and a feeling of frustration on the
+student's part. To avoid this problem, our programming environment,
+DrScheme, implements several carefully chosen sublanguages of
+Scheme. Based on this arrangement, the environment can signal error
+messages that are appropriate to a student's level of knowledge. Better
+still, the layering of languages prevents many basic mistakes. We
+developed the layers and the protection modes by observing beginners for
+weeks in Rice's computer lab. As students learn more about programming and the
+language, the teacher can expose students to richer layers of the language,
+which allows students to write more interesting and more concise programs.</p>
+<p>
+Third, the DrScheme programming environment offers a truly interactive
+evaluator. It consists of two windows: a <tt>Definitions</tt>
+<a name="node_idx_22"></a>window,
+where students define programs, and an <tt>Interactions</tt>
+<a name="node_idx_24"></a>window, which
+acts like a pocket calculator.  Students can enter expressions into the
+latter, and DrScheme determines their values. In other words, computation
+starts with pocket-calculator arithmetic, which they know quite well, and
+quickly proceeds from there to calculations with structures, lists, and
+trees -- the kinds of data that computer programs really manipulate. 
+Furthermore, an interactive mode of evaluation encourages students to
+experiment in all kinds of ways and thus stimulates their curiosity.</p>
+<p>
+Finally, the use of an interactive evaluator with a rich data language
+permits students to focus on problem solving and program design
+activities. The key improvement is that interactive evaluation renders a
+discussion of input and output operations (almost) superfluous. This has
+several consequences.  First, input and output operations require
+memorization. Learning these things is tedious and boring. Conversely,
+students are better off learning problem-solving skills and using canned
+input and output support. Second, <em>good</em> text-oriented input
+requires deep programming skills, which are best acquired in a course on
+computational problem-solving.  Teaching bad text-oriented input is a
+waste of the teachers' and the students' time.  Third, modern software
+employs graphical user interfaces (GUI), which programmers design with
+editors and ``wizards'' but not by hand. Again, students are best off
+learning to design the functions that are connected to rulers, buttons,
+text fields and so on, rather than memorizing the specific protocols that
+currently fashionable GUI libraries impose. In short, discussing input and
+output is a waste of valuable learning time during a first introduction to
+programming.  If students decide to pursue programming in more depth,
+acquiring the necessary (Scheme) knowledge about input and output
+procedures is straightforward.</p>
+<p>
+In summary, students can learn the core of Scheme in a couple of hours, yet
+the language is as powerful as a conventional programming language. As a
+result, students can focus immediately on the essence of programming,
+which greatly enhances their general problem-solving skills.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_Temp_10"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_10">The Parts of the Book</a></h2>
+<p></p>
+<p>
+The book consists of eight parts and seven intermezzos. The parts focus on
+program design; the intermezzos introduce other topics concerning
+programming and computing. Figure&nbsp;<a href="#node_fig_Temp_11">2</a> shows the
+dependence graph for the pieces of the book. The graph demonstrates that
+there are several paths through the book and that a partial coverage of
+the material is feasible. </p>
+<p>
+Parts&nbsp;<a href="curriculum-Z-H-3.html#node_part_I">I</a> through&nbsp;<a href="curriculum-Z-H-18.html#node_part_III">III</a> cover the foundations of
+data-driven program design. Part&nbsp;<a href="curriculum-Z-H-24.html#node_part_IV">IV</a> introduces
+abstraction in designs.  Parts&nbsp;<a href="curriculum-Z-H-31.html#node_part_V">V</a> and&nbsp;<a href="curriculum-Z-H-37.html#node_part_VI">VI</a>
+are about generative recursion and accumulation.  For these first six
+parts, the book uses a completely functional -- or algebraic -- form of
+programming. One and the same expression always evaluates to the same
+result, no matter how often we evaluate it. This property makes it easy to
+design, and to reason about, programs. To cope with interfaces between
+programs and the rest of the world, however, we enrich the language with
+assignment statements and abandon some of our algebraic reasoning. The
+last two parts show what this means for the design of programs. More
+precisely, they show how the design recipes
+<a name="node_idx_26"></a>of the first six parts apply and why we must be much more careful once
+assignments are added.</p>
+<p>
+Intermezzos introduce topics that are important for computing and
+programming in general but not for program design per se. Some
+introduce the syntax and semantics of our chosen subsets of Scheme on a
+rigorous basis, a few introduce additional programming constructs.
+Intermezzo&nbsp;5 is a discussion of the abstract cost of computing (time,
+space, energy) and introduces vectors. Intermezzo&nbsp;6 contrasts two ways of
+representing numbers and processing them. </p>
+<p>
+The coverage of some intermezzos can be delayed until a specific need
+arises. This is especially true of the intermezzos on Scheme's syntax and
+semantics. But, considering the central role of intermezzo&nbsp;3 in
+figure&nbsp;<a href="#node_fig_Temp_11">2</a>, it should be covered in a timely fashion.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+
+    
+  
+    
+ 
+  </p>
+<p>
+ 
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_11"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+
+
+
+</p>
+<p>
+
+</p>
+<p>
+
+
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum0-Z-G-1.gif" border="0" alt="[curriculum0-Z-G-1.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 2:</b>&nbsp;&nbsp;The dependencies among parts and intermezzos</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+I<small>T</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>V</small><small>E</small> R<small>E</small><small>F</small><small>I</small><small>N</small><small>E</small><small>M</small><small>E</small><small>N</small><small>T</small> <small>A</small><small>N</small><small>D</small> I<small>T</small><small>E</small><small>R</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>O</small><small>F</small> T<small>O</small><small>P</small><small>I</small><small>C</small><small>S</small>: Systematic program
+design is particularly interesting and important for large projects. The
+step from small single-function problems to small multifunction projects
+requires an additional design idea: iterative refinement.
+<a name="node_idx_28"></a>The goal is to
+design the core of a program and to add functionality to this core until
+the entire set of requirements is met.</p>
+<p>
+Students in a first course can, and must, get their first taste of
+iterative refinement. Hence, in order to acquaint students with the
+technique, we have included extended exercises. Typically, a brief
+overview sets the stage for a collection of exercises. The exercises
+gently guide students through some design iterations. In
+section&nbsp;<a href="curriculum-Z-H-21.html#node_chap_16">16</a>, the idea is spelled out explicitly.</p>
+<p>
+Furthermore, the book revisits certain exercise and example topics time
+and again.  For example, sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>,
+<a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>, <a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>, <a href="curriculum-Z-H-27.html#node_sec_21.4">21.4</a>,
+<a href="curriculum-Z-H-51.html#node_sec_41.4">41.4</a>, and a few exercises in between the last two sections
+cover the idea of moving pictures across a canvas.  The students thus see
+the same problem several times, each time with more and more knowledge
+about how to organize programs.  </p>
+<p>
+Adding pieces of functionality to a program demonstrates why programmers
+must follow a design discipline.  Solving the problem again shows students
+how to choose from alternative design recipes.
+<a name="node_idx_30"></a>Finally, on occasion, new knowledge just helps students
+improve the program organization; in other words, students learn that
+programs aren't finished after they work for the first time but that, like
+papers and books, they need editing.</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+T<small>E</small><small>A</small><small>C</small><small>H</small><small>P</small><small>A</small><small>C</small><small>K</small><small>S</small>: A second aspect of working on projects is that
+programmers have to work in teams. In an instructional context, this means
+that one student's program has to fit precisely to someone else's.  To
+simulate what ``fitting one's function to someone else's'' means, we provide
+DrScheme teachpacks. Roughly speaking, a teachpack simulates a team
+partner yet avoids the frustration of working with mistakes in a partner's
+program component.  More technically, the projects almost always consist
+of a view and a model program component (in the sense of the
+model-view software architecture). In a typical setting, students design
+the model component.  The teachpacks provide the view components, often in
+the form of (graphical) user interfaces. Thus they eliminate the tedious,
+mindless portions of coding. Furthermore, this particular separation of
+concerns mimics that of real-world projects. </p>
+<p>
+Fitting model components to view components requires students to pay
+attention to precise specifications of functions. It demonstrates the
+paramount importance of following a design discipline. It is also a
+critical skill for programmers and is often underemphasized in beginning
+courses. In part&nbsp;<a href="curriculum-Z-H-24.html#node_part_IV">IV</a> we show how to construct some simple
+GUIs and how GUI events trigger the application of model functions.  The
+goal is to explain that constructing GUIs is no mystery, but not to spend
+a lot of time on a topic that requires mostly rote learning and little
+computational thinking.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+S<small>C</small><small>H</small><small>E</small><small>D</small><small>U</small><small>L</small><small>E</small>: Each university, college, and school has its own needs and
+must find an appropriate schedule. At Rice University, we conventionally
+cover the entire book plus some additional material in a single
+semester. An instructor at a research university should probably keep up a
+similar pace. A high school teacher will necessarily pursue a slower pace.
+Many of the high schools that tested the book covered the first three
+parts in a semester; some used only the first part to teach algebraic
+problem solving from a computational perspective; and yet others worked
+through the entire book in a year. For more information on schedules,
+visit the book's Web site. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+T<small>H</small><small>E</small> B<small>O</small><small>O</small><small>K</small> <small>O</small><small>N</small> <small>T</small><small>H</small><small>E</small> W<small>E</small><small>B</small>: The book comes in two versions: a paper
+copy and a freely accessible on-line version at </p>
+<p>
+<code class="verbatim">http://www.htdp.org/</code></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The Web site also provides additional material, especially
+extended exercises of the style mentioned above.  At this time, the Web
+page offers exercises on the visual simulation of ball games and the
+management of Web site. More exercises will be added.</p>
+<p>
+The two versions of the book come with different kinds of hints.  Each is
+marked with one of the following three icons:</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<table bgcolor="beige" width="600" align="center">
+<tr>
+</tr><tr><td><img src="../icons/plt.gif"></td>
+<td>
+This marker refers to <em>DrScheme hints</em>; they are available in both
+  versions of the book. The
+  programming environment has been designed with students in mind. The
+  hints suggest how to use DrScheme at the various stages of the learning
+  process.
+</td>
+</tr>
+
+<td><img src="../icons/teacher1.gif"></td>
+<td>
+This marker refers to <em>teacher hints</em>, which suggest strategies on
+  how to present a section, on how to approach an exercise, or on how to
+  supplement some material.
+</td>
+
+
+<tr><td><img src="../icons/hand.right.gif"></td>
+<td>
+This marker links to <em>on-line
+  solutions.</em> Some solutions are freely available; others are
+  accessible to registered teachers only.  To find out more about
+  registration, see the book's Web site.
+</td>
+</tr>
+</table>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+T<small>Y</small><small>P</small><small>O</small><small>G</small><small>R</small><small>A</small><small>P</small><small>H</small><small>Y</small> <small>A</small><small>N</small><small>D</small> D<small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small>: For readability, Scheme programs are
+typeset using a small number of fonts. <i>Italic</i> words refer to
+program names and variables.  Sans Serif items are constants and
+built-in operations. <strong>Boldface</strong> words are Scheme keywords.</p>
+<p>
+Definitions come in three varieties. There are those terms that concern the
+principles of programming and computing. The book lists the first
+occurrence of such terms with <small>S</small><small>M</small><small>A</small><small>L</small><small>L</small> <small>C</small><small>A</small><small>P</small><small>I</small><small>T</small><small>A</small><small>L</small> <small>L</small><small>E</small><small>T</small><small>T</small><small>E</small><small>R</small><small>S</small>. Other
+definitions are of a more fleeting nature; they introduce terms that are
+important for a section, an example, an exercise, or some other small part
+of the book. The book uses <i>slanted</i> words to emphasize such
+definitions. Finally, the book also defines classes of data. Most data
+definitions are boxed, and the first occurrence of the defined name is also
+typeset using <i>slanted</i> words.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_Temp_12"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_12">Acknowledgments</a></h2>
+<p></p>
+<p>
+Four people deserve special thanks: Robert ``Corky'' Cartwright,
+who co-developed a predecessor of Rice's introductory course with the first
+author; Daniel P. Friedman, for asking the first author to rewrite <em>The Little LISPer</em> (also MIT Press) in 1984, because it started this
+project; John Clements, who designed, implemented, and maintains DrScheme's
+stepper; and Paul Steckler, who faithfully supported the team with
+contributions to our suite of programming tools.</p>
+<p>
+The development of the book benefited from many other friends and
+colleagues who used it in their courses and/or gave detailed comments on
+early drafts. We are grateful to them for their help and their patience:
+Ian Barland,
+John Clements, 
+Bruce Duba,
+Mike Ernst,
+Kathi Fisler,
+Daniel P. Friedman,
+John Greiner,
+John Stone,
+Geraldine Morin, 
+and
+Valdemar Tamez.</p>
+<p>
+A dozen generations of <em>Comp 210</em> students at Rice University used
+early drafts of the text and contributed improvements in various
+ways.  In addition, numerous attendees of our TeachScheme! workshops used early
+drafts in their classrooms. Many sent in comments and
+suggestions. As representative of these we mention the following active
+contributors:
+Ms. Barbara Adler,
+Dr. Stephen Bloch,
+Mr. Jack Clay,
+Dr. Richard Clemens,
+Mr. Kyle Gillette,
+Ms. Karen Buras,
+Mr. Marvin Hernandez,
+Mr. Michael Hunt,
+Ms. Karen North,
+Mr. Jamie Raymond,
+and
+Mr. Robert Reid.
+Christopher Felleisen patiently worked through the first few parts of
+the book with his father and provided direct insight into the views of a
+young student. 
+Hrvoje Blazevic (sailing, at the time, as Master of the LPG/C Harriette), 
+Joe Zachary (University of
+Utah) and Daniel P. Friedman (Indiana University) discovered numerous
+typos in the first printing, which we have now fixed. 
+Thank you to everyone. </p>
+<p>
+</p>
+<p>
+Finally, Matthias expresses his gratitude to Helga for her many years of
+patience and for creating a home for an absent-minded husband and
+father. Robby is grateful to Hsing-Huei Huang for her support and
+encouragement; without her, he would not have gotten anything
+done. Matthew thanks Wen Yuan for her constant support and enduring music.
+Shriram is indebted to Kathi Fisler for support, patience and puns, and for
+her participation in this project.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+&nbsp;</p>
+<p>
+</p>
+<p>
+&nbsp;</p>
+<p>
+</p>
+<p>
+
+
+
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_4"></a><a href="#call_footnote_Temp_4"><sup><small>1</small></sup></a> Readers whose experience is exclusively based on
+programming languages such as C/C++, Basic, and Pascal should read
+``procedure'' or ``method'' where the preface mentions ``program.''</p>
+<p><a name="footnote_Temp_7"></a><a href="#call_footnote_Temp_7"><sup><small>2</small></sup></a> Our design
+recipes were inspired by work with Daniel P. Friedman on structural
+recursion, with Robert Harper on type theory, and by Michael A. Jackson's
+design method. 
+<a name="node_idx_8"></a><a name="node_idx_10"></a><a name="node_idx_12"></a></p>
+<p><a name="footnote_Temp_9"></a><a href="#call_footnote_Temp_9"><sup><small>3</small></sup></a> Scheme has an official definition -- the Revised 
+Report on Scheme, edited by Richard Kelsey, William Clinger, and 
+<a name="node_idx_14"></a><a name="node_idx_16"></a><a name="node_idx_18"></a>Jonathan Rees -- and many implementations. For a copy of the report and for
+a list of alternative Scheme implementations, visit <tt>www.schemers.org</tt> on the Web. Note, however, that the language of this book
+extends that of the report and is tailored to beginners.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-1.html">previous</a></span><span>, <a href="curriculum-Z-H-3.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

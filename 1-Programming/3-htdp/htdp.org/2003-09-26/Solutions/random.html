@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="deep.html">11.2.4</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="random3.html">11.3.2</a><pre>;; random-n-m : integer integer -&gt; integer
+;; to compute a random number between n and m-1 (inclusive)
+;; Assume: n &lt; m 
+(define (random-n-m n m) 
+  (+ (random (- m n)) n)) 
+
+;; (random n) returns a number in this interval:
+;; ------[--------------)--------
+;;   -1  0  1  2  ...   n
+
+;; Thus, (random (- m n)) return a number in this interval:
+;; ------[--------------)--------
+;;   -1  0  1  2  ...  m-n
+
+;; So, (+ (random (- m n)) n) returns a number
+;; in this interval:
+;; ------[-------------------)----
+;;   -1  n  n+1  n+2  ...  m-n+n
+
+;; That interval is the same as this one:
+;; So, (+ (random (- m n)) n) returns a number
+;; in this interval:
+;; ------[-----------------)----
+;;   -1  n  n+1  n+2  ...  m
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

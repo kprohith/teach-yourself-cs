@@ -1,0 +1,115 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/7.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 7</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+<p>
+Use the following data and structure definitions to solve
+this problem.
+</p>
+A Document-summary is one of<br>
+<code>
+<ul>
+  <li>(make-letter Symbol Symbol Symbol)</li>
+  <li>(make-memo Symbol Symbol Symbol Symbol)</li>
+  <li>(make-resume Symbol Symbol Boolean)</li>
+</ul>
+</code>
+<p>where</p>
+<code>
+(define-struct letter (to date signature))<br>
+(define-struct memo (from to date subject))<br>
+(define-struct resume (name date sent?))<br>
+</code>
+<p>
+Develop the function <em>from</em>, which consumes a Document-summary
+and produces a symbol representing the author of the document (use
+the <code>signature</code> property of a letter, 
+the <code>from</code> property of a memo, and
+the <code>name</code> property of the resume).
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol7.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Develop data and structure definitions for a collection of 3D shapes.
+The collection includes
+<ul>
+  <li> <b>cubes</b> whose relevant property is the length of an edge;</li>
+  <li> <b>prisms</b> which are rectangular solids and whose relevant
+       properties are length, width, and height;</li>
+  <li> <b>spheres</b> whose relevant property is the radius.</li>
+</ul>
+<p>
+Develop the function <em>volume</em>.
+The function consumes a 3D shape and produces the volume of the object.
+</p>
+<p>
+The volume of a cube is the cube of the length of one of its edges.
+The volume of a prism is the product of its length, width, and height.
+The volume of a sphere is 4/3 * PI * <em>r</em><sup>3</sup>.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol7.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+Develop data and structure definitions for trains. A train is one of
+<ul>
+  <li> <b>commuter</b>, which has the properties: number of cars,
+       number of passengers per car, and a boolean determing whether
+       this particular train makes all stops;
+  </li>
+  <li> <b>amtrak</b>, which has the properties: number of cars,
+       number of passengers per car, and a symbol designating
+       the type of train as 'Express, 'Local, or 'Limited;
+  </li>
+  <li> <b>subway</b>, which has the properties: number of cars,
+       number of passengers per car, and a symbol representing the
+       color of the train.
+  </li>
+</ul>
+Develop the function <em>hold-all?</em> that, given a train
+and a number of passengers, produces <code>true</code> if the train could
+contain them all and <code>false</code> if not.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol7.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+Develop data and structure definitions for school employees.
+An employee is one of
+<ul>
+  <li> <b>principal</b> with properties of monthly salary, office
+       number, and a symbol represting the diploma or degree earned by
+       the principal;
+  </li>
+  <li> <b>teacher</b> with properties of monthly salary, room number,
+       and a symbol represting the diploma or degree earned by
+       the teacher;</li>
+  <li> <b>assistant</b> with properties of hourly wage and number of hours
+       worked within a pay period.</li>
+</ul>
+<p>
+The payroll office needs to compute various taxes before printing a
+paycheck.
+Develop the function <em>tax</em>, which takes an employee structure
+and a tax rate and returns the amount of tax for the pay period
+(per month for principals and teachers and the hours 
+worked for an assistant).
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol7.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+Develop data and structure definitions for financial accounts.
+An account is one of
+<ul>
+  <li><b>checking</b> with two properties: balance and number of transactions;
+  </li>
+  <li><b>savings</b> with two properties: balance and number of transactions;
+  </li>
+  <li><b>credit</b> with three properties: balance, 
+  spending limit, and number of transactions.
+  </li>
+</ul>
+<p>
+Develop a data definition for a response.
+A response is either 'Error or an account.
+</p>
+<p>
+Develop the function <em>withdrawal</em>, which consumes an account
+and an amount and produces a response. In the case in which a
+withdrawal would cause the balance of a savings account to go below
+zero, 'Error would be produced. Otherwise a new savings account would
+be produced with a new balance and the number of transactions
+incremented by one. A checking account has overdraft protection up to
+$1000, so a withdrawal would signal 'Error if the balance were lower
+than $-1000. A credit account's balance increases upon withdrawal, but
+cannot go beyond the spending limit.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol7.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#6c1e0d15010302082c0f0f1f4202091942090819">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/7.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

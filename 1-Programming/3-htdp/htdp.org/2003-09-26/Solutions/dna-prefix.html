@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dna-prefix.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.6.6; How to Design Programs </title>
+</head>
+<body>
+<a href="perm-xmas.html">17.6.5</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.6.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="scheme-one-def.html">17.7.1</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.6.6  DNAprefix
+------------------------------------------------------------
+;Data Definition:
+a list-of-symbols is either
+  1. empty or
+  2. (cons s los)
+  where s is a symbol and los is a list-of-symbols
+
+;Template:
+(define (DNAprefix pattern search-string)
+  (cond
+    [(and (empty? pattern) (empty? search-string))...]
+    [(and (empty? pattern) (cons? search-string))
+     ...(first search-string)...(rest search-string)...]
+    [(and (cons? pattern) (empty? search-string))
+     ...(first pattern)...(rest pattern)...]
+    [(and (cons? pattern) (cons? search-string))
+     ...(first pattern)...(first search-string)...
+     ...(DNAprefix (rest pattern) search-string)...
+     ...(DNAprefix pattern (rest search-string))...
+     ...(DNAprefix (rest pattern) (rest search-string))...]))
+|#
+
+;;DNAprefix: list-of-symbols list-of-symbols -&gt; true or false
+;;consumes two lists of symbols. The first list is called a 
+;;pattern, the second one a search-string. The function 
+;;returns true if the pattern is a prefix of the search-string.
+;;In all other cases, the function returns false.
+(define (DNAprefix pattern search-string)
+  (cond
+    [(empty? pattern) 
+     true]
+    [(empty? search-string) 
+     false]
+    [else
+     (and (symbol=? (first pattern) (first search-string))
+          (DNAprefix (rest pattern) (rest search-string)))]))
+
+;Examples as Tests:
+(check-expect
+ (DNAprefix empty 
+            empty)
+ true)
+
+(check-expect
+ (DNAprefix empty 
+            (list 'a 't))
+ true)
+
+(check-expect
+ (DNAprefix (list 'a 't 'c)
+            empty)
+ false)
+
+(check-expect
+ (DNAprefix (list 'a 't) 
+            (list 'a 't))
+ true)
+
+(check-expect
+ (DNAprefix (list 'a 't)
+            (list 'a 't 'c 'g))
+ true)
+
+(check-expect
+ (DNAprefix (list 'a 't 'c)
+            (list 'a 't))
+ false)
+
+(check-expect
+ (DNAprefix (list 'a 'c)
+            (list 'a 't))
+ false)
+
+
+#| 17.6.6  DNAprefix - modified version
+------------------------------------------------------------
+Can this variant of DNAprefix be simplified? 
+If so, do it. If not, explain. 
+We could not reduce the number of cond clauses. We had to
+use four cond clauses to get each case. We could, however, 
+reduce the complexity of the conditions 
+
+;Data Definition:
+a list-of-symbols is either
+  1. empty or
+  2. (cons s los)
+  where s is a symbol and los is a list-of-symbols
+
+;Template:
+(define (DNAprefix pattern search-string)
+  (cond
+    [(and (empty? pattern) (empty? search-string))...]
+    [(and (empty? pattern) (cons? search-string))
+     ...(first search-string)...(rest search-string)...]
+    [(and (cons? pattern) (empty? search-string))
+     ...(first pattern)...(rest pattern)...]
+    [(and (cons? pattern) (cons? search-string))
+     ...(first pattern)...(first search-string)...
+     ...(DNAprefix (rest pattern) search-string)...
+     ...(DNAprefix pattern (rest search-string))...
+     ...(DNAprefix (rest pattern) (rest search-string))...]))
+|#
+;;DNAprefix: 
+;;  list-of-symbols list-of-symbols 
+;;    -&gt; symbol or true or false
+;;consumes two lists of symbols. The first list is called a 
+;;pattern, the second one a search-string. The function 
+;;returns the first item beyond the pattern in the 
+;;search-string if the pattern is a proper prefix of the 
+;;search-string. It returns false if the pattern and the 
+;;search-string do not match or if the pattern is longer than
+;;search-string. It returns true if they match and are the 
+;;same length.
+(define (DNAprefix/modified pattern search-string)
+  (cond
+    [(and (empty? pattern) (empty? search-string)) 
+     true]
+    [(empty? pattern)
+     (first search-string)]
+    [(empty? search-string) 
+     false]
+    [else
+     (cond 
+       [(symbol=? (first pattern) (first search-string))
+        (DNAprefix/modified (rest pattern) (rest search-string))]
+       [else false])]))
+
+;Examples as Tests:
+(check-expect
+ (DNAprefix/modified empty 
+            empty)
+ true)
+
+(check-expect
+ (DNAprefix/modified empty 
+            (list 'a 't))
+ 'a)
+
+(check-expect
+ (DNAprefix/modified (list 'a 't 'c)
+            empty)
+ false)
+
+(check-expect
+ (DNAprefix/modified (list 'a 't) 
+            (list 'a 't))
+ true)
+
+(check-expect
+ (DNAprefix/modified (list 'a 't)
+            (list 'a 't 'c 'g))
+ 'c)
+
+(check-expect
+ (DNAprefix/modified (list 'a 't 'c)
+            (list 'a 't))
+ false)
+
+(check-expect
+ (DNAprefix/modified (list 'a 'c)
+            (list 'a 't))
+ false)
+
+(check-expect
+ (DNAprefix/modified (list 'a)
+            (list 'a 't 'c 'g))
+ 't)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dna-prefix.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

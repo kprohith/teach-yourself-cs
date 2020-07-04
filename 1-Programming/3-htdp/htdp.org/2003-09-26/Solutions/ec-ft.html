@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ec-ft.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.1.5; How to Design Programs </title>
+</head>
+<body>
+<a href="age-ft.html">14.1.4</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.1.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="proper-bea.html">14.1.6</a><pre>;; A family-tree-node (short: ftn) is either
+;;
+;;   1. empty; or
+;;   2. (make-child f m na da ec)
+;;      where f and m are ftns, na
+;;      and ec are symbols, and da is a number.
+(define-struct child (father mother name date eyes))
+
+;; Oldest Generation:
+(define Carl (make-child empty empty 'Carl 1926 'green))
+(define Bettina (make-child empty empty 'Bettina 1926 'green))
+
+;; Middle Generation: 
+(define Adam (make-child Carl Bettina 'Adam 1950 'yellow))
+(define Dave (make-child Carl Bettina 'Dave 1955 'black))
+(define Eva (make-child Carl Bettina 'Eva 1965 'blue))
+(define Fred (make-child empty empty 'Fred 1966 'pink))
+
+;; Youngest Generation: 
+(define Gustav (make-child Fred Eva 'Gustav 1988 'brown))
+
+#|
+;; TEMPLATE
+;; fun-for-ftn : ftn -&gt; ???
+(define (fun-for-ftn a-ftree)
+  (cond [(empty? a-ftree) ...]
+        [else ... (fun-for-ftn (child-father a-ftree)) ...
+              ... (fun-for-ftn (child-mother a-ftree)) ...
+              ... (child-name a-ftree) ...
+              ... (child-date a-ftree) ...
+              ... (child-eyes a-ftree) ...]))
+|#
+
+;; eye-colors : ftn -&gt; (listof symbols)
+;; to determine all of the eye colors of the
+;; people in a-ftree
+(define (eye-colors a-ftree) 
+  (cond 
+    [(empty? a-ftree) empty]
+    [else 
+     (cons
+      (child-eyes a-ftree)
+      (append
+       (eye-colors (child-father a-ftree))
+       (eye-colors (child-mother a-ftree))))]))
+
+;; EXAMPLES AS TESTS
+(eye-colors empty) "should be" empty
+(eye-colors Carl) "should be" (list 'green)
+(eye-colors Bettina) "should be" (list 'green)
+(eye-colors Adam) "should be" (list 'yellow 'green 'green)
+(eye-colors Dave) "should be" (list 'black 'green 'green)
+(eye-colors Eva) "should be" (list 'blue 'green 'green)
+(eye-colors Fred) "should be" (list 'pink)
+(eye-colors Gustav) "should be" (list 'brown 'pink 'blue 'green 'green)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ec-ft.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

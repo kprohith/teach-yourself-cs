@@ -1,0 +1,78 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 14</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+An ft-node is one of:
+<pre>  - <code>empty</code>
+  - <code>(make-child ft-node ft-node symbol number symbol)</code>
+</pre>
+
+<p>Develop the function <em>get-mothers</em>.  The function consumes an
+ft-node and produces a list of all mother's names present in the tree.</p>
+
+<p><b>Hint: </b>Use the Scheme operation <code>append</code>, which
+consumes any number of lists and produces their concatenation.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol14.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Develop the function
+<em>born-after</em>.
+The function consumes an ft-node and a
+year and produces a list of names of family members 
+who were born after that year.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol14.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+A <em>Web-page</em> (short: <em>WP</em>) is one of:
+<pre>  1. empty;
+  2. (cons symbol WP); or
+  3. (cons WP WP)
+</pre>
+<p>
+Develop the function <em>remove-wp</em>.
+The function consumes a Web-page and creates
+a new Web-page in which any pages that start with the special symbol
+'%remove are replaced with the empty Web-page.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol14.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+A peer-to-peer network (like GNUtella) consists of individual
+nodes that are connected to the rest of the network through
+one or more neighboring nodes.
+In a simplified model, each node has only one neighbor and 
+a list of files that it can serve.
+Every node has a unique number representing its address.
+
+<pre><code>
+(define-struct file (name contents))
+(define-struct node (address files neighbor))
+</code>
+
+A P2P-Network is one of:
+ - <code>empty</code>
+ - <code>(make-node number list-of-File P2P-Network)</code>
+
+A list-of-file is one of
+ - empty 
+ - (cons File list-of-file)
+
+A File is a structure: <code>(make-file symbol string)</code>
+</pre>
+
+<p>
+Develop the function <em>P2P-search</em>.
+The function consumes the name of file and a P2P-network
+and returns the address of the first node that 
+is discovered to have the
+file or false if the file does not exist anywhere within
+the network.</p>
+
+<p>Optional: 
+A copyright enforcement group wants to collect the addresses of all
+nodes on a P2P-Network that are hosting a particular file.
+Develop the function <em>P2P-search-all</em>,
+which is like <em>P2P-search</em> except that
+it returns the list of addresses of all nodes having a copy
+of the file being searched for.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol14.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+<p>See previous problem for data definitions. </p>
+
+<p>
+Develop the function <em>P2P-get</em>.  The function consumes the name of
+file, the address of a node, and a P2P-network and returns the contents of
+the file.  Assume that both the node and file exist.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol14.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#92e0f3ebfffdfcf6d2f1f1e1bcfcf7e7bcf7f6e7">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/14.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/movie-examples.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="sem-error2.html">2.4.4</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="movie-examples2.html">3.1.2</a><pre>;; attendance : number -&gt; number
+;; to compute how many attendees we get at some price 
+;; Examples:
+;; at 5.0, we get 120
+;; at 4.9, we get 135
+(define (attendance price)
+  (+ (* (/ 15 .10) (- 5.00 price))
+     120))
+
+;; at $5.00, 120 people will attend.
+;; at $4.00, 270 people will attend.
+;; at $3.00, 420 people will attend.
+
+;; EXAMPLES AS TESTS
+(attendance 5.0) "should be" 120
+(attendance 4.9) "should be" 135
+(attendance 4) "should be" 270
+(attendance 3) "should be" 420
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/movie-examples.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

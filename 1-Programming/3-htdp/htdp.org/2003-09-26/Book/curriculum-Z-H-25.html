@@ -1,0 +1,1009 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-25.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-24.html">previous</a></span><span>, <a href="curriculum-Z-H-26.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_19"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_19">Section  19</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_19">Similarities in Definitions</a></h1>
+<p></p>
+<p>
+Many of our data definitions and function definitions look alike. For
+example, the definition for a list of symbols differs from that of a list
+of numbers in only two regards: the name of the class of data and the words
+``symbol'' and ``number.'' Similarly, a function that looks for a specific
+symbol in a list of symbols is nearly indistinguishable from one that looks
+for a specific number in a list of numbers.</p>
+<p>
+Repetitions are the source of many programming mistakes.  Therefore good
+programmers try to avoid repetitions as much as possible. As we develop a
+set of functions, especially functions derived from the same template, we
+soon learn to spot similarities.  It is then time to revise the functions
+so as to eliminate the repetitions as much as possible. Put differently, a
+set of functions is just like an essay or a memo or a novel or some other
+piece of writing: the first draft is just a  draft. Unless we edit the
+essay several times, it does not express our ideas clearly and
+concisely. It is a pain for others to read it. Because functions are read
+by many other people and because real functions are modified after reading,
+we must learn to ``edit'' functions.</p>
+<p>
+The elimination of repetitions is the most important step in the (program)
+editing process.  In this section, we discuss similarities in function
+definitions and in data definitions and how to avoid them.  Our means of
+avoiding similarities are specific to Scheme and functional programming
+languages; 
+<a name="node_idx_1352"></a><a name="node_idx_1354"></a><a name="node_idx_1356"></a>still, other languages, in particular object-oriented ones, support similar
+mechanisms for factoring out similarities -- or (code) patterns 
+<a name="node_idx_1358"></a>as they are somtimes called.</p>
+<p>
+</p>
+<a name="node_sec_19.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_19.1">19.1&nbsp;&nbsp;Similarities in Functions</a></h2>
+<p> </p>
+<p>
+<a name="node_idx_1360"></a>
+The use of our design recipes entirely determines a function's template -- or
+basic organization -- from the data definition for the input. Indeed, the
+template is an alternative method of expressing what we know about the input
+data. Not surprisingly, functions that consume the same kind of data look
+alike.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_108"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1362"></a><a name="node_idx_1364"></a><div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains-doll?</span> <span class="selfeval">:</span> <span class="variable">los</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">alos</span></code> contains </span>
+<span class="comment">;; the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">alos</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alos</span>) false]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">alos</span>) <font style="background-color: pink"><u>'doll</u></font>)
+	 true]
+	[<span class="keyword">else</span> 
+	 (<span class="variable">contains-doll?</span> (<span class="builtin">rest</span> <span class="variable">alos</span>))])]))
+</pre></div></td><td>
+</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains-car?</span> <span class="selfeval">:</span> <span class="variable">los</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">alos</span></code> contains </span>
+<span class="comment">;; the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">car</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains-car?</span> <span class="variable">alos</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alos</span>) false]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">alos</span>) <font style="background-color: pink"><u>'car</u></font>)
+	 true]
+	[<span class="keyword">else</span> 
+	 (<span class="variable">contains-car?</span> (<span class="builtin">rest</span> <span class="variable">alos</span>))])]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 52:</b>&nbsp;&nbsp;Two similar functions</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Take a look at the two functions in figure&nbsp;<a href="#node_fig_Temp_108">52</a>, which
+consume lists of symbols (names of toys) and look for specific toys.  The
+function on the left looks for <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, the one on the right for
+<code class="scheme"><span class="keyword">'</span><span class="variable">car</span></code> in a list of symbols (los). The two functions are nearly
+indistinguishable.  Each consumes lists of symbols; each function body
+consists of a <strong>cond</strong>-expressions with two clauses. Each produces
+<code class="scheme">false</code> if the input is <code class="scheme"><span class="builtin">empty</span></code>; each uses a second, nested
+<strong>cond</strong>-expression to determine whether the first item is the desired
+item. The only difference is the symbol that is used in the comparison of
+the nested <strong>cond</strong>-expression: <code class="scheme"><span class="variable">contains-doll?</span></code> uses
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> and <code class="scheme"><span class="variable">contains-car?</span></code> uses <code class="scheme"><span class="keyword">'</span><span class="variable">car</span></code>, of course. To
+highlight the differences, the two symbols are boxed.</p>
+<p>
+Good programmers are too lazy to define several closely related
+functions. Instead they define a single function that can look for both a
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> and a <code class="scheme"><span class="keyword">'</span><span class="variable">car</span></code> in a list of toys. This more general
+function consumes an additional piece of data, the symbol that we are
+looking for, but is otherwise like the two original functions:
+<a name="node_idx_1366"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains?</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">los</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">alos</span></code> contains the symbol <code class="scheme"><span class="variable">s</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains?</span> <span class="variable">s</span> <span class="variable">alos</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alos</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">alos</span>) <font style="background-color: pink"><u>s</u></font>)
+             true]
+	    [<span class="keyword">else</span> 
+	     (<span class="variable">contains?</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alos</span>))])]))
+</pre></div><p>
+We can now look for <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> by applying <code class="scheme"><span class="variable">contains?</span></code> to
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> and a list of symbols. But <code class="scheme"><span class="variable">contains?</span></code> works for any
+other symbol, too. Defining the single version has solved many related
+problems at once.</p>
+<p>
+The process of combining two related functions into a single definition is
+called <small>F</small><small>U</small><small>N</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small><small>A</small><small>L</small> <small>A</small><small>B</small><small>S</small><small>T</small><small>R</small><small>A</small><small>C</small><small>T</small><small>I</small><small>O</small><small>N</small>.
+<a name="node_idx_1368"></a>Defining abstract versions of
+functions is highly beneficial. The first benefit is that a single function
+can perform many different tasks. In our first example, <code class="scheme"><span class="variable">contains?</span></code>
+can search for many different symbols instead of just one concrete
+symbol.<a name="call_footnote_Temp_109"></a><a href="#footnote_Temp_109"><sup><small>45</small></sup></a></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_110"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1370"></a><a name="node_idx_1372"></a><div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">below</span> <span class="selfeval">:</span> <span class="variable">lon</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+<span class="comment">;; to construct a list of those numbers </span>
+<span class="comment">;; on <code class="scheme"><span class="variable">alon</span></code> that are below <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">below</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+	[(<font style="background-color: pink">&lt;</font> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+	 (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	   (<span class="variable">below</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	[<span class="keyword">else</span>
+	 (<span class="variable">below</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">above</span> <span class="selfeval">:</span> <span class="variable">lon</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+<span class="comment">;; to construct a list of those numbers </span>
+<span class="comment">;; on <code class="scheme"><span class="variable">alon</span></code> that are above <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">above</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+	[(<font style="background-color: pink">&gt;</font> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>) 
+	 (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	   (<span class="variable">above</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	[<span class="keyword">else</span>
+	 (<span class="variable">above</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 53:</b>&nbsp;&nbsp;Two more similar functions</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+In the case of <code class="scheme"><span class="variable">contains-doll?</span></code> and <code class="scheme"><span class="variable">contains-car?</span></code>,
+abstraction is uninteresting. There are, however, more interesting cases:
+see figure&nbsp;<a href="#node_fig_Temp_110">53</a>.  The function on the left consumes a
+list of numbers and a threshold and produces a list of all those numbers
+that are below the threshold; the one on the right produces all those that
+are above a threshold.</p>
+<p>
+The difference between the two functions is the comparison operator. The
+left uses &lt;, the right one &gt;. Following the first example, we abstract
+over the two functions with an additional parameter that stands for the
+concrete relational operator in <code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">above</span></code>:
+<a name="node_idx_1374"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">filter1</span> <span class="variable">rel-op</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<font style="background-color: pink"><u>rel-op</u></font> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	           (<span class="variable">filter1</span> <span class="variable">rel-op</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	    [<span class="keyword">else</span>
+	     (<span class="variable">filter1</span> <span class="variable">rel-op</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+</pre></div><p>
+To apply this new function, we must supply three arguments: a relational
+operator <code class="scheme"><span class="variable">R</span></code> that compares two numbers, a list <code class="scheme"><span class="variable">L</span></code> of
+numbers, and a number <code class="scheme"><span class="variable">N</span></code>. The function then extracts all those items
+<code class="scheme"><span class="variable">i</span></code> in <code class="scheme"><span class="variable">L</span></code> for which <code class="scheme">(<span class="variable">R</span> <span class="variable">i</span> <span class="variable">N</span>)</code> evaluates to
+true. Since we do not know how to write down contracts for functions like
+<code class="scheme"><span class="variable">filter1</span></code>, we omit the contract for now. We will discuss the problem
+of contracts in section&nbsp;<a href="curriculum-Z-H-26.html#node_sec_20.2">20.2</a> below.</p>
+<p>
+Let us see how <code class="scheme"><span class="variable">filter1</span></code> works with an example. Clearly, as long as
+the input list is <code class="scheme"><span class="builtin">empty</span></code>, the result is <code class="scheme"><span class="builtin">empty</span></code>, too, no
+matter what the other arguments are:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> <span class="builtin">empty</span> <span class="selfeval">5</span>)
+<span class="builtin">=</span> <span class="builtin">empty</span>
+</pre></div><p>
+So next we look at a slightly more complicated case: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+The result should be <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)</code> because the only item of this
+list is <code class="scheme"><span class="selfeval">4</span></code> and <code class="scheme">(<span class="builtin">&lt;</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)</code> is true. </p>
+<p>
+The first step of the evaluation is based on the rule of application: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>) <span class="selfeval">5</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))
+	           (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))]
+	    [<span class="keyword">else</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)])])
+</pre></div><p>
+That is, it is the body of <code class="scheme"><span class="variable">filter1</span></code> with all occurrences of
+<code class="scheme"><span class="variable">rel-op</span></code> replaced by <code class="scheme"><span class="builtin">&lt;</span></code>, t replaced by <code class="scheme"><span class="selfeval">5</span></code>, and
+<code class="scheme"><span class="variable">alon</span></code> replaced by <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)</code>. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The rest of the evaluation is straightforward:
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))
+	           (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))]
+	    [<span class="keyword">else</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)])])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))
+           (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))]
+    [<span class="keyword">else</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&lt;</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))
+                   (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))]
+    [<span class="keyword">else</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [true (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))
+              (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))]
+    [<span class="keyword">else</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)])
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> <span class="builtin">empty</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)
+</pre></div><p>
+The last step is the equation we discussed as our first case.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Our final example is an application of <code class="scheme"><span class="variable">filter1</span></code> to a list of two
+items:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)
+<span class="builtin">=</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>) <span class="selfeval">5</span>)
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> <span class="builtin">empty</span> <span class="selfeval">5</span>))
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)
+</pre></div><p>
+The only new step is the first one. It says that <code class="scheme"><span class="variable">filter1</span></code>
+determines that the first item on the list is not less than the threshold,
+and that it therefore is not added to the result of the natural recursion.</p>
+<p>
+</p>
+<p><a name="node_thm_19.1.1"></a>
+<b>Exercise 19.1.1.</b>&nbsp;&nbsp; 
+Verify the equation 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>)) <span class="selfeval">5</span>)
+<span class="builtin">=</span> (<span class="variable">filter1</span> <span class="builtin">&lt;</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>) <span class="selfeval">5</span>)
+</pre></div><p>
+with a hand-evaluation that shows every step. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/filter-eval1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_19.1.2"></a>
+<b>Exercise 19.1.2.</b>&nbsp;&nbsp; 
+Evaluate the expression 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="builtin">&gt;</span> (<span class="builtin">cons</span> <span class="selfeval">8</span> (<span class="builtin">cons</span> <span class="selfeval">6</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> <span class="builtin">empty</span>))) <span class="selfeval">5</span>)
+</pre></div><p>
+by hand. Show only the essential steps.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/filter-eval2.html">Solution</a></p>
+<p></p>
+<p>
+The calculations show that <code class="scheme">(<span class="variable">filter1</span> <span class="builtin">&lt;</span> <span class="variable">alon</span> <span class="variable">t</span>)</code> computes the same
+result as <code class="scheme">(<span class="variable">below</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>, which is what we expected. Similar
+reasoning shows that <code class="scheme">(<span class="variable">filter1</span> <span class="builtin">&gt;</span> <span class="variable">alon</span> <span class="variable">t</span>)</code> produces the same output
+as <code class="scheme">(<span class="variable">above</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>. So suppose we define the following: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1376"></a><a name="node_idx_1378"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">below1</span> <span class="selfeval">:</span> <span class="variable">lon</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">below1</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="variable">filter1</span> <span class="builtin">&lt;</span> <span class="variable">alon</span> <span class="variable">t</span>))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">above1</span> <span class="selfeval">:</span> <span class="variable">lon</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">above1</span> <span class="variable">alon</span> <span class="variable">t</span>) 
+  (<span class="variable">filter1</span> <span class="builtin">&gt;</span> <span class="variable">alon</span> <span class="variable">t</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+Clearly, <code class="scheme"><span class="variable">below1</span></code> produces the same results as <code class="scheme"><span class="variable">below</span></code> when
+given the same inputs, and <code class="scheme"><span class="variable">above1</span></code> is related to <code class="scheme"><span class="variable">above</span></code> in
+the same manner. In short, we have defined <code class="scheme"><span class="variable">below</span></code> and
+<code class="scheme"><span class="variable">above</span></code> as one-liners using <code class="scheme"><span class="variable">filter1</span></code>. <p>
+Better yet: once we have an abstract function like <code class="scheme"><span class="variable">filter1</span></code>, we
+can put it to other uses, too. Here are three of them:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">filter1</span> <span class="builtin">=</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>: This expression extracts all those
+numbers in <code class="scheme"><span class="variable">alon</span></code> that are equal to <code class="scheme"><span class="variable">t</span></code>. </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">filter1</span> <span class="builtin">&lt;=</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>: This one produces the list of numbers
+in <code class="scheme"><span class="variable">alon</span></code> that are less than or equal to <code class="scheme"><span class="variable">t</span></code>. </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">filter1</span> <span class="builtin">&gt;=</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>: This last expression computes the list
+of numbers that are greater than or equal to the threshold.
+</p>
+</li></ol><p></p>
+<p>
+In general, <code class="scheme"><span class="variable">filter1</span></code>'s first argument need not even be one of
+Scheme's predefined operations; it can be any function that consumes two
+numbers and produces a boolean value. Consider the following example:
+<a name="node_idx_1380"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">squared&gt;?</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">squared&gt;?</span> <span class="variable">x</span> <span class="variable">c</span>)
+  (<span class="builtin">&gt;</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) <span class="variable">c</span>))
+</pre></div><p>
+The function produces <code class="scheme">true</code> whenever the area of a square with side
+<code class="scheme"><span class="variable">x</span></code> is larger than some threshold <code class="scheme"><span class="variable">c</span></code>, that is, the function
+tests whether the claim  <em>x</em><sup>2</sup> &gt; <em>c</em>  holds. We now apply <code class="scheme"><span class="variable">filter1</span></code> to
+this function and a list of numbers: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+</pre></div><p>
+This particular application extracts those numbers in <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span>
+<span class="selfeval">5</span>)</code> whose square is larger than <code class="scheme"><span class="selfeval">10</span></code>.</p>
+<p>
+Here is the beginning of a simple hand-evaluation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="variable">squared&gt;?</span> (<span class="builtin">first</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>))
+	       (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>))]
+	    [<span class="keyword">else</span>
+	      (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>)])])
+</pre></div><p>
+That is, we apply our standard law of application and calculate otherwise
+as usual: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="variable">squared&gt;?</span> <span class="selfeval">1</span> <span class="selfeval">10</span>) 
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>))
+       (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>))]
+    [<span class="keyword">else</span>
+     (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>)])
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">cond</span>
+    [false 
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>))
+       (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>))]
+    [<span class="keyword">else</span>
+     (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)) <span class="selfeval">10</span>)])
+</pre></div><p>
+The last step consists of several steps concerning <code class="scheme"><span class="variable">squared&gt;?</span></code>, which
+we can skip at this point:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+</pre></div><p>
+We leave the remainder of the evaluation to the exercises. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_19.1.3"></a>
+<b>Exercise 19.1.3.</b>&nbsp;&nbsp; 
+Show that 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">4</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>)
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="selfeval">4</span> (<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> (<span class="builtin">list</span> <span class="selfeval">5</span>) <span class="selfeval">10</span>))
+</pre></div><p>
+with a hand-evaluation. Act as if <code class="scheme"><span class="variable">squared&gt;?</span></code> were
+primitive. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/squared.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_19.1.4"></a>
+<b>Exercise 19.1.4.</b>&nbsp;&nbsp; 
+The use of <code class="scheme"><span class="variable">squared&gt;?</span></code> also suggests that the following 
+function will work, too:
+<a name="node_idx_1382"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">squared10?</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">squared10?</span> <span class="variable">x</span> <span class="variable">c</span>)
+  (<span class="builtin">&gt;</span> (<span class="builtin">sqr</span> <span class="variable">x</span>) <span class="selfeval">10</span>))
+</pre></div><p>
+In other words, the relational function that <code class="scheme"><span class="variable">filter1</span></code> uses may
+ignore its second argument. After all, we already know it and it stays
+the same throughout the evaluation of <code class="scheme">(<span class="variable">filter1</span> <span class="variable">squared&gt;?</span> <span class="variable">alon</span> <span class="variable">t</span>)</code>.</p>
+<p>
+This, in turn, implies another simplification of the function:
+<a name="node_idx_1384"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="builtin">filter</span> <span class="variable">predicate</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="variable">predicate</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	       (<span class="builtin">filter</span> <span class="variable">predicate</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]
+	    [<span class="keyword">else</span>
+	     (<span class="builtin">filter</span> <span class="variable">predicate</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))])]))
+</pre></div><p>
+The function <code class="scheme"><span class="builtin">filter</span></code> consumes only a relational function, called
+<code class="scheme"><span class="variable">predicate</span></code>, and a list of numbers. Every item <code class="scheme"><span class="variable">i</span></code> on the
+list is checked with <code class="scheme"><span class="variable">predicate</span></code>. If <code class="scheme">(<span class="variable">predicate</span> <span class="variable">i</span>)</code> holds,
+<code class="scheme"><span class="variable">i</span></code> is included in the output; if not, <code class="scheme"><span class="variable">i</span></code> does not appear in
+the result.</p>
+<p>
+Show how to use <code class="scheme"><span class="builtin">filter</span></code> to define functions that are equivalent to
+<code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">above</span></code>. Test the definitions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/filter.html">Solution</a></p>
+<p></p>
+<p>
+So far we have seen that abstracted function definitions are more flexible
+and more widely usable than specialized definitions. A second, and in
+practice equally important, advantage of abstracted definitions is that we
+can change a single definition to fix and improve many different uses.
+Consider the two variants of <code class="scheme"><span class="variable">filter1</span></code> in
+figure&nbsp;<a href="#node_fig_Temp_111">54</a>.  The first variant flattens the nested
+<strong>cond</strong>-expression, something that an experienced programmer may wish
+to do. The second variant uses a <strong>local</strong>-expression that makes the
+nested <strong>cond</strong>-expression more readable.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_111"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1386"></a><a name="node_idx_1388"></a><p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">filter1</span> <span class="variable">rel-op</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [(<span class="variable">rel-op</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>) 
+     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+       (<span class="variable">filter1</span> <span class="variable">rel-op</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+    [<span class="keyword">else</span>
+      (<span class="variable">filter1</span> <span class="variable">rel-op</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)]))
+
+
+
+
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">filter1</span> <span class="variable">rel-op</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">first-item</span> (<span class="builtin">first</span> <span class="variable">alon</span>))
+	      (<span class="keyword">define</span> <span class="variable">rest-filtered</span>
+		(<span class="variable">filter1</span> <span class="variable">rel-op</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)))
+	(<span class="keyword">cond</span>
+	  [(<span class="variable">rel-op</span> <span class="variable">first-item</span> <span class="variable">t</span>) 
+	   (<span class="builtin">cons</span> <span class="variable">first-item</span> <span class="variable">rest-filtered</span>)]
+	  [<span class="keyword">else</span>
+	   <span class="variable">rest-filtered</span>]))]))
+</pre></div></td><td></td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 54:</b>&nbsp;&nbsp;Two modifications of <i>filter1</i></td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Although both of these changes are trivial, the key is that  all
+uses of <code class="scheme"><span class="variable">filter1</span></code>, including those to define the functions
+<code class="scheme"><span class="variable">below1</span></code> and <code class="scheme"><span class="variable">above1</span></code>, benefit from this change. Similarly,
+if the modification had fixed a logical mistake, all uses of the function
+would be improved. Finally, it is even possible to add new tasks to
+abstracted functions, for example, a mechanism for counting how many
+elements are filtered. In that case all uses of the function would benefit
+from the new functionality. We will encounter this form of improvement
+later.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_19.1.5"></a>
+<b>Exercise 19.1.5.</b>&nbsp;&nbsp; 
+</p>
+<p>
+Abstract the following two functions into a single function: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1390"></a><a name="node_idx_1392"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">mini</span> <span class="selfeval">:</span> <span class="variable">nelon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the smallest number</span>
+<span class="comment">;; on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">mini</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&lt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) 
+		(<span class="variable">mini</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))
+	     (<span class="builtin">first</span> <span class="variable">alon</span>)]
+	    [<span class="keyword">else</span>
+	     (<span class="variable">mini</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))])]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">maxi</span> <span class="selfeval">:</span> <span class="variable">nelon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the largest number</span>
+<span class="comment">;; on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">maxi</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&gt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+		(<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))
+	     (<span class="builtin">first</span> <span class="variable">alon</span>)]
+	    [<span class="keyword">else</span>
+	     (<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))])]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+Both consume non-empty lists of numbers and produce a single number.  The
+left one produces the smallest number in the list, the right one the
+largest.<p>
+Define <code class="scheme"><span class="variable">mini1</span></code> and <code class="scheme"><span class="variable">maxi1</span></code> in terms of the abstracted
+function. Test each of them with the following three lists:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">7</span> <span class="selfeval">6</span> <span class="selfeval">2</span> <span class="selfeval">9</span> <span class="selfeval">8</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">20</span> <span class="selfeval">19</span> <span class="selfeval">18</span> <span class="selfeval">17</span> <span class="selfeval">16</span> <span class="selfeval">15</span> <span class="selfeval">14</span> <span class="selfeval">13</span> <span class="selfeval">12</span> <span class="selfeval">11</span> <span class="selfeval">10</span> <span class="selfeval">9</span> <span class="selfeval">8</span> <span class="selfeval">7</span> <span class="selfeval">6</span> <span class="selfeval">5</span> <span class="selfeval">4</span> <span class="selfeval">3</span> <span class="selfeval">2</span> <span class="selfeval">1</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span> <span class="selfeval">10</span> <span class="selfeval">11</span> <span class="selfeval">12</span> <span class="selfeval">13</span> <span class="selfeval">14</span> <span class="selfeval">15</span> <span class="selfeval">16</span> <span class="selfeval">17</span> <span class="selfeval">18</span> <span class="selfeval">19</span> <span class="selfeval">20</span>)</code>
+</p>
+</li></ol><p>
+Why are they slow on the long lists? </p>
+<p>
+Improve the abstracted function. First, introduce a local name for the
+result of the natural recursion.
+<a name="node_idx_1394"></a>Then introduce a local, auxiliary function
+that picks the ``interesting'' one of two numbers.  Test <code class="scheme"><span class="variable">mini1</span></code> and
+<code class="scheme"><span class="variable">maxi1</span></code> with the same inputs again.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-min-max.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_19.1.6"></a>
+<b>Exercise 19.1.6.</b>&nbsp;&nbsp; 
+Recall the definition of <code class="scheme"><span class="variable">sort</span></code>, which consumes a list of numbers
+and produces a sorted version: 
+<a name="node_idx_1396"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to construct a list with all items from <code class="scheme"><span class="variable">alon</span></code> in descending order</span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [<span class="keyword">else</span> (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+	  (<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">an</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">list</span> <span class="variable">an</span>)]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="builtin">&gt;</span> <span class="variable">an</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">an</span> <span class="variable">alon</span>)]
+		      [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">an</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])])))
+    (<span class="variable">sort</span> <span class="variable">alon</span>)))
+</pre></div><p>
+Define an abstract version of <code class="scheme"><span class="variable">sort</span></code> that consumes the comparison
+operation in addition to the list of numbers. Use the abstract version to
+sort <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">1</span> <span class="selfeval">5</span> <span class="selfeval">4</span>)</code> in ascending and descending
+order.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-sort.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<a name="node_sec_19.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_19.2">19.2&nbsp;&nbsp;Similarities in Data Definitions</a></h2>
+<p> </p>
+<p>
+Inspect the following two data definitions: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<p>
+<blockquote>
+<table bgcolor="tan">
+<tr>
+<td align="left">
+A <i>list-of-numbers</i> is either 
+<ul> 
+<li>empty 
+<li>(cons n l)  
+<br>where n is a number  
+<br>and n is a list-of-numbers. 
+</li></ul> 
+</td> 
+
+<td>
+A <i>list-of-IRs</i> is either 
+<ul> 
+<li>empty 
+<li>(cons n l)  
+<br>where n is an IR 
+<br>and n is a list-of-IRs. 
+</li></ul> 
+</td> 
+</tr></table>
+</blockquote>
+<p>
+Both define a class of lists. The one on the left is the data
+definition for lists of numbers; the one on the right describes lists of
+inventory records, which we represent with structures. The necessary
+structure and data definitions follow:
+<a name="node_idx_1398"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">ir</span> (<span class="variable">name</span> <span class="variable">price</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_1400"></a>An <i>IR</i> is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-ir</span> <span class="variable">n</span> <span class="variable">p</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">n</span></code> is a symbol and <code class="scheme"><span class="variable">p</span></code> is a number.<p>
+Given the similarity between the data definitions, functions that consume
+elements of these classes are similar, too.  Take a look at the
+illustrative example in figure&nbsp;<a href="#node_fig_Temp_112">55</a>. The function on
+the left is the function <code class="scheme"><span class="variable">below</span></code>, which filters numbers from a list
+of numbers. The one on the right is <code class="scheme"><span class="variable">below-ir</span></code>, which extracts those
+inventory records from a list whose prices are below a certain threshold.
+Except for the name of the function, which is arbitrary, the two
+definitions differ in only one point: the relational operator.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_112"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1402"></a><a name="node_idx_1404"></a><p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">below</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">lon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+<span class="comment">;; to construct a list of those numbers</span>
+<span class="comment">;; on <code class="scheme"><span class="variable">alon</span></code> that are below <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">below</span> <span class="variable">alon</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<font style="background-color: pink">&lt;</font> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">t</span>)
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	       (<span class="variable">below</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>))]
+	    [<span class="keyword">else</span>
+	      (<span class="variable">below</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <span class="variable">t</span>)])]))
+
+
+
+
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">below-ir</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">loIR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">loIR</span></code></span>
+<span class="comment">;; to construct a list of those records </span>
+<span class="comment">;; on <code class="scheme"><span class="variable">aloir</span></code> that contain a price below <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">below</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloir</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<font style="background-color: pink">&lt;<sub><em>i</em><em>r</em></sub></font> (<span class="builtin">first</span> <span class="variable">aloir</span>) <span class="variable">t</span>) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">aloir</span>)
+	      (<span class="variable">below-ir</span> (<span class="builtin">rest</span> <span class="variable">aloir</span>) <span class="variable">t</span>))]
+	    [<span class="keyword">else</span>
+	      (<span class="variable">below-ir</span> (<span class="builtin">rest</span> <span class="variable">aloir</span>) <span class="variable">t</span>)])]))
+
+<span class="comment">;; <code class="scheme">&lt;<sub><em>i</em><em>r</em></sub> <span class="selfeval">:</span> <span class="variable">IR</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+(<span class="keyword">define</span> (&lt;<sub><em>i</em><em>r</em></sub> <span class="variable">ir</span> <span class="variable">p</span>)
+    (<span class="builtin">&lt;</span> (<span class="builtin">ir-price</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+</pre></div></td><td></td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 55:</b>&nbsp;&nbsp;Marking the differences in similar functions</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+If we abstract the two functions, we obviously obtain <code class="scheme"><span class="variable">filter1</span></code>.
+Conversely, we can define <code class="scheme"><span class="variable">below-ir</span></code> in terms of <code class="scheme"><span class="variable">filter1</span></code>:
+<a name="node_idx_1406"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">below-ir1</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="variable">filter1</span> &lt;<sub><em>i</em><em>r</em></sub> <span class="variable">aloir</span> <span class="variable">t</span>))
+</pre></div><p>
+It should not surprise us to discover yet another use for
+<code class="scheme"><span class="variable">filter1</span></code> -- after all, we already argued that abstraction promotes
+the reuse of functions for different purposes. Here we see that
+<code class="scheme"><span class="variable">filter1</span></code> not only filters lists of numbers but lists of arbitrary
+things -- as long as we can define a function that compares these arbitrary
+things with numbers.</p>
+<p>
+Indeed, all we need is a function that compares items on the list with the
+items we pass to <code class="scheme"><span class="variable">filter1</span></code> as the second argument. Here is a function
+that extracts all items with the same label from a list of inventory
+records: 
+<a name="node_idx_1408"></a><a name="node_idx_1410"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find</span> <span class="selfeval">:</span> <span class="variable">loIR</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">aloir</span></code> contains a record for <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">find</span> <span class="variable">aloir</span> <span class="variable">t</span>)
+  (<span class="builtin">cons?</span> (<span class="variable">filter1</span> <span class="variable">eq-ir?</span> <span class="variable">aloir</span> <span class="variable">t</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">eq-ir?</span> <span class="selfeval">:</span> <span class="variable">IR</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to compare <code class="scheme"><span class="variable">ir</span></code>'s name and <code class="scheme"><span class="variable">p</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">eq-ir?</span> <span class="variable">ir</span> <span class="variable">p</span>)
+  (<span class="builtin">symbol=?</span> (<span class="builtin">ir-name</span> <span class="variable">ir</span>) <span class="variable">p</span>))
+</pre></div><p>
+This new relational operator compares the name in an inventory record with
+some other symbol. </p>
+<p>
+</p>
+<p><a name="node_thm_19.2.1"></a>
+<b>Exercise 19.2.1.</b>&nbsp;&nbsp; 
+Determine the values of 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">below-ir1</span> <span class="selfeval">10</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">8</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">12</span>)))</code>
+</p>
+<li><p><code class="scheme">(<span class="variable">find</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">list</span> (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">8</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="selfeval">12</span>) (<span class="builtin">make-ir</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="selfeval">13</span>)))</code>
+</p>
+</li></ol><p>
+by hand and with DrScheme. Show only those lines that introduce new
+applications of <code class="scheme"><span class="variable">filter1</span></code> to values. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/filter-eval3.html">Solution</a></p>
+<p></p>
+<p>
+In short, <code class="scheme"><span class="variable">filter1</span></code> uniformly works on many shapes of input data.
+The word ``uniformly'' means that if <code class="scheme"><span class="variable">filter1</span></code> is applied to a list
+of <code class="scheme"><span class="variable">X</span></code>, its result is also a list of <code class="scheme"><span class="variable">X</span></code> -- no matter what
+kind of Scheme data <code class="scheme"><span class="variable">X</span></code> is.  Such functions are called
+<small>P</small><small>O</small><small>L</small><small>Y</small><small>M</small><small>O</small><small>R</small><small>P</small><small>H</small><small>I</small><small>C</small><a name="call_footnote_Temp_113"></a><a href="#footnote_Temp_113"><sup><small>46</small></sup></a>
+<a name="node_idx_1412"></a>or <small>G</small><small>E</small><small>N</small><small>E</small><small>R</small><small>I</small><small>C</small> 
+<a name="node_idx_1414"></a>functions.</p>
+<p>
+Of course, <code class="scheme"><span class="variable">filter1</span></code> is not the only function that can process
+arbitrary lists. There are many other functions that process lists
+independently of what they contain. Here are two functions that determine
+the length of lists of numbers and <code class="scheme"><span class="variable">IR</span></code>s: 
+<a name="node_idx_1416"></a><a name="node_idx_1418"></a></p>
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">length-lon</span> <span class="selfeval">:</span> <span class="variable">lon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">length-lon</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> 
+      (<span class="builtin">+</span> (<span class="variable">length-lon</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) <span class="selfeval">1</span>)]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">length-ir</span> <span class="selfeval">:</span> <span class="variable">loIR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">length-ir</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">+</span> (<span class="variable">length-ir</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) <span class="selfeval">1</span>)]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+The two functions differ only in their names. If we had chosen the same
+name, say, <code class="scheme"><span class="builtin">length</span></code>, the two definitions would be identical. <p>
+To write precise contracts for functions such as <code class="scheme"><span class="builtin">length</span></code>, we need
+data definitions with parameters. We call these <small>P</small><small>A</small><small>R</small><small>A</small><small>M</small><small>E</small><small>T</small><small>R</small><small>I</small><small>C</small> <small>D</small><small>A</small><small>T</small><small>A</small>
+<small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small> and agree that they
+<a name="node_idx_1420"></a><a name="node_idx_1422"></a>do not specify everything about a class of data.  Instead they use
+variables to say that any form of Scheme data can be used in a certain
+place. Roughly speaking,  
+a parametric data definition abstracts from a reference to a particular
+collection of data in the same manner as a function abstracts from a
+particular value.</p>
+<p>
+Here is a parametric definition of lists of <code class="scheme"><span class="variable">ITEM</span></code>s:</p>
+<p>
+A <i>list of ITEM</i> is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">l</span>)</code>  where
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">s</span></code> is an ITEM and
+</p>
+<li><p><code class="scheme"><span class="variable">l</span></code> is a list of ITEM.&nbsp;
+</p>
+</li></ol><p>
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+The token <code class="scheme"><span class="variable">ITEM</span></code> is a <small>T</small><small>Y</small><small>P</small><small>E</small> <small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>B</small><small>L</small><small>E</small> 
+<a name="node_idx_1424"></a>that stands for any arbitrary collection of Scheme data: symbols, numbers,
+booleans, <code class="scheme"><span class="variable">IR</span></code>s, etc. By replacing <code class="scheme"><span class="variable">ITEM</span></code> with one of these
+names, we get a concrete instance of this abstract data definition for
+lists of symbols, numbers, booleans, <code class="scheme"><span class="variable">IR</span></code>s, etc. To make the
+language of contracts more concise, we introduce an additional abbreviation:
+<a name="node_idx_1426"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">listof</span> <span class="variable">ITEM</span>)
+</pre></div><p>
+We use <code class="scheme">(<span class="keyword">listof</span> <span class="variable">ITEM</span>)</code> as the name of abstract data definitions such
+as the above. Then we can use <code class="scheme">(<span class="keyword">listof</span> <span class="variable">symbol</span>)</code> for the class of all
+lists of symbols, <code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code> for the class of all lists of
+numbers, <code class="scheme">(<span class="keyword">listof</span> (<span class="keyword">listof</span> <span class="variable">number</span>))</code> for the class of all lists of
+lists of numbers, etc.</p>
+<p>
+In contracts we use <code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code> to say that a function works
+on all lists: 
+<a name="node_idx_1428"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">length</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the length of a list </span>
+(<span class="keyword">define</span> (<span class="builtin">length</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">length</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) <span class="selfeval">1</span>)]))
+</pre></div><p>
+The <code class="scheme"><span class="variable">X</span></code> is just a variable, a name that stands for some class of
+data.  If we now apply <code class="scheme"><span class="builtin">length</span></code> to an element of, say,
+<code class="scheme">(<span class="keyword">listof</span> <span class="variable">symbol</span>)</code> or <code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>, we get a number.</p>
+<p>
+The function <code class="scheme"><span class="builtin">length</span></code> is an example of simple polymorphism. It works
+on all classes of lists. While there are other useful examples of simple
+polymorphic functions, the more common cases require that we define functions
+like <code class="scheme"><span class="variable">filter1</span></code>, which consume a parametric form of data and functions
+that work on this data. This combination is extremely powerful and greatly
+facilitates the construction and maintenance of software systems. To
+understand it better, we will next discuss a revision of Scheme's grammar
+and new ways to write contracts.</p>
+<p>
+</p>
+<p><a name="node_thm_19.2.2"></a>
+<b>Exercise 19.2.2.</b>&nbsp;&nbsp; 
+Show how to use the abstracted version of <code class="scheme"><span class="variable">sort</span></code> from
+exercise&nbsp;<a href="#node_thm_19.1.6">19.1.6</a> to sort a list of <code class="scheme"><span class="variable">IR</span></code>s in ascending and
+descending order. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-sort2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_19.2.3"></a>
+<b>Exercise 19.2.3.</b>&nbsp;&nbsp; 
+Here is a structure definition for pairs
+<a name="node_idx_1430"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">pair</span> (<span class="variable">left</span> <span class="variable">right</span>))
+</pre></div><p>
+and its parametric data definition: </p>
+<p>
+<a name="node_idx_1432"></a>
+A <i>(pair <code class="scheme"><span class="variable">X</span></code> <code class="scheme"><span class="variable">Y</span></code>)</i> is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-pair</span> <span class="variable">l</span> <span class="variable">r</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">l</span></code> is an <code class="scheme"><span class="variable">X</span></code> and <code class="scheme"><span class="variable">r</span></code> is a <code class="scheme"><span class="variable">Y</span></code>.<p>
+Using this abstract data definition, we can describe many
+different forms of pairs:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">pair</span> <span class="variable">number</span> <span class="variable">number</span>)</code>, which is the class of pairs that
+combine two numbers;</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">pair</span> <span class="variable">symbol</span> <span class="variable">number</span>)</code>, which is the class of pairs that
+combine a number with a symbol; and</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">pair</span> <span class="variable">symbol</span> <span class="variable">symbol</span>)</code>, which is the class of pairs that 
+combine two symbols. 
+</p>
+</li></ol><p>
+Still, in all of these examples, each pair contains two values that are
+accessible via <code class="scheme"><span class="builtin">pair-left</span></code> and <code class="scheme"><span class="builtin">pair-right</span></code>.</p>
+<p>
+By combining the abstract data definition for lists and pairs we can
+describe lists of parametric pairs with a single line:</p>
+<p>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="keyword">listof</span> (<span class="variable">pair</span> <span class="variable">X</span> <span class="variable">Y</span>))</code>  .&nbsp;</div>
+<p>
+Some concrete examples of this abstract class of data are: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="keyword">listof</span> (<span class="variable">pair</span> <span class="variable">number</span> <span class="variable">number</span>))</code>, the list of pairs of numbers; 
+</p>
+<li><p><code class="scheme">(<span class="keyword">listof</span> (<span class="variable">pair</span> <span class="variable">symbol</span> <span class="variable">number</span>))</code>, the list of pairs of symbols
+and numbers;  
+</p>
+<li><p><code class="scheme">(<span class="keyword">listof</span> (<span class="variable">pair</span> <span class="variable">symbol</span> <span class="variable">symbol</span>))</code>, the list of pairs of symbols. 
+</p>
+</li></ol><p>
+Make an example for each of these classes. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">lefts</span></code>, which consumes a list of
+<code class="scheme">(<span class="variable">pair</span> <span class="variable">X</span> <span class="variable">Y</span>)</code> and produces a corresponding list of <code class="scheme"><span class="variable">X</span></code>'s; that
+is, it extracts the <code class="scheme"><span class="variable">left</span></code> part of each item in its
+input.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/para-pair.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_19.2.4"></a>
+<b>Exercise 19.2.4.</b>&nbsp;&nbsp; 
+Here is a parametric data definition of non-empty lists:</p>
+<p>
+<a name="node_idx_1434"></a>
+A <i><code class="scheme">(<span class="variable">non-empty-listof</span> <span class="variable">ITEM</span>)</code></i> is either
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="builtin">empty</span>)</code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">l</span>)</code>
+where <code class="scheme"><span class="variable">l</span></code> is a <code class="scheme">(<span class="variable">non-empty-listof</span> <span class="variable">ITEM</span>)</code> 
+</p>
+</li></ol><p>
+and <code class="scheme"><span class="variable">s</span></code> is always an <code class="scheme"><span class="variable">ITEM</span></code>.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">last</span></code>, which consumes a
+<code class="scheme">(<span class="variable">non-empty-listof</span> <span class="variable">ITEM</span>)</code> and produces the last <code class="scheme"><span class="variable">ITEM</span></code> in
+that list.</p>
+<p>
+<strong>Hint:</strong>  Replace <code class="scheme"><span class="variable">ITEM</span></code> with a fixed class of data to develop an
+initial draft of <code class="scheme"><span class="variable">last</span></code>. When finished, replace the class with
+<code class="scheme"><span class="variable">ITEM</span></code> throughout the function
+development.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/para-non-empty.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_109"></a><a href="#call_footnote_Temp_109"><sup><small>45</small></sup></a> Computing borrows the term ``abstract'' from
+mathematics. A mathematician refers to ``6'' as an abstract number because
+it only represents all different ways of naming six things.  In contrast,
+``6 inches'' or ``6 eggs'' are concrete instances of ``6'' because they
+express a measurement and a count.</p>
+<p><a name="footnote_Temp_113"></a><a href="#call_footnote_Temp_113"><sup><small>46</small></sup></a> The word ``poly'' means ``many'' and 
+``morphic'' means shape.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-24.html">previous</a></span><span>, <a href="curriculum-Z-H-26.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-25.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

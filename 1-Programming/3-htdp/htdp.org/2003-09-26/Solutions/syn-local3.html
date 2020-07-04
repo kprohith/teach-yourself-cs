@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/syn-local3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.3; How to Design Programs </title>
+</head>
+<body>
+<a href="syn-local2.html">18.1.2</a> | <a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student
+
+#| 18.1.3
+------------------------------------------------------------
+1. NOT Legal
+(define A-CONSTANT
+  (not 
+   (local ((define (odd an)
+             (cond
+               [(= an 0) false]
+               [else (even (- an 1))]))
+           (define (even an)
+             (cond
+               [(= an 0) true]
+               [else (odd (- an 1))])))
+     (even a-nat-num))))
+
+The name a-nat-num has not been defined.
+
+2. Legal
+(+ (local ((define (f x) (+ (* x x) (* 3 x) 15))
+           (define x 100)
+           (define <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="214761101111">[email&#160;protected]</a> (f x)))
+     <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="355375040505">[email&#160;protected]</a>)
+   1000)
+
+This uses correct syntax.
+
+3.NOT Legal
+(local ((define CONST 100)
+        (define f x (+ x CONST)))
+  (define (g x y z) (f (+ x (* y z)))))
+
+The definition (define f x (+ x CONST)) is not syntactically
+correct. Also, the body of the local is a definition when
+it should be an expression.
+|#
+</pre>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/syn-local3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

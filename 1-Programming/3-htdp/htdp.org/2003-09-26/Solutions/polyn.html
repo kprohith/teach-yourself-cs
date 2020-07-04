@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/polyn.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.6.4; How to Design Programs </title>
+</head>
+<body>
+<a href="wage-general.html">17.6.3</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.6.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="perm-xmas.html">17.6.5</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.6.4 value
+------------------------------------------------------------
+;Data Definition:
+a list-of-numbers is either
+  1. empty or
+  2. (cons n lon)
+  where n is a number and lon is a list-of-numbers
+
+;Template:
+(define (value coefficients variables)
+  (cond
+    [(empty? coefficients)...]
+    [else 
+     ...(first coefficients)...(first variables)...
+     ...(value (rest coefficients) (rest variables))...]))
+|#
+
+;;value: list-of-numbers list-of-numbers -&gt; number
+;;consumes the representation of a linear combination 
+;;and a list-of-numbers.  It produces the value of  
+;;the combination for these values
+;;ASSUMPTION: The lists are of equal length.
+(define (value coefficients variables)
+  (cond
+    [(empty? coefficients) 0]
+    [else 
+     (+ (* (first coefficients) (first variables))
+        (value (rest coefficients) (rest variables)))]))
+
+;Examples as Tests:
+(check-expect 
+ (value (list 7) 
+        (list 8)) 
+ 56)
+
+(check-expect 
+ (value (list 7 12) 
+        (list 8 3)) 
+ 92)
+
+(check-expect 
+ (value (list 7 12  8) 
+        (list 8 3 9)) 
+ 164)
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/polyn.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

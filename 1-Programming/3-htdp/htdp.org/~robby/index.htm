@@ -1,0 +1,133 @@
+<html><head><META content="text/html; charset=UTF-8" http-equiv="Content-Type" /><title>Robby Findler</title><meta content="robert findler, robert bruce findler, robby findler" name="keywords" /><style type="text/css" title="currentStyle">.generic-text {font-family: Georgia, Times New Roman, Times, serif;}
+body {color: CC99FF; background-image: url(./china-2008.jpg); background-repeat: no-repeat; background: black url(./china-2008.jpg) 0 30 no-repeat fixed; background-position: center; }
+.single-line { color: FF9966 }
+</style><script type="text/javascript">
+
+var  TimeToFade = 1000.0;
+
+function InitGlory() {
+  var ele =   document.getElementById("glorysmall")
+  if (ele == null) return;
+  ele.style.visibility="visible"
+}
+
+function fade(eid,fadein)
+{
+  var element = document.getElementById(eid);
+  if(element == null)
+    return;
+
+ if (fadein) {
+    element.FadeState=1;
+    element.style.zIndex = 5;
+  } else {
+    element.FadeState=-1;
+  }
+
+    element.FadeTimeLeft = TimeToFade;
+   if (!element.fading || element.fading==null) {
+    element.fading=true;
+    setTimeout("animateFade(" + new Date().getTime() + ",'" + eid + "')", 33);
+  }  
+  return true;
+}
+
+function  animateFade(lastTick, eid)
+{  
+  var curTick = new Date().getTime();
+  var elapsedTicks = curTick - lastTick;
+ 
+  var element = document.getElementById(eid);
+ 
+  if(Math.min(element.FadeTimeLeft,elapsedTicks)==element.FadeTimeLeft)
+  {
+    if (element.FadeState!=1) element.style.zIndex=-1;
+    element.style.opacity = element.FadeState == 1 ? '1' : '0';
+    element.style.filter = 'alpha(opacity = '
+        + (element.FadeState == 1 ? '100' : '0') + ')';
+    element.fading=false;
+    return;
+  }
+
+  element.FadeTimeLeft -= elapsedTicks;
+  var newOpVal = element.FadeTimeLeft/TimeToFade;
+  if(element.FadeState == 1)
+    newOpVal = 1 - newOpVal;
+
+  element.style.opacity = newOpVal;
+  element.style.filter = 'alpha(opacity = ' + (newOpVal*100) + ')';
+ 
+  setTimeout("animateFade(" + curTick + ",'" + eid + "')", 33);
+}
+
+var origw=1000;
+var origh=1363;
+function ScaleSize() {
+  var ele = document.getElementById("imgTag");
+  if (ele==null) return;
+  var scalex = f_clientWidth() * .9 / origw;
+  var scaley = f_clientHeight() * .9 / origh;
+  var scale = scalex;
+  if (Math.min(scaley,scalex)==scaley) {
+    scale = scaley;
+  }
+  if (Math.max(scale,1.0)==1.0) {
+    document.getElementById("imgTag").style.width = origw*scale;
+    document.getElementById("imgTag").style.height = origh*scale;
+  }
+}
+function InitScale() {
+  var ele = document.getElementById("imgTag");
+  if (ele == null) return;
+  ScaleSize();
+  ele.style.visibility="visible"
+}
+function f_clientWidth() {
+	return f_filterResults (
+		window.innerWidth ? window.innerWidth : 0,
+		document.documentElement ? document.documentElement.clientWidth : 0,
+		document.body ? document.body.clientWidth : 0
+	);
+}
+function f_clientHeight() {
+	return f_filterResults (
+		window.innerHeight ? window.innerHeight : 0,
+		document.documentElement ? document.documentElement.clientHeight : 0,
+		document.body ? document.body.clientHeight : 0
+	);
+}
+function f_scrollLeft() {
+	return f_filterResults (
+		window.pageXOffset ? window.pageXOffset : 0,
+		document.documentElement ? document.documentElement.scrollLeft : 0,
+		document.body ? document.body.scrollLeft : 0
+	);
+}
+function f_scrollTop() {
+	return f_filterResults (
+		window.pageYOffset ? window.pageYOffset : 0,
+		document.documentElement ? document.documentElement.scrollTop : 0,
+		document.body ? document.body.scrollTop : 0
+	);
+}
+function f_filterResults(n_win, n_docel, n_body) {
+  var n_result = n_win ? n_win : 0;
+  if (n_docel)
+    if (!n_result || (Math.min(n_result,n_docel)==n_docel))
+      n_result = n_docel;
+  if (n_body)
+     return (!n_result || (Math.min(n_result,n_body)==n_body)) ? n_body : n_result;
+  return false;
+}
+
+
+</script><style type="text/css">
+
+.sansa {
+font-family: Lucida Grande,Geneva,Arial,Helvetica,Swiss,SunSans-Regular,sans-serif;
+color: white
+}
+.min {
+font-size: 10px
+}
+</style></head><body bgcolor="black" onload="javascript:InitScale(); javascript:InitGlory()" onresize="javascript:ScaleSize();"><table height="100%" width="100%"><tr><td><center><table width="650"><tr><td align="left"><div class="mainpart"><table><tr align="bottom" align="left"><td valign="bottom" align="left"><table cellspacing="0" cellpadding="0"><tr><td valign="bottom" align="left"><a href="/~robby/"><img width="155" height="318" src="portrait-2018.jpg" border="0" /></a></td><td valign="bottom"><table><tr align="bottom"><td align="left" valign="bottom"><span class="sansa"><font size="+1"><a class="single-line" href="pubs/" style="text-decoration: none">Publications</a></font><br /><font size="+1"><a class="single-line" href="courses/" style="text-decoration: none">Teaching</a></font><br /><font size="+1"><a class="single-line" href="contact.html" style="text-decoration: none">Contact</a></font><br /><font size="+1"><a class="single-line" href="talks/index.html" style="text-decoration: none">Talks</a></font><br /><font size="+1"><a class="single-line" href="misc.html" style="text-decoration: none">Misc</a></font><br /><font size="+1"><a class="single-line" href="cv/cv.pdf" style="text-decoration: none">CV</a></font><br />&nbsp;<br /><font size="+1"><a class="single-line" href="http://www.htdp.org" style="text-decoration: none">HtDP</a></font><br /><font size="+1"><a class="single-line" href="http://www.racket-lang.org/" style="text-decoration: none">Racket</a></font><br /><font size="+1"><a class="single-line" href="http://www.eecs.northwestern.edu/" style="text-decoration: none">NWU CS</a></font><br /><font size="+1"><a class="single-line" href="http://redex.racket-lang.org/" style="text-decoration: none">PLT Redex</a></font><br /><font size="+1"><a class="single-line" href="http://www.programbydesign.org/" style="text-decoration: none">Program by Design</a></font><br /><font size="+1"><a class="single-line" href="http://docs.racket-lang.org/guide/contracts.html" style="text-decoration: none">Guide to Racket Contracts</a></font></span></td></tr></table></td></tr></table></td></tr><tr align="left"><td colspan="2"><table><tr><td></td></tr></table><br /><div><table cellspacing="0" cellpadding="0"><tr valign="top"><td>“</td><td>The programmer, like the poet, works only slightly removed from pure thought-stuff.”<div style="float:right;">&mdash;Fredrick Brooks</div><br /><br /></td></tr><tr valign="top"><td>“</td><td>The poet's eye, in a fine frenzy rolling, / Doth glance from heaven to earth, from earth to heaven; / And, as imagination bodies forth / The forms of things unknown, the poet's pen / Turns them to shapes, and gives to airy nothing / A local habitation and a name.”<div style="float:right;">&mdash;William Shakespeare</div></td></tr></table></div></td></tr></table></div></td></tr></table></center></td></tr></table></body></html>

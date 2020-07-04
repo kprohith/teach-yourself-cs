@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/define-struct-value.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.7.2; How to Design Programs </title>
+</head>
+<body>
+<a href="define-struct-syn.html">8.7.1</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.7.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="define-struct2.html">8.7.3</a><pre>#|
+
+A value is a program that cannot
+be simplified by hand-evaluation. That is, if there
+are hand-evaluation steps possible, it is not a value. 
+If there are no more hand-evaluation steps (and no
+errors) it is a value.
+
+1. (make-point 1 2 3) is a value, 
+because 1, 2 and 3 are values.
+   
+2. (make-point (make-point 1 2 3) 4 5) is a value,
+because (make-point 1 2 3) is a value (from part 1.) and 
+4 and 5 are also values.
+
+3. (make-point (+ 1 2) 3 4) is not a value,
+becuase (+ 1 2) is not a value. It has a value,
+however: (make-point 3 3 4)
+
+There is an important difference between
+having a value and being a value. As above,
+values are programs that cannot be 
+simplified. But, if a program can be
+simplified to a value, then that program
+has a value. This seeming subtlty between
+"have" and "is" is not something special
+to values. For example, I have a hat, but
+I am not a hat.
+
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/define-struct-value.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/palindrome.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.6; How to Design Programs </title>
+</head>
+<body>
+<a href="add-pi-accu.html">31.3.5</a> | <a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="to10.html">31.3.7</a><pre>;; make-palindrome : (NEListof Symbol) -&gt; (Listof Symbol)
+;; create the mirror image of the given "word" around its last letter
+
+(define (make-palindrome.v0 word)
+   (local (;; accumulator: keep track of all the letters seen so far
+           [define (rev word reverse-seen)
+             (cond
+               [(empty? (rest word)) (cons (first word) reverse-seen)]
+               [else (cons (first word) (rev (rest word) (cons (first word) reverse-seen)))])])
+     (rev word empty)))
+
+(define (make-palindrome.v1 word)
+   (local (;; accumulator: keep track of all the letters seen so far
+           [define (rev word reverse-seen)
+             (cond
+               [(empty? (rest word)) reverse-seen]
+               [else (rev (rest word) (cons (first word) reverse-seen))])])
+     (append word (rev word empty))))
+
+;; Tests:
+(equal? (make-palindrome.v0 '(r a c e)) '(r a c e c a r))
+(equal? (make-palindrome.v1 '(r a c e)) '(r a c e c a r))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/palindrome.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

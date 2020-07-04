@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/recall2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.8; How to Design Programs </title>
+</head>
+<body>
+<a href="raise-prices.html">10.2.7</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.8">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="name-robot.html">10.2.9</a><pre>;; recall : inventory symbol -&gt; inventory
+;; removes all of the items from inv whose names match sym
+
+(define-struct ir (name price))
+
+#|
+;; Template
+(define (recall inv sym)
+  (cond
+    [(empty? inv) ...]
+    [else (ir-name (first inv))
+          (ir-price (first inv))
+          (recall (rest inv) sym)]))
+|#
+
+(define (recall inv sym)
+  (cond
+    [(empty? inv) empty]
+    [else (cond
+            [(eq? (ir-name (first inv)) sym)
+             (recall (rest inv) sym)]
+            [else
+             (cons (first inv)
+                   (recall (rest inv) sym))])]))
+
+(recall empty 'doll) "should be" empty
+(recall (cons (make-ir 'doll 2.31) empty) 'doll) "should be" empty
+(recall (cons (make-ir 'rocket 1.21) empty) 'doll) "should be" 
+(cons (make-ir 'rocket 1.21) empty)
+
+(recall (cons (make-ir 'rocket 1.21)
+              (cons (make-ir 'rocket 1.21)
+                    (cons (make-ir 'doll 2.31)
+                          (cons (make-ir 'rocket 1.21)
+                                empty))))
+        'rocket)
+"should be"
+(cons (make-ir 'doll 2.31) empty)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/recall2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-cp-x.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="def-struct-names.html">6.3.1</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="data-def1.html">6.3.3</a><pre>(define-struct movie (title producer))
+(movie-title (make-movie 'ThePhantomMenace 'Lucas)) 
+"should be" 'ThePhantomMenace
+(movie-producer (make-movie 'TheEmpireStrikesBack 'Lucas))
+"should be" 'Lucas
+
+; for any values x and y,
+; (movie-title (make-movie x y)) = x
+; for any values x and y,
+; (movie-producer (make-movie x y)) = y
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-cp-x.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

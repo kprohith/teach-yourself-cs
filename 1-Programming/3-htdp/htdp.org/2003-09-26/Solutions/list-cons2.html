@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 13.0.3; How to Design Programs </title>
+</head>
+<body>
+<a href="permutations.html">12.4.2</a> | <a href="../Book/curriculum-Z-H-17.html#node_thm_13.0.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-cons3.html">13.0.4</a><pre>;; 1.
+(list 0 1 2 3 4 5) 
+"should be"
+(cons 0 (cons 1 (cons 2 (cons 3 (cons 4 (cons 5 empty))))))
+
+;; 2.
+(list (list 'adam 0) (list 'eve 1) (list 'louisXIV 2)) 
+"should be"
+(cons (cons 'adam (cons 0 empty))
+      (cons (cons 'eve (cons 1 empty))
+            (cons (cons 'louisXIV (cons 2 empty))
+                  empty)))
+
+;; 3.
+(list 1 (list 1 2) (list 1 2 3))
+"should be"
+(cons 1 
+      (cons (cons 1 (cons 2 empty))
+            (cons (cons 1 (cons 2 (cons 3 empty)))
+                  empty)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

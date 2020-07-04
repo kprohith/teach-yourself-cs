@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/filter-contract.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 20.2.3; How to Design Programs </title>
+</head>
+<body>
+<a href="fancy-contracts.html">20.2.2</a> | <a href="../Book/curriculum-Z-H-26.html#node_thm_20.2.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="fancy-contracts-poly.html">20.2.4</a><pre>;; Language: Intermediate Student
+
+;; Exercise 20.2.3. Use filter1 to develop a function that
+;; consumes a list of symbols and extracts all those that
+;; are not equal to 'car. Give filter1's corresponding contract.
+
+;; Solution.
+
+(define (filter1 rel-op alon t)
+  (cond
+    [(empty? alon) empty]
+    [else (cond
+            [(rel-op (first alon) t)
+             (cons (first alon)
+                   (filter1 rel-op (rest alon) t))]
+            [else
+             (filter1 rel-op (rest alon) t)])]))
+
+;; f: (listof symbol) -&gt; (listof symbol)
+;; consumes a (listof symbol), producing a (listof symbol) without
+;; any occurrence of 'car
+(define (f ls-of-sym)
+  (local ((define (cmp sym1 sym2)
+            (not (symbol=? sym1 sym2))))
+    (filter1 cmp ls-of-sym 'car)))
+
+(check-expect (f (list 'a 'b 'car 'x)) (list 'a 'b 'x))
+(check-expect (f (list 'car 'car 'x 'car)) (list 'x))
+
+;; The contract of filter1
+;; filter1: (symbol symbol -&gt; boolean) (listof symbol) symbol -&gt; (listof symbol)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/filter-contract.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

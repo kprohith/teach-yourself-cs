@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/rect-trans.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.6.10; How to Design Programs </title>
+</head>
+<body>
+<a href="rect-in.html">6.6.9</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.6.10">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="rect-clear.html">6.6.11</a><pre>;; teachpack: draw.ss
+
+;; A rectangle is a structure:
+;;   (make-rectangle P W H)
+;; where P is a posn, W is a number and H is a number.
+(define-struct rectangle (nw-corner width height color))
+
+;; DATA EXAMPLES
+(define example-rectangle1 (make-rectangle (make-posn 20 20) 260 260 'red))
+(define example-rectangle2 (make-rectangle (make-posn 60 60) 180 180 'blue))
+
+#|
+;; Template
+(define (fun-for-rectangle a-rectangle)
+  ... (rectangle-nw-corner a-rectangle) ...
+  ... (rectangle-width a-rectangle) ...
+  ... (rectangle-height a-rectangle) ...
+  ... (rectangle-color a-rectangle) ...)
+|#
+
+; -------------------------------------------------------------------------
+
+;; draw-a-rectangle : rectangle -&gt; true
+;; to draw a-rect
+(define (draw-a-rectangle a-rectangle)
+  (draw-solid-rect
+   (rectangle-nw-corner a-rectangle)
+   (rectangle-width a-rectangle)
+   (rectangle-height a-rectangle)
+   (rectangle-color a-rectangle)))
+
+;; EXAMPLES
+(start 300 300)
+(draw-a-rectangle example-rectangle1)
+(draw-a-rectangle example-rectangle2)
+
+; -------------------------------------------------------------------------
+
+;; in-rectangle? : rectangle posn -&gt; boolean
+;; to determine if a-posn is in a-rectangle, or not
+(define (in-rectangle? a-rectangle a-posn)
+  (and (&lt;= (posn-x (rectangle-nw-corner a-rectangle))
+           (posn-x a-posn)
+           (+ (posn-x (rectangle-nw-corner a-rectangle))
+              (rectangle-width a-rectangle)))
+       (&lt;= (posn-y (rectangle-nw-corner a-rectangle))
+           (posn-y a-posn)
+           (+ (posn-y (rectangle-nw-corner a-rectangle))
+              (rectangle-height a-rectangle)))))
+
+;; EXAMPLES AS TESTS
+(in-rectangle? example-rectangle1 (make-posn 0 0)) "should be" false
+(in-rectangle? example-rectangle1 (make-posn 25 0)) "should be" false
+(in-rectangle? example-rectangle1 (make-posn 0 25)) "should be" false
+(in-rectangle? example-rectangle1 (make-posn 25 25)) "should be" true
+
+; -------------------------------------------------------------------------
+
+;; translate-rectangle : rectangle number -&gt; rectangle
+;; to translate a-rectangle horizontally by x pixels 
+(define (translate-rectangle a-rectangle x)
+  (make-rectangle (make-posn
+                   (+ x (posn-x (rectangle-nw-corner a-rectangle)))
+                   (posn-y (rectangle-nw-corner a-rectangle)))
+                  (rectangle-width a-rectangle)
+                  (rectangle-height a-rectangle)
+                  (rectangle-color a-rectangle)))
+
+;; EXAMPLES AS TESTS
+(translate-rectangle example-rectangle1 30)
+"should be"
+(make-rectangle (make-posn 50 20) 260 260 'red)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/rect-trans.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

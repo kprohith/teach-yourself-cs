@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-sum-prod.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 21.1.2; How to Design Programs </title>
+</head>
+<body>
+<a href="abs-tabulate.html">21.1.1</a> | <a href="../Book/curriculum-Z-H-27.html#node_thm_21.1.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="N-fold.html">21.1.3</a><pre>;; fold : list-of-numbers (number X -&gt; X) number -&gt; X
+(define (fold alon acc init)
+  (cond
+    [(empty? alon) init]
+    [else (acc (first alon) (fold (rest alon) acc init))]))
+
+(define (prod alon) (fold alon * 1))
+(define (sum alon) (fold alon + 0))
+
+;; tests
+(= (prod empty) 1)
+(= (prod (list 1 2 3 4)) 24)
+(= (sum empty) 0)
+(= (sum (list 1 2 3 4)) 10)
+
+;; concat : lon lon -&gt; lon
+(define (concat lon1 lon2)
+  (fold lon1 cons lon2))
+
+;; append tests
+(equal? (concat empty empty) empty)
+(equal? (concat (list 1 2 3) (list 4 5 6)) (list 1 2 3 4 5 6))
+
+;; map : (X -&gt; Y) (listof X) -&gt; (listof Y)
+(define (map2 f l)
+  (local ([define (cmb fst rst) (cons (f fst) rst)])
+    (fold l cmb empty)))
+
+;; map tests
+(equal? (map2 add1 empty) empty)
+(equal? (map2 add1 (list 1 2 3)) (list 2 3 4))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-sum-prod.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

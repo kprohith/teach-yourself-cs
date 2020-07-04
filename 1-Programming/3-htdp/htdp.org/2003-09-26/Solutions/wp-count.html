@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/wp-count.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 15.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="desc-ec-ft.html">15.1.4</a> | <a href="../Book/curriculum-Z-H-20.html#node_thm_15.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="wp-to-file.html">15.3.2</a><pre>;; struct from WP data definition
+(define-struct wp (header body))
+
+;; EXAMPLE WEB PAGES
+(define dogs-wp
+  (make-wp 'dogs-wp 
+           (list 'my 'dogs 'web 'page)))
+
+(define cats-wp
+  (make-wp 'cats-wp
+           (list 'my 'cats 'web 'page)))
+
+(define my-wp
+  (make-wp 'my-wp
+           (list 'see 'my 'dog dogs-wp
+                 'see 'my 'cat cats-wp)))
+
+;; size-wp : wp -&gt; number
+;; determines the number of words in a web page
+(define (size a-wp)
+  (size-document (wp-body a-wp)))
+
+;; size-document : web-document -&gt; number
+;; determines the number of words in a web document
+(define (size-document a-wd)
+  (cond
+    [(empty? a-wd) 0]
+    [(symbol? (first a-wd)) (+ 1 (size-document (rest a-wd)))]
+    [(wp? (first a-wd)) (size-document (rest a-wd))]))
+
+;; EXAMPLES AS TESTS
+(size dogs-wp) "should be" 4
+(size cats-wp) "should be" 4
+(size my-wp) "should be" 6
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/wp-count.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

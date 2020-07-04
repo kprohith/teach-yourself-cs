@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/interval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="boolean1a.html">4.1.2</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="cond-interval.html">4.2.2</a><pre>;; interval-1 : number -&gt; boolean
+;; determines if n is in the interval (3,7]
+
+;; EXAMPLES
+;; -1, 3, and 10 are outside
+;; 5 and 7 are inside
+
+(define (interval-1 n)
+  (and (&gt; n 3)
+       (&lt;= n 7)))
+
+;; EXAMPLES TURNED INTO TESTS
+(interval-1 -1) "should be" false
+(interval-1 3) "should be" false
+(interval-1 5) "should be" true
+(interval-1 7) "should be" true
+(interval-1 10) "should be" false
+
+
+;; interval-2 : number -&gt; boolean
+;; determines if n is in the interval [3,7]
+
+;; EXAMPLES
+;; -1 and 10 are outside the interval
+;; 3, 5, and 7 are inside the interval
+
+(define (interval-2 n)
+  (and (&gt;= n 3)
+       (&lt;= n 7)))
+
+;; EXAMPLES TURNED INTO TESTS
+(interval-2 -1) "should be" false
+(interval-2 3) "should be" true
+(interval-2 5) "should be" true
+(interval-2 7) "should be" true
+(interval-2 10) "should be" false
+
+;; interval-3 : number -&gt; boolean
+;; determines if n is in the interval [3,9)
+
+;; EXAMPLES
+;; -1, 9, 10 are all outside the interval
+;; 3 and 5 are inside the interval
+
+(define (interval-3 n)
+  (and (&gt;= n 3)
+       (&lt; n 9)))
+
+(interval-3 -1) "should be" false
+(interval-3 3) "should be" true
+(interval-3 5) "should be" true
+(interval-3 9) "should be" false
+(interval-3 10) "should be" false
+
+
+;; interval-4 : number -&gt; boolean
+;; determines if n is in the combination of (1,3) and (9,11)
+
+;; EXAMPLES
+;; 1, 3, 5, 9, 11, and 50 are all outside the interval
+;; 2, and 10 are inside the interval
+
+(define (interval-4 n)
+  (or (and (&gt; n 1)
+           (&lt; n 3))
+      (and (&gt; n 9)
+           (&lt; n 11))))
+(interval-4 1) "should be" false
+(interval-4 2) "should be" true
+(interval-4 3) "should be" false
+(interval-4 5) "should be" false
+(interval-4 9) "should be" false
+(interval-4 10) "should be" true
+(interval-4 11) "should be" false
+(interval-4 50) "should be" false
+
+;; interval-5 : number -&gt; boolean
+;; to determine if n is outside [1,3]
+
+;; EXAMPLES
+;; -100 and 100 are in the interval
+;; 1 and 3 are outside the interval
+
+(define (interval-5 n)
+  (or (&lt; n 1)
+      (&gt; n 3)))
+
+(interval-5 -100) "should be" true
+(interval-5 1) "should be" false
+(interval-5 3) "should be" false
+(interval-5 100) "should be" true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/interval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

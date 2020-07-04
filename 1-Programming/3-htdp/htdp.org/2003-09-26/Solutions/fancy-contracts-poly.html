@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/fancy-contracts-poly.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 20.2.4; How to Design Programs </title>
+</head>
+<body>
+<a href="filter-contract.html">20.2.3</a> | <a href="../Book/curriculum-Z-H-26.html#node_thm_20.2.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="abs-tabulate.html">21.1.1</a><pre>;; Language: Intermediate Student
+
+#|
+Our approach is to make two concrete examples and replace matching concrete types with variables.
+
+(-) Sort 
+
+sort1: (listof number) (number number -&gt; boolean) -&gt; (listof number)
+sort2: (listof name) (name name -&gt; boolean) -&gt; (listof name)
+sort: (listof ITEM) (ITEM ITEM -&gt; boolean) -&gt; (listof ITEM)
+
+Type variable: ITEM.
+
+(-) Map
+
+map1: (number -&gt; number) (listof number) -&gt; (listof number)
+map2: (name -&gt; name) (listof name) -&gt; (listof name)
+map: (X -&gt; X) (listof X) -&gt; (listof X)
+
+Type variable: X.
+
+(-) Project
+
+project1: (listof (listof symbol)) ((listof symbol) -&gt; symbol) -&gt; (listof symbol)
+project2: (listof (listof name)) ((listof name) -&gt; name) -&gt; (listof name)
+project: (listof (listof X)) ((listof X) -&gt; X) -&gt; (listof X)
+
+Type variable: X.
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/fancy-contracts-poly.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

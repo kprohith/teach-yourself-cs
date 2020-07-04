@@ -1,0 +1,1277 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-23.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-22.html">previous</a></span><span>, <a href="curriculum-Z-H-24.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_18"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_18">Section  18</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_18">Intermezzo 3: Local Definitions and Lexical Scope</a></h1>
+<p></p>
+<p>
+
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-20.html#node_part_III"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Intermediate<br>
+Student</a>
+</td></tr></table><p></p>
+<p>
+Programs do not just consist of single definitions. In many cases, a
+program requires the definition of auxiliary functions or of functions with
+mutual references. Indeed, as we become more experienced, we write programs
+that consist of numerous auxiliary functions. If we are not careful, these
+large collections of functions overwhelm us. As the size of our functions
+grows, we need to organize them so that we (and other readers) can quickly
+identify the relationships between parts.</p>
+<p>
+This section introduces <code class="scheme"><span class="keyword">local</span></code>, a simple construct for organizing
+collections of functions. With <code class="scheme"><span class="keyword">local</span></code>, a programmer can group
+function definitions that belong together so that readers immediately
+recognize the connection between the functions. Finally, the introduction of
+<code class="scheme"><span class="keyword">local</span></code> also forces us to discuss the concept of variable
+binding. While the variable and function definitions of <tt>Beginning
+Student</tt> Scheme already introduce bindings into a program, a good
+understanding of 
+<code class="scheme"><span class="keyword">local</span></code> definitions is possible only with a thorough familiarity of
+this concept.</p>
+<p>
+
+</p>
+<a name="node_sec_18.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_18.1">18.1&nbsp;&nbsp;Organizing Programs with <strong>local</strong></a></h2>
+<p> 
+</p>
+<p>
+A <strong>local</strong>-expression groups together an arbitrarily long sequence of definitions
+similar to those found in the <tt>Definitions</tt>
+<a name="node_idx_1266"></a>window.  Following our established rules, we first introduce the syntax and
+then the semantics and pragmatics of <strong>local</strong>-expressions.</p>
+<p>
+</p>
+<a name="node_sec_Temp_101"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_101">Syntax of <strong>local</strong></a></h3>
+<p><a name="node_idx_1268"></a><a name="node_idx_1270"></a></p>
+<p>
+A <strong>local</strong>-expression is just another kind of expression: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> </td><td valign="top">= </td><td valign="top">(<strong>local</strong> (<tt>&lt;def-1&gt;</tt> <tt>...</tt><tt>&lt;def-n&gt;</tt>) <tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+As usual, <tt>&lt;def-1&gt;</tt> <tt>...</tt> <tt>&lt;def-n&gt;</tt> is an arbitrarily long sequence
+of definitions (see figure&nbsp;<a href="#node_fig_Temp_102">51</a>) and <tt>&lt;exp&gt;</tt> is an
+arbitrary expression. In other words, a <strong>local</strong>-expression consists
+of the keyword <code class="scheme"><span class="keyword">local</span></code>, followed by a sequence of definitions
+grouped with <code class="scheme">(</code> and <code class="scheme">)</code>, followed by an expression. <p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_102"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;def&gt;</tt> </td><td valign="top">=</td><td valign="top"> &nbsp;  (<strong>define</strong> (<tt>&lt;var&gt;</tt> <tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define</strong> <tt>&lt;var&gt;</tt> <tt>&lt;exp&gt;</tt>) </td></tr>
+<tr><td valign="top"></td><td valign="top"></td><td valign="top"> |  (<strong>define-struct</strong> <tt>&lt;var&gt;</tt> (<tt>&lt;var&gt;</tt> <tt>...</tt><tt>&lt;var&gt;</tt>))
+</td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 51:</b>&nbsp;&nbsp;Scheme definitions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The keyword <strong>local</strong> distinguishes this new class of expressions from
+other expressions, just as <code class="scheme"><span class="keyword">cond</span></code> distinguishes conditional
+expressions from applications.  The parenthesized sequence that follows
+<code class="scheme"><span class="keyword">local</span></code> is referred to as the <small>L</small><small>O</small><small>C</small><small>A</small><small>L</small>
+<small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small>
+.<a name="node_idx_1272"></a>The definitions are called the <small>L</small><small>O</small><small>C</small><small>A</small><small>L</small><small>L</small><small>Y</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>E</small><small>D</small>
+<a name="node_idx_1274"></a>variables, functions, or structures. All those in the
+<tt>Definitions</tt>
+<a name="node_idx_1276"></a>window are called <small>T</small><small>O</small><small>P</small>-<small>L</small><small>E</small><small>V</small><small>E</small><small>L</small> <small>D</small><small>E</small><small>F</small><small>I</small><small>N</small><small>I</small><small>T</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_1278"></a>Each name may occur at
+most once on the left-hand side, be it in a variable definition or a
+function definition.  The expression in each definition is called the 
+<small>R</small><small>I</small><small>G</small><small>H</small><small>T</small>-<small>H</small><small>A</small><small>N</small><small>D</small> <small>S</small><small>I</small><small>D</small><small>E</small> expression.
+<a name="node_idx_1280"></a>The expression that follows the definitions is the <small>B</small><small>O</small><small>D</small><small>Y</small>.
+<a name="node_idx_1282"></a></p>
+<p>
+Let us take a look at an example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">5</span>))
+	(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">alon</span>)
+	  (<span class="keyword">cond</span>
+	    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="variable">f</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="variable">g</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])))
+  (<span class="variable">g</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)))
+</pre></div><p>
+The locally defined functions are <code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">g</span></code>. The right-hand
+side of the first function definition is <code class="scheme">(<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">5</span>)</code>; the second one is
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+  [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="variable">f</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="variable">g</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])
+</pre></div><p>
+Finally, the body of the <strong>local</strong>-expression is <code class="scheme">(<span class="variable">g</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.1"></a>
+<b>Exercise 18.1.1.</b>&nbsp;&nbsp; 
+Circle the locally defined variables and functions in red, the right-hand
+sides in green, and the body of the following <strong>local</strong>-expression in blue:
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="selfeval">3</span>)))
+       (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">2.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">odd</span> <span class="variable">an</span>)
+	       (<span class="keyword">cond</span>
+		 [(<span class="builtin">zero?</span> <span class="variable">an</span>) false]
+		 [<span class="keyword">else</span> (<span class="variable">even</span> (<span class="builtin">sub1</span> <span class="variable">an</span>))]))
+	     (<span class="keyword">define</span> (<span class="variable">even</span> <span class="variable">an</span>)
+	       (<span class="keyword">cond</span>
+		 [(<span class="builtin">zero?</span> <span class="variable">an</span>) true]
+		 [<span class="keyword">else</span> (<span class="variable">odd</span> (<span class="builtin">sub1</span> <span class="variable">an</span>))])))
+       (<span class="variable">even</span> <span class="variable">a-nat-num</span>))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="variable">g</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>)))
+	     (<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="variable">f</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>))))
+       (<span class="builtin">+</span> (<span class="variable">f</span> <span class="selfeval">10</span>) (<span class="variable">g</span> <span class="selfeval">10</span> <span class="selfeval">20</span>)))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-local1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.2"></a>
+<b>Exercise 18.1.2.</b>&nbsp;&nbsp; 
+The following phrases are <em>not</em> syntactically legal: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">10</span>)
+	     (<span class="variable">y</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">x</span>)))
+       <span class="variable">y</span>)
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">2.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">x</span>) <span class="selfeval">15</span>))
+	     (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">100</span>)
+	     (<span class="keyword">define</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="8debcdbcbdbd">[email&#160;protected]</a></span> (<span class="variable">f</span> <span class="variable">x</span>)))
+       <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="442204757474">[email&#160;protected]</a></span> <span class="variable">x</span>)
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">x</span>) <span class="selfeval">14</span>))
+	     (<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">100</span>)
+	     (<span class="keyword">define</span> <span class="variable">f</span> (<span class="variable">f</span> <span class="variable">x</span>)))
+       <span class="variable">f</span>)
+</pre></div><p>
+Explain why! &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-local2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.3"></a>
+<b>Exercise 18.1.3.</b>&nbsp;&nbsp; 
+Determine which of the following definitions or expressions are legal and
+which ones are not: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">define</span> <span class="variable">A-CONSTANT</span>
+       (<span class="builtin">not</span> 
+	 (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">odd</span> <span class="variable">an</span>)
+		   (<span class="keyword">cond</span>
+		     [(<span class="builtin">=</span> <span class="variable">an</span> <span class="selfeval">0</span>) false]
+		     [<span class="keyword">else</span> (<span class="variable">even</span> (<span class="builtin">-</span> <span class="variable">an</span> <span class="selfeval">1</span>))]))
+		 (<span class="keyword">define</span> (<span class="variable">even</span> <span class="variable">an</span>)
+		   (<span class="keyword">cond</span>
+		     [(<span class="builtin">=</span> <span class="variable">an</span> <span class="selfeval">0</span>) true]
+		     [<span class="keyword">else</span> (<span class="variable">odd</span> (<span class="builtin">-</span> <span class="variable">an</span> <span class="selfeval">1</span>))])))
+	   (<span class="variable">even</span> <span class="variable">a-nat-num</span>))))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">2.</span> (<span class="builtin">+</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">x</span>) <span class="selfeval">15</span>))
+		(<span class="keyword">define</span> <span class="variable">x</span> <span class="selfeval">100</span>)
+		(<span class="keyword">define</span> <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="cfa98ffeffff">[email&#160;protected]</a></span> (<span class="variable">f</span> <span class="variable">x</span>)))
+	  <span class="variable"><a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="254365141515">[email&#160;protected]</a></span>)
+	<span class="selfeval">1000</span>)
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">CONST</span> <span class="selfeval">100</span>)
+	     (<span class="keyword">define</span> <span class="variable">f</span> <span class="variable">x</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">CONST</span>)))
+       (<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span> <span class="variable">y</span> <span class="variable">z</span>) (<span class="variable">f</span> (<span class="builtin">+</span> <span class="variable">x</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">z</span>)))))
+</pre></div><p>
+Explain why each expression is legal or illegal. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/syn-local3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_103"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_103">Semantics of <strong>local</strong></a></h3>
+<p>The purpose of a <strong>local</strong>-expression is to define a variable, a
+function, or a structure for the evaluation of the body
+expression. Outside of the <strong>local</strong>-expression the definitions have
+no effect. Consider the following expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="variable">exp-1</span>)) <span class="builtin">exp</span>)
+</pre></div><p>
+It defines the function <code class="scheme"><span class="variable">f</span></code> during the evaluation of <code class="scheme"><span class="builtin">exp</span></code>.
+The result of <code class="scheme"><span class="builtin">exp</span></code> is the result of the entire
+<strong>local</strong>-expression.  Similarly,
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">PI</span> <span class="selfeval">3</span>)) <span class="builtin">exp</span>)
+</pre></div><p>
+temporarily lets the variable <code class="scheme"><span class="variable">PI</span></code> stand for <code class="scheme"><span class="selfeval">3</span></code> during the
+evaluation of <code class="scheme"><span class="builtin">exp</span></code>. </p>
+<p>
+We can describe the evaluation
+<a name="node_idx_1284"></a>of <strong>local</strong>-expressions with a single rule, but the
+rule is extremely complex. More specifically, the rule requires two steps
+in a hand-evaluation.  First, we must systematically replace all locally
+defined variables, functions, and structures so that the names do not
+overlap with those used in the <tt>Definitions</tt>
+<a name="node_idx_1286"></a>window.  Second, we
+move the entire sequence of definitions to the top level and proceed as if
+we had just created a new function.</p>
+<p>
+Here is the evaluation rule, stated symbolically: 
+</p>
+<div align="center"><table><tr><td>
+</td><td><div align="left"><pre class="scheme">   <span class="variable">def-1</span> ... <span class="variable">def-n</span> 
+   <span class="variable">E</span>[(<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f-1</span> <span class="variable">x</span>) <span class="variable">exp-1</span>) ... (<span class="keyword">define</span> (<span class="variable">f-n</span> <span class="variable">x</span>) <span class="variable">exp-n</span>)) <span class="builtin">exp</span>)] 
+<span class="builtin">=</span> 
+   <span class="variable">def-1</span> ... <span class="variable">def-n</span> (<span class="keyword">define</span> (<span class="variable">f-1</span><span class="variable">'</span> <span class="variable">x</span>) <span class="variable">exp-1</span><span class="variable">'</span>) ... (<span class="keyword">define</span> (<span class="variable">f-n</span><span class="variable">'</span> <span class="variable">x</span>) <span class="variable">exp-n</span><span class="variable">'</span>) 
+   <span class="variable">E</span>[<span class="builtin">exp</span><span class="variable">'</span>]
+</pre></div></td><td></td></tr></table></div>
+
+For simplicity, the <strong>local</strong>-expression in this rule defines only
+one-argument functions, but it is straightforward to generalize from here.
+As usual, the sequence <code class="scheme"><span class="variable">def-1</span> ... <span class="variable">def-n</span></code> represents top-level
+definitions.<p>
+The unusual part of the rule is the notation <code class="scheme"><span class="variable">E</span>[<span class="builtin">exp</span>]</code>. It represents
+an expression <code class="scheme"><span class="builtin">exp</span></code> and its context <code class="scheme"><span class="variable">E</span></code>. More specifically,
+<code class="scheme"><span class="builtin">exp</span></code> is the next expression that must be evaluated; <code class="scheme"><span class="variable">E</span></code> is
+called its <small>E</small><small>V</small><small>A</small><small>L</small><small>U</small><small>A</small><small>T</small><small>I</small><small>O</small><small>N</small> <small>C</small><small>O</small><small>N</small><small>T</small><small>E</small><small>X</small><small>T</small>.  
+<a name="node_idx_1288"></a></p>
+<p>
+For example, the expression
+</p>
+<div align="left"><pre class="scheme">   (<span class="builtin">+</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="selfeval">10</span>)) (<span class="variable">f</span> <span class="selfeval">13</span>)) <span class="selfeval">5</span>)
+</pre></div><p>
+is an addition. Before we can compute its result, we must evaluate the two
+subexpressions to numbers. Since the first subexpression is not a number,
+we focus on it: 
+</p>
+<div align="left"><pre class="scheme">   (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="selfeval">10</span>)) (<span class="variable">f</span> <span class="selfeval">13</span>))
+</pre></div><p>
+This <strong>local</strong>-expression must and can be evaluated, so 
+</p>
+<div align="center"><table><tr><td>
+</td><td><div align="left"><pre class="scheme">   <span class="builtin">exp</span> <span class="builtin">=</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) <span class="selfeval">10</span>)) (<span class="variable">f</span> <span class="selfeval">13</span>))
+   <span class="variable">E</span> <span class="builtin">=</span> (<span class="builtin">+</span> ... <span class="selfeval">5</span>)
+</pre></div></td><td></td></tr></table></div>
+<p>
+On the right-hand side of the rule for <code class="scheme"><span class="keyword">local</span></code>, we can see several
+primed names and expressions. The primed names <code class="scheme"><span class="variable">f-1</span><span class="variable">'</span></code>, <tt>...</tt>,
+<code class="scheme"><span class="variable">f-n</span><span class="variable">'</span></code> are new function names, distinct from all other names in
+top-level definitions; the primes on the expressions <code class="scheme"><span class="variable">exp-1</span><span class="variable">'</span></code>,
+<tt>...</tt>, <code class="scheme"><span class="variable">exp-n</span><span class="variable">'</span></code> indicate that these expressions are structurally
+identical to <code class="scheme"><span class="variable">exp-1</span></code>, <tt>...</tt>, <code class="scheme"><span class="variable">exp-n</span></code> but contain
+<code class="scheme"><span class="variable">f-1</span><span class="variable">'</span></code> instead of <code class="scheme"><span class="variable">f-1</span></code>, etc.</p>
+<p>
+The evaluation rule for <strong>local</strong>-expressions is the most complex rule
+that we have encountered so far, and indeed, it is the most complex rule
+that we will ever encounter. Each of the two steps is important and serves
+a distinct purpose. Their purpose is best illustrated by a series of simple
+examples.</p>
+<p>
+</p>
+<p>
+The first part of the rule eliminates name clashes between names
+that are already defined in the top-level environment and those that will
+be inserted there. Consider the following example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+(<span class="builtin">+</span> <span class="variable">y</span> 
+   (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+	   (<span class="keyword">define</span> <span class="variable">z</span> (<span class="builtin">+</span> <span class="variable">y</span> <span class="variable">y</span>)))
+     <span class="variable">z</span>))
+</pre></div><p>
+The expression introduces a local definition for <code class="scheme"><span class="variable">y</span></code>, adds
+<code class="scheme"><span class="variable">y</span></code> to itself to get <code class="scheme"><span class="variable">z</span></code>, and returns the value of
+<code class="scheme"><span class="variable">z</span></code>. </p>
+<p>
+The informal description of <code class="scheme"><span class="keyword">local</span></code> says that the result should be
+<code class="scheme"><span class="selfeval">30</span></code>. Let's verify this with our rule. If we simply added the
+definitions in <code class="scheme"><span class="keyword">local</span></code> to the top level, the two definitions for
+<code class="scheme"><span class="variable">y</span></code> would clash. The renaming step prevents this clash and clarifies
+which of the <code class="scheme"><span class="variable">y</span></code>'s belong together:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+  (<span class="builtin">+</span> <span class="variable">y</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">y1</span> <span class="selfeval">10</span>) (<span class="keyword">define</span> <span class="variable">z1</span> (<span class="builtin">+</span> <span class="variable">y1</span> <span class="variable">y1</span>))) <span class="variable">z1</span>))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">y1</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">z1</span> (<span class="builtin">+</span> <span class="variable">y1</span> <span class="variable">y1</span>))
+  (<span class="builtin">+</span> <span class="variable">y</span> <span class="variable">z1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">y1</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">z1</span> <span class="selfeval">20</span>)
+  (<span class="builtin">+</span> <span class="selfeval">10</span> <span class="variable">z1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> <span class="variable">y</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">y1</span> <span class="selfeval">10</span>)
+  (<span class="keyword">define</span> <span class="variable">z1</span> <span class="selfeval">20</span>)
+  (<span class="builtin">+</span> <span class="selfeval">10</span> <span class="selfeval">20</span>)
+</pre></div><p>
+As expected, the result is <code class="scheme"><span class="selfeval">30</span></code>. </p>
+<p>
+</p>
+<p>
+Since <strong>local</strong>-expressions may occur inside of function bodies,
+renaming is important if such functions are applied more than once. The
+following second example illustrates this point: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">D</span> <span class="variable">x</span> <span class="variable">y</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+	    (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+      (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+  (<span class="builtin">+</span> (<span class="variable">D</span> <span class="selfeval">0</span> <span class="selfeval">1</span>) (<span class="variable">D</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">D</span></code> computes the square root of the sum of the squares
+of its arguments. Hence the result of <code class="scheme">(<span class="builtin">+</span> (<span class="variable">D</span> <span class="selfeval">0</span> <span class="selfeval">1</span>) (<span class="variable">D</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))</code> should
+be <code class="scheme"><span class="selfeval">6</span></code>. </p>
+<p>
+As <code class="scheme"><span class="variable">D</span></code> computes its answer, it introduces two local variables:
+<code class="scheme"><span class="variable">x2</span></code> and <code class="scheme"><span class="variable">y2</span></code>. Since <code class="scheme"><span class="variable">D</span></code> is applied twice, a modified
+version of its body is evaluated twice and therefore its local definitions
+must be added to the top-level twice. The renaming step ensures that no
+matter how often we lift such definitions, they never interfere with each
+other. Here is how this works:  
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">D</span> <span class="variable">x</span> <span class="variable">y</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+	    (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+      (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+  (<span class="builtin">+</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="selfeval">0</span> <span class="selfeval">0</span>))
+	     (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)))
+       (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>)))
+     (<span class="variable">D</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+</pre></div><p>
+The expression <code class="scheme">(<span class="variable">D</span> <span class="selfeval">0</span> <span class="selfeval">1</span>)</code> is evaluated according to the regular rules. 
+Now we rename and lift the <code class="scheme"><span class="keyword">local</span></code> definitions: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">D</span> <span class="variable">x</span> <span class="variable">y</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+	    (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+      (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+  (<span class="keyword">define</span> <span class="variable">x21</span> (<span class="builtin">*</span> <span class="selfeval">0</span> <span class="selfeval">0</span>))
+  (<span class="keyword">define</span> <span class="variable">y21</span> (<span class="builtin">*</span> <span class="selfeval">1</span> <span class="selfeval">1</span>))
+  (<span class="builtin">+</span> (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x21</span> <span class="variable">y21</span>))
+     (<span class="variable">D</span> <span class="selfeval">3</span> <span class="selfeval">4</span>))
+</pre></div><p>
+From here, the evaluation proceeds according to the standard rules 
+until we encounter a second nested
+<strong>local</strong>-expression in the expression that we are evaluating: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">D</span> <span class="variable">x</span> <span class="variable">y</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+	    (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+      (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+  (<span class="keyword">define</span> <span class="variable">x21</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> <span class="variable">y21</span> <span class="selfeval">1</span>)
+  (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">3</span>))
+	       (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="selfeval">4</span> <span class="selfeval">4</span>)))
+	 (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">D</span> <span class="variable">x</span> <span class="variable">y</span>)
+    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">x2</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+	    (<span class="keyword">define</span> <span class="variable">y2</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>)))
+      (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x2</span> <span class="variable">y2</span>))))
+  (<span class="keyword">define</span> <span class="variable">x21</span> <span class="selfeval">0</span>)
+  (<span class="keyword">define</span> <span class="variable">y21</span> <span class="selfeval">1</span>)
+  (<span class="keyword">define</span> <span class="variable">x22</span> <span class="selfeval">9</span>)
+  (<span class="keyword">define</span> <span class="variable">y22</span> <span class="selfeval">16</span>)
+  (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x22</span> <span class="variable">y22</span>)))
+</pre></div><p>
+By renaming <code class="scheme"><span class="variable">x2</span></code> and <code class="scheme"><span class="variable">y2</span></code> again, we avoided clashes. From
+here, the evaluation of the expression is straightforward: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="variable">x22</span> <span class="variable">y22</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="selfeval">9</span> <span class="variable">y22</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">sqrt</span> (<span class="builtin">+</span> <span class="selfeval">9</span> <span class="selfeval">16</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> (<span class="builtin">sqrt</span> <span class="selfeval">25</span>))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">5</span>)
+<span class="builtin">=</span> <span class="selfeval">6</span>
+</pre></div><p>
+The result is 6, as expected.<a name="call_footnote_Temp_104"></a><a href="#footnote_Temp_104"><sup><small>44</small></sup></a></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.1.4"></a>
+<b>Exercise 18.1.4.</b>&nbsp;&nbsp; 
+Since <code class="scheme"><span class="keyword">local</span></code> definitions are added to the
+<tt>Definitions</tt>
+<a name="node_idx_1290"></a>window during an evaluation, we might wish to try to see their values by
+just typing in the variables into the <tt>Interactions</tt>
+<a name="node_idx_1292"></a>window. Is this
+possible? Why or why not?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem-local0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.5"></a>
+<b>Exercise 18.1.5.</b>&nbsp;&nbsp; 
+Evaluate the following expressions by hand: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">y</span>)))
+       (<span class="builtin">*</span> (<span class="variable">x</span> <span class="selfeval">2</span>) <span class="selfeval">5</span>))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">2.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">c</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">9/5</span> <span class="variable">c</span>) <span class="selfeval">32</span>)))
+       (<span class="builtin">-</span> (<span class="variable">f</span> <span class="selfeval">0</span>) (<span class="variable">f</span> <span class="selfeval">10</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">3.</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">odd?</span> <span class="variable">n</span>)
+	       (<span class="keyword">cond</span>
+		 [(<span class="builtin">zero?</span> <span class="variable">n</span>) false]
+		 [<span class="keyword">else</span> (<span class="variable">even?</span> (<span class="builtin">sub1</span> <span class="variable">n</span>))]))
+	     (<span class="keyword">define</span> (<span class="variable">even?</span> <span class="variable">n</span>)
+	       (<span class="keyword">cond</span>
+		 [(<span class="builtin">zero?</span> <span class="variable">n</span>) true]
+		 [<span class="keyword">else</span> (<span class="variable">odd?</span> (<span class="builtin">sub1</span> <span class="variable">n</span>))])))
+       (<span class="variable">even?</span> <span class="selfeval">1</span>))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">4.</span> (<span class="builtin">+</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="variable">g</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">1</span>) <span class="selfeval">22</span>))
+		(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span> <span class="variable">y</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable">y</span>)))
+	  (<span class="variable">f</span> <span class="selfeval">10</span>))
+	<span class="selfeval">555</span>)
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="variable">5.</span> (<span class="keyword">define</span> (<span class="variable">h</span> <span class="variable">n</span>) 
+       (<span class="keyword">cond</span>
+	 [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) <span class="builtin">empty</span>]
+	 [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">r</span> (<span class="builtin">*</span> <span class="variable">n</span> <span class="variable">n</span>)))
+		 (<span class="builtin">cons</span> <span class="variable">r</span> (<span class="variable">h</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>))))]))
+     (<span class="variable">h</span> <span class="selfeval">2</span>)
+</pre></div><p>
+The evaluations should show all
+<code class="scheme"><span class="keyword">local</span></code>-reductions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sem-local1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_105"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_105">Pragmatics of <strong>local</strong>, Part 1</a></h3>
+<p>The most important use of <strong>local</strong>-expressions is to <small>E</small><small>N</small><small>C</small><small>A</small><small>P</small><small>S</small><small>U</small><small>L</small><small>A</small><small>T</small><small>E</small>
+<a name="node_idx_1294"></a>a collection of functions that serve one purpose. Consider for an example
+the definitions for our sort function from section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.2">12.2</a>: 
+<a name="node_idx_1296"></a><a name="node_idx_1298"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [(<span class="builtin">cons?</span> <span class="variable">alon</span>) (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">insert</span> <span class="selfeval">:</span> <span class="variable">number</span> <span class="variable">list-of-numbers</span> (<span class="variable">sorted</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">an</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">list</span> <span class="variable">an</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&gt;</span> <span class="variable">an</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">an</span> <span class="variable">alon</span>)]
+	    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">an</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])]))
+</pre></div><p>
+The first definition defines <code class="scheme"><span class="variable">sort</span></code> per se, and the second one defines
+an auxiliary function that inserts a number into a sorted list of numbers. 
+The first one uses the second one to construct the result from a natural
+recursion, a sorted version of the rest of the list, and the first
+item.  </p>
+<p>
+The two functions together form the program that sorts a list of numbers. To
+indicate this intimate relationship between the functions, we can, and should,
+use a <strong>local</strong>-expression. Specifically, we define a program
+<code class="scheme"><span class="variable">sort</span></code> that immediately introduces the two functions as auxiliary
+definitions:
+<a name="node_idx_1300"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [(<span class="builtin">cons?</span> <span class="variable">alon</span>) (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+                                    (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+	  (<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">an</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">list</span> <span class="variable">an</span>)]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="builtin">&gt;</span> <span class="variable">an</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">an</span> <span class="variable">alon</span>)]
+		      [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) 
+                                  (<span class="variable">insert</span> <span class="variable">an</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])])))
+    (<span class="variable">sort</span> <span class="variable">alon</span>)))
+</pre></div><p>
+Here the body of <strong>local</strong>-expressions simply passes on the argument
+to the locally defined function <code class="scheme"><span class="variable">sort</span></code>. </p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on the Use of local
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Develop a function following the design recipes. 
+If the function requires the use of auxiliary definitions, group
+them in a <strong>local</strong>-expression and put the <strong>local</strong>-expression into a new
+function definition. The body of the <code class="scheme"><span class="keyword">local</span></code> should apply the main
+function to the arguments of the newly defined function.
+</p></font></td></tr>
+</table>
+
+<a name="node_idx_1302"></a><p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.1.6"></a>
+<b>Exercise 18.1.6.</b>&nbsp;&nbsp; 
+Evaluate <code class="scheme">(<span class="variable">sort</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span> <span class="selfeval">3</span>))</code> by hand until the locally defined
+<code class="scheme"><span class="variable">sort</span></code> function is used. Do the same for <code class="scheme">(<span class="builtin">equal?</span> (<span class="variable">sort</span> (<span class="builtin">list</span>
+<span class="selfeval">1</span>)) (<span class="variable">sort</span> (<span class="builtin">list</span> <span class="selfeval">2</span>)))</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-prag-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.7"></a>
+<b>Exercise 18.1.7.</b>&nbsp;&nbsp; 
+Use a <code class="scheme"><span class="keyword">local</span></code> expression to organize the functions for moving
+pictures from section&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/move-pic-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.8"></a>
+<b>Exercise 18.1.8.</b>&nbsp;&nbsp; 
+Use a <code class="scheme"><span class="keyword">local</span></code> expression to organize the functions for drawing a
+polygon in figure&nbsp;<a href="curriculum-Z-H-16.html#node_fig_Temp_78">34</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/draw-poly-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.9"></a>
+<b>Exercise 18.1.9.</b>&nbsp;&nbsp; 
+Use a <code class="scheme"><span class="keyword">local</span></code> expression to organize the functions for rearranging
+words from section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.4">12.4</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/permute-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.10"></a>
+<b>Exercise 18.1.10.</b>&nbsp;&nbsp; 
+Use a <code class="scheme"><span class="keyword">local</span></code> expression to organize the functions for finding
+blue-eyed descendants from
+section&nbsp;<a href="curriculum-Z-H-20.html#node_sec_15.1">15.1</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/blue-eye-local.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_106"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_106">Pragmatics of <strong>local</strong>, Part 2</a></h3>
+<p>Suppose we need a function that produces the last occurrence of some item
+in a list. To be precise, assume we have lists of records of rock stars. 
+For simplicity, each star is represented as a pair of values: 
+<a name="node_idx_1304"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">star</span> (<span class="variable">name</span> <span class="variable">instrument</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_1306"></a>A <i>star</i> (record) is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-star</span> <span class="variable">s</span> <span class="variable">t</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">s</span></code> and <code class="scheme"><span class="variable">t</span></code> are symbols.<p>
+Here is an example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">alos</span> 
+  (<span class="builtin">list</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="keyword">'</span><span class="variable">saxophone</span>)
+        (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Robby</span> <span class="keyword">'</span><span class="variable">trumpet</span>)
+        (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Matt</span> <span class="keyword">'</span><span class="variable">violin</span>)
+        (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Wen</span> <span class="keyword">'</span><span class="variable">guitar</span>)
+        (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Matt</span> <span class="keyword">'</span><span class="variable">radio</span>)))
+</pre></div><p>
+This list contains two occurrences of <code class="scheme"><span class="keyword">'</span><span class="variable">Matt</span></code>. So, if we wanted to
+determine the instrument that goes with the last occurrence of
+<code class="scheme"><span class="keyword">'</span><span class="variable">Matt</span></code>, we would want <code class="scheme"><span class="keyword">'</span><span class="variable">radio</span></code>. For <code class="scheme"><span class="keyword">'</span><span class="variable">Wen</span></code>, on the
+other hand, our function would produce <code class="scheme"><span class="keyword">'</span><span class="variable">guitar</span></code>. Of course, looking
+for the instrument of <code class="scheme"><span class="keyword">'</span><span class="variable">Kate</span></code> should yield <code class="scheme"><span class="builtin">false</span></code> to
+indicate that there is no record for <code class="scheme"><span class="keyword">'</span><span class="variable">Kate</span></code>. </p>
+<p>
+Let's write down a contract, a purpose statement, and a header: 
+<a name="node_idx_1308"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">last-occurrence</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">list-of-star</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">star</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+<span class="comment">;; to find the last star record in <code class="scheme"><span class="variable">alostars</span></code> that contains <code class="scheme"><span class="variable">s</span></code> in <code class="scheme"><span class="variable">name</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> <span class="variable">alostars</span>) ...)
+</pre></div><p>
+The contract is unusual because it mentions two classes of data to the
+right of the arrow: <code class="scheme"><span class="variable">star</span></code> and <code class="scheme"><span class="builtin">false</span></code>. Although we haven't
+seen this kind of contract before, its meaning is obvious. The function may
+produce a <code class="scheme"><span class="variable">star</span></code> or <code class="scheme"><span class="builtin">false</span></code>.</p>
+<p>
+We have already developed some examples, so we can move directly to the
+template stage of our design recipe:
+<a name="node_idx_1310"></a>
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> <span class="variable">alostars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alostars</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">alostars</span>) ... (<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>)) ...]))
+</pre></div><p>
+The real problem with this function, of course, shows up only when we want
+to fill in the gaps in this template. The answer in the first case is
+<code class="scheme"><span class="builtin">false</span></code>, per specification. How to form the answer in the second case
+is far from clear. Here is what we have: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">alostars</span>)</code> is the first <code class="scheme"><span class="variable">star</span></code> record on the
+given list. If its name field is equal to <code class="scheme"><span class="variable">s</span></code>, it may or may not
+be the final result. It all depends on the records in the rest of the
+list. </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>))</code> evaluates to one of two
+things: a <code class="scheme"><span class="variable">star</span></code> record with <code class="scheme"><span class="variable">s</span></code> as the name field or
+<code class="scheme"><span class="builtin">false</span></code>. In the first case, the <code class="scheme"><span class="variable">star</span></code> record is the result;
+in the second case, the result is either <code class="scheme"><span class="builtin">false</span></code> or the first
+<code class="scheme"><span class="variable">record</span></code>. 
+</p>
+</li></ol><p>
+The second point implies that we need to use the result of the natural
+recursion twice, first to check whether it is a <code class="scheme"><span class="variable">star</span></code> or a
+<code class="scheme"><span class="variable">boolean</span></code>, and second, to use it as the answer if it is a
+<code class="scheme"><span class="variable">star</span></code>. </p>
+<p>
+The dual-use of the natural recursion is best expressed with a
+<strong>local</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> <span class="variable">alostars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alostars</span>) <span class="builtin">false</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">r</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>))))
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">star?</span> <span class="variable">r</span>) <span class="variable">r</span>]
+	      ...))]))
+</pre></div><p>
+The nested <strong>local</strong>-expression gives a name to the result of the
+natural recursion.
+<a name="node_idx_1312"></a>The <strong>cond</strong>-expression uses it twice. We could 
+eliminate the <strong>local</strong>-expression by replacing <code class="scheme"><span class="variable">r</span></code> with the
+right-hand side: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> <span class="variable">alostars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alostars</span>) <span class="builtin">false</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">star?</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>))) 
+	     (<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>))]
+	    ...)]))
+</pre></div><p>
+But even a superficial glance shows that reading a natural
+recursion
+<a name="node_idx_1314"></a>twice is difficult. The version with <code class="scheme"><span class="keyword">local</span></code> is superior. </p>
+<p>
+From the partially refined template it is only a short step to the full
+definition: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">last-occurrence</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">list-of-star</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">star</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+<span class="comment">;; to find the last star record in <code class="scheme"><span class="variable">alostars</span></code> that contains <code class="scheme"><span class="variable">s</span></code> in <code class="scheme"><span class="variable">name</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> <span class="variable">alostars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alostars</span>) <span class="builtin">false</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">r</span> (<span class="variable">last-occurrence</span> <span class="variable">s</span> (<span class="builtin">rest</span> <span class="variable">alostars</span>))))
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">star?</span> <span class="variable">r</span>) <span class="variable">r</span>]
+              [(<span class="builtin">symbol=?</span> (<span class="builtin">star-name</span> (<span class="builtin">first</span> <span class="variable">alostars</span>)) <span class="variable">s</span>) (<span class="builtin">first</span> <span class="variable">alostars</span>)]
+              [<span class="keyword">else</span> false]))]))
+</pre></div><p>
+The second clause in the nested <strong>cond</strong>-expression compares the first
+record's <code class="scheme"><span class="variable">name</span></code> field with <code class="scheme"><span class="variable">s</span></code> if <code class="scheme"><span class="variable">r</span></code> is not a
+<code class="scheme"><span class="variable">star</span></code> record. In that case, there is no record with the matching
+name in the rest of the list, and, if the first record is the appropriate
+one, it is the result. Otherwise, the entire list does not contain the name
+we're looking for and the result is <code class="scheme"><span class="builtin">false</span></code>. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.1.11"></a>
+<b>Exercise 18.1.11.</b>&nbsp;&nbsp; 
+Evaluate the following test by hand: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">last-occurrence</span> <span class="keyword">'</span><span class="variable">Matt</span>
+  (<span class="builtin">list</span> (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Matt</span> <span class="keyword">'</span><span class="variable">violin</span>)
+        (<span class="builtin">make-star</span> <span class="keyword">'</span><span class="variable">Matt</span> <span class="keyword">'</span><span class="variable">radio</span>)))
+</pre></div><p>
+How many <strong>local</strong>-expressions are lifted?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-interm0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.12"></a>
+<b>Exercise 18.1.12.</b>&nbsp;&nbsp; 
+Consider the following function definition: 
+<a name="node_idx_1316"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">maxi</span> <span class="selfeval">:</span> <span class="variable">non-empty-lon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the largest number on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">maxi</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&gt;</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+	    [<span class="keyword">else</span> (<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))])]))
+</pre></div><p>
+Both clauses in the nested <strong>cond</strong>-expression compute <code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">rest</span>
+<span class="variable">an-inv</span>))</code>, which is therefore a natural candidate for a <strong>local</strong>-expression. Test
+both versions of <code class="scheme"><span class="variable">maxi</span></code> with 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span> <span class="selfeval">9</span> <span class="selfeval">10</span> <span class="selfeval">11</span> <span class="selfeval">12</span> <span class="selfeval">13</span> <span class="selfeval">14</span> <span class="selfeval">15</span> <span class="selfeval">16</span> <span class="selfeval">17</span> <span class="selfeval">18</span> <span class="selfeval">19</span> <span class="selfeval">20</span>)
+</pre></div><p>
+Explain the effect.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-interm2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.1.13"></a>
+<b>Exercise 18.1.13.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">to-blue-eyed-ancestor</span></code>. The function consumes
+a family tree (<code class="scheme"><span class="variable">ftn</span></code>) (see section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.1">14.1</a>) and
+produces a list that explains how to get to a blue-eyed ancestor. If there
+is no blue-eyed ancestor, the function produces <code class="scheme"><span class="builtin">false</span></code>.</p>
+<p>
+The function's contract, purpose statement, and header are as follows: 
+<a name="node_idx_1318"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">to-blue-eyed-ancestor</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">path</span> <span class="keyword">or</span> <span class="builtin">false</span></code> </span>
+<span class="comment">;; to compute the path from <code class="scheme"><span class="variable">a-ftn</span></code> tree to a blue-eyed ancestor</span>
+(<span class="keyword">define</span> (<span class="variable">to-blue-eyed-ancestor</span> <span class="variable">a-ftn</span>) ...)
+</pre></div><p>
+A path is a list of <code class="scheme"><span class="keyword">'</span><span class="variable">father</span></code> and <code class="scheme"><span class="keyword">'</span><span class="variable">mother</span></code>, which we call
+a direction. Here are the two data definitions:</p>
+<p>
+<a name="node_idx_1320"></a>
+A <i>direction</i> is either 
+</p>
+<ol>
+<li><p>the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">father</span></code> or 
+</p>
+<li><p>the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">mother</span></code>  . 
+</p>
+</li></ol><p></p>
+<p>
+<a name="node_idx_1322"></a>A <i>path</i> is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">los</span>)</code> where <code class="scheme"><span class="variable">s</span></code> is a direction and
+<code class="scheme"><span class="variable">los</span></code> is a path.   
+</p>
+</li></ol><p></p>
+<p>
+The empty path indicates that <code class="scheme"><span class="variable">a-ftn</span></code> has <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code>
+in the <code class="scheme"><span class="variable">eyes</span></code> field. If the first item is <code class="scheme"><span class="keyword">'</span><span class="variable">mother</span></code>, we may
+search in the mother's family tree for a blue-eyed ancestor using the rest
+of the path. Similarly, we search in the father's family tree if the first
+item is <code class="scheme"><span class="keyword">'</span><span class="variable">father</span></code> and use the rest of the path for further
+directions.</p>
+<p>
+Examples: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">to-blue-eyed-ancestor</span> <span class="variable">Gustav</span>)</code> produces <code class="scheme">(<span class="builtin">list</span>
+ <span class="keyword">'</span><span class="variable">mother</span>)</code> for the family tree in figure&nbsp;<a href="curriculum-Z-H-19.html#node_fig_Temp_81">35</a>; </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">to-blue-eyed-ancestor</span> <span class="variable">Adam</span>)</code> produces <code class="scheme"><span class="builtin">false</span></code> in the
+same setting; and </p>
+<p>
+</p>
+<li><p>if we added 
+<code class="scheme">(<span class="keyword">define</span> <span class="variable">Hal</span> (<span class="builtin">make-child</span> <span class="variable">Gustav</span> <span class="variable">Eva</span> <span class="keyword">'</span><span class="variable">Gustav</span> <span class="selfeval">1988</span> <span class="keyword">'</span><span class="variable">hazel</span>))</code>
+then <code class="scheme">(<span class="variable">to-blue-eyed-ancestor</span> <span class="variable">Hal</span>)</code>
+would yield <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">father</span> <span class="keyword">'</span><span class="variable">mother</span>)</code>.
+</p>
+</li></ol><p>
+Build test cases from these examples. Formulate them as boolean
+expressions, using the strategy of
+section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-interm3.html">Solution</a></p>
+<p></p>
+<p>
+<a name="node_idx_1324"></a>
+</p>
+<p></p>
+<p><strong>Backtracking</strong>:  The functions <code class="scheme"><span class="variable">last-occurrence</span></code> and
+<code class="scheme"><span class="variable">to-blue-eyed-ancestor</span></code> produce two kinds of results: one to
+indicate a successful search and another one to indicate a failure. Both
+are recursive. If a natural recursion fails to find the desired result,
+<a name="node_idx_1326"></a>each tries to compute a result in a different manner. Indeed,
+<code class="scheme"><span class="variable">to-blue-eyed-ancestor</span></code> may use another natural recursion. </p>
+<p>
+This strategy of computing an answer is a simple form of
+<small>B</small><small>A</small><small>C</small><small>K</small><small>T</small><small>R</small><small>A</small><small>C</small><small>K</small><small>I</small><small>N</small><small>G</small>.
+<a name="node_idx_1328"></a>In the world of data that we have dealt with so
+far, backtracking is simple and just a device to save computing steps. It
+is always possible to write two separate recursive functions that accomplish
+the same purpose as one of the backtracking functions here. </p>
+<p>
+We will take an even closer look at backtracking in
+section&nbsp;<a href="curriculum-Z-H-35.html#node_chap_28">28</a>. Also, we will discuss counting computing steps
+in intermezzo&nbsp;5.&nbsp;</p>
+<p>
+</p>
+<p><a name="node_thm_18.1.14"></a>
+<b>Exercise 18.1.14.</b>&nbsp;&nbsp; 
+Discuss the function <code class="scheme"><span class="variable">find</span></code> from exercise&nbsp;<a href="curriculum-Z-H-20.html#node_thm_15.3.4">15.3.4</a> in terms
+of backtracking.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/backtrack-x.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_107"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_107">Pragmatics of <strong>local</strong>, Part 3</a></h3>
+<p>Consider the following function definition: 
+<a name="node_idx_1330"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">mult10</span> <span class="selfeval">:</span> <span class="variable">list-of-digits</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to create a list of numbers by multiplying each digit on <code class="scheme"><span class="variable">alod</span></code> </span>
+<span class="comment">;; by <code class="scheme">(<span class="builtin">expt</span> <span class="selfeval">10</span> <span class="variable">p</span>)</code> where <code class="scheme"><span class="variable">p</span></code> is the number of digits that follow</span>
+(<span class="keyword">define</span> (<span class="variable">mult10</span> <span class="variable">alod</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alod</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">*</span> (<span class="builtin">expt</span> <span class="selfeval">10</span> (<span class="builtin">length</span> (<span class="builtin">rest</span> <span class="variable">alod</span>))) (<span class="builtin">first</span> <span class="variable">alod</span>))
+       	        (<span class="variable">mult10</span> (<span class="builtin">rest</span> <span class="variable">alod</span>)))]))
+</pre></div><p>
+Here is a test: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">mult10</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)) (<span class="builtin">list</span> <span class="selfeval">100</span> <span class="selfeval">20</span> <span class="selfeval">3</span>))
+</pre></div><p>
+Clearly, the function could be used to convert a list of digits into a number. </p>
+<p>
+A small problem with the definition of <code class="scheme"><span class="variable">mult10</span></code> is the computation
+of the first item of the result in the second clause. It is a large
+expression and doesn't quite correspond to the purpose statement. By using
+a <strong>local</strong>-expression in the second clause, we can introduce names
+for some intermediate values in the computation of the answer:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">mult10</span> <span class="selfeval">:</span> <span class="variable">list-of-digits</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+<span class="comment">;; to create a list of numbers by multiplying each digit on <code class="scheme"><span class="variable">alod</span></code> </span>
+<span class="comment">;; by <code class="scheme">(<span class="builtin">expt</span> <span class="selfeval">10</span> <span class="variable">p</span>)</code> where <code class="scheme"><span class="variable">p</span></code> is the number of digits that follow</span>
+(<span class="keyword">define</span> (<span class="variable">mult10</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">a-digit</span> (<span class="builtin">first</span> <span class="variable">alon</span>))
+                  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">length</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))))
+	    <span class="comment">;; ------------------------------------------------------</span>
+            (<span class="builtin">cons</span> (<span class="builtin">*</span> (<span class="builtin">expt</span> <span class="selfeval">10</span> <span class="variable">p</span>) <span class="variable">a-digit</span>) (<span class="variable">mult10</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))))]))
+</pre></div><p>
+The use of names helps us understand the expression when we read the
+definition again because we can study one <code class="scheme"><span class="keyword">local</span></code>-definition at a
+time. </p>
+<p>
+The use of <code class="scheme"><span class="keyword">local</span></code> for such cases is most appropriate when a value
+is computed twice as, for example, the expression <code class="scheme">(<span class="builtin">rest</span> <span class="variable">alon</span>)</code> in
+<code class="scheme"><span class="variable">mult10</span></code>. By introducing names for repeated expressions, we might
+also avoid some (small) effort on DrScheme's side:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">mult10</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">a-digit</span> (<span class="builtin">first</span> <span class="variable">alon</span>))
+                  (<span class="keyword">define</span> <span class="variable">the-rest</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))
+		  (<span class="keyword">define</span> <span class="variable">p</span> (<span class="builtin">length</span> <span class="variable">the-rest</span>)))
+	    <span class="comment">;; ------------------------------------------------------</span>
+            (<span class="builtin">cons</span> (<span class="builtin">*</span> (<span class="builtin">expt</span> <span class="selfeval">10</span> <span class="variable">p</span>) <span class="variable">a-digit</span>) (<span class="variable">mult10</span> <span class="variable">the-rest</span>)))]))
+</pre></div><p></p>
+<p>
+For the programs that we have developed, this third usage of <code class="scheme"><span class="keyword">local</span></code>
+is hardly ever useful. An auxiliary function is almost always better. We
+will, however, encounter many different styles of functions in the
+remaining parts of the book and with them the opportunity, and sometimes
+the necessity, to use <strong>local</strong>-expressions like the one for
+<code class="scheme"><span class="variable">mult10</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.1.15"></a>
+<b>Exercise 18.1.15.</b>&nbsp;&nbsp; 
+Consider the following function definition: 
+<a name="node_idx_1332"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">extract1</span> <span class="selfeval">:</span> <span class="variable">inventory</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">inventory</span></code></span>
+<span class="comment">;; to create an <code class="scheme"><span class="variable">inventory</span></code> from <code class="scheme"><span class="variable">an-inv</span></code> for all</span>
+<span class="comment">;; those items that cost less than $1</span>
+(<span class="keyword">define</span> (<span class="variable">extract1</span> <span class="variable">an-inv</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">an-inv</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&lt;=</span> (<span class="builtin">ir-price</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>)) <span class="selfeval">1.00</span>)
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">an-inv</span>) (<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>)))]
+	    [<span class="keyword">else</span> (<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>))])]))
+</pre></div><p>
+Both clauses in the nested <strong>cond</strong>-expression extract the first item
+from <code class="scheme"><span class="variable">an-inv</span></code> and both compute <code class="scheme">(<span class="variable">extract1</span> (<span class="builtin">rest</span> <span class="variable">an-inv</span>))</code>. </p>
+<p>
+Introduce a <strong>local</strong>-expression for these
+expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-interm1.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_18.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_18.2">18.2&nbsp;&nbsp;Lexical Scope and Block Structure</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-20.html#node_part_III"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Check Syntax</a>
+</td></tr></table><p></p>
+<p>
+The introduction of <code class="scheme"><span class="keyword">local</span></code> requires some additional terminology
+concerning the syntax of Scheme and the structure of
+functions. Specifically, we need words to discuss the usage of names for
+variables, functions, and structures.  For a simple example,
+consider the following two definitions:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>) <span class="selfeval">25</span>))
+
+(<span class="keyword">define</span> (<span class="variable">g</span> <span class="variable">x</span>) (<span class="builtin">*</span> <span class="selfeval">12</span> (<span class="builtin">expt</span> <span class="variable">x</span> <span class="selfeval">5</span>)))
+</pre></div><p>
+Clearly, the underlined occurrences of <code class="scheme"><span class="variable">x</span></code> in <code class="scheme"><span class="variable">f</span></code> are
+completely unrelated to the occurrences of <code class="scheme"><span class="variable">x</span></code> in <code class="scheme"><span class="variable">g</span></code>. As
+mentioned before, if we systematically replaced the underlined occurrences
+with <code class="scheme"><span class="variable">y</span></code>, the function would still compute the exact same
+numbers. In short, the underlined occurrences of <code class="scheme"><span class="variable">x</span></code> mean something
+only in the definition of <code class="scheme"><span class="variable">f</span></code> and nowhere else.</p>
+<p>
+At the same time, the first occurrence of <code class="scheme"><span class="variable">x</span></code> is different from the
+others. When we apply <code class="scheme"><span class="variable">f</span></code> to a number <code class="scheme"><span class="variable">n</span></code>, this occurrence
+completely disappears; in contrast, the others are replaced with
+<code class="scheme"><span class="variable">n</span></code>. To distinguish these two forms of variable occurrences, we call
+the one to the right of the function name <small>B</small><small>I</small><small>N</small><small>D</small><small>I</small><small>N</small><small>G</small> 
+<a name="node_idx_1334"></a>occurrence of
+<code class="scheme"><span class="variable">x</span></code> and those in the body the <small>B</small><small>O</small><small>U</small><small>N</small><small>D</small> 
+<a name="node_idx_1336"></a>occurrences of
+<code class="scheme"><span class="variable">x</span></code>. We also say that the binding occurrence of <code class="scheme"><span class="variable">x</span></code> binds all
+occurrences of <code class="scheme"><span class="variable">x</span></code> in the body of <code class="scheme"><span class="variable">f</span></code>, and from the
+discussion above, the body of <code class="scheme"><span class="variable">f</span></code> is clearly the only textual region
+of the function where the underlined binding occurrence of <code class="scheme"><span class="variable">x</span></code> can
+bind other occurrences. The name of this region is <code class="scheme"><span class="variable">x</span></code>'s
+<small>L</small><small>E</small><small>X</small><small>I</small><small>C</small><small>A</small><small>L</small> <small>S</small><small>C</small><small>O</small><small>P</small><small>E</small>.
+<a name="node_idx_1338"></a><a name="node_idx_1340"></a>We also say that the definitions of <code class="scheme"><span class="variable">f</span></code> and
+<code class="scheme"><span class="variable">g</span></code> (or other definitions in the
+<tt>Definitions</tt>
+<a name="node_idx_1342"></a>window) have
+<small>G</small><small>L</small><small>O</small><small>B</small><small>A</small><small>L</small> <small>S</small><small>C</small><small>O</small><small>P</small><small>E</small>.
+<a name="node_idx_1344"></a><a name="node_idx_1346"></a>On occasion, people also use the word <small>F</small><small>R</small><small>E</small><small>E</small> <small>O</small><small>C</small><small>C</small><small>U</small><small>R</small><small>R</small><small>E</small><small>N</small><small>C</small><small>E</small>.
+<a name="node_idx_1348"></a></p>
+<p>
+The description of an application of <code class="scheme"><span class="variable">f</span></code> to a number
+<code class="scheme"><span class="variable">n</span></code> suggests the following pictorial representation of the
+definition: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope1.gif" alt="scope1">
+<p>
+The bullet over the first occurrence indicates that it is a binding
+occurrence. The arrow that originates from the bullet suggests the flow of
+values. That is, when the value of a binding occurrence becomes known, the
+bound occurrences receive their values from there. Put differently, when we
+know which is the binding occurrence of a variable, we know where the value
+will come from during an evaluation.</p>
+<p>
+Along similar lines, the scope of a variable also dictates where we
+can rename it. If we wish to rename a parameter, say,  from <code class="scheme"><span class="variable">x</span></code>
+to <code class="scheme"><span class="variable">y</span></code>, we search for all bound occurrences in the scope of the
+parameter and replace them with <code class="scheme"><span class="variable">y</span></code>. For example, if the
+function definition is the one from above:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>) <span class="selfeval">25</span>))
+</pre></div><p>
+renaming <code class="scheme"><span class="variable">x</span></code> to <code class="scheme"><span class="variable">y</span></code> affects two bound occurrences: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">y</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">y</span> <span class="variable">y</span>) <span class="selfeval">25</span>))
+</pre></div><p>
+No other occurrences of <code class="scheme"><span class="variable">x</span></code> outside of the definitions need to
+be changed. </p>
+<p>
+Obviously function definitions also introduce a binding occurrence
+for the function name. If a definition introduces a function named
+<code class="scheme"><span class="variable">f</span></code>, the scope of <code class="scheme"><span class="variable">f</span></code> is the entire sequence of
+definitions: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope2.gif" alt="scope2">
+<p>
+That is, the scope of <code class="scheme"><span class="variable">f</span></code> includes all definitions above and
+below the definition of <code class="scheme"><span class="variable">f</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.2.1"></a>
+<b>Exercise 18.2.1.</b>&nbsp;&nbsp; 
+Here is a simple Scheme program: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">p1</span> <span class="variable">x</span> <span class="variable">y</span>) 
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">y</span>)
+     (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">x</span>)
+	(<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">y</span>) <span class="selfeval">22</span>))))
+
+(<span class="keyword">define</span> (<span class="variable">p2</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">55</span> <span class="variable">x</span>) (<span class="builtin">+</span> <span class="variable">x</span> <span class="selfeval">11</span>)))
+
+(<span class="keyword">define</span> (<span class="variable">p3</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="variable">p1</span> <span class="variable">x</span> <span class="selfeval">0</span>)
+     (<span class="builtin">+</span> (<span class="variable">p1</span> <span class="variable">x</span> <span class="selfeval">1</span>) (<span class="variable">p2</span> <span class="variable">x</span>))))
+</pre></div><p>
+Draw arrows from <code class="scheme"><span class="variable">p1</span></code>'s <code class="scheme"><span class="variable">x</span></code> parameter to all its bound
+occurrences. Draw arrows from <code class="scheme"><span class="variable">p1</span></code> to all bound occurrences of 
+<code class="scheme"><span class="variable">p1</span></code>.</p>
+<p>
+Copy the function and rename the parameter <code class="scheme"><span class="variable">x</span></code> of <code class="scheme"><span class="variable">p1</span></code> to
+<code class="scheme"><span class="variable">a</span></code> and the parameter <code class="scheme"><span class="variable">x</span></code> of <code class="scheme"><span class="variable">p3</span></code> to
+<code class="scheme"><span class="variable">b</span></code>.</p>
+<p>
+Check the results with DrScheme's <tt>Check Syntax</tt> button.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scope1.html">Solution</a></p>
+<p></p>
+<p>
+In contrast to top-level function definitions, the scope of the definitions
+in a <code class="scheme"><span class="keyword">local</span></code> are limited. Specifically, the scope of local
+definitions <em>is</em> the <strong>local</strong>-expression. 
+Consider the definition of an auxiliary function <code class="scheme"><span class="variable">f</span></code> in
+a <strong>local</strong>-expression. It binds all occurrences within the
+<strong>local</strong>-expression but none that occur outside: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope3.gif" alt="scope3">
+<p>
+The two occurrences outside of <code class="scheme"><span class="keyword">local</span></code> are not bound by the local
+definition of <code class="scheme"><span class="variable">f</span></code>.</p>
+<p>
+As always, the parameters of a function definition, local or not, is only
+bound in the function's body and nowhere else: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope4.gif" alt="scope4">
+<p>
+</p>
+<p>
+Since the scope of a function name or a function parameter is a textual
+region, people often draw a box to indicate some scope. More precisely, for
+parameters a box is drawn around the body of a function:
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope5.gif" alt="scope5">
+<p>
+In the case of a local definition, the box is drawn aorund the
+entire <strong>local</strong>-expression: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope6.gif" alt="scope6">
+<p>
+In this example, the box describes the scope of the definitions
+of <code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">g</span></code>.</p>
+<p>
+Using a box for a scope, we can also easily understand what it means to
+reuse the name of function inside a <strong>local</strong>-expression:</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope7.gif" alt="scope7">
+<p>
+The inner box describes the scope of the inner definition of
+<code class="scheme"><span class="variable">f</span></code>; the outer box is the scope of the outer definition of
+<code class="scheme"><span class="variable">f</span></code>.  Accordingly, all occurrences of <code class="scheme"><span class="variable">f</span></code> in the inner box
+refer to the inner <code class="scheme"><span class="keyword">local</span></code>; all those in the outer box refer to the
+definition in the outer <code class="scheme"><span class="keyword">local</span></code>. In other words, the scope of the
+outer definition of <code class="scheme"><span class="variable">f</span></code> has a hole: the inner box, which is the
+scope of the inner definition of <code class="scheme"><span class="variable">f</span></code>.</p>
+<p>
+Holes can also occur in the scope of a parameter definition. Here is an
+example: </p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/scope8.gif" alt="scope8">
+<p>
+In this function, the parameter <code class="scheme"><span class="variable">x</span></code> is used twice: for the
+function <code class="scheme"><span class="variable">f</span></code> and for <code class="scheme"><span class="variable">g</span></code>. The scope of the latter is nested 
+in the scope of the former and is thus a hole for the scope of the outer
+use of <code class="scheme"><span class="variable">x</span></code>. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+In general, if the same name occurs more than once in a function, the boxes
+that describe the corresponding scopes never overlap. In some cases the
+boxes are nested within each other, which gives rise to holes. Still, the
+picture is always that of a hierarchy of smaller and smaller nested boxes. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_18.2.2"></a>
+<b>Exercise 18.2.2.</b>&nbsp;&nbsp; 
+Here is a simple Scheme function: 
+<a name="node_idx_1350"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-numbers</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+	      [(<span class="builtin">cons?</span> <span class="variable">alon</span>) (<span class="variable">insert</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sort</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+	  (<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">an</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">list</span> <span class="variable">an</span>)]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="builtin">&gt;</span> <span class="variable">an</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">an</span> <span class="variable">alon</span>)]
+		      [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">an</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])])))
+    (<span class="variable">sort</span> <span class="variable">alon</span>)))
+</pre></div><p>
+Draw a box around the scope of each binding occurrence of <code class="scheme"><span class="variable">sort</span></code> and
+<code class="scheme"><span class="variable">alon</span></code>. Then draw arrows from each occurrence of <code class="scheme"><span class="variable">sort</span></code> to
+the matching binding occurrence.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scope2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_18.2.3"></a>
+<b>Exercise 18.2.3.</b>&nbsp;&nbsp; 
+Recall that each occurrence of a variable receives its value from the
+corresponding binding occurrence. Consider the following definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">x</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> <span class="variable"><u><code class="scheme"><span class="variable">x</span></code></u></span>))
+</pre></div><p>
+Where is the underlined occurrence of <code class="scheme"><span class="variable">x</span></code> bound? Since the
+definition is a variable definition and not a function definition, we need
+to evaluate the right-hand side if we wish to work with this function. What
+is the value of the right-hand side according to our
+rules?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/scope-meaning.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_104"></a><a href="#call_footnote_Temp_104"><sup><small>44</small></sup></a> As we evaluate expressions in this
+manner, our list of definitions grows longer and longer. Fortunately,
+DrScheme knows how to manage such growing lists. Indeed, it occasionally
+throws out definitions that will never be used again.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-22.html">previous</a></span><span>, <a href="curriculum-Z-H-24.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-23.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

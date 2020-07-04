@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/integral-kepler.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 23.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-29.html#node_thm_23.4.1">Problem Statement</a>
+<pre>#| ---------------------------------------------------------------------------
+   integrate-kepler : (number -&gt; number) number[a] number[&gt;a] -&gt; number
+
+   to compute the area under f between a and b using Kepler's method
+
+   Examples:
+    (integrate-kepler one 0 1) =~ 1
+    (integrate-kepler square 0 1) =~ 1/3 
+
+|# 
+(define (integrate-kepler f a b)
+  (* (+ (f a)
+	(* 4 (f (/ (+ a b) 2)))
+	(f b))
+     (/ (- b a) 6)))}
+
+#| Tests: 
+(define (square x)
+  (* x x))
+
+(define (one x)
+  1)
+
+(= (integrate-kepler one 0 1) 1)
+
+(= (integrate-kepler square 0 1) 1/3)
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/integral-kepler.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

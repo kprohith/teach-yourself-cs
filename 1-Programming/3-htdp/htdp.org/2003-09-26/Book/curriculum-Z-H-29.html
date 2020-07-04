@@ -1,0 +1,875 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-29.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-28.html">previous</a></span><span>, <a href="curriculum-Z-H-30.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_23"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_23">Section  23</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_23">Mathematical Examples</a></h1>
+<p> 
+</p>
+<p>
+Applying mathematics to real-world problems requires programs that
+implement mathematical functions. In many cases, the programs also employ
+functions that consume and produce functions. Mathematics is therefore a
+great starting point for practicing programming with functions and, more
+generally, for creating abstract functions.</p>
+<p>
+The first subsection covers sequences and series, a key element of
+mathematics. The second section discusses integration, which relies heavily
+on series. Finally, the third section introduces function differentiation.</p>
+<p>
+</p>
+<a name="node_sec_23.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_23.1">23.1&nbsp;&nbsp;Sequences and Series</a></h2>
+<p></p>
+<p>
+In pre-algebra and algebra, we encounter <i>sequences</i> 
+<a name="node_idx_1578"></a>(also known as
+progressions) of numbers. Here are three examples:
+</p>
+<ol>
+<li><p>0, 2, 4, 6, 8;
+</p>
+<li><p>1, 3, 5, 7, 9;
+</p>
+<li><p>5, 10, 15, 20, 25.
+</p>
+</li></ol><p>
+The first two enumerate the first five even and odd natural numbers,
+respectively; the last one lists the first five positive integers, evenly
+divisible by 5. Sequences can also be infinite:
+</p>
+<ol>
+<li><p>0, 2, 4, 6, 8, <tt>...</tt>;
+</p>
+<li><p>1, 3, 5, 7, 9, <tt>...</tt>;
+</p>
+<li><p>5, 10, 15, 20, 25, <tt>...</tt></p>
+</li></ol><p>
+Following mathematical tradition, infinite sequences end in ``<tt>...</tt>'' and
+the reader must determine how to find more of the terms in the sequence.</p>
+<p>
+One way to understand sequences of numbers, especially infinite ones, is to
+match them up with an enumeration of the natural numbers. For example,
+the even and odd (natural) numbers match up like this: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-2.gif" border="0" alt="[curriculum3a-Z-G-2.gif]"></div><p>
+It is easy to see from this table that every even number is 2  &middot;  <em>i</em>
+for its index <em>i</em> and that an odd number is 2  &middot;  <em>i</em>  +  1.</p>
+<p>
+Both statements can be translated into simple Scheme functions:
+</p>
+<div align="center"><table><tr><td>
+<a name="node_idx_1580"></a><a name="node_idx_1582"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">make-even</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong>[<span class="variable">even</span>]</code></span>
+<span class="comment">;; to compute the <code class="scheme"><span class="variable">i</span></code>-th even number</span>
+(<span class="keyword">define</span> (<span class="variable">make-even</span> <span class="variable">i</span>)
+  (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">i</span>))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">make-odd</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong>[<span class="variable">odd</span>]</code></span>
+<span class="comment">;; to compute the <code class="scheme"><span class="variable">i</span></code>-th odd number</span>
+(<span class="keyword">define</span> (<span class="variable">make-odd</span> <span class="variable">i</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable">i</span>) <span class="selfeval">1</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+In short, functions from natural numbers to numbers are representations of
+infinite sequences. <p>
+A mathematical <i>series</i> 
+<a name="node_idx_1584"></a>is the sum of a sequence. The three finite
+sequences have the sums 20, 25, and 75, respectively. In the case of
+infinite sequences it is often interesting to consider a finite portion,
+staring with the first one.<a name="call_footnote_Temp_126"></a><a href="#footnote_Temp_126"><sup><small>51</small></sup></a> For example, adding the first 10 even numbers yields 90,
+and adding the first 10 odd numbers yields 100. Computing a series is
+clearly a job for a computer. Here are functions that add up the first
+<code class="scheme"><span class="variable">n</span></code> odd or even numbers, respectively, using <code class="scheme"><span class="variable">make-even</span></code> and
+<code class="scheme"><span class="variable">make-odd</span></code> to compute the required numbers: 
+</p>
+<div align="center"><table><tr><td>
+
+
+<a name="node_idx_1586"></a><a name="node_idx_1588"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">series-even</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the first<br>
+;; <code class="scheme"><span class="variable">n</span></code> even numbers</span>
+(<span class="keyword">define</span> (<span class="variable">series-even</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (<span class="variable">make-even</span> <span class="variable">n</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">make-even</span> <span class="variable">n</span>) 
+	     (<span class="variable">series-even</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)))]))	
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">series-odd</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the first<br>
+;; <code class="scheme"><span class="variable">n</span></code> odd numbers</span>
+(<span class="keyword">define</span> (<span class="variable">series-odd</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (<span class="variable">make-odd</span> <span class="variable">n</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">make-odd</span> <span class="variable">n</span>)
+	     (<span class="variable">series-odd</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+<p>
+The two functions are natural candidates for abstraction and here is the
+result of following our basic abstraction recipe: 
+<a name="node_idx_1590"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">series</span> <span class="selfeval">:</span> <strong>N</strong> (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the first <code class="scheme"><span class="variable">n</span></code> numbers in the sequence <code class="scheme"><span class="variable">a-term</span></code>,</span>
+(<span class="keyword">define</span> (<span class="variable">series</span> <span class="variable">n</span> <span class="variable">a-term</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (<span class="variable">a-term</span> <span class="variable">n</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">a-term</span> <span class="variable">n</span>)
+	     (<span class="variable">series</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>) <span class="variable">a-term</span>))]))
+</pre></div><p>
+The first argument specifies where the addition starts.  The second
+argument of <code class="scheme"><span class="variable">series</span></code> is a function that maps a natural number to the
+corresponding term in the series. To test <code class="scheme"><span class="variable">series</span></code>, we apply it to
+<code class="scheme"><span class="variable">make-even</span></code> and <code class="scheme"><span class="variable">make-odd</span></code>: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1592"></a><a name="node_idx_1594"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">series-even1</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">series-even1</span> <span class="variable">n</span>)
+  (<span class="variable">series</span> <span class="variable">n</span> <span class="variable">make-even</span>))	
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">series-odd1</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">series-odd1</span> <span class="variable">n</span>)
+  (<span class="variable">series</span> <span class="variable">n</span> <span class="variable">make-odd</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+<p>
+For over a century, mathematicians have used the Greek symbol Sigma to
+communicate about series. The two series above would be expressed as
+</p>
+<div align="center"><img src="curriculum3a-Z-G-5.gif" border="0" alt="[curriculum3a-Z-G-5.gif]"></div><p>
+A true (lazy) mathematician would also replace <code class="scheme"><span class="variable">make-even</span></code> and
+<code class="scheme"><span class="variable">make-odd</span></code> by their definitions, that is, 2  &middot;  <em>i</em> and 2  &middot;  <em>i</em>  + 
+1, but we refrain from doing so to emphasize the analogy to our
+(well-organized) functions. </p>
+<p>
+</p>
+<p><a name="node_thm_23.1.1"></a>
+<b>Exercise 23.1.1.</b>&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Use <code class="scheme"><span class="keyword">local</span></code> to create <code class="scheme"><span class="variable">series-local</span></code> from
+<code class="scheme"><span class="variable">series-even</span></code> and <code class="scheme"><span class="variable">series-odd</span></code>. Show with a hand-evaluation 
+that <code class="scheme">(<span class="variable">series-local</span> <span class="variable">make-even</span>)</code> is equivalent to
+<code class="scheme"><span class="variable">series-even</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/local-series.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_23.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_23.2">23.2&nbsp;&nbsp;Arithmetic Sequences and Series</a></h2>
+<p></p>
+<p>
+In an arithmetic sequence
+<a name="node_idx_1596"></a></p>
+<div align="center"><img src="curriculum3a-Z-G-6.gif" border="0" alt="[curriculum3a-Z-G-6.gif]"></div><p>
+each successor term <em>a</em><sub><em>n</em>+1</sub> is the result of adding a fixed constant to
+<em>a</em><sub><em>n</em></sub>. Here is a concrete example, matched up with the natural numbers: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-7.gif" border="0" alt="[curriculum3a-Z-G-7.gif]"></div><p>
+Here the starting point is 3 and the constant is 5. From these two facts,
+called <i>starting point</i> 
+<a name="node_idx_1598"></a>and <i>summand</i>,
+<a name="node_idx_1600"></a>respectively, all other terms in the sequence can be determined.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_23.2.1"></a>
+<b>Exercise 23.2.1.</b>&nbsp;&nbsp; 
+Develop the recursive function <code class="scheme"><span class="variable">a-fives</span></code>, which consumes a natural
+number and recursively determines the corresponding term in the above
+series.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/alg-ser2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.2.2"></a>
+<b>Exercise 23.2.2.</b>&nbsp;&nbsp; 
+Develop the non-recursive function <code class="scheme"><span class="variable">a-fives-closed</span></code>. It consumes
+a natural number and determines the corresponding term in the above
+series. A non-recursive function is sometimes called a 
+<a name="node_idx_1602"></a><i>closed form</i>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/alg-ser3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.2.3"></a>
+<b>Exercise 23.2.3.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="variable">series</span></code> to determine the sum of the <code class="scheme"><span class="variable">a-fives</span></code> sequence
+for the bounds 3, 7, and 88.  Can an infinite arithmetic series have a
+sum?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/alg-ser4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.2.4"></a>
+<b>Exercise 23.2.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">seq-a-fives</span></code>, which consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and creates the sequence of the first <code class="scheme"><span class="variable">n</span></code> terms according
+to <code class="scheme"><span class="variable">a-fives</span></code> or <code class="scheme"><span class="variable">a-fives-closed</span></code>. <strong>Hint:</strong> Use
+<code class="scheme"><span class="builtin">build-list</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/alg-ser1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.2.5"></a>
+<b>Exercise 23.2.5.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">arithmetic-series</span></code>.  The function consumes two numbers:
+<code class="scheme"><span class="variable">start</span></code> and <code class="scheme"><span class="variable">s</span></code>.  Its result is a function that represents
+the arithmetic series whose starting point is <code class="scheme"><span class="variable">start</span></code> and whose
+summand is <code class="scheme"><span class="variable">s</span></code>.  For example, <code class="scheme">(<span class="variable">arithmetic-series</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)</code>
+yields <code class="scheme"><span class="variable">a-fives</span></code> (or <code class="scheme"><span class="variable">a-fives-closed</span></code>). Similarly,
+<code class="scheme">(<span class="variable">arithmetic-series</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)</code> produces a function that represents the
+series of even numbers.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/alg-ser-gen.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_23.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_23.3">23.3&nbsp;&nbsp;Geometric Sequences and Series</a></h2>
+<p></p>
+<p>
+In a geometric sequence 
+<a name="node_idx_1604"></a>
+</p>
+<div align="center"><img src="curriculum3a-Z-G-8.gif" border="0" alt="[curriculum3a-Z-G-8.gif]"></div><p>
+each succesor term <em>g</em><sub><em>n</em>+1</sub> is the result of multiplying a fixed constant with
+<em>g</em><sub><em>n</em></sub>. Here is a concrete example, matched up with the natural numbers: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-9.gif" border="0" alt="[curriculum3a-Z-G-9.gif]"></div><p>
+Here the starting point is 3 and the constant is 5. From these, called
+<i>starting point</i> 
+<a name="node_idx_1606"></a>and <i>factor</i>,
+<a name="node_idx_1608"></a>respectively, every other term in the sequence is determined.</p>
+<p>
+</p>
+<p><a name="node_thm_23.3.1"></a>
+<b>Exercise 23.3.1.</b>&nbsp;&nbsp; 
+Develop the recursive function <code class="scheme"><span class="variable">g-fives</span></code>, which consumes a natural
+number and recursively determines the corresponding term in the above
+geometric sequence.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/geo-ser1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.2"></a>
+<b>Exercise 23.3.2.</b>&nbsp;&nbsp; 
+Develop the non-recursive function <code class="scheme"><span class="variable">g-fives-closed</span></code>. It consumes
+a natural number and determines the corresponding term in the above
+series.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/geo-ser2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.3"></a>
+<b>Exercise 23.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">seq-g-fives</span></code>, which consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and creates the sequence of the first <code class="scheme"><span class="variable">n</span></code> terms according
+to <code class="scheme"><span class="variable">g-fives</span></code> or <code class="scheme"><span class="variable">g-fives-closed</span></code>. <strong>Hint:</strong> Use
+<code class="scheme"><span class="builtin">build-list</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/geo-ser9.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.4"></a>
+<b>Exercise 23.3.4.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">geometric-series</span></code>. The function consumes two numbers:
+<code class="scheme"><span class="variable">start</span></code> and <code class="scheme"><span class="variable">s</span></code>.  Its result is a function that represents
+the geometric series whose starting point is <code class="scheme"><span class="variable">start</span></code> and whose
+factor is <code class="scheme"><span class="variable">s</span></code>.  For example, <code class="scheme">(<span class="variable">geometric-series</span> <span class="selfeval">3</span> <span class="selfeval">5</span>)</code> yields
+<code class="scheme"><span class="variable">g-fives</span></code> (or <code class="scheme"><span class="variable">g-fives-closed</span></code>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/geo-ser-gen.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.5"></a>
+<b>Exercise 23.3.5.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="variable">series</span></code> to determine the sum of the <code class="scheme"><span class="variable">g-fives</span></code> sequence
+for the bounds 3, 7, and 88. 
+Use <code class="scheme"><span class="variable">series</span></code> to determine the sum of <code class="scheme">(<span class="variable">geometric-series</span> <span class="selfeval">1</span>
+<span class="selfeval">.1</span>)</code> for the bounds 3, 7, 88.  
+Can an infinite geometric series have a sum?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/geo-ser4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_Temp_127"></a>
+<h3><a href="curriculum-Z-H-1.html#node_toc_node_sec_Temp_127">Taylor Series</a></h3>
+<p>Mathematical constants like <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> and <em>e</em> or functions like sin, cos,
+log are difficult to compute. Since these functions are important for
+many daily engineering applications, mathematicians have spent a lot of
+time and energy looking for better ways to compute these functions. One
+method is to replace a function with its Taylor series, which is, roughly
+speaking, an infinitely long polynomial.</p>
+<p>
+A <i>Taylor series</i> 
+<a name="node_idx_1610"></a>is the sum of a sequence of terms. In contrast to arithmetic
+or geometric sequences, the terms of a Taylor series depend on two
+unknowns: some variable <code class="scheme"><span class="variable">x</span></code> and the position <code class="scheme"><span class="variable">i</span></code> in the
+sequence. Here is the Taylor series for the exponential function: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-10.gif" border="0" alt="[curriculum3a-Z-G-10.gif]"></div><p>
+That is, if we wish to compute <em>e</em><sup><em>x</em></sup> for any specific <em>x</em>, we
+replace <em>x</em> with the number and determine the value of the series.
+In other words, for a specific value of <code class="scheme"><span class="variable">x</span></code>, say, 1, the Taylor
+series becomes an ordinary series, that is, a sum of some sequence of numbers:
+</p>
+<div align="center"><img src="curriculum3a-Z-G-11.gif" border="0" alt="[curriculum3a-Z-G-11.gif]"></div><p>
+While this series is the sum of an infinitely long sequence, it actually is
+a number, and it often suffices to add just the first few terms to
+have an idea what the number is. </p>
+<p>
+The key to computing a Taylor series is to formulate each term in the
+underlying sequence as a function of <code class="scheme"><span class="variable">x</span></code> and its position
+<code class="scheme"><span class="variable">i</span></code>. In our running example, the Taylor sequence for the exponential
+function has the shape 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-12.gif" border="0" alt="[curriculum3a-Z-G-12.gif]"></div><p>
+Assuming a fixed <code class="scheme"><span class="variable">x</span></code>, here is an equivalent Scheme definition: 
+<a name="node_idx_1612"></a><a name="node_idx_1614"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">e-taylor</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">e-taylor</span> <span class="variable">i</span>)
+  (<span class="builtin">/</span> (<span class="builtin">expt</span> <span class="variable">x</span> <span class="variable">i</span>) (<span class="variable">!</span> <span class="variable">i</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n</span> (<span class="variable">!</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p>
+The first function computes the term; the second computes the factorial of
+a natural number. To compute the value of <em>e</em><sup><em>x</em></sup>, we now just need to ask
+for <code class="scheme">(<span class="variable">series</span> <span class="selfeval">10</span> <span class="variable">e-taylor</span>)</code>, assuming we want the first <code class="scheme"><span class="selfeval">10</span></code>
+items of the sequence included. </p>
+<p>
+Putting everything together, we can define a function that computes the
+<code class="scheme"><span class="variable">x</span></code>th power of <code class="scheme"><span class="variable">e</span></code>. Since the function requires two
+auxiliaries, we use a <code class="scheme"><span class="keyword">local</span></code>: 
+<a name="node_idx_1616"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">e-power</span> <span class="variable">x</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">e-taylor</span> <span class="variable">i</span>)
+	    (<span class="builtin">/</span> (<span class="builtin">expt</span> <span class="variable">x</span> <span class="variable">i</span>) (<span class="variable">!</span> <span class="variable">i</span>)))
+	  (<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) <span class="selfeval">1</span>]
+	      [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n</span> (<span class="variable">!</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))])))
+    (<span class="variable">series</span> <span class="selfeval">10</span> <span class="variable">e-taylor</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_23.3.6"></a>
+<b>Exercise 23.3.6.</b>&nbsp;&nbsp; 
+Replace <code class="scheme"><span class="selfeval">10</span></code> by <code class="scheme"><span class="selfeval">3</span></code> in the definition of <code class="scheme"><span class="variable">e-power</span></code> and
+evaluate <code class="scheme">(<span class="variable">e-power</span> <span class="selfeval">1</span>)</code> by hand. Show only those lines that contain
+new applications of <code class="scheme"><span class="variable">e-taylor</span></code> to a number.</p>
+<p>
+The results of <code class="scheme"><span class="variable">e-power</span></code> are fractions with large numerators and
+denominators. In contrast, Scheme's built-in <code class="scheme"><span class="builtin">exp</span></code> function produces
+an inexact number. We can turn exact fractions into inexact numbers with
+the following function:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"> exact<tt>-&gt;</tt> inexact <span class="selfeval">:</span> <span class="variable">number</span> [<span class="variable">exact</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span> [<span class="variable">inexact</span>] </code></span>
+</pre></div><p>
+Test the function and add it to <code class="scheme"><span class="variable">e-power</span></code>'s body. Then compare the
+results of <code class="scheme"><span class="builtin">exp</span></code> and <code class="scheme"><span class="variable">e-power</span></code>. Increase the number of items
+in the series until the difference between the results is
+small.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/e-taylor.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.7"></a>
+<b>Exercise 23.3.7.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">ln</span></code>, which computes the Taylor series for the
+natural logarithm. The mathematical definition of the series is 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-13.gif" border="0" alt="[curriculum3a-Z-G-13.gif]"></div><p>
+This Taylor series has a value for all <code class="scheme"><span class="variable">x</span></code> that are greater than
+<code class="scheme"><span class="selfeval">0</span></code>. </p>
+<p>
+DrScheme also provides <code class="scheme"><span class="builtin">log</span></code>, a primitive for computing the natural
+logarithm. Compare the results for <code class="scheme"><span class="variable">ln</span></code> and <code class="scheme"><span class="builtin">log</span></code>. Then use
+<code class="scheme">exact<tt>-&gt;</tt>inexact</code> (see exercise&nbsp;<a href="#node_thm_23.3.6">23.3.6</a>) to get results
+that are easier to compare.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ln-taylor.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.8"></a>
+<b>Exercise 23.3.8.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">my-sin</span></code>, which computes the Taylor series for
+<code class="scheme"><span class="builtin">sin</span></code>, one of the trigonometric functions. The Taylor series is
+defined as follows: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-14.gif" border="0" alt="[curriculum3a-Z-G-14.gif]"></div><p>
+It is defined for all <code class="scheme"><span class="variable">x</span></code>. </p>
+<p>
+<strong>Hint:</strong>  The sign of a term is positive if the index is even and negative
+otherwise. Mathematicians compute ( <tt>-</tt> 1)<sup><em>i</em></sup> to determine the sign; 
+programmers can use <code class="scheme"><span class="keyword">cond</span></code> instead.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sin-taylor.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.3.9"></a>
+<b>Exercise 23.3.9.</b>&nbsp;&nbsp; 
+Mathematicians have used series to determine the value of <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> for many
+centuries. Here is the first such sequence, discovered by Gregory (1638-1675):
+</p>
+<div align="center"><img src="curriculum3a-Z-G-15.gif" border="0" alt="[curriculum3a-Z-G-15.gif]"></div><p>
+Define the function <code class="scheme"><span class="variable">greg</span></code>, which maps a natural number to the
+corresponding term in this sequence. Then use <code class="scheme"><span class="variable">series</span></code> to determine
+approximations of the value of <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]">.</p>
+<p>
+<a name="node_idx_1618"></a>
+</p>
+<p></p>
+<p><strong>Note on <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"></strong>:  The approximation improves as we increase the number of items
+in the series. Unfortunately, it is not practical to compute <img src="curriculum-Z-G-D-1.gif" border="0" alt="[curriculum-Z-G-D-1.gif]"> with
+this definition.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pi-taylor.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_23.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_23.4">23.4&nbsp;&nbsp;The Area Under a Function</a></h2>
+<p></p>
+<p>
+Consider the function graph in figure&nbsp;<a href="#node_fig_Temp_128">64</a>. Suppose we wish
+to know the area between the <em>x</em> axis, the fat lines labeled <em>a</em> and <em>b</em>,
+and the graph.  Determining the area under the graph of a function for some
+specific interval is called <i>integrating a function</i>.
+<a name="node_idx_1620"></a>Since engineers had to solve this kind of problem before computers were available,
+mathematicians have studied it extensively. For a small class of functions,
+it is indeed possible to determine the area exactly. For the other cases,
+mathematicians have developed several methods to determine close estimates.
+Since these methods involve lots of mechanical calculations, they are
+natural candidates for computer functions.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_128"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">&nbsp;<p></p>
+<p></p>
+<p>
+   <img src="../icons/integrate.jpg" border="0" alt="[../icons/integrate.jpg]"><br>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 64:</b>&nbsp;&nbsp;Integrating a function <em>f</em> between <em>a</em> and <em>b</em></td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+A general integration function must consume three inputs: <code class="scheme"><span class="variable">a</span></code>,
+<code class="scheme"><span class="variable">b</span></code>, and the function <code class="scheme"><span class="variable">f</span></code>. The fourth part, the <em>x</em> axis, is
+implied.  This suggests the following contract: 
+<a name="node_idx_1622"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">integrate</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) <span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the area under the graph of <code class="scheme"><span class="variable">f</span></code> between <code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">integrate</span> <span class="variable">f</span> <span class="variable">a</span> <span class="variable">b</span>) ...)
+</pre></div><p></p>
+<p>
+<a name="node_idx_1624"></a>
+Kepler suggested one simple integration method. It consists of three steps:
+</p>
+<ol>
+<li><p>divide the interval into two parts: 
+[<em>a</em>,(<em>a</em> + <em>b</em>/2)] and [(<em>a</em> + <em>b</em>/2),<em>b</em>];
+</p>
+<li><p>compute the area of each <i>trapezoid</i>; and
+<a name="node_idx_1626"></a></p>
+<li><p>add the two areas to get an estimate at the integral. 
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_23.4.1"></a>
+<b>Exercise 23.4.1.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">integrate-kepler</span></code>. It computes the area under
+some the graph of some function <code class="scheme"><span class="variable">f</span></code> between <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code> using Kepler's rule.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/integral-kepler.html">Solution</a></p>
+<p></p>
+<p>
+Another simple method is to think of the area as a sequence of many small
+rectangles. Each rectangle is as tall as the function graph in, say, the
+middle of the rectangle. Figure&nbsp;<a href="#node_fig_Temp_128">64</a> shows two examples. By
+adding up the area of the rectangles, we get a good estimate at the area
+under the graph. The more rectangles we consider, the closer the estimate
+is to the actual area.</p>
+<p>
+Let us agree that <code class="scheme"><span class="variable">R</span></code> stands for the number of rectangles that we
+wish to consider. To determine how large these rectangles are, we need to
+figure out how large their sides are. The length of the side on the <em>x</em>
+axis is the length of the interval divided by the number of rectangles:
+</p>
+<div align="center"><img src="curriculum3a-Z-G-16.gif" border="0" alt="[curriculum3a-Z-G-16.gif]"></div><p>
+For the height of the rectangle, we need to determine its midpoint and then
+the value of <em>f</em> at the midpoint. The first midpoint is clearly at 
+<em>a</em> plus half of the width of the rectangle, that is, if 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-17.gif" border="0" alt="[curriculum3a-Z-G-17.gif]"></div><p>
+the area is 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-18.gif" border="0" alt="[curriculum3a-Z-G-18.gif]"></div><p>
+where <em>W</em> stands for <i>width</i> and <em>S</em> for <i>step</i>
+from now on. </p>
+<p>
+To get from the rectangle starting at <code class="scheme"><span class="variable">a</span></code> to the next one on the
+right, we must add the width of one rectangle. That is, the next midpoint
+(called <em>x</em><sub>1</sub> in figure&nbsp;<a href="#node_fig_Temp_128">64</a>) is at 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-19.gif" border="0" alt="[curriculum3a-Z-G-19.gif]"></div><p> 
+the third one at
+</p>
+<div align="center"><img src="curriculum3a-Z-G-20.gif" border="0" alt="[curriculum3a-Z-G-20.gif]"></div><p>
+and so on. 
+The following table explains the three sequences that are involved in the
+usual manner: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-21.gif" border="0" alt="[curriculum3a-Z-G-21.gif]"></div><p>
+In the second row, <em>M</em> stands for midpoint. The first rectangle has
+index 0, the last one <em>R</em>  <tt>-</tt>  1.  </p>
+<p>
+Using this sequence of rectangles, we can now determine the area under the
+graph as a series: 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-22.gif" border="0" alt="[curriculum3a-Z-G-22.gif]"></div><p></p>
+<p>
+</p>
+<p><a name="node_thm_23.4.2"></a>
+<b>Exercise 23.4.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">integrate</span></code>. It computes the area under
+some the graph of some function <code class="scheme"><span class="variable">f</span></code> between <code class="scheme"><span class="variable">left</span></code> and
+<code class="scheme"><span class="variable">right</span></code> using the rectangle-series method.</p>
+<p>
+Use test cases for <code class="scheme"><span class="variable">f</span></code>, <code class="scheme"><span class="variable">a</span></code>, and <code class="scheme"><span class="variable">b</span></code> for which one can
+determine the area exactly and easily by hand, for example, <code class="scheme">(<span class="keyword">define</span> (<span class="variable">id</span> <span class="variable">x</span>)
+<span class="variable">x</span>)</code>.  Compare the results with those of <code class="scheme"><span class="variable">integrate</span></code> from
+exercise&nbsp;<a href="#node_thm_23.4.1">23.4.1</a>.</p>
+<p>
+Make <code class="scheme"><span class="variable">R</span></code> a top-level constant: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">R</span></code> : number of rectangles to approximate integral</span>
+(<span class="keyword">define</span> <span class="variable">R</span> ...)
+</pre></div><p>
+Test <code class="scheme"><span class="variable">integrate</span></code> on <code class="scheme"><span class="builtin">sin</span></code> and increase <code class="scheme"><span class="variable">R</span></code>
+gradually from <code class="scheme"><span class="selfeval">10</span></code> to <code class="scheme"><span class="selfeval">10000</span></code>. What happens to the
+result?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/integral-rect.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_23.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_23.5">23.5&nbsp;&nbsp;The Slope of a Function</a></h2>
+<p></p>
+<p>
+Let us take another look at the function graph in
+figure&nbsp;<a href="#node_fig_Temp_128">64</a>.    For many problems,
+we need to be able to draw a line that has the same slope as some curve at
+a certain point. Indeed, computing the slope is often the true goal. In
+economics problems, the slope is the growth rate of a company if the curve
+represents the income over time. In a physics problem, the curve could
+represent the velocity of some object; its slope, at any point, is then
+the current acceleration of the object.</p>
+<p>
+Determining the slope of some function <em>f</em> at some point <em>x</em> is to <i>differentiate</i>  
+<a name="node_idx_1628"></a>the function.  The differential operator (also called a
+functional) returns a function <em>f</em>' (pronounced ``f prime''). It tells us
+for any <em>x</em> what the slope of <em>f</em> is at that point. Computing <em>f</em>' is
+complicated, so it is again a good task for a computer program. The program
+consumes some function <em>f</em> and produces <em>f</em>'.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_129"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">   <img src="../icons/differentiate.jpg" border="0" alt="[../icons/differentiate.jpg]"><br>
+</td></tr>
+<tr><td align="center"><b>Figure 65:</b>&nbsp;&nbsp;The graph of some function</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+ </p>
+<p>
+To design a ``differentiator'' we must study how we could construct lines
+that have the same slope as a curve. In principle, such a line touches the
+curve at just that point.  But suppose we relax this constraint for a
+moment and look at straight lines that intersect the curve  close to
+the point of interest. We pick two points that are equally far away from
+<em>x</em>, say, <em>x</em>  <tt>-</tt>  <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> and <em>x</em>  +  <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">; the constant <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">, pronounced
+epsilon, represents some small distance. Using the two corresponding points
+on the curve, we can determine a straight line that has the proper slope. </p>
+<p>
+The situation is sketched in figure&nbsp;<a href="#node_fig_Temp_129">65</a>. If the point
+of interest has coordinate <em>x</em>, the two points are (<em>x</em>,<em>f</em>(<em>x</em> <tt>-</tt> <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">))
+and (<em>x</em>,<em>f</em>(<em>x</em> + <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">)). Hence the slope of the line is 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-23.gif" border="0" alt="[curriculum3a-Z-G-23.gif]"></div><p>
+That is, the difference between the height of the right point and the left
+point divided by their horizontal distance.  Determining the line from the
+slope and one of the points or even from two points is an exercise.</p>
+<p>
+</p>
+<p><a name="node_thm_23.5.1"></a>
+<b>Exercise 23.5.1.</b>&nbsp;&nbsp; 
+The equation for a line is 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-24.gif" border="0" alt="[curriculum3a-Z-G-24.gif]"></div><p>
+By now, it is straightforward to translate this equation into Scheme: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">y</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="variable">a</span> <span class="variable">x</span>) <span class="variable">b</span>))
+</pre></div><p>
+To obtain a concrete line we must replace <code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code> with
+numbers. </p>
+<p>
+The teachpack <tt><strong>graphing.ss</strong></tt> provides one operation for drawing lines:
+<code class="scheme"><span class="variable">graph-line</span></code>. The operation consumes a line like <code class="scheme"><span class="variable">y</span></code> and a
+color, say, <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>. Use <code class="scheme"><span class="variable">graph-line</span></code> to draw the graphs of the
+following lines:
+</p>
+<ol>
+<li><p><em>y</em><sub>1</sub>(<em>x</em>)  =  <em>x</em>  +  4
+</p>
+<li><p><em>y</em><sub>2</sub>(<em>x</em>)  =  4  <tt>-</tt>  <em>x</em>
+</p>
+<li><p><em>y</em><sub>3</sub>(<em>x</em>)  =  <em>x</em>  +  10
+</p>
+<li><p><em>y</em><sub>4</sub>(<em>x</em>)  =  10  <tt>-</tt>  <em>x</em>
+</p>
+<li><p><em>y</em><sub>5</sub>(<em>x</em>)  =  12
+</p>
+</li></ol><p>
+&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tangent1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.5.2"></a>
+<b>Exercise 23.5.2.</b>&nbsp;&nbsp; 
+It is a standard mathematical exercise to develop the equation for a line
+from a point on the line and its slope. Look up the method in your
+mathematics book. Then develop the function <code class="scheme"><span class="variable">line-from-point+slope</span></code>,
+which implements the method. The function consumes a <code class="scheme"><span class="variable">posn</span></code> (the
+point) and a number (the slope). It produces a function that represents the
+line in the spirit of exercise&nbsp;<a href="#node_thm_23.5.1">23.5.1</a>. </p>
+<p>
+Testing a function-producing function like <code class="scheme"><span class="variable">line-from-point+slope</span></code>
+can be done in two ways. Suppose we apply the function to (0,4) and 1. The
+result should be line <em>y</em><sub>1</sub> from exercise&nbsp;<a href="#node_thm_23.5.1">23.5.1</a>. To check this,
+we can either apply the result of
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">line-from-point+slope</span> (<span class="builtin">make-posn</span> <span class="selfeval">0</span> <span class="selfeval">4</span>) <span class="selfeval">1</span>)
+</pre></div><p>
+to some numbers, or we can draw the result using the operations in
+<tt><strong>graphing.ss</strong></tt>. In the first case, we must use <em>y</em><sub>1</sub> to compare
+outputs; in the second case we can draw the result in one color and the
+hand-constructed line in a different one and observe the
+effect.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tangent2.html">Solution</a></p>
+<p></p>
+<p>
+Once we have an intersecting line through (<em>x</em>,<em>f</em>(<em>x</em> <tt>-</tt> <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">)) and
+(<em>x</em>,<em>f</em>(<em>x</em> + <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">)), we can also get a line with the proper slope. By
+decreasing <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> until it is (almost) indistinguishable from 0, the two
+intersection points move closer and closer until they are one, namely,
+(<em>x</em>,<em>f</em>(<em>x</em>)), the point for which we wish to know the slope.<a name="call_footnote_Temp_130"></a><a href="#footnote_Temp_130"><sup><small>52</small></sup></a></p>
+<p>
+</p>
+<p><a name="node_thm_23.5.3"></a>
+<b>Exercise 23.5.3.</b>&nbsp;&nbsp; 
+Use the operation <code class="scheme"><span class="variable">graph-fun</span></code> in the teachpack <tt><strong>graphing.ss</strong></tt>
+to draw the mathematical function
+</p>
+<div align="center"><img src="curriculum3a-Z-G-25.gif" border="0" alt="[curriculum3a-Z-G-25.gif]"></div><p>
+The operation works just like <code class="scheme"><span class="variable">draw-line</span></code> (see
+exercise&nbsp;<a href="#node_thm_23.5.1">23.5.1</a>.) </p>
+<p>
+Suppose we wish to determine the slope at <em>x</em>  =  2.  Pick an <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> &gt; 0 and
+determine the slope of the line that goes through (<em>x</em>,<em>f</em>(<em>x</em> <tt>-</tt> <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">)) and
+(<em>x</em>,<em>f</em>(<em>x</em> + <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">)) with the above formula. Compute the line with
+<code class="scheme"><span class="variable">line-from-point+slope</span></code> from exercise&nbsp;<a href="#node_thm_23.5.2">23.5.2</a> and use
+<code class="scheme"><span class="variable">draw-line</span></code> to draw it into the same coordinate system as
+<code class="scheme"><span class="variable">y</span></code>. Repeat the process with <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">/2 and then with
+<img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]">/4.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tangent3.html">Solution</a></p>
+<p></p>
+<p>
+If our goal is to define the differential operator as a Scheme function, 
+we can approximate it by setting <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> to a small number and by
+translating the mathematical formula into a Scheme expression: 
+
+<a name="node_idx_1630"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">d/dx</span> <span class="selfeval">:</span> (<span class="variable">num</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">num</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="variable">num</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">num</span>)</code></span>
+<span class="comment">;; to compute the derivative function of <code class="scheme"><span class="variable">f</span></code> numerically</span>
+(<span class="keyword">define</span> (<span class="variable">d/dx</span> <span class="variable">f</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+	    (<span class="builtin">/</span> (<span class="builtin">-</span> (<span class="variable">f</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) (<span class="variable">f</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+	       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+	  (<span class="keyword">define</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span> ...))
+    <span class="variable">fprime</span>))
+</pre></div><p>
+Note that <code class="scheme"><span class="variable">d/dx</span></code> consumes and produces functions -- just like the
+differential operator in mathematics. </p>
+<p>
+As mentioned in the introduction to this section, the differential operator
+computes the function <em>f</em>' from some function <em>f</em>. The former computes the
+slope of <em>f</em> for any <em>x</em>. For straight lines, the slope is always
+known. Hence a function that represents a straight line is an ideal test
+case for <code class="scheme"><span class="variable">d/dx</span></code>. Let us consider
+<a name="node_idx_1632"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">a-line</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="variable">x</span>) <span class="selfeval">1</span>))
+</pre></div><p>
+The evaluation of <code class="scheme">(<span class="variable">d/dx</span> <span class="variable">a-line</span>)</code> proceeds as follows: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">d/dx</span> <span class="variable">a-line</span>)
+
+<span class="builtin">=</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+	    (<span class="builtin">/</span> (<span class="builtin">-</span> (<span class="variable">a-line</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) (<span class="variable">a-line</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+	       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+	  (<span class="keyword">define</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span> ...))
+    <span class="variable">fprime</span>)
+
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    (<span class="builtin">/</span> (<span class="builtin">-</span> (<span class="variable">a-line</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) (<span class="variable">a-line</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+  (<span class="keyword">define</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span> ...)
+  <span class="variable">fprime</span>
+</pre></div><p></p>
+<p>
+Now, if we think of <code class="scheme">(<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)</code> and <code class="scheme">(<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)</code> as
+numbers, we can evaluate the application of <code class="scheme"><span class="variable">a-line</span></code> in the
+definition of <code class="scheme"><span class="variable">fprime</span></code>:<a name="call_footnote_Temp_131"></a><a href="#footnote_Temp_131"><sup><small>53</small></sup></a>
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    (<span class="builtin">/</span> (<span class="builtin">-</span> (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) <span class="selfeval">1</span>) (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) <span class="selfeval">1</span>))
+       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    (<span class="builtin">/</span> (<span class="builtin">-</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)) (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    (<span class="builtin">/</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">-</span> (<span class="builtin">+</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>) (<span class="builtin">-</span> <span class="variable">x</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    (<span class="builtin">/</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>))
+       (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span>)))
+
+<span class="builtin">=</span> (<span class="keyword">define</span> (<span class="variable">fprime</span> <span class="variable">x</span>)
+    <span class="selfeval">3</span>)
+</pre></div><p>
+In other words, the result of <code class="scheme">(<span class="variable">d/dx</span> <span class="variable">a-line</span>)</code> always returns 3,
+which is the slope of <code class="scheme"><span class="variable">a-line</span></code>. In short, we not only got a close
+approximation because <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> is small, we actually got the correct answer.
+In general, however, the answer will depend on <code class="scheme"><span class="variable"><img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"></span></code> and will
+not be precise. </p>
+<p>
+</p>
+<p><a name="node_thm_23.5.4"></a>
+<b>Exercise 23.5.4.</b>&nbsp;&nbsp; 
+Pick a small <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> and use <code class="scheme"><span class="variable">d/dx</span></code> to compute the slope of 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-26.gif" border="0" alt="[curriculum3a-Z-G-26.gif]"></div><p>
+at <em>x</em>  =  2. How does the result compare with your calculation in
+exercise&nbsp;<a href="#node_thm_23.5.3">23.5.3</a>?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tangent4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.5.5"></a>
+<b>Exercise 23.5.5.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">line-from-two-points</span></code>. It consumes two points
+<code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p2</span></code>. Its result is a Scheme function that
+represents the line through <code class="scheme"><span class="variable">p1</span></code> and <code class="scheme"><span class="variable">p2</span></code>.</p>
+<p>
+Question: Are there any situations for which this function may
+fail to compute a function? If so, refine the definition to produce a
+proper error message in this case.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/line1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_23.5.6"></a>
+<b>Exercise 23.5.6.</b>&nbsp;&nbsp; 
+Compute the slope of the following function 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>) 
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">1/60</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span> <span class="variable">x</span>))
+     (<span class="builtin">*</span> <span class="selfeval">-1/10</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>))
+     <span class="selfeval">5</span>))
+</pre></div><p>
+at <em>x</em>  =  4. Set <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> to <code class="scheme"><span class="selfeval">2</span></code>, <code class="scheme"><span class="selfeval">1</span></code>, <code class="scheme"><span class="selfeval">.5</span></code>. Try the same
+for some other value of <code class="scheme"><span class="variable">x</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tangent5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_126"></a><a href="#call_footnote_Temp_126"><sup><small>51</small></sup></a> In some cases, an infinite sequence may also
+have a sum. Specifically, adding up more and more of the terms of a
+sequence produces numbers that are closer and closer to some number, which
+we call the sum. For example, the sum of the sequence
+</p>
+<div align="center"><img src="curriculum3a-Z-G-3.gif" border="0" alt="[curriculum3a-Z-G-3.gif]"></div><p>
+is 2. In contrast, the sequence 
+</p>
+<div align="center"><img src="curriculum3a-Z-G-4.gif" border="0" alt="[curriculum3a-Z-G-4.gif]"></div><p>
+does not have a sum.</p>
+<p><a name="footnote_Temp_130"></a><a href="#call_footnote_Temp_130"><sup><small>52</small></sup></a> The
+process of decreasing <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> to 0 is a convergence (or limit) process. It
+does not always succeed, that is, for some function graphs, the process
+does not end properly. We ignore those cases, but they are common and
+require special attention.</p>
+<p><a name="footnote_Temp_131"></a><a href="#call_footnote_Temp_131"><sup><small>53</small></sup></a> If <code class="scheme"><span class="variable">x</span></code> is a number, then
+adding or subtracting <img src="curriculum-Z-G-D-2.gif" border="0" alt="[curriculum-Z-G-D-2.gif]"> yields a number. If, by accident, we apply
+<code class="scheme"><span class="variable">fprime</span></code> to something else, both expressions signal an error. It is
+therefore acceptable to act as if the expressions were values. In general,
+this is not true.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-28.html">previous</a></span><span>, <a href="curriculum-Z-H-30.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-29.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

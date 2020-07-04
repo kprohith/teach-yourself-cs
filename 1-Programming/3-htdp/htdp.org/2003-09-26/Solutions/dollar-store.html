@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dollar-store.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.3; How to Design Programs </title>
+</head>
+<body>
+<a href="how-manyS.html">9.5.2</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="check-range1.html">9.5.4</a><pre>;; dollar-store? : list-of-numbers -&gt; boolean
+;; determines if all of the prices in a-lon are less than 1.00
+#|
+;; Template
+(define (dollar-store? a-lon)
+  (cond
+   [(empty? a-lon) ...]
+   [else ... (first a-lon) ...
+         ... (dollar-store? (rest a-lon)) ...]))
+|#
+
+(define (dollar-store? a-lon)
+  (cond
+   [(empty? a-lon) true]
+   [else (and (&lt;= (first a-lon) 1.00)
+              (dollar-store? (rest a-lon)))]))
+
+;; Examples:
+
+(dollar-store? empty) "should be" true
+(dollar-store? (cons .75 (cons 1.95 (cons .25 empty)))) "should be" false
+(dollar-store? (cons .75 (cons 0.95 (cons .25 empty)))) "should be" true
+
+
+;; N-dollar-store? : list-of-numbers number -&gt; boolean
+;; Determines if all of the prices on a-lon are less than an-n
+#|
+;; Template
+
+(define (N-dollar-store? a-lon an-n)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon)
+          ... (N-dollar-store? (rest a-lon) an-n) ...]))
+|#
+
+(define (N-dollar-store? a-lon an-n)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (&lt;= (first a-lon) an-n)
+               (N-dollar-store? (rest a-lon) an-n))]))
+
+;; Examples:
+
+(N-dollar-store? empty 1.00) "should be" true
+(N-dollar-store? (cons 1.50 empty) 2.00) "should be" true
+(N-dollar-store? (cons 3.00 empty) 2.00) "should be" false
+(N-dollar-store? (cons .75 (cons 1.95 (cons .25 empty))) 1.50) "should be" false
+(N-dollar-store? (cons .75 (cons 0.95 (cons .25 empty))) 1.50) "should be" true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dollar-store.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

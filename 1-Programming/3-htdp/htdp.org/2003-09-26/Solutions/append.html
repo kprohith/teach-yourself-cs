@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/append.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-22.html#node_thm_17.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="cross.html">17.1.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.1.1 
+replace-eol-with adapted from text by allowing 
+any type of list instead of only a list-of-numbers
+------------------------------------------------------------
+Data Definition:
+A list is 
+  1. empty or
+  2. (cons i loi) 
+     where i is a item and loi is a list-of-items
+
+A list-of-items to be used in examples below
+|#
+(define L (list 3 6 8 4 9))
+
+#|
+list template:
+(define (replace-eol-with alon1 alon2)
+  (cond
+    ((empty? alon1) ...)
+    (else ... (first alon1) ... 
+          ... (replace-eol-with (rest alon1) alon2) ... )))
+|#
+
+;;replace-eol-with : list list  -&gt;  list
+;;to construct a new list by replacing 
+;;empty in alon1 with alon2
+(define (replace-eol-with alon1 alon2)
+  (cond
+    [(empty? alon1) 
+     alon2]
+    [else 
+     (cons (first alon1) 
+           (replace-eol-with (rest alon1) alon2))]))
+
+;Examples as Tests:
+(check-expect 
+ (replace-eol-with empty L)
+ L)
+
+(check-expect 
+ (replace-eol-with (cons 1 empty) L) 
+ (cons 1 L))
+
+(check-expect 
+ (replace-eol-with (cons 2 (cons 1 empty)) L) 
+ (cons 2 (cons 1 L)))
+
+(check-expect 
+ (replace-eol-with (cons 2 (cons 11 (cons 1 empty))) L) 
+ (cons 2 (cons 11 (cons 1 L))))
+
+#| Use replace-eol-with to define our-append
+------------------------------------------------------------
+|#
+;our-append: list list -&gt; list
+;consumes three lists and juxtaposes their items.
+;Uses replace-eol-with to replicate what append does.
+(define (our-append list1 list2 list3)
+  (replace-eol-with list1 (replace-eol-with list2 list3)))
+
+;Tests:
+(check-expect (our-append 
+               empty
+               empty
+               empty)
+              empty)
+(check-expect (our-append 
+               empty
+               (list 'a 'b 'c)
+               empty)
+              (list 'a 'b 'c))
+(check-expect (our-append 
+               (list 1 2 3)
+               (list 'a 'b 'c)
+               empty)
+              (list 1 2 3 'a 'b 'c))
+(check-expect (our-append 
+               (list 1 2 3)
+               (list 'a 'b 'c)
+               (list 5 'w  'r))
+              (list 1 2 3 'a 'b 'c 5 'w  'r))
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/append.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

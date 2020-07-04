@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/add-pi-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.5; How to Design Programs </title>
+</head>
+<body>
+<a href="length-accu.html">31.3.4</a> | <a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="palindrome.html">31.3.6</a><pre>;; add-to-pi : nat -&gt; number
+;; adds `n' to pi
+(define (add-to-pi n)
+  (local [;; add-to-pi/acc : nat number -&gt; number
+          ;; accumulator: `m' bigger than the initial value of the accumulator
+          ;; where m is the number of nats we've seen so far
+          (define (add-to-pi/acc n acc)
+            (cond
+              [(zero? n) acc]
+              [else (add-to-pi/acc (sub1 n) (add1 acc))]))]
+    (add-to-pi/acc n pi)))
+
+;; examples as tests
+(= (add-to-pi 0) pi)
+(= (add-to-pi 10) (+ 10 pi))
+
+;; plus : nat nat -&gt; nat
+(define (plus n1 n2)
+  (local [;; add-to-pi/acc : nat number -&gt; number
+          ;; accumulator: `m' bigger than the initial value of the accumulator
+          ;; where m is the number of nats we've seen so far
+          (define (plus/acc n acc)
+            (cond
+              [(zero? n) acc]
+              [else (plus/acc (sub1 n) (add1 acc))]))]
+    (plus/acc n1 n2)))
+
+;; examples as tests
+(= (plus 0 0) 0)
+(= (plus 0 3) 3)
+(= (plus 3 4) 7)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/add-pi-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

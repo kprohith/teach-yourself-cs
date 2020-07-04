@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="random2.html">11.3.3</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.3.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="random1.html">11.3.5</a><pre>;; create-prices : number -&gt; list-of-numbers
+;; to create a list of prices, between $0.10 and $10.00
+;; with increments of $0.10
+(define (create-prices n)
+  (cond
+    [(zero? n) empty]
+    [else (cons (* (+ (random 100) 1) 0.10)
+                (create-prices (sub1 n)))]))
+
+;; EXAMPLES
+(create-prices 3)
+;; = a list of three prices between $0.10 and $10.00
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

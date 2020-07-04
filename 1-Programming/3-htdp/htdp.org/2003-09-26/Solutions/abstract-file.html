@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abstract-file.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 27.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-34.html#node_thm_27.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="restaurant.html">27.2.3</a><pre>;; Language: Intermediate Student with Lambda
+
+;; constant definitions
+(define NEWLINE 'NL)
+
+;; data definitions
+;; File = (Listof Symbol)
+;; Line = (Listof Symbol)
+
+;; file-&gt;list-of-lines : File  -&gt;  (Listof Line)
+(define (file-&gt;list-of-lines afile)
+ (local (;; internal : File  -&gt;  (Listof Line)
+         ;; to convert a file into a list of lines
+         (define (internal afile)
+           (cond
+             [(empty? afile) empty]
+             [else
+              (cons (first-line afile) (internal (remove-first-line afile)))]))
+#|
+         ;; first-line : file  -&gt;  Line
+         ;; the prefix of afile up to the first occurrence of NEWLINE
+         (define (first-line.OLD afile)
+           (cond
+             [(empty? afile) empty]
+             [else (cond
+                     [(symbol=? (first afile) NEWLINE) empty]
+                     [else (cons (first afile) (first-line (rest afile)))])]))
+
+         ;; remove-first-line : file  -&gt;  Line
+         ;; the suffix of afile behind the first occurrence of NEWLINE
+         (define (remove-first-line.OLD afile)
+           (cond
+             [(empty? afile) empty]
+             [else (cond
+                     [(symbol=? (first afile) NEWLINE) (rest afile)]
+                     [else (remove-first-line (rest afile))])]))
+|#
+         ;; File (File -&gt; Line)  (Symbol Line -&gt; Line) -&gt; Line
+         ;; an abstraction of first-line and remove-first-line
+         (define (abs afile bas com)
+           (cond
+             [(empty? afile) empty]
+             [else (cond
+                     [(symbol=? (first afile) NEWLINE) (bas afile)]
+                     [else (com (first afile) (abs (rest afile) bas com))])]))
+
+         (define (first-line afile) (abs afile (lambda (x) empty) cons))
+
+         (define (remove-first-line afile) (abs afile rest (lambda (a d) d))))
+   ;; -- IN --
+   (internal afile)))
+
+(check-expect (file-&gt;list-of-lines (list 'a 'b NEWLINE 'c)) 
+              '((a b) (c)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abstract-file.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

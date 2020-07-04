@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 16.2.5; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-21.html#node_thm_16.2.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="file-example3.html">16.3.1</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#|
+Data Definition, Model 2:
+A file is a symbol.
+
+A directory (short: dir) is a structure:
+      (make-dir n c) 
+where n is a symbol
+      c is a list-of-files-and-directories
+
+A list-of-files-and-directories (short: LOFD) is either
+   1. empty;
+   2.(cons f d) where f is a file and d is a LOFD; or
+   3.(cons d1 d2) where d1 is a dir and d2 is a LOFD.
+|#  
+(define-struct dir (name content))
+
+;sample directory for use in tests below
+(define directory4 
+  (make-dir 'TS 
+            (list 
+             (make-dir 'Text 
+                       (list 'part1 'part2 'part3))
+             (make-dir 'Libs 
+                       (list 
+                        (make-dir 'Code (list  'hang 'draw))
+                        (make-dir 'Docs (list 'read!)))) 
+             'read!)))
+#|
+;directory template:
+(define (how-many adir)
+  ...(dir-name adir)...
+  ...(how-many-in-content (dir-content adir))...)
+|#
+
+;;how-many: dir -&gt; number
+;;consumes a directory and produces the 
+;;number of files in the directory tree
+(define (how-many adir)
+  (how-many-in-content (dir-content adir)))
+
+;Examples as Tests:
+(check-expect (how-many (make-dir 'TS empty)) 0)
+(check-expect (how-many (make-dir 'TS (list 'read!))) 1)
+(check-expect 
+ (how-many (make-dir 'Text 
+                     (list (make-dir 'TS (list 'read!)) 
+                           'part1 
+                           'part2 
+                           'part3)))
+ 4)
+(check-expect (how-many directory4) 7)
+
+#|We need a mutually recursive function that 
+reports how many files in a LOFD
+------------------------------------------------------------
+;LOFD Template:
+(define (how-many-in-content aLOFD)
+  (cond
+    [(empty? aLOFD)...]
+    [(symbol? (first aLOFD)) 
+     ...(first aLOFD)...
+     ...(how-many-in-content (rest aLOFD))...]
+    [else 
+     ...(how-many (first aLOFD))...
+     ...(how-many-in-content (rest aLOFD))...]))
+|#
+
+;;how-many-in-content: LOFD -&gt; number
+;;consumes a list-of-files-and-directories 
+;;and produces the number of files in the 
+;;list-of-files-and-directories
+(define (how-many-in-content aLOFD)
+  (cond
+    [(empty? aLOFD) 0]
+    [(symbol? (first aLOFD)) 
+     (+ 1 (how-many-in-content (rest aLOFD)))]
+    [else (+ (how-many (first aLOFD)) 
+             (how-many-in-content (rest aLOFD)))]))
+
+;Examples as Tests:
+(check-expect (how-many-in-content empty) 0)
+(check-expect 
+ (how-many-in-content (list (make-dir 'TS empty))) 
+ 0)
+(check-expect 
+ (how-many-in-content 
+  (list 
+   (make-dir 'Text 
+             (list 'part1 'part2 'part3)))) 
+ 3)
+(check-expect 
+ (how-many-in-content 
+  (list (make-dir 'Text (list 'part1 'part2 'part3)) 
+        'hang 
+        'read!)) 
+ 5)
+(check-expect 
+ (how-many-in-content 
+  (list (make-dir 'Text (list 'part1 'part2 'part3))
+        directory4
+        'hang 
+        'read!
+        'other)) 
+ 13)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/dir-how-many2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

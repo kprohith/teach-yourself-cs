@@ -1,0 +1,1751 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-51.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-50.html">previous</a></span><span>, <a href="curriculum-Z-H-52.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_41"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_41">Section  41</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_41">Designing Functions that Change Structures</a></h1>
+<p></p>
+<p>
+<a name="node_idx_2412"></a></p>
+<p>
+Sections&nbsp;<a href="curriculum-Z-H-49.html#node_chap_39">39</a> and&nbsp;<a href="curriculum-Z-H-50.html#node_chap_40">40</a> gradually introduced
+the idea of mutable structures. In the first of the two sections we studied
+the idea of changing a <code class="scheme"><span class="keyword">local</span></code>ly defined variable through a
+function. In the second one, we discussed how structures could be modified,
+too. </p>
+<p>
+Now we need to learn when and how to use this new power.  The first
+subsection concerns the question of why a program should modify a structure.
+The second reviews how the existing design recipes apply when we wish to
+use mutators. The third one discusses some difficult cases. The last one is
+dedicated to the differences between <code class="scheme"><span class="keyword">set!</span></code> and structure mutators.</p>
+<p>
+</p>
+<a name="node_sec_41.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_41.1">41.1&nbsp;&nbsp;Why Mutate Structures</a></h2>
+<p></p>
+<p>
+Whenever we apply a structure constructor,
+<a name="node_idx_2414"></a>we create a new structure. On
+some occasions, this is truly what we want. Consider a function that
+consumes a list of personnel records and produces a list of phone book
+entries. The personnel records may contain information about a person's
+address, including the phone number, date of birth, marital status, closest
+relatives, and salary level. The entry for the phone book should contain
+the name and the phone number and nothing else. This kind of program should
+definitely generate a new structure from each structure in the given list. </p>
+<p>
+On other occasions, though, creating a new structure doesn't correspond to
+our intuition. Suppose we wish to give someone a raise. The only way of
+accomplishing this at the moment is to create a new personnel record that
+contains all the old information and the new salary information. Or,
+suppose someone has moved and received a new phone number, and we wish to
+update the phone book on our PDA. Just like the program that changes a
+person's salary level, the program that updates the phone book would create
+a new phone book entry. In reality, however, we would not create a new
+personnel record or a new entry in the phone book. We would instead correct
+the existing personnel record and the existing entry in our phone book. A
+program should be able to perform the same kind of corrective action and,
+with mutators, we can indeed develop such programs.</p>
+<p>
+Roughly speaking, the examples suggest two cases. First, if a structure
+corresponds to a physical object and the computation corresponds to a
+corrective action, the program may mutate the structure. Second, if a
+structure does not correspond to a physical object or if the computation
+creates a new kind of value from existing information, the program should
+create a new structure. These two rules are not clear-cut. We will often
+encounter situations where both solutions are feasible. In that case, we
+must consider an ease-of-programming argument. If one of the two solutions
+is easier to design -- often the creation of a new structure, choose it. If
+the decision leads to a performance bottleneck -- and only then, restructure
+it.</p>
+<p>
+</p>
+<a name="node_sec_41.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_41.2">41.2&nbsp;&nbsp;Structural Design Recipes and Mutation, Part 1</a></h2>
+<p> </p>
+<p>
+Surprisingly, programming with mutators does not require any new design
+recipes -- as long as the mutated fields always contain atomic values. Our
+receipes work perfectly fine.  While the design of non-mutating programs
+requires the combination of values, programming with mutators requires the
+combination of effects. Hence the key is to add a well-formulated effect
+statement to a function's contract and to make up examples that illustrate
+the effects. We practiced both of these activities for <code class="scheme"><span class="keyword">set!</span></code>
+expressions already in section&nbsp;<a href="curriculum-Z-H-45.html#node_chap_36">36</a>. In this section we
+learn to adapt the design recipes and effect statements to structural
+mutations. To do that, we consider a short series of examples.  Each
+illustrates how an applicable design recipe helps with the design of
+structure-modifying or vector-modifying functions.</p>
+<p>
+The first example concerns the mutation of plain structures. Suppose we are
+given a structure and a data definition for personnel records:
+<a name="node_idx_2416"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">personnel</span> (<span class="variable">name</span> <span class="variable">address</span> <span class="variable">salary</span>))
+<span class="comment">;; A personnel record (<i>PR</i>) is a structure: </span>
+<span class="comment">;; <code class="scheme">(<span class="variable">make-personnel</span> <span class="variable">n</span> <span class="variable">a</span> <span class="variable">s</span>)</code></span>
+<span class="comment">;; where <code class="scheme"><span class="variable">n</span></code> is a symbol, <code class="scheme"><span class="variable">a</span></code> is a string, and <code class="scheme"><span class="variable">s</span></code> is a number. </span>
+</pre></div><p>
+A function that consumes such a record is based on the following template: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fun-for-personnel</span> <span class="variable">pr</span>)
+  ... (<span class="variable">personnel-name</span> <span class="variable">pr</span>) ...
+  ... (<span class="variable">personnel-address</span> <span class="variable">pr</span>) ...
+  ... (<span class="variable">personnel-salary</span> <span class="variable">pr</span>) ...)  
+</pre></div><p></p>
+<p>
+Consider a function for increasing the salary field:
+<a name="node_idx_2418"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increase-salary</span> <span class="selfeval">:</span> <span class="variable">PR</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify the salary field of <code class="scheme"><span class="variable">a-pr</span></code> by adding <code class="scheme"><span class="variable">a-raise</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">increase-salary</span> <span class="variable">a-pr</span> <span class="variable">a-raise</span>) ...)
+</pre></div><p>
+The contract specifies that the function consumes a <code class="scheme"><span class="variable">PR</span></code> and a
+number. The purpose statement is an effect statement, which explains how
+the argument of <code class="scheme"><span class="variable">increase-salary</span></code> is modified. </p>
+<p>
+Developing examples for <code class="scheme"><span class="variable">increase-salary</span></code> requires the techniques of
+section&nbsp;<a href="curriculum-Z-H-45.html#node_chap_36">36</a>. Specifcially, we must be able to compare
+the before and after state of some <code class="scheme"><span class="variable">PR</span></code> structure: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">pr1</span> (<span class="variable">make-personnel</span> <span class="keyword">'</span><span class="variable">Bob</span> <span class="keyword">'</span><span class="variable">Pittsburgh</span> <span class="selfeval">70000</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">increase-salary</span> <span class="variable">pr1</span> <span class="selfeval">10000</span>)
+    (<span class="builtin">=</span> (<span class="variable">personnel-salary</span> <span class="variable">pr1</span>) <span class="selfeval">80000</span>)))
+</pre></div><p>
+The result of the expression is <code class="scheme"><span class="builtin">true</span></code> if, and only if,
+<code class="scheme"><span class="variable">increase-salary</span></code> works properly for this example. </p>
+<p>
+We can now use the template and the example to define the function:
+<a name="node_idx_2420"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increase-salary</span> <span class="selfeval">:</span> <span class="variable">PR</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify the salary field of <code class="scheme"><span class="variable">a-pr</span></code> by adding in <code class="scheme"><span class="variable">a-raise</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">increase-salary</span> <span class="variable">a-pr</span> <span class="variable">a-raise</span>)
+  (<span class="variable">set-personnel-salary!</span> <span class="variable">a-pr</span> (<span class="builtin">+</span> (<span class="variable">personnel-salary</span> <span class="variable">a-pr</span>) <span class="variable">a-raise</span>)))
+</pre></div><p>
+As usual, the full definition uses only one of several subexpressions from
+the template, but the template reminds us of what information we can use:
+the arguments and their pieces; and what parts we can modify: the fields
+for which we have selectors. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.1"></a>
+<b>Exercise 41.2.1.</b>&nbsp;&nbsp; 
+Make up examples for <code class="scheme"><span class="variable">increase-salary</span></code> and test the
+function. Formulate the tests as boolean-valued
+expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-struct0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.2"></a>
+<b>Exercise 41.2.2.</b>&nbsp;&nbsp; 
+Adapt <code class="scheme"><span class="variable">increase-salary</span></code> such that it accepts only values for
+<code class="scheme"><span class="variable">a-raise</span></code> between 3% and 7% of the salary. It calls <code class="scheme"><span class="builtin">error</span></code>
+otherwise.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-struct1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.3"></a>
+<b>Exercise 41.2.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">increase-percentage</span></code>. The function consumes a <code class="scheme"><span class="variable">PR</span></code>
+and a percentage between 3% and 7%. It increases the value in the salary
+field of the <code class="scheme"><span class="variable">PR</span></code> by the lesser of the percentage increase or
+<code class="scheme"><span class="selfeval">7000</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-struct2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.4"></a>
+<b>Exercise 41.2.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">new-date</span></code>. It consumes a <code class="scheme"><span class="variable">cheerleader</span></code>
+record and adds a date to the beginning of a list. Here are the relevant
+definitions:
+<a name="node_idx_2422"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">cheerleader</span> (<span class="variable">name</span> <span class="variable">dates</span>))
+<span class="comment">;; A <i>cheerleader</i> is a structure: </span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">make-cheerleader</span> <span class="variable">n</span> <span class="variable">d</span>)</code></span>
+<span class="comment">;; where <code class="scheme"><span class="variable">n</span></code> is a symbol and <code class="scheme"><span class="variable">d</span></code> is a list of symbols. </span>
+</pre></div><p>
+For example, <code class="scheme">(<span class="builtin">make-cheerleader</span> <span class="keyword">'</span><span class="variable">JoAnn</span> <span class="keyword">'</span>(<span class="variable">Carl</span> <span class="variable">Bob</span> <span class="variable">Dude</span> <span class="variable">Adam</span> <span class="variable">Emil</span>))</code>
+is a valid <code class="scheme"><span class="variable">cheerleader</span></code> record. Develop an example that shows what 
+it means to add <code class="scheme"><span class="keyword">'</span><span class="variable">Frank</span></code> as a date.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-struct3.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.5"></a>
+<b>Exercise 41.2.5.</b>&nbsp;&nbsp; 
+Recall the structure definitions for <code class="scheme"><i>square</i></code>s: 
+<a name="node_idx_2424"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <i>square</i> (<span class="variable">nw</span> <i>length</i>))
+</pre></div><p>
+The matching data definition specifies that the <code class="scheme"><span class="variable">nw</span></code> field is always
+a <code class="scheme"><span class="variable">posn</span></code> structure and that <code class="scheme"><i>length</i></code> is a number: </p>
+<p>
+<a name="node_idx_2426"></a>A <i>square</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-square</span> <span class="variable">p</span> <span class="variable">s</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">p</span></code> is a <code class="scheme"><span class="variable">posn</span></code> and <code class="scheme"><span class="variable">s</span></code> is a number.<p>
+Develop the function <code class="scheme"><span class="variable">move-square!</span></code>. It consumes a square,
+called <code class="scheme"><span class="variable">sq</span></code>, and a number, called <code class="scheme"><span class="variable">delta</span></code>. It modifies
+<code class="scheme"><span class="variable">sq</span></code> by adding <code class="scheme"><span class="variable">delta</span></code> to its <em>x</em> coordinate.</p>
+<p>
+Look up the structure and data definition for circles and develop the
+function <code class="scheme"><span class="variable">move-circle</span></code>, which is analogous to
+<code class="scheme"><span class="variable">move-square</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-struct4.html">Solution</a></p>
+<p></p>
+<p>
+The second example recalls the design recipe for functions that work on
+unions of classes. One of our first examples of this kind concerned the
+class of geometric shapes. Here is the relevant data definition:</p>
+<p>
+<a name="node_idx_2428"></a>A <i>shape</i> is either
+</p>
+<ol>
+<li><p>a <code class="scheme"><span class="variable">circle</span></code>, or 
+</p>
+<li><p>a <code class="scheme"><i>square</i></code>.
+</p>
+</li></ol><p></p>
+<p>
+See exercise&nbsp;<a href="#node_thm_41.2.5">41.2.5</a> or part&nbsp;<a href="curriculum-Z-H-3.html#node_part_I">I</a> for
+the definitions of <code class="scheme"><span class="variable">circle</span></code> and <code class="scheme"><i>square</i></code>. </p>
+<p>
+Following our recipe, a template for <code class="scheme"><span class="variable">shape</span></code>-processing functions
+consists of a two-clause <strong>cond</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fun-for-shape</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) ... (<span class="variable">fun-for-circle</span> <span class="variable">a-shape</span>) ...]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) ... (<span class="variable">fun-for-square</span> <span class="variable">a-shape</span>) ...]))
+</pre></div><p>
+Each <code class="scheme"><span class="keyword">cond</span></code>-clause refers to a function with the same purpose for
+the matching kind of shape. </p>
+<p>
+So, suppose we wish to move a <code class="scheme"><span class="variable">shape</span></code> in the <em>x</em> direction by
+a fixed number of pixels. In part&nbsp;<a href="curriculum-Z-H-3.html#node_part_I">I</a>, we created a new
+structure for this purpose. Now we can use the mutators for
+<code class="scheme"><span class="variable">circle</span></code> and <code class="scheme"><i>square</i></code> structures instead -- that is, the
+function can have an effect:
+<a name="node_idx_2430"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move-shape!</span> <span class="selfeval">:</span> <span class="variable">shape</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to move <code class="scheme"><span class="variable">a-shape</span></code> in the <em>x</em> direction by <code class="scheme"><span class="variable">delta</span></code> pixels</span>
+(<span class="keyword">define</span> (<span class="variable">move-shape!</span> <span class="variable">a-shape</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">circle?</span> <span class="variable">a-shape</span>) (<span class="variable">move-circle</span> <span class="variable">a-shape</span> <span class="variable">delta</span>)]
+    [(<span class="builtin">square?</span> <span class="variable">a-shape</span>) (<span class="variable">move-square</span> <span class="variable">a-shape</span> <span class="variable">delta</span>)]))
+</pre></div><p>
+The functions <code class="scheme"><span class="variable">move-circle</span></code> and <code class="scheme"><span class="variable">move-square</span></code> are the subject
+of execise&nbsp;<a href="#node_thm_41.2.5">41.2.5</a> because they consume and affect plain
+structures.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.6"></a>
+<b>Exercise 41.2.6.</b>&nbsp;&nbsp; 
+Make up examples for <code class="scheme"><span class="variable">move-shape!</span></code> and test the function. Formulate
+the tests as boolean-valued expressions!&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-rec0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.7"></a>
+<b>Exercise 41.2.7.</b>&nbsp;&nbsp; 
+The following structure definitions are to represent items that a music
+store sells: 
+<a name="node_idx_2432"></a><a name="node_idx_2434"></a><a name="node_idx_2436"></a><a name="node_idx_2438"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">CD</span> (<span class="variable">price</span> <span class="variable">title</span> <span class="variable">artist</span>))
+(<span class="keyword">define-struct</span> <span class="variable">record</span> (<span class="variable">price</span> <span class="variable">antique</span> <span class="variable">title</span> <span class="variable">artist</span>))
+(<span class="keyword">define-struct</span> <span class="variable">DVD</span> (<span class="variable">price</span> <span class="variable">title</span> <span class="variable">artist</span> <span class="variable">to-appear</span>))
+(<span class="keyword">define-struct</span> <span class="variable">tape</span> (<span class="variable">price</span> <span class="variable">title</span> <span class="variable">artist</span>))
+</pre></div><p>
+Provide a data definition for the class of <i>music item</i>s,
+<a name="node_idx_2440"></a>which comprises <code class="scheme"><span class="variable">cd</span></code>s, <code class="scheme"><span class="variable">record</span></code>s, <code class="scheme"><span class="variable">dvd</span></code>s, and
+<code class="scheme"><span class="variable">tape</span></code>s. The price must be a number in each case.</p>
+<p>
+Develop the program <code class="scheme"><span class="variable">inflate!</span></code>, which consumes a <code class="scheme"><span class="variable">music-item</span></code>
+and a percentage. Its effect is to increase the price in the given
+structure according to the percentage.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-rec2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.8"></a>
+<b>Exercise 41.2.8.</b>&nbsp;&nbsp; 
+Develop a program that keeps track of the feeding of zoo animals.  Our zoo
+has three kinds of animals: elephants, monkeys, and spiders.  Each animal
+has a name and two feeding times per day: morning and evening. Initially a
+structure that represents an animal (structure) contains <code class="scheme"><span class="builtin">false</span></code> in
+the fields for feeding times. The program <code class="scheme"><span class="variable">feed-animal</span></code> should
+consume a structure that represents an animal and the name of a feeding
+time. It should switch the corresponding field in the animal structure to
+<code class="scheme"><span class="builtin">true</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mut-rec1.html">Solution</a></p>
+<p></p>
+<p>
+The next two examples are about mutations when the underlying data
+definitions involve self-references. Self-references are needed if we wish
+to deal with data that has no size limit. Lists were the first class of
+such data we encountered and natural numbers the second one.</p>
+<p>
+Let's first take a look at mutation of lists of structures, using the
+running data example of this part: the address book. An address book is a
+list of entries; for completeness, here are the structure and data
+definitions:
+<a name="node_idx_2442"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">entry</span> (<span class="variable">name</span> <span class="variable">number</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_2444"></a>An <i>entry</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-entry</span> <span class="variable">n</span> <span class="variable">p</span>)</code>&nbsp;</div>
+ 
+where <code class="scheme"><span class="variable">n</span></code> is a symbol and <code class="scheme"><span class="variable">p</span></code> is a number.<p>
+<a name="node_idx_2446"></a><a name="node_idx_2448"></a>An <i>address-book</i> is 
+</p>
+<ol>
+<li><p>the empty list, <code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">an-e</span> <span class="variable">an-ab</span>)</code> where <code class="scheme"><span class="variable">an-e</span></code> is an entry and
+<code class="scheme"><span class="variable">an-ab</span></code> is an address book.   
+</p>
+</li></ol><p></p>
+<p>
+Only the second one is self-referential, so we focus on the
+template for it:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">fun-for-ab</span> <span class="selfeval">:</span> <span class="variable">address-book</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">XYZ</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">fun-for-ab</span> <span class="variable">ab</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">ab</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">fun-for-entry</span> (<span class="builtin">first</span> <span class="variable">ab</span>)) ... (<span class="variable">fun-for-ab</span> (<span class="builtin">rest</span> <span class="variable">ab</span>)) ...]))
+</pre></div><p>
+If we needed an auxiliary function for processing an <code class="scheme"><span class="variable">entry</span></code>, we
+might also wish to write out the template for structure-processing
+functions. </p>
+<p>
+</p>
+<p>
+So suppose we want a function that updates an existing entry. The function
+consumes an <code class="scheme"><span class="variable">address-book</span></code>, a name, and a phone number. The first
+<code class="scheme"><span class="variable">entry</span></code> that contains the name is modified to contain the new phone
+number: 
+<a name="node_idx_2450"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">change-number!</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> <span class="variable">address-book</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify the first <code class="scheme"><span class="variable">entry</span></code> for <code class="scheme"><span class="variable">name</span></code> in <code class="scheme"><span class="variable">ab</span></code> so that its</span>
+<span class="comment">;; number field is <code class="scheme"><span class="variable">phone</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">change-number!</span> <span class="variable">name</span> <span class="variable">phone</span> <span class="variable">ab</span>) ...)
+</pre></div><p>
+It is justified to develop this function with mutators because just as in
+reality, most of the address book stays the same while one entry is
+changed. </p>
+<p>
+Here is an example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">ab</span>
+  (<span class="builtin">list</span>
+    (<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1</span>)
+    (<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">3</span>)
+    (<span class="builtin">make-entry</span> <span class="keyword">'</span><span class="variable">Eve</span> <span class="selfeval">2</span>)))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">change-number!</span> <span class="keyword">'</span><span class="variable">Chris</span> <span class="selfeval">17</span> <span class="variable">ab</span>)
+  (<span class="builtin">=</span> (<span class="builtin">entry-number</span> (<span class="builtin">second</span> <span class="variable">ab</span>)) <span class="selfeval">17</span>))
+</pre></div><p>
+The definition introduces <code class="scheme"><span class="variable">ab</span></code>, an <code class="scheme"><span class="variable">address-book</span></code> with three
+items.  The <strong>begin</strong>-expression first changes <code class="scheme"><span class="variable">ab</span></code> by
+associating <code class="scheme"><span class="keyword">'</span><span class="variable">Chris</span></code> with <code class="scheme"><span class="selfeval">17</span></code>; then it compares the phone
+number of the second item on <code class="scheme"><span class="variable">ab</span></code> with <code class="scheme"><span class="selfeval">17</span></code>. If
+<code class="scheme"><span class="variable">change-number!</span></code> functions properly, the result of the
+<strong>begin</strong>-expression is <code class="scheme"><span class="builtin">true</span></code>. An even better test would ensure that nothing
+else in <code class="scheme"><span class="variable">ab</span></code> changes. </p>
+<p>
+The next step is to develop the function definition, using the template and
+the examples. Let's consider each case separately:
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">ab</span></code> is empty, <code class="scheme"><span class="variable">name</span></code> doesn't occur in it. Unfortunately, 
+the purpose statement doesn't specify what the function should compute in this 
+case, and there is indeed nothing sensible the function can do. To be safe,
+we use <code class="scheme"><span class="builtin">error</span></code> to signal that no matching entry was found. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">ab</span></code> contains a first <code class="scheme"><span class="variable">entry</span></code>, it might or might not
+contain <code class="scheme"><span class="variable">name</span></code>. To find out, the function must distinguish the two 
+cases with a <strong>cond</strong>-expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">symbol=?</span> (<span class="builtin">entry-name</span> (<span class="builtin">first</span> <span class="variable">ab</span>)) <span class="variable">name</span>) ...]
+  [<span class="keyword">else</span> ...])
+</pre></div><p>
+In the first subcase, the function must modify the structure. In the
+second, <code class="scheme"><span class="variable">name</span></code> can occur only in <code class="scheme">(<span class="builtin">rest</span> <span class="variable">ab</span>)</code>, which means the
+function must mutate some <code class="scheme"><span class="variable">entry</span></code> in the rest of the
+list. Fortunately, the natural recursion accomplishes just that. 
+</p>
+</li></ol><p></p>
+<p>
+Putting everything together, we get the following definition: 
+<a name="node_idx_2452"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">change-number!</span> <span class="variable">name</span> <span class="variable">phone</span> <span class="variable">ab</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">ab</span>) (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">change-number!</span> <span class="selfeval">&quot;name not in list&quot;</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">symbol=?</span> (<span class="builtin">entry-name</span> (<span class="builtin">first</span> <span class="variable">ab</span>)) <span class="variable">name</span>)
+             (<span class="builtin">set-entry-number!</span> (<span class="builtin">first</span> <span class="variable">ab</span>) <span class="variable">phone</span>)]
+            [<span class="keyword">else</span> 
+             (<span class="variable">change-number!</span> <span class="variable">name</span> <span class="variable">phone</span> (<span class="builtin">rest</span> <span class="variable">ab</span>))])]))
+</pre></div><p>
+The only unique aspect of this function is that it uses a structure mutator
+in one of the cases. Otherwise it has the familiar recursive shape: a
+<code class="scheme"><span class="keyword">cond</span></code> with two clauses and a natural recursion. It is especially
+instructive to compare the function with <code class="scheme"><span class="variable">contains-doll?</span></code> from
+section&nbsp;<a href="curriculum-Z-H-13.html#node_sec_9.3">9.3</a> and <code class="scheme"><span class="variable">contains?</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.3.3">9.3.3</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.9"></a>
+<b>Exercise 41.2.9.</b>&nbsp;&nbsp; 
+<a name="node_idx_2454"></a>Define <code class="scheme"><span class="variable">test-change-number</span></code>.  The function consumes a name, a phone
+number, and an address book. It uses <code class="scheme"><span class="variable">change-number!</span></code> to update the
+address book, and then ensures that it was changed properly. If so, it produces
+<code class="scheme"><span class="builtin">true</span></code>; if not, it produces an error message. Use this new function to
+test <code class="scheme"><span class="variable">change-number!</span></code> with at least three different
+examples.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rec0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.10"></a>
+<b>Exercise 41.2.10.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">move-squares</span></code>. It consumes a list of <code class="scheme"><i>square</i></code>s, as
+defined above, and a number <code class="scheme"><span class="variable">delta</span></code>. The function modifies each on
+the list by adding <code class="scheme"><span class="variable">delta</span></code> to the <em>x</em>-component of its
+position.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rec1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.11"></a>
+<b>Exercise 41.2.11.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">all-fed</span></code>. It consumes a list of
+<code class="scheme"><span class="variable">animal</span></code>s, as defined in exercise&nbsp;<a href="#node_thm_41.2.8">41.2.8</a>, and modifies
+them so that their field for morning feedings is switched to
+<code class="scheme"><span class="builtin">true</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rec3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.12"></a>
+<b>Exercise 41.2.12.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">for-all</span></code>, which abstracts
+<code class="scheme"><span class="variable">move-squares</span></code> and <code class="scheme"><span class="variable">all-fed</span></code> from exercises&nbsp;<a href="#node_thm_41.2.10">41.2.10</a>
+and&nbsp;<a href="#node_thm_41.2.11">41.2.11</a>.  It consumes two values: a function that consumes
+structures and produces <code class="scheme">(void)</code>; and a list of structures. Its
+result is <code class="scheme">(void)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-list.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.13"></a>
+<b>Exercise 41.2.13.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">ft-descendants</span></code>. It consumes a descendant
+family tree (see section&nbsp;<a href="curriculum-Z-H-20.html#node_sec_15.1">15.1</a>) based on the following
+structure definition: 
+<a name="node_idx_2456"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">parent</span> (<span class="variable">children</span> <span class="variable">name</span> <span class="variable">date</span> <span class="variable">eyes</span> <span class="variable">no-descendants</span>))
+</pre></div><p>
+The last field in a <code class="scheme"><span class="variable">parent</span></code> structure is originally <code class="scheme"><span class="selfeval">0</span></code>. 
+The function <code class="scheme"><span class="variable">ft-descendants</span></code> traverses the tree and modifies these
+slots so that they contain the total number of descendants of the
+corresponding family member. Its result is the number of total descendants
+of the given tree.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/rec4.html">Solution</a></p>
+<p></p>
+<p>
+Natural numbers make up another class of values that requires a
+self-referential description. Recursion on natural numbers per se
+isn't useful in conjunction with mutation, but recursion on natural numbers
+as indices into vectors is useful when a problem's data representation
+involves vectors.
+<a name="node_idx_2458"></a></p>
+<p>
+Let's start with a snippet of an elevator control program. An elevator
+control program must know at which floor people have pressed the call
+buttons. We assume that the elevator hardware can mutate some status vector
+of booleans. That is, we assume that the program contains a vector, call it
+<code class="scheme"><span class="variable">call-status</span></code>, and that a field in <code class="scheme"><span class="variable">call-status</span></code> is
+<code class="scheme"><span class="builtin">true</span></code> if someone has pushed the call button at the corresponding
+floor.</p>
+<p>
+One important elevator operation is to <code class="scheme"><span class="variable">reset</span></code> all the buttons. For
+example, an operator may have to restart the elevator after it has been out
+of service for a while. We start the development of <code class="scheme"><span class="variable">reset</span></code> by
+restating the known facts in a Scheme outline:<a name="call_footnote_Temp_207"></a><a href="#footnote_Temp_207"><sup><small>76</small></sup></a>
+<a name="node_idx_2460"></a>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">call-status</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">boolean</span>)</code></span>
+<span class="comment">;; to keep track of the floors from which calls have been issued </span>
+(<span class="keyword">define</span> <span class="variable">call-status</span> (<span class="builtin">vector</span> true true true false true true true false))
+
+<span class="comment">;; <code class="scheme"><span class="variable">reset</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set all fields in <code class="scheme"><span class="variable">call-status</span></code> to <code class="scheme"><span class="builtin">false</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reset</span>) ...)
+</pre></div><p>
+The first definition specifies <code class="scheme"><span class="variable">call-status</span></code> as a state variable,
+but of course we use each slot in the vector as a state value, not the
+entire variable.  The second part consists of three pieces: a contract, an
+effect statement, and a header for the function <code class="scheme"><span class="variable">reset</span></code>, which
+implements the informally specified service.</p>
+<p>
+While it is possible to implement the service as
+<a name="node_idx_2462"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">reset</span>)
+  (<span class="keyword">set!</span> <span class="variable">call-status</span>
+    (<span class="builtin">build-vector</span> (<span class="builtin">vector-length</span> <span class="variable">call-status</span>) (<span class="keyword">lambda</span> (<span class="variable">i</span>) <span class="builtin">false</span>))))
+</pre></div><p> 
+this trivial solution is clearly not what we want because it creates a new
+vector. Instead, we want a
+function that modifies each field of the existing vector. Following the suggestions
+of intermezzo&nbsp;5, we develop an auxiliary function with the following
+template:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reset-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">boolean</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set the fields of <code class="scheme"><span class="variable">v</span></code> with index in [<code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="variable">i</span></code>) to <code class="scheme"><span class="builtin">false</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reset-aux</span> <span class="variable">v</span> <span class="variable">i</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">reset-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...]))
+</pre></div><p>
+That is, the auxiliary function consumes not only the vector but also an
+interval bound. The shape of the template is based on the data definition
+of the latter.</p>
+<p>
+The effect statement suggests the following examples:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="variable">reset-aux</span> <span class="variable">call-status</span> <span class="selfeval">0</span>)</code> leaves <code class="scheme"><span class="variable">call-status</span></code>
+unchanged, because the purpose statement says to change all indices in
+[<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">0</span></code>) and there are none;</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">reset-aux</span> <span class="selfeval">1</span>)</code> changes <code class="scheme"><span class="variable">call-status</span></code> so that
+<code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">call-status</span> <span class="selfeval">0</span>)</code> is <code class="scheme"><span class="builtin">false</span></code>, because <code class="scheme"><span class="selfeval">0</span></code>
+is the only natural number in [<code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="selfeval">1</span></code>); </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">reset-aux</span> <span class="variable">call-status</span> (<span class="builtin">vector-length</span> <span class="variable">call-status</span>))</code> sets all
+fields of <code class="scheme"><span class="variable">call-status</span></code> to <code class="scheme"><span class="builtin">false</span></code>.
+</p>
+</li></ol><p>
+The last example implies that we can define <code class="scheme"><span class="variable">reset</span></code> with
+<code class="scheme">(<span class="variable">reset-aux</span> <span class="variable">call-status</span> (<span class="builtin">vector-length</span> <span class="variable">call-status</span>))</code>. </p>
+<p>
+Equipped with examples, we can turn our attention to the definition.  The
+key is to remember that the additional argument must be interpreted as an
+index into the vector. Keeping the example and the guideline in mind, let's
+look at each of the two cases separately: 
+</p>
+<ol>
+<li><p>If <code class="scheme">(<span class="builtin">zero?</span> <span class="variable">i</span>)</code> holds, the function has no effect and produces
+<code class="scheme">(void)</code>.</p>
+<p>
+</p>
+<li><p>Otherwise <code class="scheme"><span class="variable">i</span></code> is positive. In that case, the natural recursion
+sets all fields in <code class="scheme"><span class="variable">call-status</span></code> with an index in [0,<code class="scheme">(<span class="builtin">sub1</span>
+ <span class="variable">i</span>)</code>) to <code class="scheme"><span class="builtin">false</span></code>. Furthermore, to complete the task, the function
+must set the vector field with index <code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code> to <code class="scheme"><span class="builtin">false</span></code>.
+The combination of the two effects is achieved with a
+<strong>begin</strong>-expression that sequences the natural recursion and the
+additional <code class="scheme"><span class="builtin">vector-set!</span></code>.
+</p>
+</li></ol><p>
+Figure&nbsp;<a href="#node_fig_Temp_208">118</a> puts everything together. The second clause in the
+definition of <code class="scheme"><span class="variable">reset-aux</span></code> changes the vector at index <code class="scheme">(<span class="builtin">sub1</span>
+<span class="variable">i</span>)</code> and then uses the natural recursion. Its result is the result of the
+<strong>begin</strong>-expression.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_208"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2464"></a><a name="node_idx_2466"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">call-status</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">boolean</span>)</code></span>
+<span class="comment">;; to keep track of the floors from which calls have been issued </span>
+(<span class="keyword">define</span> <span class="variable">call-status</span> (<span class="builtin">vector</span> true true true false true true true false))
+
+<span class="comment">;; <code class="scheme"><span class="variable">reset</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set all fields in <code class="scheme"><span class="variable">call-status</span></code> to <code class="scheme"><span class="builtin">false</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reset</span>)
+  (<span class="variable">reset-aux</span> <span class="variable">call-status</span> (<span class="builtin">vector-length</span> <span class="variable">call-status</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">reset-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">boolean</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set the fields of <code class="scheme"><span class="variable">v</span></code> with index in [<code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="variable">i</span></code>) to <code class="scheme"><span class="builtin">false</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reset-aux</span> <span class="variable">v</span> <span class="variable">i</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) (void)]
+    [<span class="keyword">else</span> (<span class="keyword">begin</span>
+	    (<span class="builtin">vector-set!</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>) <span class="builtin">false</span>)
+	    (<span class="variable">reset-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)))]))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 118:</b>&nbsp;&nbsp;Resetting call-buttons for an elevator</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.14"></a>
+<b>Exercise 41.2.14.</b>&nbsp;&nbsp; 
+Use the examples to develop tests for <code class="scheme"><span class="variable">reset-aux</span></code>. Formulate the
+tests as boolean-valued expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/served0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.15"></a>
+<b>Exercise 41.2.15.</b>&nbsp;&nbsp; 
+Develop the following variant of <code class="scheme"><span class="variable">reset</span></code>: 
+<a name="node_idx_2468"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reset-interval</span> <span class="selfeval">:</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set all fields in [<code class="scheme"><span class="variable">from</span></code>, <code class="scheme"><span class="variable">to</span></code>] to <code class="scheme"><span class="builtin">false</span></code></span>
+<span class="comment">;; assume: <code class="scheme">(<span class="builtin">&lt;=</span> <span class="variable">from</span> <span class="variable">to</span>)</code> holds </span>
+(<span class="keyword">define</span> (<span class="variable">reset-interval</span> <span class="variable">from</span> <span class="variable">to</span>) ...)
+</pre></div><p>
+Use <code class="scheme"><span class="variable">reset-interval</span></code> to define <code class="scheme"><span class="variable">reset</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/served1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.16"></a>
+<b>Exercise 41.2.16.</b>&nbsp;&nbsp; 
+Suppose we represent the position of an object with a vector and the
+velocity of an object with a second vector.  Develop the function
+<code class="scheme"><span class="variable">move!</span></code>, which consumes a position vector and an equally long
+velocity vector. It modifies the position vector by adding in the numbers
+of the speed vector, field by field:
+<a name="node_idx_2470"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">move!</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to add the fields of <code class="scheme"><span class="variable">v</span></code> to the corresponding fields of <code class="scheme"><span class="variable">pos</span></code> </span>
+<span class="comment">;; </span>
+<span class="comment">;; assumption: <code class="scheme"><span class="variable">pos</span></code> and <code class="scheme"><span class="variable">v</span></code> have equal length</span>
+(<span class="keyword">define</span> (<span class="variable">move!</span> <span class="variable">pos</span> <span class="variable">v</span>) ...)
+</pre></div><p>
+Justify why the use of a vector-modifying function is appropriate to
+model the movement of an object.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pos0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.17"></a>
+<b>Exercise 41.2.17.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">vec-for-all</span></code>, which abstracts
+<code class="scheme"><span class="variable">reset-aux</span></code> and the auxiliary vector-processing function for
+<code class="scheme"><span class="variable">move!</span></code> from exercise&nbsp;<a href="#node_thm_41.2.16">41.2.16</a>.  It consumes two values: a
+function <code class="scheme"><span class="variable">f</span></code> and a vector <code class="scheme"><span class="variable">vec</span></code>. The function <code class="scheme"><span class="variable">f</span></code>
+consumes indices (<code class="scheme"><strong>N</strong></code>) and vector items. The result of
+<code class="scheme"><span class="variable">vec-for-all</span></code> is <code class="scheme">(void)</code>; its effect is to apply
+<code class="scheme"><span class="variable">f</span></code> to each index and corresponding value in <code class="scheme"><span class="variable">vec</span></code>:
+<a name="node_idx_2472"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vec-for-all</span> <span class="selfeval">:</span> (<strong>N</strong> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span>) (<span class="keyword">vectorof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to apply <code class="scheme"><span class="variable">f</span></code> to all indices and values in <code class="scheme"><span class="variable">vec</span></code></span>
+<span class="comment">;; equation: </span>
+<span class="comment">;; <code class="scheme">(<span class="variable">vec-for-all</span> <span class="variable">f</span> (<span class="builtin">vector</span> <span class="variable">v-0</span> ... <span class="variable">v-N</span>))</code> </span>
+<span class="comment">;; = </span>
+<span class="comment">;; <code class="scheme">(<span class="keyword">begin</span> (<span class="variable">f</span> <span class="variable">N</span> <span class="variable">v-N</span>) ... (<span class="variable">f</span> <span class="selfeval">0</span> <span class="variable">v-0</span>) (void))</code></span>
+(<span class="keyword">define</span> (<span class="variable">vec-for-all</span> <span class="variable">f</span> <span class="variable">vec</span>) ...)
+</pre></div><p>
+Use <code class="scheme"><span class="variable">vec-for-all</span></code> to define <code class="scheme"><span class="variable">vector*!</span></code>, which consumes a
+number <code class="scheme"><span class="variable">s</span></code> and a vector of numbers and modifies the vector by
+multiplying each field's value with&nbsp;<code class="scheme"><span class="variable">s</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-vec.html">Solution</a></p>
+<p></p>
+<p>
+The last example covers the common situation when we wish to compute
+several numeric values at once and place them in a vector.  In
+section&nbsp;<a href="curriculum-Z-H-46.html#node_chap_37">37</a> we saw that the use of effects is on
+occasion useful to communicate several results. In the same manner, it is
+sometimes best to create a vector and to modify it within the same
+function. Consider the problem of counting how many times each vowel occurs
+in a list of letters:
+<a name="node_idx_2474"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">count-vowels</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">letter</span>) </code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp; (<span class="builtin">vector</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; where a <i>letter</i> is a symbol in <code class="scheme"><span class="keyword">'</span><span class="variable">a</span> ... <span class="keyword">'</span><span class="variable">z</span></code></span>
+<span class="comment">;; to determine how many times the five vowels occur in <code class="scheme"><span class="variable">chars</span></code></span>
+<span class="comment">;; the resulting vector lists the counts in the lexicographic order</span>
+(<span class="keyword">define</span> (<span class="variable">count-vowels</span> <span class="variable">chars</span>) ...)
+</pre></div><p>
+The choice of vector as a result is appropriate because the function must
+combine five values into one and each of the values is equally interesting.</p>
+<p>
+Using the purpose statement, we can also come up with examples: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">count-vowels</span> <span class="keyword">'</span>(<span class="variable">a</span> <span class="variable">b</span> <span class="variable">c</span> <span class="variable">d</span> <span class="variable">e</span> <span class="variable">f</span> <span class="variable">g</span> <span class="variable">h</span> <span class="variable">i</span>))
+<span class="builtin">=</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">1</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)
+
+  (<span class="variable">count-vowels</span> <span class="keyword">'</span>(<span class="variable">a</span> <span class="variable">a</span> <span class="variable">i</span> <span class="variable">u</span> <span class="variable">u</span>))
+<span class="builtin">=</span> (<span class="builtin">vector</span> <span class="selfeval">2</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)
+</pre></div><p>
+Given that the input is a list, the natural choice for the template is that
+for a list-processing function:
+<a name="node_idx_2476"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">count-vowels</span> <span class="variable">chars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">chars</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">chars</span>) ... (<span class="variable">count-vowels</span> (<span class="builtin">rest</span> <span class="variable">chars</span>)) ... ]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_209"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2478"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">count-vowels</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">letter</span>) </code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp; (<span class="builtin">vector</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; where a <i>letter</i> is a symbol in <code class="scheme"><span class="keyword">'</span><span class="variable">a</span> ... <span class="keyword">'</span><span class="variable">z</span></code></span>
+<span class="comment">;; to determine how many times the five vowels occur in <code class="scheme"><span class="variable">chars</span></code></span>
+<span class="comment">;; the resulting vector lists the counts in the lexicographic order</span>
+(<span class="keyword">define</span> (<span class="variable">count-vowels</span> <span class="variable">chars</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">chars</span>) (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)]
+    [<span class="keyword">else</span>
+     (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">count-rest</span> (<span class="variable">count-vowels</span> (<span class="builtin">rest</span> <span class="variable">chars</span>))))
+       (<span class="keyword">begin</span>
+         (<span class="variable">count-a-vowel</span> (<span class="builtin">first</span> <span class="variable">chars</span>) <span class="variable">count-rest</span>)
+         <span class="variable">count-rest</span>))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">count-a-vowel</span> <span class="selfeval">:</span> <span class="variable">letter</span> (<span class="builtin">vector</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">counts</span></code> at the appropriate place if <code class="scheme"><span class="variable">l</span></code> is a vowel, </span>
+<span class="comment">;; none otherwise</span>
+(<span class="keyword">define</span> (<span class="variable">count-a-vowel</span> <span class="variable">l</span> <span class="variable">counts</span>) 
+  ...)
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 119:</b>&nbsp;&nbsp;Counting vowels</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+To fill the gaps in the template, we consider each of the two clauses:
+</p>
+<ol>
+<li><p>If <code class="scheme">(<span class="builtin">empty?</span> <span class="variable">chars</span>)</code> is <code class="scheme"><span class="builtin">true</span></code>, the result is a vector
+of five <code class="scheme"><span class="selfeval">0</span></code>'s. After all, there are no vowels in an empty list. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">chars</span></code> isn't <code class="scheme"><span class="builtin">empty</span></code>, the natural recursion counts
+how many vowels and which ones occur in <code class="scheme">(<span class="builtin">rest</span> <span class="variable">chars</span>)</code>. To get the
+correct result, we also have to check whether <code class="scheme">(<span class="builtin">first</span> <span class="variable">chars</span>)</code> is a
+vowel, and depending on the outcome, increase one of the vector
+fields. Since this kind of task is a separate, repeated task, we leave it
+to an auxiliary function:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">count-a-vowel</span> <span class="selfeval">:</span> <span class="variable">letter</span></code></span>
+<span class="comment">;; &nbsp;&nbsp;&nbsp;&nbsp; <code class="scheme">(<span class="builtin">vector</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">counts</span></code> at the appropriate place if <code class="scheme"><span class="variable">l</span></code> is a vowel, </span>
+(<span class="keyword">define</span> (<span class="variable">count-a-vowel</span> <span class="variable">l</span> <span class="variable">counts</span>) 
+  ...)
+</pre></div><p></p>
+<p>
+In other words, the second clause first counts the vowels in the rest of
+the list. This computation is guaranteed to yield a vector according to the
+purpose statement. Let's call this vector <code class="scheme"><span class="variable">counts</span></code>. Then, it uses
+<code class="scheme"><span class="variable">count-a-vowel</span></code> to increase the appropriate field in
+<code class="scheme"><span class="variable">counts</span></code>, if any. The result is <code class="scheme"><span class="variable">counts</span></code>, after the first
+letter on the list has been counted. 
+</p>
+</li></ol><p>
+Figure&nbsp;<a href="#node_fig_Temp_209">119</a> contains the complete definition of the main
+function. Defining the auxiliary function follows the recipe for
+non-recursive structure mutations. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.18"></a>
+<b>Exercise 41.2.18.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">count-a-vowel</span></code>. Then test the complete
+<code class="scheme"><span class="variable">count-vowels</span></code> program.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/count-vowel0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.2.19"></a>
+<b>Exercise 41.2.19.</b>&nbsp;&nbsp; 
+At the end of intermezzo&nbsp;5, we could have defined <code class="scheme"><span class="variable">count-vowels</span></code> as
+shown in figure&nbsp;<a href="#node_fig_Temp_210">120</a>. This version does not use
+<code class="scheme"><span class="builtin">vector-set!</span></code>, but constructs the vector directly using
+<code class="scheme"><span class="builtin">build-vector</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_210"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2480"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">count-vowels-bv</span> <span class="variable">chars</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">count-vowel</span> <span class="variable">x</span> <span class="variable">chars</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">chars</span>) <span class="selfeval">0</span>]
+              [<span class="keyword">else</span> (<span class="keyword">cond</span>
+                      [(<span class="builtin">symbol=?</span> <span class="variable">x</span> (<span class="builtin">first</span> <span class="variable">chars</span>))
+                       (<span class="builtin">+</span> (<span class="variable">count-vowel</span> <span class="variable">x</span> (<span class="builtin">rest</span> <span class="variable">chars</span>)) <span class="selfeval">1</span>)]
+                      [<span class="keyword">else</span> (<span class="variable">count-vowel</span> <span class="variable">x</span> (<span class="builtin">rest</span> <span class="variable">chars</span>))])])))
+    (<span class="builtin">build-vector</span> <span class="selfeval">5</span> (<span class="keyword">lambda</span> (<span class="variable">i</span>) 
+                      (<span class="keyword">cond</span>
+                        [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">0</span>) (<span class="variable">count-vowel</span> <span class="keyword">'</span><span class="variable">a</span> <span class="variable">chars</span>)]
+                        [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">1</span>) (<span class="variable">count-vowel</span> <span class="keyword">'</span><span class="variable">e</span> <span class="variable">chars</span>)]
+                        [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">2</span>) (<span class="variable">count-vowel</span> <span class="keyword">'</span><span class="variable">i</span> <span class="variable">chars</span>)]
+                        [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">3</span>) (<span class="variable">count-vowel</span> <span class="keyword">'</span><span class="variable">o</span> <span class="variable">chars</span>)]
+                        [(<span class="builtin">=</span> <span class="variable">i</span> <span class="selfeval">4</span>) (<span class="variable">count-vowel</span> <span class="keyword">'</span><span class="variable">u</span> <span class="variable">chars</span>)])))))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 120:</b>&nbsp;&nbsp;Another way of counting vowels</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Measure the performance difference between <code class="scheme"><span class="variable">count-vowels-bv</span></code> and
+<code class="scheme"><span class="variable">count-vowels</span></code>. <strong>Hint:</strong>  Define a function that generates a large list
+of random letters (with, say, 5,000 or 10,000 items).</p>
+<p>
+Explain the performance difference between <code class="scheme"><span class="variable">count-vowels-bv</span></code> and
+<code class="scheme"><span class="variable">count-vowels</span></code>. Does the explanation reflect the measured
+difference? What does this suggest concerning the <code class="scheme"><span class="builtin">vector-set!</span></code>
+operation?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/count-vowel5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.20"></a>
+<b>Exercise 41.2.20.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">histogram</span></code>. The function consumes a list of grades between
+0 and 100; it produces a vector of size 101 where each slot contains the
+number of grades at that level.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/count-vowel2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.2.21"></a>
+<b>Exercise 41.2.21.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">count-children</span></code>. The function consumes a descendant family
+tree, which is a family tree that leads from a family member to the
+descendants. It produces a vector with six fields. The first five slots
+contain the number of family members that have that many children; the
+sixth field contains the number of family members that have five or more
+children.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/count-vowel3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_41.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_41.3">41.3&nbsp;&nbsp;Structural Design Recipes and Mutation, Part 2</a></h2>
+<p></p>
+<p>
+In the preceding sections, we studied structure mutation for fields that
+contain atomic data. We know, however, that structures can contain
+structures. Starting in section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.1">14.1</a>, we even
+encountered self-referential data definitions involving structures in
+structures. On occasion, processing such classes of data may also require
+mutations of structure fields that contain structures. In this section, we
+work through one such example.</p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_211"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p>
+</p>
+
+  <center><img src="../icons/cards.gif" alt="[cards in DrScheme]"></center>
+ <p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 121:</b>&nbsp;&nbsp;Playing with cards</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Suppose we wish to simulate a card game as a program. Each card has two
+important characteristics: its <i>suit</i> 
+<a name="node_idx_2482"></a>and its <i>rank</i>.  A player's
+collection of cards is called a <i>hand</i>.
+<a name="node_idx_2484"></a>For now we also assume that every player has at least one card, that is, a
+hand is never empty.  </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_211">121</a> contains a screen shot of DrScheme with structure
+and data definitions for manipulating cards and hands. The program fragment
+does not introduce separate classes of cards and hands, but a single
+structure and a single data definition for hands. A hand consists of a
+<code class="scheme"><span class="variable">hand</span></code> structure, which contains a <code class="scheme"><span class="variable">rank</span></code>, a <code class="scheme"><span class="variable">suit</span></code>,
+and a <code class="scheme"><span class="variable">next</span></code> field. The data definition shows that the next field
+may contain two kinds of values: <code class="scheme"><span class="builtin">empty</span></code>, which means that there are
+no other cards, and a <code class="scheme"><span class="variable">hand</span></code> structure, which contains the remainder
+of the cards. From a global perspective, a <code class="scheme"><span class="variable">hand</span></code> forms a chain of
+cards; only the last one contains <code class="scheme"><span class="builtin">empty</span></code> in the <code class="scheme"><span class="variable">next</span></code>
+field.<a name="call_footnote_Temp_212"></a><a href="#footnote_Temp_212"><sup><small>77</small></sup></a></p>
+<p>
+At first, a player has no cards. Picking up the first card creates a
+hand. Others cards are then inserted into the existing hand as needed.
+This calls for two functions: one for creating a hand and another one for
+inserting a card into a hand. Because a hand exists only once and
+corresponds to a physical object, it is natural to think of the second
+function as one that modifies an existing value rather than building a new
+one. For now, we accept this premise and explore its consequences. </p>
+<p>
+Creating a hand is a simple act and easy to implement as a function: 
+<a name="node_idx_2486"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-hand</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">hand</span></code></span>
+<span class="comment">;; to create a single-card hand from <code class="scheme"><span class="variable">r</span></code> and <code class="scheme"><span class="variable">s</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">create-hand</span> <span class="variable">r</span> <span class="variable">s</span>)
+  (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> <span class="builtin">empty</span>))
+</pre></div><p>
+The function consumes the properties of a card; it creates a hand with one
+card and no others. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_213"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+
+<table noborder="" cellspacing="20" align="center">
+<tr align="left"><td>
+(define hand0 (create-hand 13 spades))
+</td><td>
+<table>
+<!-- (define hand0 (create-hand 13 spades)) -->
+<tr align="left">
+<table border="" bgcolor="beige">
+<tr> 
+  <td><font size="-2">rank</font></td> 
+  <td><font size="-2">suit</font></td> 
+  <td><font size="-2">next</font></td>
+</tr>
+<tr>
+  <td>13</td> 
+  <td><img src="../icons/spades.gif" alt="spades"></td> 
+  <td>empty</td>
+</tr>
+</table>
+</tr>
+<tr align="left"><td>
+(add-at-end! diamonds 1 hand0)
+</td><td>
+<table>
+<!-- (add-at-end! diamonds 1 hand0) -->
+<tr align="left">
+<table border="" bgcolor="tan">
+<tr> 
+  <td><font size="-2">rank</font></td> 
+  <td><font size="-2">suit</font></td> 
+  <td><font size="-2">next</font></td>
+</tr>
+<tr>
+  <td>13</td> 
+  <td><img src="../icons/spades.gif" alt="spades"></td> 
+  <td>
+     <table>
+     <!-- (make-hand 1 diamond empty)) -->
+     <tr align="left">
+     <table border="" bgcolor="beige">
+     <tr> 
+       <td><font size="-2">rank</font></td> 
+       <td><font size="-2">suit</font></td> 
+       <td><font size="-2">next</font></td>
+     </tr>
+     <tr>
+       <td>13</td> 
+       <td><img src="../icons/diamonds.gif" alt="diamonds"></td> 
+       <td>empty</td>
+     </tr>
+     </table>
+  </tr></table></td>
+</tr>
+</table>
+</tr></table></td></tr>
+</table>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 122:</b>&nbsp;&nbsp;Building a hand</td></tr>
+<tr><td> 
+</td></tr></table></td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Adding a card to the end of a hand is a more difficult task. To
+simplify our life a bit, let's say that a player always adds new cards to
+the end of the hand. In this case we must process an arbitrarily large
+value, which means we need a recursive function. Here are the contract, effect
+statement, and header:
+<a name="node_idx_2488"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-at-end!</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect : to add a card with <code class="scheme"><span class="variable">r</span></code> as rank and <code class="scheme"><span class="variable">s</span></code> as suit at the end </span>
+(<span class="keyword">define</span> (<span class="variable">add-at-end!</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">a-hand</span>) ...)
+</pre></div><p>
+These specifications say that the function has the invisible value as the
+result and that it communicates with the rest of the program exclusively
+through its effects. </p>
+<p>
+Let's start with examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">hand0</span> (<span class="variable">create-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>))
+</pre></div><p>
+If we were to evaluate the following expression 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">add-at-end!</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="variable">hand0</span>)
+</pre></div><p>
+in the context of this definition, <code class="scheme"><span class="variable">hand0</span></code> becomes a hand with two
+cards: a spades-13 followed by a diamonds-1. Figure&nbsp;<a href="#node_fig_Temp_213">122</a>
+depicts the change of hand0; the top half displays the initial state of
+<code class="scheme"><span class="variable">hand0</span></code>, the lower half displays the state after
+<code class="scheme"><span class="variable">add-at-end!</span></code> has added a card. If we furthermore evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">add-at-end!</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span> <span class="variable">hand0</span>))
+</pre></div><p>
+in this context, <code class="scheme"><span class="variable">hand0</span></code> becomes a hand with three cards. The last
+one is a clubs-2. In terms of an evaluation, the definition of
+<code class="scheme"><span class="variable">hand0</span></code> should change to
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">hand0</span> 
+  (<span class="builtin">make-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>
+    (<span class="builtin">make-hand</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span>
+      (<span class="builtin">make-hand</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span> <span class="builtin">empty</span>))))
+</pre></div><p>
+after both additions have been carried out. </p>
+<p>
+Given that the <code class="scheme"><span class="variable">rank</span></code> and <code class="scheme"><span class="variable">suit</span></code> argument to
+<code class="scheme"><span class="variable">add-at-end!</span></code> are atomic values, the template must be based on the
+data definition for <code class="scheme"><span class="variable">hand</span></code>s: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">add-at-end!</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">a-hand</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) 
+     ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...
+     ... (<span class="variable">add-at-end!</span> <span class="variable">rank</span> <span class="variable">suit</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) ...]))
+</pre></div><p>
+The template consists of two clauses, which check the content of the
+<code class="scheme"><span class="variable">next</span></code> field of <code class="scheme"><span class="variable">a-hand</span></code>. It is recursive in the second
+clause, because the data definition for <code class="scheme"><span class="variable">hand</span></code>s is self-referential
+in that clause. In short, the template is completely conventional. </p>
+<p>
+The next step is to consider how the function should affect <code class="scheme"><span class="variable">a-hand</span></code>
+in each clause: 
+</p>
+<ol>
+<li><p>In the first case, <code class="scheme"><span class="variable">a-hand</span></code>'s <code class="scheme"><span class="variable">next</span></code> field is
+<code class="scheme"><span class="builtin">empty</span></code>. In that case, we can modify the <code class="scheme"><span class="variable">next</span></code> field so that
+it contains the new card: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">set-next-hand!</span> <span class="variable">a-hand</span> (<span class="builtin">make-hand</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="builtin">empty</span>))
+</pre></div><p>
+The newly created <code class="scheme"><span class="variable">hand</span></code> structure is now the one that contains
+<code class="scheme"><span class="builtin">empty</span></code> in its next field, that is, it is the new end of the
+<code class="scheme"><span class="variable">a-hand</span></code> value. </p>
+<p>
+</p>
+<li><p>In the second case, the natural recursion adds a new card to the end
+of <code class="scheme"><span class="variable">a-hand</span></code>. Indeed, because the given <code class="scheme"><span class="variable">a-hand</span></code> isn't the
+last one in the chain, the natural recursion does everything that needs to
+be done.
+</p>
+</li></ol><p></p>
+<p>
+Here is the complete definition of <code class="scheme"><span class="variable">add-at-end!</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-at-end!</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to add a card with <code class="scheme"><span class="variable">v</span></code> as rank and <code class="scheme"><span class="variable">s</span></code> as suit at the end of <code class="scheme"><span class="variable">a-hand</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-at-end!</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">a-hand</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))
+     (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span>  (<span class="builtin">make-hand</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="builtin">empty</span>))]
+    [<span class="keyword">else</span> (<span class="variable">add-at-end!</span> <span class="variable">rank</span> <span class="variable">suit</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))]))
+</pre></div><p>
+It closely resembles the list-processing functions we designed in
+part&nbsp;<a href="curriculum-Z-H-12.html#node_part_II">II</a>. This should come as no surprise, because
+<code class="scheme"><span class="variable">add-at-end!</span></code> processes values from a class that closely resembles
+the data definition of lists and the design recipes are formulated in a
+general manner. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.3.1"></a>
+<b>Exercise 41.3.1.</b>&nbsp;&nbsp; 
+Evaluate the following program by hand: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">hand0</span> (<span class="variable">create-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">add-at-end!</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="variable">hand0</span>)
+  (<span class="variable">add-at-end!</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span> <span class="variable">hand0</span>)
+  <span class="variable">hand0</span>)
+</pre></div><p>
+Test the function with this example. </p>
+<p>
+Make up two other examples. Recall that each example consists of an initial
+hand, cards to be added, and a prediction of what the result should
+be. Then test the function with the additional examples. Formulate the
+tests as boolean-valued expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/cards0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.2"></a>
+<b>Exercise 41.3.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">last-card</span></code>. It consumes a <code class="scheme"><span class="variable">hand</span></code> and
+produces a list with the last card's rank and suit. How can we use this
+function to test the <code class="scheme"><span class="variable">add-at-end!</span></code> function?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/cards2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.3"></a>
+<b>Exercise 41.3.3.</b>&nbsp;&nbsp; 
+Suppose a family tree consists of structures that record the name, social
+security number, and parents of a person. Describing such a tree requires a
+structure definition:
+<a name="node_idx_2490"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">child</span> (<span class="variable">name</span> <span class="variable">social</span> <span class="variable">father</span> <span class="variable">mother</span>))
+</pre></div><p>
+and a data definition: </p>
+<p>
+<a name="node_idx_2492"></a><a name="node_idx_2494"></a><a name="node_idx_2496"></a></p>
+<p>
+A <i>family-tree-node</i> (short: <i>ftn</i>) is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">false</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-child</span> <span class="variable">name</span> <span class="variable">socsec</span> <span class="variable">f</span> <span class="variable">m</span>)</code>
+where <code class="scheme"><span class="variable">name</span></code> is a symbol, <code class="scheme"><span class="variable">socsec</span></code> is a number, and 
+<code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">m</span></code> are <i>ftn</i>s. 
+</p>
+</li></ol><p></p>
+<p>
+For now, we assume that everyone has a social security number
+and that social security numbers are unique. </p>
+<p>
+Following our convention from part&nbsp;<a href="curriculum-Z-H-18.html#node_part_III">III</a>, <code class="scheme"><span class="builtin">false</span></code>
+represents a lack of knowledge about someone's father or mother. As we find
+out more information, though, we can add nodes to our family tree. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">add-ftn!</span></code>. It consumes a family tree
+<code class="scheme"><span class="variable">a-ft</span></code>, a social security number <code class="scheme"><span class="variable">ssc</span></code>, a symbol
+<code class="scheme"><span class="variable">anc</span></code>, and a <code class="scheme"><span class="variable">child</span></code> structure. Its effect is to modify that
+structure in <code class="scheme"><span class="variable">a-ft</span></code> whose social security number is <code class="scheme"><span class="variable">ssc</span></code>. If
+<code class="scheme"><span class="variable">anc</span></code> is <code class="scheme"><span class="keyword">'</span><span class="variable">father</span></code>, it modifies the <code class="scheme"><span class="variable">father</span></code> field to
+contain the given <code class="scheme"><span class="variable">child</span></code> structure; otherwise, <code class="scheme"><span class="variable">anc</span></code> is the
+symbol <code class="scheme"><span class="keyword">'</span><span class="variable">mother</span></code> and <code class="scheme"><span class="variable">add-ftn!</span></code> mutates the <code class="scheme"><span class="variable">mother</span></code>
+field. If the respective fields already contain a <code class="scheme"><span class="variable">child</span></code> structure,
+<code class="scheme"><span class="variable">add-ftn!</span></code> signals an error. </p>
+<p>
+</p>
+<p></p>
+<p><strong>Using Functions as Arguments</strong>:  Instead of accepting <code class="scheme"><span class="keyword">'</span><span class="variable">father</span></code>
+and <code class="scheme"><span class="keyword">'</span><span class="variable">mother</span></code> for <code class="scheme"><span class="variable">anc</span></code>, the function could also accept one
+of the two structure mutators: <code class="scheme"><span class="variable">set-child-father!</span></code> or
+<code class="scheme"><span class="variable">set-child-mother!</span></code>. Modify <code class="scheme"><span class="variable">add-ftn!</span></code>
+accordingly.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ft-ss1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.4"></a>
+<b>Exercise 41.3.4.</b>&nbsp;&nbsp; 
+Develop an implementation of a hand with <code class="scheme"><span class="variable">create-hand</span></code> and
+<code class="scheme"><span class="variable">add-at-end!</span></code> services using encapsulated state variables and
+function definitions. Use <code class="scheme"><span class="keyword">set!</span></code> expression but no structure
+mutators.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/cards1.html">Solution</a></p>
+<p></p>
+<p>
+Not all mutator functions are as easily designed as the
+<code class="scheme"><span class="variable">add-at-end!</span></code> function. Indeed, in some cases things don't even work
+out at all. Let's consider two additional services. The first one removes
+the last card in a hand. Its contract and effect statement are variations
+on those for <code class="scheme"><span class="variable">add-at-end!</span></code>:
+<a name="node_idx_2498"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">remove-last!</span> <span class="selfeval">:</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect : to remove the last card in <code class="scheme"><span class="variable">a-hand</span></code>, unless it is the only one</span>
+(<span class="keyword">define</span> (<span class="variable">remove-last!</span> <span class="variable">a-hand</span>) ...)
+</pre></div><p>
+The effect is restricted because a hand must always contain one card. </p>
+<p>
+We can also adapt the example for <code class="scheme"><span class="variable">add-at-end!</span></code> without difficulty: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">hand0</span> (<span class="variable">create-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>))
+
+(<span class="keyword">begin</span>
+  (<span class="variable">add-at-end!</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="variable">hand0</span>)
+  (<span class="variable">add-at-end!</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span> <span class="variable">hand0</span>)
+  (<span class="variable">remove-last!</span> <span class="variable">hand0</span>)
+  (<span class="variable">remove-last!</span> <span class="variable">hand0</span>))  
+</pre></div><p>
+The resulting value is <code class="scheme"><span class="variable">void</span></code>. The effect of the computation is to 
+return <code class="scheme"><span class="variable">hand0</span></code> in its initial state. </p>
+<p>
+The template for <code class="scheme"><span class="variable">remove-last!</span></code> is the same as that for
+<code class="scheme"><span class="variable">add-at-end!</span></code> because both functions process the same class of
+values. So the next step is to analyze what effects the function must
+compute for each case in the template: 
+</p>
+<ol>
+<li><p>Recall that the first clause represents the case when <code class="scheme"><span class="variable">a-hand</span></code>'s 
+<code class="scheme"><span class="variable">next</span></code> field is <code class="scheme"><span class="builtin">empty</span></code>. In contrast to the situation with
+<code class="scheme"><span class="variable">add-at-end!</span></code>, it is not clear what we need to do now. According to the
+effect statement, we must do one of two things: 
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">a-hand</span></code> is the last item in a chain that consists of more
+than one <code class="scheme"><span class="variable">hand</span></code> structure, it must be removed.  </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">a-hand</span></code> is the only structure that <code class="scheme"><span class="variable">remove-last!</span></code>
+consumed, the function should have no effect.
+</p>
+</li></ol><p>
+But we can't know whether <code class="scheme"><span class="variable">a-hand</span></code> is the last item in a long
+chain of <code class="scheme"><span class="variable">hand</span></code>s or the only one. We have lost knowledge that was
+available at the beginning of the evaluation!
+</p>
+</li></ol><p>
+The analysis of the first clause suggests the use of an accumulator. We
+tried the natural route and discovered that knowledge is lost during an
+evaluation, which is the criterion for considering a switch to an
+accumulator-based design recipe. </p>
+<p>
+</p>
+<p>
+Once we have recognized the need for an accumulator-style function, we
+encapsulate the template in a <strong>local</strong>-expression and add an
+accumulator argument to its definition and applications: 
+<a name="node_idx_2500"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">remove-last!</span> <span class="variable">a-hand0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt> </span>
+	  (<span class="keyword">define</span> (<span class="variable">rem!</span> <span class="variable">a-hand</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) 
+	       ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...]
+	      [<span class="keyword">else</span> ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...
+	       ... (<span class="variable">rem!</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>) ... <i>accumulator</i> ...) ...])))
+    ... (<span class="variable">rem!</span> <span class="variable">a-hand0</span> ...) ...))
+</pre></div><p>
+The questions to ask now are what the accumulator represents and what its
+first value is. </p>
+<p>
+The best way to understand the nature of accumulators is to study why the
+plain structural design of <code class="scheme"><span class="variable">remove-last!</span></code> failed. Hence we return
+to the analysis of our first clause in the template. When <code class="scheme"><span class="variable">rem!</span></code>
+reaches that clause, two things should have been accomplished. First,
+<code class="scheme"><span class="variable">rem!</span></code> should know that <code class="scheme"><span class="variable">a-hand</span></code> is not the only
+<code class="scheme"><span class="variable">hand</span></code> structure in <code class="scheme"><span class="variable">a-hand0</span></code>. Second, <code class="scheme"><span class="variable">rem!</span></code>  must be
+enabled to remove <code class="scheme"><span class="variable">a-hand</span></code> from <code class="scheme"><span class="variable">a-hand0</span></code>.  For the first
+goal, <code class="scheme"><span class="variable">rem!</span></code>'s first application should be in a context where we
+know that <code class="scheme"><span class="variable">a-hand0</span></code> contains more than one card. This argument
+suggests a <strong>cond</strong>-expression for the body of the <strong>local</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) (void)]
+  [<span class="keyword">else</span> (<span class="variable">rem!</span> <span class="variable">a-hand0</span> ...)])
+</pre></div><p>
+For the second goal, <code class="scheme"><span class="variable">rem!</span></code>'s accumulator argument should always
+represent the <code class="scheme"><span class="variable">hand</span></code> structure that precedes <code class="scheme"><span class="variable">a-hand</span></code> in
+<code class="scheme"><span class="variable">a-hand0</span></code>. Then <code class="scheme"><span class="variable">rem!</span></code> can remove <code class="scheme"><span class="variable">a-hand</span></code> by
+modifying the predecessor's <code class="scheme"><span class="variable">next</span></code> field:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">set-hand-next!</span> <span class="variable">accumulator</span> <span class="builtin">empty</span>)
+</pre></div><p></p>
+<p>
+Now the pieces of the design puzzle fall into place. The complete
+definition of the function is in figure&nbsp;<a href="#node_fig_Temp_214">123</a>.  The
+<code class="scheme"><span class="variable">accumulator</span></code> parameter is renamed to <code class="scheme"><span class="variable">predecessor-of:a-hand</span></code>
+to emphasize the relationship to the parameter proper.  The first
+application of <code class="scheme"><span class="variable">rem!</span></code> in the body of the <strong>local</strong>-expression hands it the
+second <code class="scheme"><span class="variable">hand</span></code> structure in <code class="scheme"><span class="variable">a-hand0</span></code>. The second argument is
+<code class="scheme"><span class="variable">a-hand0</span></code>, which establishes the desired relationship.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_214"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p></p>
+<p></p>
+<p>
+<a name="node_idx_2502"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">remove-last!</span> <span class="selfeval">:</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect : to remove the last card in <code class="scheme"><span class="variable">a-hand0</span></code>, unless it is the only one</span>
+(<span class="keyword">define</span> (<span class="variable">remove-last!</span> <span class="variable">a-hand0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">predecessor-of:a-hand</span></code> represents the predecessor of</span>
+	  <span class="comment">;; <code class="scheme"><span class="variable">a-hand</span></code> in the <code class="scheme"><span class="variable">a-hand0</span></code> chain </span>
+	  (<span class="keyword">define</span> (<span class="variable">rem!</span> <span class="variable">a-hand</span> <span class="variable">predecessor-of:a-hand</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))
+	       (<span class="builtin">set-hand-next!</span> <span class="variable">predecessor-of:a-hand</span> <span class="builtin">empty</span>)]
+	      [<span class="keyword">else</span> (<span class="variable">rem!</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>) <span class="variable">a-hand</span>)])))
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand0</span>)) (void)]
+      [<span class="keyword">else</span> (<span class="variable">rem!</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand0</span>) <span class="variable">a-hand0</span>)])))
+</pre></div><p>
+Both applications of <code class="scheme"><span class="variable">rem!</span></code> have the shape
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">rem!</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>) <span class="variable">a-hand</span>)
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 123:</b>&nbsp;&nbsp;Removing the last card</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+It is now time to revisit the basic assumption about the card game that the
+cards are added to the end of a hand.  When human players pick up cards,
+they hardly ever just add them to the end. Instead, many use some special
+arrangement and maintain it over the course of a game. Some arrange hands
+according to suits, others according to rank, and yet others according to
+both criteria.</p>
+<p>
+Let's consider an operation for inserting a card into a <code class="scheme"><span class="variable">hand</span></code> based
+on its rank:
+<a name="node_idx_2504"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sorted-insert!</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; assume: <code class="scheme"><span class="variable">a-hand</span></code> is sorted by rank, in descending order</span>
+<span class="comment">;; effect: to add a card with <code class="scheme"><span class="variable">r</span></code> as rank and <code class="scheme"><span class="variable">s</span></code> as suit at the proper place</span>
+(<span class="keyword">define</span> (<span class="variable">sorted-insert!</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">a-hand</span>) ...)
+</pre></div><p>
+The function assumes that the given <code class="scheme"><span class="variable">hand</span></code> is already sorted. The
+assumption naturally holds if we always use <code class="scheme"><span class="variable">create-hand</span></code> to create
+a hand and <code class="scheme"><span class="variable">sorted-insert!</span></code> to insert cards.</p>
+<p>
+Suppose we start with the same hand as above for <code class="scheme"><span class="variable">add-at-end!</span></code>:
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">hand0</span> (<span class="variable">create-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>If we evaluate <code class="scheme">(<span class="variable">sorted-insert!</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="variable">hand0</span>)</code> in this context,
+<code class="scheme"><span class="variable">hands0</span></code> becomes
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>
+  (<span class="builtin">make-hand</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="builtin">empty</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>If we now evaluate <code class="scheme">(<span class="variable">sorted-insert!</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span> <span class="variable">hand0</span>)</code> in addition, 
+we get
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="builtin">make-hand</span> <span class="selfeval">13</span> <span class="variable">SPADES</span>
+  (<span class="builtin">make-hand</span> <span class="selfeval">2</span> <span class="variable">CLUBS</span>
+    (<span class="builtin">make-hand</span> <span class="selfeval">1</span> <span class="variable">DIAMONDS</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+</p>
+<p></p>
+<p>for <code class="scheme"><span class="variable">hand0</span></code>. This value shows what it means for a chain to be
+sorted in descending order. As we traverse the chain, the ranks get smaller
+and smaller independent of what the suits are. </p>
+<p>
+Our next step is to analyze the template. Here is the template, adapted to
+our present purpose: 
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sorted-insert!</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">a-hand</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) 
+     ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...
+      ... (<span class="variable">sorted-insert!</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) ...]))
+</pre></div><p>
+</p>
+<p></p>
+<p>The key step of the function is to insert the new card between two cards
+such that first card's rank is larger than, or equal to, <code class="scheme"><span class="variable">r</span></code> and
+<code class="scheme"><span class="variable">r</span></code> is larger than, or equal to, the rank of the second. Because 
+we only have two cards in the second clause, we start by formulating the 
+answer for the second clause. The condition we just specified implies that
+we need a nested <strong>cond</strong>-expression: 
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span> (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))) ...]
+  [<span class="keyword">else</span> ...])
+</pre></div><p>
+</p>
+<p></p>
+<p>The first condition expresses in Scheme what we just discussed. In
+particular, <code class="scheme">(<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>)</code> picks the rank of the first card in
+<code class="scheme"><span class="variable">a-hand</span></code> and <code class="scheme">(<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))</code> picks the rank
+of the second one. The comparison determines whether the three ranks are
+properly ordered. </p>
+<p>
+Each case of this new <strong>cond</strong>-expression deserves its own analysis: 
+</p>
+<ol>
+<li><p>If <code class="scheme">(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span> (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))</code>
+is true, then the new card must go between the two cards that are currently
+linked. That is, the <code class="scheme"><span class="variable">next</span></code> field of <code class="scheme"><span class="variable">a-hand</span></code> must be changed
+to contain a new <code class="scheme"><span class="variable">hand</span></code> structure. The new structure consists of
+<code class="scheme"><span class="variable">r</span></code>, <code class="scheme"><span class="variable">s</span></code>, and the original value of <code class="scheme"><span class="variable">a-hand</span></code>'s
+<code class="scheme"><span class="variable">next</span></code> field. This yields the following elaboration of the
+<strong>cond</strong>-expression: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span> (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))
+   (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))]
+  [<span class="keyword">else</span> ...])
+</pre></div><p></p>
+<p>
+</p>
+<li><p>If <code class="scheme">(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span> (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))</code>
+is false, the new card must be inserted at some place in the rest of the
+chain. Of course, the natural recursion accomplishes just that, which
+finishes the analysis of the second clause of <code class="scheme"><span class="variable">sorted-insert!</span></code>.
+</p>
+</li></ol><p>
+Putting all the pieces together yields a partial function definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sorted-insert!</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">a-hand</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) 
+     ... (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) ... (<span class="builtin">hand-suit</span> <span class="variable">a-hand</span>) ...]
+    [<span class="keyword">else</span> 
+      (<span class="keyword">cond</span>
+	[(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span> (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))
+	 (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))]
+	[<span class="keyword">else</span> (<span class="variable">sorted-insert!</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))])]))
+</pre></div><p>
+The only remaining gaps are now in the first clause. </p>
+<p>
+The difference between the first and the second <code class="scheme"><span class="keyword">cond</span></code>-clause is
+that there is no second <code class="scheme"><span class="variable">hand</span></code> structure in the first clause so 
+we cannot compare ranks. Still, we can compare <code class="scheme"><span class="variable">r</span></code> and
+<code class="scheme">(<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>)</code> and compute something based on the outcome of
+this comparison:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span>) ...]
+  [<span class="keyword">else</span> ...])
+</pre></div><p>
+Clearly, if the comparison expression evaluates to <code class="scheme"><span class="builtin">true</span></code>, the
+function must mutate the <code class="scheme"><span class="variable">next</span></code> field of <code class="scheme"><span class="variable">a-hand</span></code> and add a
+new <code class="scheme"><span class="variable">hand</span></code> structure: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>) <span class="variable">r</span>) 
+   (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> <span class="builtin">empty</span>))]
+  [<span class="keyword">else</span> ...])
+</pre></div><p>
+The problem is that we have nothing to mutate in the second clause. If
+<code class="scheme"><span class="variable">r</span></code> is larger than the rank of <code class="scheme"><span class="variable">a-hand</span></code>, the new card should
+be inserted between the predecessor of <code class="scheme"><span class="variable">a-hand</span></code> and <code class="scheme"><span class="variable">a-hand</span></code>.
+But that kind of situation would have been discovered by the second
+clause. The seeming contradiction suggests that the dots in the second
+clause are a response to a singular case:
+</p>
+<blockquote>
+The dots are evaluated only if <code class="scheme"><span class="variable">sorted-insert!</span></code> consumes a rank
+<code class="scheme"><span class="variable">r</span></code> that is larger than all the values in the <code class="scheme"><span class="variable">rank</span></code> fields
+of <code class="scheme"><span class="variable">a-hand</span></code>.
+</blockquote>
+In that singular case, <code class="scheme"><span class="variable">a-hand</span></code> shouldn't change at all. After all,
+there is no way to create a descending chain of cards by mutating
+<code class="scheme"><span class="variable">a-hand</span></code> or any of its embedded <code class="scheme"><span class="variable">hand</span></code> structures. <p>
+At first glance, we can overcome the problem with a <code class="scheme"><span class="keyword">set!</span></code>
+expression that changes the definition of <code class="scheme"><span class="variable">hand0</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">hand0</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">hand0</span>))
+</pre></div><p>
+This fix doesn't work in general though, because we can't assume that we
+know which variable definition must be modified. Since expressions can be
+abstracted over values but not variables, there is also no way to abstract
+over <code class="scheme"><span class="variable">hand0</span></code> in this <strong>set!</strong>-expression.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_215"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2506"></a><a name="node_idx_2508"></a>A <i>hand</i> is an interface: 
+<ol>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">insert</span></code> :: <code class="scheme"><span class="variable">rank</span> <span class="variable">suit</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code>
+</p>
+</li></ol><p></p>
+<p>
+<a name="node_idx_2510"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-hand</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">hand</span></code></span>
+<span class="comment">;; to create a <code class="scheme"><span class="variable">hand</span></code> from the <code class="scheme"><span class="variable">rank</span></code> and <code class="scheme"><span class="variable">suit</span></code> of a single card</span>
+(<span class="keyword">define</span> (<span class="variable">create-hand</span> <span class="variable">rank</span> <span class="variable">suit</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define-struct</span> <span class="variable">hand</span> (<span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">next</span>))
+	  
+          (<span class="keyword">define</span> <span class="variable">the-hand</span> (<span class="builtin">make-hand</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="builtin">empty</span>))
+	  
+          <span class="comment">;; <code class="scheme"><span class="variable">insert-aux!</span> <span class="selfeval">:</span> <span class="variable">rank</span> <span class="variable">suit</span> <span class="variable">hand</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+          <span class="comment">;; assume: hand is sorted by rank in descending order</span>
+          <span class="comment">;; effect: to add a card with <code class="scheme"><span class="variable">r</span></code> as rank and <code class="scheme"><span class="variable">s</span></code> as suit</span>
+          <span class="comment">;; at the proper place</span>
+          (<span class="keyword">define</span> (<span class="variable">insert-aux!</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">a-hand</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)) 
+               (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> <span class="builtin">empty</span>))]
+              [<span class="keyword">else</span> (<span class="keyword">cond</span>
+                      [(<span class="builtin">&gt;=</span> (<span class="builtin">hand-rank</span> <span class="variable">a-hand</span>)
+			   <span class="variable">r</span>
+			   (<span class="builtin">hand-rank</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))
+                       (<span class="builtin">set-hand-next!</span> <span class="variable">a-hand</span>
+			 (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>)))]
+                      [<span class="keyword">else</span> (<span class="variable">insert-aux!</span> <span class="variable">r</span> <span class="variable">s</span> (<span class="builtin">hand-next</span> <span class="variable">a-hand</span>))])]))
+	  
+	  ... <span class="comment">;; other services as needed</span>
+	  
+          (<span class="keyword">define</span> (<span class="variable">service-manager</span> <span class="variable">msg</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">symbol=?</span> <span class="variable">msg</span> <span class="keyword">'</span><span class="variable">insert!</span>) 
+               (<span class="keyword">lambda</span> (<span class="variable">r</span> <span class="variable">s</span>)
+                 (<span class="keyword">cond</span>
+                   [(<span class="builtin">&gt;</span> <span class="variable">r</span> (<span class="builtin">hand-rank</span> <span class="variable">the-hand</span>))
+                    (<span class="keyword">set!</span> <span class="variable">the-hand</span> (<span class="builtin">make-hand</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">the-hand</span>))]
+                   [<span class="keyword">else</span> (<span class="variable">insert-aux!</span> <span class="variable">r</span> <span class="variable">s</span> <span class="variable">the-hand</span>)]))]
+              [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">managed-hand</span> <span class="selfeval">&quot;message not understood&quot;</span>)])))
+    <span class="variable">service-manager</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 124:</b>&nbsp;&nbsp;Encapsulation and structure mutation for hands of cards</td></tr>
+<tr><td> 
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+We're stuck. It is impossible to define <code class="scheme"><span class="variable">sorted-insert!</span></code>, at least
+as specified above. The analysis suggests a remedy, however. If we
+introduce a single variable that always stands for the current
+<code class="scheme"><span class="variable">hand</span></code> structure, we can use a combination of assignments and
+structure mutators to insert a new card. The trick is not to let any other
+part of the program refer to this variable or even change it. Otherwise a
+simple <code class="scheme"><span class="keyword">set!</span></code> won't work, as argued before. In other words, we need
+a state variable for each <code class="scheme"><span class="variable">hand</span></code> structure, and we need to
+encapsulate it in a <strong>local</strong>-expression.</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_215">124</a> displays the complete function definition. It
+follows the pattern of section&nbsp;<a href="curriculum-Z-H-49.html#node_chap_39">39</a>. The function itself
+corresponds to <code class="scheme"><span class="variable">create-hand</span></code>, though instead of producing a
+structure the new <code class="scheme"><span class="variable">create-hand</span></code> function produces a manager
+function. At this point, the manager can deal with only one message:
+<code class="scheme"><span class="keyword">'</span><span class="variable">insert</span></code>; all other messages are rejected. An <code class="scheme"><span class="keyword">'</span><span class="variable">insert</span></code>
+message first checks whether the new rank is larger than the first one in
+<code class="scheme"><span class="variable">the-hand</span></code>, the hidden state variable. If so, the manager just
+changes <code class="scheme"><span class="variable">the-hand</span></code>; if not, it uses <code class="scheme"><span class="variable">insert-aux!</span></code>, which may
+now assume that the new card belongs into the middle of the chain.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.3.5"></a>
+<b>Exercise 41.3.5.</b>&nbsp;&nbsp;  
+Extend the definition in figure&nbsp;<a href="#node_fig_Temp_215">124</a> with a service for
+removing the first card of a given rank, even if it is the only
+card.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hand-remove.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.6"></a>
+<b>Exercise 41.3.6.</b>&nbsp;&nbsp;  
+Extend the definition in figure&nbsp;<a href="#node_fig_Temp_215">124</a> with a service for
+determining the suits of those cards in <code class="scheme"><span class="variable">the-hand</span></code> that have a given
+rank. The function should produce a list of suits.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hand-project.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.7"></a>
+<b>Exercise 41.3.7.</b>&nbsp;&nbsp;  
+Reformulate <code class="scheme"><span class="variable">create-hand</span></code> in figure&nbsp;<a href="#node_fig_Temp_215">124</a> such that the
+manager uses a single <strong>set!</strong>-expression and <code class="scheme"><span class="variable">sorted-insert</span></code> does not use
+any structure mutation.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hand-mostly-functional.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.3.8"></a>
+<b>Exercise 41.3.8.</b>&nbsp;&nbsp;  
+Recall the definition of a binary tree from section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.2">14.2</a>:</p>
+<p>
+<a name="node_idx_2512"></a><a name="node_idx_2514"></a>A <i>binary-tree</i> (short: <i>BT</i>) is either
+</p>
+<ol>
+<li><p><code class="scheme">false</code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-node</span> <span class="variable">soc</span> <span class="variable">pn</span> <span class="variable">lft</span> <span class="variable">rgt</span>)</code> <br>
+where <code class="scheme"><span class="variable">soc</span></code> is a number, <code class="scheme"><span class="variable">pn</span></code> is a symbol,
+and <code class="scheme"><span class="variable">lft</span></code> and <code class="scheme"><span class="variable">rgt</span></code> are <code class="scheme"><span class="variable">BT</span></code>s. 
+</p>
+</li></ol><p></p>
+<p>
+The required structure definition is 
+<a name="node_idx_2516"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">node</span> (<span class="variable">ssn</span> <span class="variable">name</span> <span class="variable">left</span> <span class="variable">right</span>))
+</pre></div><p>
+A binary tree is a <i>binary-search-tree</i>
+<a name="node_idx_2518"></a>if every <code class="scheme"><span class="variable">node</span></code> structure contains a social security number that is
+larger than all those in the left subtree and smaller than all those in the
+right subtree.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">insert-bst!</span></code>. The function consumes a name
+<code class="scheme"><span class="variable">n</span></code>, a social security number <code class="scheme"><span class="variable">s</span></code>, and a bst. It modifies the
+bst so that it contains a new node with <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">s</span></code> while
+maintaining it as a search tree.</p>
+<p>
+Also develop the function <code class="scheme"><span class="variable">remove-bst!</span></code>, which removes a node with a
+given social security number. It combines the two subtrees of the removed
+node by inserting all the nodes from the right tree into the left
+one.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/bst-insert.html">Solution</a></p>
+<p></p>
+<p>
+The discussion in this subsection and the exercises suggest that adding or
+removing items from linked structures is a messy task.  Dealing with an
+item in the middle of the linked structures is best done with
+accumulator-style functions. Dealing with the first structure requires
+encapsulation and management functions. In contrast, as
+exercise&nbsp;<a href="#node_thm_41.3.7">41.3.7</a> shows, a solution without mutators
+is much easier to produce than a solution based on structure mutation. And
+the case of cards and hands, which deals with at most 52 structures, is
+equally efficient. To decide which of the two approaches to use requires a
+better understanding of algorithmic analysis (see intermezzo&nbsp;5) and of the
+language  
+<a name="node_idx_2520"></a>mechanisms and program design recipes for encapsulating state
+variables.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_41.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_41.4">41.4&nbsp;&nbsp;Extended Exercise: Moving Pictures, a Last Time</a></h2>
+<p></p>
+<p>
+In sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>, <a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>,
+<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>, and&nbsp;<a href="curriculum-Z-H-27.html#node_sec_21.4">21.4</a> we studied how to move
+pictures across a canvas. A picture is a list of shapes; a shape is one of
+several basic geometric shapes: circles, rectangles, etc. Following our
+most basic design principle -- one function per concept -- we first defined
+functions for moving basic geometric shapes, then for mixed classes of
+shapes, and finally for lists of shapes. Eventually we abstracted over
+related functions.</p>
+<p>
+The functions for moving basic shapes create a new shape from an existing
+shape. For example, the function for moving a circle consumes a
+<code class="scheme"><span class="variable">circle</span></code> structure and produces a new <code class="scheme"><span class="variable">circle</span></code> structure. If
+we think of the <code class="scheme"><span class="variable">circle</span></code> as a painting with a round frame and the
+canvas as a wall, however, creating a new shape for each move is
+inappropriate. Instead, we should change the shape's current position.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_41.4.1"></a>
+<b>Exercise 41.4.1.</b>&nbsp;&nbsp;  
+Turn the functions <code class="scheme"><span class="variable">translate-circle</span></code> and
+<code class="scheme"><span class="variable">translate-rectangle</span></code> of exercises&nbsp;<a href="curriculum-Z-H-9.html#node_thm_6.6.2">6.6.2</a>
+and&nbsp;<a href="curriculum-Z-H-9.html#node_thm_6.6.8">6.6.8</a>, respectively, into 
+structure-mutating  functions. Adapt <code class="scheme"><span class="variable">move-circle</span></code> from
+section&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a> and <code class="scheme"><span class="variable">move-rectangle</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-9.html#node_thm_6.6.12">6.6.12</a> so that they use these new
+functions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mu-picture1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.4.2"></a>
+<b>Exercise 41.4.2.</b>&nbsp;&nbsp;  
+Adapt the function <code class="scheme"><span class="variable">move-picture</span></code> from exercise&nbsp;<a href="curriculum-Z-H-14.html#node_thm_10.3.6">10.3.6</a> to
+use the structure-mutating functions from
+exercise&nbsp;<a href="#node_thm_41.4.1">41.4.1</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mu-picture2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_41.4.3"></a>
+<b>Exercise 41.4.3.</b>&nbsp;&nbsp;  
+Use Scheme's <code class="scheme"><span class="builtin">for-each</span></code> function (see Help Desk) to abstract where
+possible in the functions of
+exercise&nbsp;<a href="#node_thm_41.4.2">41.4.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mu-picture3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+
+
+
+
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_207"></a><a href="#call_footnote_Temp_207"><sup><small>76</small></sup></a> The notation
+<code class="scheme">(<span class="keyword">vectorof</span> <span class="variable">X</span>)</code> is analogous to <code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code>.</p>
+<p><a name="footnote_Temp_212"></a><a href="#call_footnote_Temp_212"><sup><small>77</small></sup></a> Scheme proper provides list mutators, and a Scheme
+programmer would use them to represent a hand as a list of cards.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-50.html">previous</a></span><span>, <a href="curriculum-Z-H-52.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-51.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

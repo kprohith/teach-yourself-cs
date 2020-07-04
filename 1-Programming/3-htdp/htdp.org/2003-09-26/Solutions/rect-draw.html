@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/rect-draw.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.6.8; How to Design Programs </title>
+</head>
+<body>
+<a href="rect-descr.html">6.6.7</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.6.8">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="rect-in.html">6.6.9</a><pre>;; teachpack: draw.ss
+
+;; A rectangle is a structure:
+;;   (make-rectangle P W H)
+;; where P is a posn, W is a number and H is a number.
+(define-struct rectangle (nw-corner width height color))
+
+;; DATA EXAMPLES
+(define example-rectangle1 (make-rectangle (make-posn 20 20) 260 260 'red))
+(define example-rectangle2 (make-rectangle (make-posn 60 60) 180 180 'blue))
+
+#|
+;; Template
+(define (fun-for-rectangle a-rectangle)
+  ... (rectangle-nw-corner a-rectangle) ...
+  ... (rectangle-width a-rectangle) ...
+  ... (rectangle-height a-rectangle) ...
+  ... (rectangle-color a-rectangle) ...)
+|#
+
+; -------------------------------------------------------------------------
+
+;; draw-a-rectangle : rectangle -&gt; true
+;; to draw a-rect
+(define (draw-a-rectangle a-rectangle)
+  (draw-solid-rect
+   (rectangle-nw-corner a-rectangle)
+   (rectangle-width a-rectangle)
+   (rectangle-height a-rectangle)
+   (rectangle-color a-rectangle)))
+
+;; EXAMPLES
+(start 300 300)
+(draw-a-rectangle example-rectangle1)
+(draw-a-rectangle example-rectangle2)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/rect-draw.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

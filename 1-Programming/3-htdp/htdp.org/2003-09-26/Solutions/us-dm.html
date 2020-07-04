@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/us-dm.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="f2c.html">2.2.1</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="triangle.html">2.2.3</a><pre>;; The dollar/euro conversion rate was roughly 1.17 euros per dollar
+;; when the euro was introduced on January 1, 1999.
+;; (source: The Economist).
+
+;; dollar-&gt;euro : number -&gt; number
+;; computes the value of d dollars in euros
+
+;; EXAMPLES
+;; one dollar is 1.17 euros
+;; one dollar is 2.34 euros
+
+(define (dollar-&gt;euro d)
+  (* 1.17 d))
+
+;; EXAMPLES TURNED INTO TESTS
+(dollar-&gt;euro 1) "should be" 1.17
+(dollar-&gt;euro 2) "should be" 2.34
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/us-dm.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

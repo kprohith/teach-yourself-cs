@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/weekly-wage.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="cross.html">17.1.2</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="zip.html">17.2.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.2.1 hours-&gt;wages
+------------------------------------------------------------
+;Data Definition:
+an employee is a structure:
+     (make-employee n s p)
+where n and s are symbols and p is a number
+|#
+(define-struct employee (name ssn payRate))
+
+#|
+a list-of-employees is either
+  1. empty or
+  2. (cons e loe)
+  where e is an employee and loe is a list-of-employees
+
+a work-record is a structure:
+     (make-work-record n h)
+where n is a symbol and h is a number
+|#
+(define-struct work-record (name hours))
+
+#|
+a list-of-work-records is either
+  1. empty or
+  2. (cons w low)
+  where w is a work-record and low is a list-of-work-records
+  
+a weekly-pay is a structure:
+     (make-weekly-pay n w)
+where n is a symbol and w is a number
+|#
+(define-struct weekly-pay (name pay))
+
+#|
+a list-of-weekly-pay is either
+  1. empty or
+  2. (cons wp lowp)
+  where wp is a weekly-pay and lowp is a list-of-weekly-pay
+|#
+;define some list-of-employees to be used in the tests
+(define twoEmployees
+  (list (make-employee 'john '123-78-6548 12.50)
+        (make-employee 'mary '892-46-3891 14.25)))
+
+(define fiveEmployees
+  (list (make-employee 'john '123-78-6548 12.50)
+        (make-employee 'mary '892-46-3891 14.25)
+        (make-employee 'bill '654-78-9665 14.80)
+        (make-employee 'walter '564-89-9659 15.95)
+        (make-employee 'sally '567-78-9658 16.15)))
+
+;define some list-of-work-records to be used in the tests
+(define twoWorkRecords
+  (list (make-work-record 'john 36.5)
+        (make-work-record 'mary 42)))
+
+(define fiveWorkRecords
+  (list (make-work-record 'john 36.5)
+        (make-work-record 'mary 42)
+        (make-work-record 'bill 32)
+        (make-work-record 'walter 38)
+        (make-work-record 'sally 37.5)))
+#|
+;Template:
+(define (hours-&gt;wages aloe alow)
+  (cond
+    [(empty? aloe) ...]
+    [else
+     ...(calc-weekly-pay (first aloe) (first alow))...
+     ...(hours-&gt;wages (rest aloe) (rest alow))... ]))
+|#
+
+;;hours-&gt;wages : 
+;;  list-of-employees list-of-work-records  
+;;    -&gt;  list-of-weekly-pay
+;;to construct a new list-of-weekly-pay  by 
+;;multiplying employee's pay rate by the 
+;;corresponding hours in the list-of-work-records
+;;ASSUMPTION: the two lists are of equal length 
+;;ASSUMPTION: the two lists are in the same order so 
+;;that the nth member of the first list has the same 
+;;name as the nth element of the second list.
+(define (hours-&gt;wages aloe alow)
+  (cond
+    [(empty? aloe) 
+     empty]
+    [else
+     (cons 
+      (calc-weekly-pay (first aloe) (first alow))
+      (hours-&gt;wages (rest aloe) (rest alow)))]))
+
+;Examples as Tests:
+(check-expect 
+ (hours-&gt;wages empty empty) 
+ empty)
+
+(check-expect 
+ (hours-&gt;wages 
+  (list (make-employee 'john '123-78-6548 12.50))
+  (list (make-work-record 'john 36.5)))
+ (list (make-weekly-pay 'john 456.25))) 
+
+(check-expect 
+ (hours-&gt;wages twoEmployees twoWorkRecords) 
+ (list
+  (make-weekly-pay 'john 456.25)
+  (make-weekly-pay 'mary 598.5)))
+
+(check-expect 
+ (hours-&gt;wages fiveEmployees fiveWorkRecords)
+ (list
+  (make-weekly-pay 'john 456.25)
+  (make-weekly-pay 'mary 598.5)
+  (make-weekly-pay 'bill 473.6)
+  (make-weekly-pay 'walter 606.1)
+  (make-weekly-pay 'sally 605.625)))
+
+#| We need a helper function that calculates weekly pay
+------------------------------------------------------------
+;Template
+(define (calc-weekly-pay a-employee a-work-record)
+     ... (employee-name a-employee) ... 
+     ... (employee-ssn a-employee) ...
+     ... (employee-payRate a-employee) ...
+     ... (work-record-name a-work-record) ...
+     ... (work-record-hours a-work-record) ...)
+|#
+;; employee-&gt;weekly-pay : employee work-record -&gt; weekly-pay
+;;consumes an employee and a work-record and produces the 
+;;weekly-pay based on that data
+(define (calc-weekly-pay a-employee a-work-record)
+  (make-weekly-pay 
+   (employee-name a-employee) 
+   (* (employee-payRate a-employee) 
+      (work-record-hours a-work-record))))
+
+;Examples as Tests:
+(check-expect 
+ (calc-weekly-pay (make-employee 'john '123-78-6548 12.50)
+                 (make-work-record 'john 36.5))
+ (make-weekly-pay 'john 456.25))
+
+(check-expect 
+ (calc-weekly-pay (make-employee 'mary '892-46-3891 14.25)
+                 (make-work-record 'mary 42))
+ (make-weekly-pay 'mary 598.5))
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/weekly-wage.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

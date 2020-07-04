@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.13; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.13">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student
+
+;; STRUCTURE DEFINITION
+(define-struct child (father mother name dob eyes))
+
+;; DATA DEFINITIONS
+;;
+;; &gt; family-tree-node (ftn)
+;;   An ftn is either
+;;      empty; or
+;;      (make-child ftn ftn symbol number symbol)
+;;
+;; &gt; direction
+;;   A direction is either
+;;      the symbol 'father or
+;;      the symbol 'mother.
+;;
+;; &gt; path
+;;   A path is either
+;;      empty or
+;;     (cons s los)
+;;   where s is a direction and los is a path.
+
+;; TEMPLATE: ftn
+;(define (consumes-a-ftn n)
+;  (cond
+;    [(empty? n) ...]
+;    [else (consumes-a-ftn (child-father n))
+;          (consumes-a-ftn (child-mother n))
+;          (child-name n)
+;          (child-dob n)
+;          (child-eyes n)]))
+
+;; VARIABLES
+;;
+;; Oldest Generation:
+(define Carl (make-child empty empty 'Carl 1926 'green))
+(define Bettina (make-child empty empty 'Bettina 1926 'green))
+
+;; Middle Generation:
+(define Adam (make-child Carl Bettina 'Adam 1950 'yellow))
+(define Dave (make-child Carl Bettina 'Dave 1955 'black))
+(define Eva (make-child Carl Bettina 'Eva 1965 'blue))
+(define Fred (make-child empty empty 'Fred 1966 'pink))
+
+;; Youngest Generation:
+(define Gustav (make-child Fred Eva 'Gustav 1988 'brown))
+(define Django (make-child empty Eva 'Django 1990 'grey))
+
+(define Hal (make-child Gustav Eva 'Gustav 1988 'hazel))
+
+;; to-blue-eyed-ancestor : ftn  -&gt;  path or false
+;; builds the path to a blue-eyed ancestor
+(define (to-blue-eyed-ancestor node)
+  (cond
+    [(empty? node) false]
+    [else
+     (cond
+       [(equal? 'blue (child-eyes node)) empty]
+       [else
+        (local [(define blue-father (to-blue-eyed-ancestor (child-father node)))
+                (define blue-mother (to-blue-eyed-ancestor (child-mother node)))]
+          (cond
+            [(and (false? blue-father) (false? blue-mother))
+             false]
+            [(false? blue-father) 
+             (cons 'mother blue-mother)]
+            [else 
+             (cons 'father blue-father)]))])]))
+
+;; EXAMPLES AS TESTS
+(check-expect (to-blue-eyed-ancestor empty) false)
+(check-expect (to-blue-eyed-ancestor Eva) empty)
+(check-expect (to-blue-eyed-ancestor Adam) false)
+(check-expect (to-blue-eyed-ancestor Gustav) (list 'mother))
+(check-expect (to-blue-eyed-ancestor Hal) (list 'father 'mother))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/local-interm3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

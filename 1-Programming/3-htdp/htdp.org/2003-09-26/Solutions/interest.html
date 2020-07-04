@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/interest.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="cond1.html">4.3.3</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.4.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="tax.html">4.4.2</a><pre>;; interest : number -&gt; number
+;; calculates the amount of interest for d dollars.
+
+;; EXAMPLES
+;; the interest for $500 is $20
+;; the interest for $2000 is $90
+;; the interest for $10,000 is $500
+
+(define (interest d)
+  (cond
+    [(&lt;= d 1000) (* d 4/100)]
+    [(&lt;= d 5000) (* d 45/1000)]
+    [(&gt; d 5000) (* d 5/100)]))
+
+;; EXAMPLES TURNED INTO TESTS
+(interest 500) "should be" 20
+(interest 2000) "should be" 90
+(interest 10000) "should be" 500
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/interest.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

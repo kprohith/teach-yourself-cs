@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/set-pb-remove.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 35.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-44.html#node_thm_35.4.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>
+(define address-book empty)
+
+;; add-to-address-book : symbol number -&gt; void 
+(define (add-to-address-book name phone) 
+  (set! address-book (cons (list name phone) address-book))) 
+
+;; lookup : symbol (listof (list symbol number)) -&gt; number or false
+;; to lookup the phone number for name in ab 
+(define (lookup name ab) 
+  (cond 
+    [(empty? ab) false] 
+    [else (cond 
+            [(symbol=? (first (first ab)) name) 
+             (second (first ab))] 
+            [else (lookup name (rest ab))])])) 
+
+;; remove : symbol -&gt; void
+(define (remove name)
+  (set! address-book (remove-from-address-book name address-book)))
+
+;; remove-from-address-book : symbol address-book -&gt; address-book
+;; returns a new address book that corresponds to the original address book,
+;; but with `name' removed from the book
+(define (remove-from-address-book name ab)
+  (cond
+    [(empty? ab) empty]
+    [else (cond
+            [(symbol=? (first (first ab)) name)
+             (remove-from-address-book name (rest ab))]
+            [else 
+             (cons (first ab)
+                   (remove-from-address-book name (rest ab)))])]))
+
+;; examples as tests
+
+(add-to-address-book 'bill 7035551111)
+(add-to-address-book 'alice 7035552222)
+
+(lookup 'bill address-book)
+"should be"
+7035551111
+
+(remove 'bill)
+
+(lookup 'bill address-book)
+"should be"
+false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/set-pb-remove.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/prime.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.4.7; How to Design Programs </title>
+</head>
+<body>
+<a href="tabulate-f-up-to-20.html">11.4.6</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.4.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="add.html">11.5.1</a><pre>;; is-not-divisible-by&lt;=i : N N -&gt; boolean
+;; determines if n is divisable by a number less than i
+
+#| 
+;; TEMPLATE
+(define (is-not-divisible-by&lt;=i i n)
+  (cond
+    [(= 1 i) ...]
+    [else ... (is-not-divisible-by&lt;=i (sub1 i) n) ...]))
+|#
+
+(define (begin x y) y)
+
+(define (is-not-divisible-by&lt;=i i n)
+  (cond
+    [(= 1 i) true]
+    [else (and (not (= 0 (modulo n i)))
+               (is-not-divisible-by&lt;=i (sub1 i) n))]))
+
+;; EXAMPLES AS TESTS
+(is-not-divisible-by&lt;=i 5 35) "should be" false
+(is-not-divisible-by&lt;=i 4 35) "should be" true
+
+;; prime? : N -&gt; boolean
+;; to determine if n is prime
+(define (prime? n)
+  (cond
+    [(= n 1) false]
+    [else
+     (is-not-divisible-by&lt;=i (- n 1) n)]))
+
+(prime? 1) "should be" false
+(prime? 2) "should be" true
+(prime? 3) "should be" true
+(prime? 4) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/prime.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-min-max.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 19.1.5; How to Design Programs </title>
+</head>
+<body>
+<a href="filter.html">19.1.4</a> | <a href="../Book/curriculum-Z-H-25.html#node_thm_19.1.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="abs-sort.html">19.1.6</a><pre>;; extreme : (number number -&gt; boolean) nelon -&gt; number
+(define (extreme cmp alon)
+  (cond
+    [(empty? (rest alon)) (first alon)]
+    [else
+     (cond
+       [(cmp (first alon) (extreme cmp (rest alon)))
+        (first alon)]
+       [else 
+        (extreme cmp (rest alon))])]))
+
+;; maxi : nelon  -&gt;  number
+;; to determine the largest number on alon
+(define (maxi1 alon) (extreme &gt; alon))
+
+;; mini : nelon  -&gt;  number
+;; to determine the smallest number on alon
+(define (mini1 alon) (extreme &lt; alon))
+
+;; extreme : (number number -&gt; boolean) nelon -&gt; number
+(define (extreme2 cmp alon)
+  (cond
+    [(empty? (rest alon)) (first alon)]
+    [else
+     (local [(define extreme-rest (extreme2 cmp (rest alon)))]
+       (pick-interesting cmp extreme-rest (first alon)))]))
+
+;; pick-interesting : (number number -&gt; boolean) number number -&gt; number
+(define (pick-interesting cmp one another)
+  (cond
+    [(cmp one another)
+     one]
+    [else 
+     another]))
+
+;; maxi : nelon  -&gt;  number
+;; to determine the largest number on alon
+(define (maxi2 alon) (extreme2 &gt; alon))
+
+;; mini : nelon  -&gt;  number
+;; to determine the smallest number on alon
+(define (mini2 alon) (extreme2 &lt; alon))
+
+;; tests
+
+(= (maxi1 (list 3 7 6 2 9 8)) 9)
+(= (maxi1 (list 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)) 17)
+(= (maxi1 (list 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)) 17)
+
+(= (mini1 (list 3 7 6 2 9 8)) 2)
+(= (mini1 (list 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)) 1)
+(= (mini1 (list 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)) 1)
+
+(= (maxi2 (list 3 7 6 2 9 8)) 9)
+(= (maxi2 (list 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)) 17)
+(= (maxi2 (list 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)) 17)
+
+(= (mini2 (list 3 7 6 2 9 8)) 2)
+(= (mini2 (list 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1)) 1)
+(= (mini2 (list 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17)) 1)
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-min-max.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/blue-eye-local.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 18.1.10; How to Design Programs </title>
+</head>
+<body>
+<a href="permute-local.html">18.1.9</a> | <a href="../Book/curriculum-Z-H-23.html#node_thm_18.1.10">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="local-interm0.html">18.1.11</a><pre>;; Language: Intermediate Student
+
+#| 18.1.10 adapting blue-eyed-descendant?
+------------------------------------------------------------
+;data definition
+A parent is a structure:
+     (make-parent loc n d e)
+where loc is a list of children, n and e are symbols, and
+d is a number.
+|#
+(define-struct parent (children name date eyes))
+#|
+A list-of-children is either
+   1. empty or
+   2. (cons p loc) 
+   where p is a parent and loc is a list of children.
+
+;; blue-eyed-descendant? : parent  -&gt;  boolean
+;; to determine whether a-parent any of the descendants 
+;; (children,  grandchildren, and so on) have 'blue in 
+;; the eyes field
+|#
+(define (blue-eyed-descendant? a-parent)
+  (local 
+    [(define (blue-eyed-descendant? a-parent)
+       (or 
+        (symbol=? (parent-eyes a-parent) 'blue)
+        (blue-eyed-children? (parent-children a-parent))))
+     (define (blue-eyed-children? aloc)
+       (cond
+         [(empty? aloc) false]
+         [else (or (blue-eyed-descendant? (first aloc))
+                   (blue-eyed-children? (rest aloc)))]))]
+    (blue-eyed-descendant? a-parent)))
+
+;;example family tree - used in examples below
+;; Youngest Generation:
+(define Gustav (make-parent empty 'Gustav 1988 'brown))
+
+(define Fred&amp;Eva (list Gustav))
+
+;; Middle Generation:
+(define Adam (make-parent empty 'Adam 1950 'yellow))
+(define Dave (make-parent empty 'Dave 1955 'black))
+(define Eva (make-parent Fred&amp;Eva 'Eva 1965 'blue))
+(define Fred (make-parent Fred&amp;Eva 'Fred 1966 'pink))
+
+(define Carl&amp;Bettina (list Adam Dave Eva))
+
+;; Oldest Generation:
+(define Carl (make-parent Carl&amp;Bettina 'Carl 1926 'green))
+(define Bettina 
+  (make-parent Carl&amp;Bettina 'Bettina 1926 'green))
+
+;Examples as Tests:
+(check-expect 
+ (blue-eyed-descendant? Gustav) 
+ false)
+(check-expect 
+ (blue-eyed-descendant? Eva) 
+ true)
+(check-expect 
+ (blue-eyed-descendant? Bettina) 
+ true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/blue-eye-local.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

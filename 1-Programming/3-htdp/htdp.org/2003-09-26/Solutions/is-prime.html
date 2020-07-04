@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/is-prime.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.8; How to Design Programs </title>
+</head>
+<body>
+<a href="to10.html">31.3.7</a> | <a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.8">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; is-prime? : N -&gt; Boolean
+;; is the given number a prime? are the only divisors 1 and n?
+(define (is-prime? n)
+   (local (;; accumulator : keeps track of the original input to is-prime?
+           ;; (Note: since it is available it is unnecessary! This is not
+           ;; a necessary use of accumulators, and you can see it because
+           ;; the accumulator remains the same.)
+           [define (check i n)
+             (cond
+               [(= i 1) true]
+               [else (and (not (= (remainder n i) 0)) 
+                          (check (sub1 i) n))])])
+     (check (- n 1) n)))
+
+(is-prime? 5)
+(is-prime? 11)
+(not (is-prime? 12))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/is-prime.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

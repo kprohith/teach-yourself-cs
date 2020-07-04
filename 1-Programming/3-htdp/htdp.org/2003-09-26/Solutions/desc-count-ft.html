@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/desc-count-ft.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 15.1.3; How to Design Programs </title>
+</head>
+<body>
+<a href="desc-distance.html">15.1.2</a> | <a href="../Book/curriculum-Z-H-20.html#node_thm_15.1.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="desc-ec-ft.html">15.1.4</a><pre>;; Language: Intermediate Student
+
+;; STRUCTURE DEFINITION: parent
+
+(define-struct parent (c name dob eyes))
+
+;; DATA DEFINITIONS
+;; ----------------
+;;  parent
+;;  list-of-children
+;; -----------------
+;; A parent is a structure
+;;
+;;  (make-parent c name dob eyes)
+;;
+;; where c is a list of children, name and eyes are symbols, and dob is a number.
+;; ------------------------------------------------------------------------------
+;; A list-of-children is either
+;;
+;;  empty, or
+;;  (cons p c)
+;;
+;; where p is a parent and c is a list of children.
+;; ------------------------------------------------
+
+;; VARIABLE DEFINITIONS
+;; --------------------
+(define Jango (make-parent empty 'Jango 2010 'blue))
+ 
+(define Jennifer-Gustav (list Jango))
+(define Jennifer (make-parent Jennifer-Gustav 'Jennifer 1988 'purple))
+(define Gustav (make-parent Jennifer-Gustav 'Gustav 1988 'brown))
+ 
+(define Fred-Eva (list Gustav))
+(define Fred (make-parent Fred-Eva 'Fred 1965 'pink))
+ 
+(define Eva (make-parent Fred-Eva 'Eva 1965 'blue))
+(define Dave (make-parent empty 'Dave 1955 'black))
+(define Adam (make-parent empty 'Adam 1950 'yellow))
+ 
+(define Carl-Bettina (list Adam Dave Eva))
+(define Carl (make-parent Carl-Bettina 'Carl 1926 'green))
+(define Bettina (make-parent Carl-Bettina 'Bettina 1926 'green))
+ 
+;; count-descendants : parent -&gt; number
+;; consumes a parent p
+;; produces the number of nodes in the tree that has p as its root
+;; including p
+(define (count-descendants p)
+  (+ 1 (count-children (parent-c p))))
+
+;; examples as tests
+(check-expect (count-descendants Eva) 3)
+(check-expect (count-descendants Carl) 6)
+
+;; count-children : list-of-children -&gt; number
+;; consumes a list-of-children c
+;; produces the number of parents in c
+(define (count-children c)
+  (cond
+    [(empty? c) 0]
+    [else (+ (count-descendants (first c)) (count-children (rest c)))]))
+
+(check-expect (count-children empty) 0)
+(check-expect (count-children (list Dave)) 1)
+
+;; count-proper-descendants : parent -&gt; number
+;; consumes a parent p
+;; produces the number of p's descendants (sub-nodes of p)
+(define (count-proper-descendants p)
+  (count-children (parent-c p)))
+
+;; examples as tests
+(check-expect (count-proper-descendants Eva) 2)
+(check-expect (count-proper-descendants Carl) 5)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/desc-count-ft.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

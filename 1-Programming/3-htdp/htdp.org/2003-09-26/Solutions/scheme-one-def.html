@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-one-def.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.7.1; How to Design Programs </title>
+</head>
+<body>
+<a href="dna-prefix.html">17.6.6</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.7.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="scheme-prog-dd.html">17.7.2</a><pre>#|
+
+A scheme-expression is either:
+
+  - number,
+  - symbol,
+  - (make-add scheme-expression scheme-expression)
+  - (make-mul scheme-expression scheme-expression)
+  - (make-app symbol scheme-expression)
+|#
+
+(define-struct add (lhs rhs))
+(define-struct mul (lhs rhs))
+(define-struct app (rator rand))
+
+;; EXAMPLES
+
+;; (f (+ 1 1))
+(make-app 'f (make-add 1 1))
+
+;; (* 3 (g 2))
+(make-mul 3 (make-app 'g 2))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-one-def.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

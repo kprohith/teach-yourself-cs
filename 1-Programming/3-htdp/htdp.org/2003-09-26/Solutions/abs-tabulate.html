@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-tabulate.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 21.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="fancy-contracts-poly.html">20.2.4</a> | <a href="../Book/curriculum-Z-H-27.html#node_thm_21.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="abs-sum-prod.html">21.1.2</a><pre>;; tabulate : (Nat -&gt; X) Nat -&gt; list-of-X
+(define (tabulate f n)
+  (cond
+    [(= n 0) (list (f 0))]
+    [else (cons (f n)
+                (tabulate f (- n 1)))]))
+
+;; tabulate-sin : Nat -&gt; list-of-number
+(define (tabulate-sin n) (tabulate sin n))
+
+;; tabulate-sqrt : Nat -&gt; list-of-number
+(define (tabulate-sqrt n) (tabulate sqrt n))
+
+;; tabulate-tan : Nat -&gt; list-of-number
+(define (tabulate-tan n) (tabulate tan n))
+
+;; tabulate-sqr : Nat -&gt; list-of-number
+(define (tabulate-sqr n) (tabulate sqr n))
+
+;; examples as tests
+(equal? (tabulate-sqr 5) (list 25 16 9 4 1 0))
+(equal? (tabulate-sin 3) (list (sin 3) (sin 2) (sin 1) (sin 0)))
+(equal? (tabulate-sqrt 3) (list (sqrt 3) (sqrt 2) (sqrt 1) (sqrt 0)))
+(equal? (tabulate-tan 3) (list (tan 3) (tan 2) (tan 1) (tan 0)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-tabulate.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/merge.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.6.1; How to Design Programs </title>
+</head>
+<body>
+<a href="list-ref-simpl.html">17.4.2</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.6.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="hangman-list.html">17.6.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.6.1 merge
+------------------------------------------------------------
+;Data Definition:
+a list-of-numbers is either
+  1. empty or
+  2. (cons n lon)
+  where n is a number and lon is a list-of-numbers
+
+;Contract, Purpose, Header:
+
+(define (merge alon1 alon2) ...)
+
+;Template:
+(define (merge alon1 alon2) 
+  (cond
+    [(and (empty? alon1) (empty? alon2)) 
+     ...]
+    [(and (empty? alon1) (cons? alon2)) 
+     ...(first alon2)...(rest alon2)...]
+    [(and (cons? alon1) (empty? alon2))      
+     ...(first alon1)...(rest alon1)...]
+    [(and (cons? alon1) (cons? alon2)) 
+     ...(first alon1)...(first alon2)...
+     ...(merge (rest alon1) alon2)...
+     ...(merge alon1 (rest alon2))...
+     ...(merge (rest alon1) (rest alon2))...]))
+|#
+
+;;merge: 
+;;  list-of-numbers list-of-numbers  -&gt;  list-of-numbers
+;;consumes two lists of numbers, sorted in ascending order.
+;;It produces a single sorted list of numbers that contains 
+;;all the numbers on both inputs lists (and nothing else).
+;;A number occurs in the output as many times as it occurs 
+;;on the two input lists together.
+(define (merge alon1 alon2) 
+  (cond
+    [(empty? alon1)
+     alon2]
+    [(empty? alon2)      
+     alon1]
+    [(cons? alon2)
+     (cond
+       [(&lt; (first alon1) (first alon2))
+        (cons (first alon1) (merge (rest alon1) alon2))]
+       [else 
+        (cons (first alon2) (merge alon1 (rest alon2)))])]))
+
+;Examples as Tests:
+(check-expect 
+ (merge empty empty)
+ empty)
+
+(check-expect 
+ (merge empty (list 1 2 3))
+ (list 1 2 3))
+
+(check-expect 
+ (merge (list 1 2 3) empty)
+ (list 1 2 3))
+
+(check-expect 
+ (merge (list 1 2 3) (list 7 8 9))
+ (list 1 2 3 7 8 9))
+
+(check-expect 
+ (merge (list 1 3 5 7 9) (list 0 2 4 6 8))
+ (list 0 1 2 3 4 5 6 7 8 9))
+
+(check-expect 
+ (merge (list 1 8 8 11 12) (list 2 3 4 8 13 14))
+ (list 1 2 3 4 8 8 8 11 12 13 14))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/merge.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

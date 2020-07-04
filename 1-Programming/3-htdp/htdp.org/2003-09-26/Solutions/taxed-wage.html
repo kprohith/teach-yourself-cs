@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/taxed-wage.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="algebra1.html">2.2.5</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sum-coins.html">2.3.2</a><pre>;; tax : number -&gt; number
+;; computes the tax, given a wage.
+
+;; EXAMPLES
+;; the tax on $100 is $15
+
+(define (tax w)
+  (* 0.15 w))
+
+;; netpay : number -&gt; number
+;; computes the net pay, given the number of hours worked
+
+;; EXAMPLES
+;; the net pay for 40 hours is 408 dollars.
+
+(define (netpay h)
+  (- (wage h)
+     (tax (wage h))))
+
+;; wage : number -&gt; number
+;; computes the wage for a given number of hours
+
+;; EXAMPLES
+;; the wage for 2 hours is 24 dollars.
+
+(define (wage h)
+  (* h 12))
+
+
+;; EXAMPLES TURNED INTO TESTS
+(tax 100) "should be" 15
+(wage 2) "should be" 24
+(netpay 40) "should be" 408
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/taxed-wage.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

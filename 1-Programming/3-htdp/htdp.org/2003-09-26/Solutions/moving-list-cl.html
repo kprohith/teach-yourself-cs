@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-list-cl.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="moving-list-tr.html">10.3.3</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.3.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; a shape is either:
+;;   - (make-circle C P N)
+;;   - (make-rectangle C P N N)
+;; where C is a color,
+;;       P is a posn, and
+;;       N is a number.
+
+(define-struct circle (color center radius))
+(define-struct rectangle (color nw-corner width height))
+
+#|
+;; TEMPLATE
+(define (prog-for-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (circle-color a-shape) ...
+     (circle-center a-shape) ...
+     (circle-radius a-shape) ...]
+    [(rectangle? a-shape)
+     (rectangle-color a-shape) ...
+     (rectangle-nw-corner a-shape) ...
+     (rectangle-width a-shape) ...
+     (rectangle-height a-shape) ...]))
+|#
+
+; -------------------------------------------------------------------------
+
+;; draw-shape : shape -&gt; true
+;; draws a-shape
+(define (draw-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      (circle-color a-shape))]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      (rectangle-color a-shape))]))
+
+;; EXAMPLES AS TESTS
+(start 200 200)
+(draw-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+
+; -------------------------------------------------------------------------
+
+;; translate-shape : shape number -&gt; true
+;; translates a-shape by delta pixels in the X directions
+(define (translate-shape a-shape delta)
+  (cond
+    [(circle? a-shape) 
+     (make-circle      
+      (circle-color a-shape)
+      (make-posn (+ delta (posn-x (circle-center a-shape)))
+                 (posn-y (circle-center a-shape)))
+      (circle-radius a-shape))]
+    [(rectangle? a-shape)
+     (make-rectangle
+      (rectangle-color a-shape)
+      (make-posn (+ delta (posn-x (rectangle-nw-corner a-shape)))
+                 (posn-y (rectangle-nw-corner a-shape)))
+      (rectangle-width a-shape)
+      (rectangle-height a-shape))]))
+
+;; EXAMPLES AS TESTS
+(translate-shape (make-circle 'red (make-posn 30 30) 20) 10) "should be" 
+(make-circle 'red (make-posn 40 30) 20)
+(translate-shape (make-rectangle 'blue (make-posn 30 60) 20 50) 20) "should be" 
+(make-rectangle 'blue (make-posn 50 60) 20 50)
+
+; -------------------------------------------------------------------------
+
+;; clear-shape : shape -&gt; true
+;; erases a-shape
+(define (clear-shape a-shape)
+  (cond
+    [(circle? a-shape) 
+     (draw-circle
+      (circle-center a-shape)
+      (circle-radius a-shape)
+      'white)]
+    [(rectangle? a-shape)
+     (draw-solid-rect 
+      (rectangle-nw-corner a-shape)
+      (rectangle-width a-shape)
+      (rectangle-height a-shape)
+      'white)]))
+
+;; EXAMPLES AS TESTS
+(start 200 200)
+(draw-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(draw-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+(clear-shape (make-circle 'red (make-posn 30 30) 20)) "should be" true
+(clear-shape (make-rectangle 'blue (make-posn 30 60) 20 50)) "should be" true
+
+; -------------------------------------------------------------------------
+
+
+;; A list-of-shapes is either:
+;;  - empty, or
+;;  - (cons shape list-of-shapes)
+
+#|
+;; TEMPLATE
+(define (prog-for-losh a-los)
+  (cond
+    [(empty? a-los) ...]
+    [else (first a-los) ...
+          (prog-for-losh (rest a-los))..]))
+|#
+
+(define FACE
+  (cons (make-circle 'red (make-posn 50 50) 50)
+        (cons (make-rectangle 'blue (make-posn 30 20) 10 10)
+              (cons (make-rectangle 'blue (make-posn 65 20) 10 10)
+                    (cons (make-rectangle 'blue (make-posn 40 75) 10 10)
+                          (cons (make-rectangle 'blue (make-posn 40 75) 25 10)
+                                (cons (make-rectangle 'blue (make-posn 45 35) 15 30)
+                                      empty)))))))
+
+; -------------------------------------------------------------------------
+
+;; clear-losh : list-of-shapes -&gt; true
+;; clear each shape on a-los
+(define (clear-losh a-los)
+  (cond
+    [(empty? a-los) true]
+    [else (and (clear-shape (first a-los))
+               (clear-losh (rest a-los)))]))
+
+;; EXAMPLES AS TESTS
+(start 100 100)
+(draw-shape (make-circle 'red (make-posn 50 50) 40)) "should be" true
+(clear-losh empty) "should be" true
+(clear-losh (cons (make-circle 'red (make-posn 50 50) 40) empty)) "should be" true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/moving-list-cl.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,932 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-15.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-14.html">previous</a></span><span>, <a href="curriculum-Z-H-16.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_11"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_11">Section  11</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_11">Natural Numbers</a></h1>
+<p> 
+</p>
+<p>
+</p>
+<p>
+The only self-referential data definitions we have seen thus far involved
+<code class="scheme"><span class="builtin">cons</span></code> and lists of arbitrary length. We needed such data
+definitions because the classes of lists that we wanted to process were of
+arbitrary size. Natural numbers are another class of data whose elements
+are of arbitrary size; after all, there is no limit on how large a natural
+number can be, and, at least in principle, a function should be able to
+process them all.</p>
+<p>
+In this section, we study how to describe natural numbers with
+self-referential data definitions and how to develop functions that
+process natural numbers in a systematic fashion. Since such functions
+come in many flavors, we study several different flavors of definitions.</p>
+<p>
+</p>
+<a name="node_sec_11.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_11.1">11.1&nbsp;&nbsp;Defining Natural Numbers</a></h2>
+<p></p>
+<p>
+People normally introduce natural numbers via enumeration: <code class="scheme"><span class="selfeval">0</span></code>,
+<code class="scheme"><span class="selfeval">1</span></code>, <code class="scheme"><span class="selfeval">2</span></code>, etc.<a name="call_footnote_Temp_71"></a><a href="#footnote_Temp_71"><sup><small>34</small></sup></a> The
+abbreviation ``etc.'' at the end says that the series continues in this
+manner. Mathematicians and mathematics teachers often use dots for the same
+purpose. For us, however, neither the ``etc.'' nor the dots is good
+enough, if we wish to design functions on natural numbers
+systematically. So, the question is what it means to write down ``etc.,''
+or put differently, what a complete, self-contained description of the
+natural numbers is.</p>
+<p>
+The only way to remove the informal ``etc.'' from the enumeration is to
+describe the collection of numbers with a self-referential
+description. Here is a first attempt:
+</p>
+<blockquote>
+0 is a natural number. <br>
+If <em>n</em> is a natural number, then one more than <em>n</em> is one, too.
+</blockquote>
+While this description is still not quite rigorous,<a name="call_footnote_Temp_72"></a><a href="#footnote_Temp_72"><sup><small>35</small></sup></a> it is a good starting
+point for a Scheme-style data description:<p>
+<a name="node_idx_954"></a>A <i>natural-number</i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="selfeval">0</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">add1</span> <span class="variable">n</span>)</code> if <code class="scheme"><span class="variable">n</span></code> is a natural number.
+</p>
+</li></ol><p></p>
+<p>
+The operation <code class="scheme"><span class="builtin">add1</span></code> adds <code class="scheme"><span class="selfeval">1</span></code> to a natural
+number. Of course, we could use <code class="scheme">(<span class="builtin">+</span> ... <span class="selfeval">1</span>)</code> but <code class="scheme"><span class="builtin">add1</span></code>
+stands out and signals ``natural number,'' as opposed to arbitrary number,
+to the reader of a data definition and a function. </p>
+<p>
+Although we are familiar with natural numbers from school, it is
+instructive to construct examples from the data definition. Clearly,
+</p>
+<div align="left"><pre class="scheme"><span class="selfeval">0</span>
+</pre></div><p> 
+is the first natural number, so 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">add1</span> <span class="selfeval">0</span>)
+</pre></div><p> 
+is the next one. From here, it is easy to see the pattern: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">add1</span> (<span class="builtin">add1</span> <span class="selfeval">0</span>))
+(<span class="builtin">add1</span> (<span class="builtin">add1</span> (<span class="builtin">add1</span> <span class="selfeval">0</span>)))
+(<span class="builtin">add1</span> (<span class="builtin">add1</span> (<span class="builtin">add1</span> (<span class="builtin">add1</span> <span class="selfeval">0</span>))))
+</pre></div><p> 
+The examples should remind us of the lists construction process. We built
+lists by starting with <code class="scheme"><span class="builtin">empty</span></code> and by <code class="scheme"><span class="builtin">cons</span></code>tructing on more
+items. Now we build natural natural numbers by starting with <code class="scheme"><span class="selfeval">0</span></code> and
+by <code class="scheme"><span class="variable">add</span></code>ing on <code class="scheme"><span class="selfeval">1</span></code>. In addition, natural numbers come with
+century-old abbreviations. For example, <code class="scheme">(<span class="builtin">add1</span> <span class="selfeval">0</span>)</code> is abbreviated as
+<code class="scheme"><span class="selfeval">1</span></code>, <code class="scheme">(<span class="builtin">add1</span> (<span class="builtin">add1</span> <span class="selfeval">0</span>))</code> as <code class="scheme"><span class="selfeval">2</span></code>, and so on. </p>
+<p>
+A function on natural numbers must extract the number that went into the
+construction of a positive natural number just like a function on lists
+must extract the list that went into a <code class="scheme"><span class="builtin">cons</span></code>tructed list. The
+operation that performs this ``extraction'' is called <code class="scheme"><span class="builtin">sub1</span></code>. It
+satisfies the law
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">sub1</span> (<span class="builtin">add1</span> <span class="variable">n</span>)) <span class="builtin">=</span> <span class="variable">n</span> 
+</pre></div><p>
+just as the <code class="scheme"><span class="builtin">rest</span></code> operation satisfies the law 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="variable">a-value</span> <span class="variable">a-list</span>)) <span class="builtin">=</span> <span class="variable">a-list</span>
+</pre></div><p>
+Of course, <code class="scheme">(<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)</code> would also work, but <code class="scheme"><span class="builtin">sub1</span></code> stands out
+and signals that the function processes natural numbers.</p>
+<p>
+</p>
+<a name="node_sec_11.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_11.2">11.2&nbsp;&nbsp;Processing Natural Numbers of Arbitrary Size</a></h2>
+<p></p>
+<p>
+Let us develop the function <code class="scheme"><span class="variable">hellos</span></code>. It consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and produces a list of <code class="scheme"><span class="variable">n</span></code> copies of <code class="scheme"><span class="keyword">'</span><span class="variable">hello</span></code>. We
+can write the contract for this function: 
+<a name="node_idx_956"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">hellos</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">list-of-symbols</span></code></span>
+<span class="comment">;; to create a list of <code class="scheme"><span class="variable">n</span></code> copies of <code class="scheme"><span class="keyword">'</span><span class="variable">hello</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">hellos</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+And we can make up examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">hellos</span> <span class="selfeval">0</span>) 
+<span class="comment">;; expected value: </span>
+<span class="builtin">empty</span>
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">hellos</span> <span class="selfeval">2</span>)
+<span class="comment">;; expected value: </span>
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="builtin">empty</span>))
+</pre></div><p></p>
+<p>
+The design of a template for <code class="scheme"><span class="variable">hellos</span></code> follows the design recipe for
+self-referential data definitions.  We immediately see that <code class="scheme"><span class="variable">hellos</span></code>
+is a conditional function, that its <strong>cond</strong>-expression has two
+clauses, and that the first clause must distinguish <code class="scheme"><span class="selfeval">0</span></code> from other
+possible inputs:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">hellos</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+    [<span class="keyword">else</span> ...]))
+</pre></div><p></p>
+<p>
+Furthermore, the data definition says that <code class="scheme"><span class="selfeval">0</span></code> is an atomic value,
+and every other natural number is a compound value that ``contains'' the
+predecessor to which <code class="scheme"><span class="selfeval">1</span></code> was added. Hence, if <code class="scheme"><span class="variable">n</span></code> is not
+<code class="scheme"><span class="selfeval">0</span></code>, we subtract <code class="scheme"><span class="selfeval">1</span></code> from <code class="scheme"><span class="variable">n</span></code>. The result is also a
+natural number, so according to the design recipe we wrap the expression
+with <code class="scheme">(<span class="variable">hellos</span> ...)</code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">hellos</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)) ... ]))
+</pre></div><p>
+Now we have exploited every hint in the data definition and are ready to
+proceed with the definition. </p>
+<p>
+Assume <code class="scheme">(<span class="builtin">zero?</span> <span class="variable">n</span>)</code> evaluates to true. Then the answer must be
+<code class="scheme"><span class="builtin">empty</span></code>, as the examples illustrate. So assume the input is greater
+than <code class="scheme"><span class="selfeval">0</span></code>. For concreteness, let us say it is <code class="scheme"><span class="selfeval">2</span></code>. According
+to the suggestion in the template, <code class="scheme"><span class="variable">hellos</span></code> should use
+<code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">1</span>)</code> to compute a part of the answer. The purpose statement
+specifies that <code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">1</span>)</code> produces <code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="builtin">empty</span>)</code>, a
+list with one <code class="scheme"><span class="keyword">'</span><span class="variable">hello</span></code>. In general, <code class="scheme">(<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="variable">n</span>))</code>
+produces a list that contains <em>n</em>  <tt>-</tt>  1 occurrences of <code class="scheme"><span class="keyword">'</span><span class="variable">hello</span></code>.
+Clearly, to produce a list with <code class="scheme"><span class="variable">n</span></code> occurrences, we must
+<code class="scheme"><span class="builtin">cons</span></code> another <code class="scheme"><span class="keyword">'</span><span class="variable">hello</span></code> onto this list:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">hellos</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p>
+As usual, the final definition is just the template with a few extras. </p>
+<p>
+Let's test <code class="scheme"><span class="variable">hellos</span></code> with some hand-evaluations:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">hellos</span> <span class="selfeval">0</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="selfeval">0</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">0</span>)))])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [true <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">0</span>)))])
+
+<span class="builtin">=</span> <span class="builtin">empty</span>
+</pre></div><p>
+It confirms that <code class="scheme"><span class="variable">hellos</span></code> works properly for the first example.  </p>
+<p>
+Here is another example: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">hellos</span> <span class="selfeval">1</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="selfeval">1</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">1</span>)))])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [false <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">1</span>)))])
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">1</span>)))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="variable"><u><code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">0</span>)</code></u></span>)
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="builtin">empty</span>)
+</pre></div><p>
+For the last step in the calculation, we can exploit that we already know
+that <code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">0</span>)</code> evaluates to <code class="scheme"><span class="builtin">empty</span></code> and replace the
+(underlined) expression with its result.</p>
+<p>
+The last hand-evaluation shows that the function works for the second
+example:
+</p>
+<p>
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">hellos</span> <span class="selfeval">2</span>)
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="selfeval">2</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">2</span>)))])
+
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [false <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">2</span>)))])
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="variable">hellos</span> (<span class="builtin">sub1</span> <span class="selfeval">2</span>)))
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="variable"><u><code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">1</span>)</code></u></span>)
+
+<span class="builtin">=</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">hello</span> <span class="builtin">empty</span>))
+</pre></div><p>
+We can again exploit what we know about <code class="scheme">(<span class="variable">hellos</span> <span class="selfeval">1</span>)</code>, which greatly
+shortens the hand-evaluation. </p>
+<p>
+</p>
+<p><a name="node_thm_11.2.1"></a>
+<b>Exercise 11.2.1.</b>&nbsp;&nbsp;  
+Generalize <code class="scheme"><span class="variable">hellos</span></code> to <code class="scheme"><span class="variable">repeat</span></code>, which consumes a natural
+number <code class="scheme"><span class="variable">n</span></code> and a symbol and produces a list with <code class="scheme"><span class="variable">n</span></code>
+occurrences of the symbol.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/copy.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.2.2"></a>
+<b>Exercise 11.2.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">tabulate-f</span></code>, which tabulates the values of
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">f</span> <span class="variable">x</span>)
+  (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="variable">x</span> <span class="variable">x</span>)) 
+     (<span class="builtin">+</span> (<span class="builtin">*</span> <span class="selfeval">-6</span> <span class="variable">x</span>)
+        <span class="selfeval">-1</span>)))
+</pre></div><p>
+for some natural numbers. Specifically, it consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and produces a list of <code class="scheme"><span class="variable">n</span></code> <code class="scheme"><span class="variable">posn</span></code>s. The first one
+combines <code class="scheme"><span class="variable">n</span></code> with <code class="scheme">(<span class="variable">f</span> <span class="variable">n</span>)</code>, the second one <code class="scheme"><span class="variable">n-1</span></code> with
+<code class="scheme">(<span class="variable">f</span> <span class="variable">n-1</span>)</code>, etc.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tabulate-f.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.2.3"></a>
+<b>Exercise 11.2.3.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">apply-n</span></code>.  The function consumes a natural number,
+<code class="scheme"><span class="variable">n</span></code>. It applies the function <code class="scheme"><span class="variable">move</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-14.html#node_thm_10.3.6">10.3.6</a> <code class="scheme"><span class="variable">n</span></code> times to <code class="scheme"><span class="variable">FACE</span></code>, the list of
+shapes from exercise&nbsp;<a href="curriculum-Z-H-14.html#node_thm_10.3.1">10.3.1</a>. Each application should
+translate the shape by one pixel. The purpose of the function is to
+simulate a continuously moving shape on a canvas, the last missing piece of
+the extended exercise&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/apply-move.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.2.4"></a>
+<b>Exercise 11.2.4.</b>&nbsp;&nbsp; 
+Lists may contain lists that contain lists and so on. Here is a data
+definition that takes this idea to an extreme:</p>
+<p>
+<a name="node_idx_958"></a>A <i>deep-list</i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">s</span></code> where <code class="scheme"><span class="variable">s</span></code> is some symbol or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">dl</span> <span class="builtin">empty</span>)</code>, where <code class="scheme"><span class="variable">dl</span></code> is a deep list. 
+</p>
+</li></ol><p></p>
+<p>
+Develop the function <code class="scheme"><span class="variable">depth</span></code>, which consumes a deep list and
+determines how many times <code class="scheme"><span class="builtin">cons</span></code> was used to construct it. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">make-deep</span></code>, which consumes a symbol
+<code class="scheme"><span class="variable">s</span></code> and a natural number and produces a deep list containing
+<code class="scheme"><span class="variable">s</span></code> and <code class="scheme"><span class="builtin">cons</span></code>tructed with <code class="scheme"><span class="variable">n</span></code> <code class="scheme"><span class="builtin">cons</span></code>es. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/deep.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_11.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_11.3">11.3&nbsp;&nbsp;Extended Exercise: Creating Lists, Testing Functions</a></h2>
+<p></p>
+<p>
+We often encounter situations where we would like to create lists of data
+that involve numbers. For example, we may wish to create large lists of
+numbers to test a function like <code class="scheme"><span class="variable">extract1</span></code> in
+section&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.2">10.2</a> on large lists instead of hand-coded small
+ones. Sometimes we would like to visualize randomly picked data. We can
+create such functions using recursion on natural numbers and a
+random number generator.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_11.3.1"></a>
+<b>Exercise 11.3.1.</b>&nbsp;&nbsp;  
+Scheme provides the operation <code class="scheme"><span class="builtin">random</span></code>. It consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> greater than 1, and produces a random integer between <code class="scheme"><span class="selfeval">0</span></code>
+and <code class="scheme"><span class="variable">n</span> <span class="builtin">-</span> <span class="selfeval">1</span></code>: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">random</span> <span class="selfeval">:</span>  <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute a natural number between <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="variable">n-1</span></code></span>
+(<span class="keyword">define</span> (<span class="builtin">random</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+Two successive uses of <code class="scheme">(<span class="builtin">random</span> <span class="variable">n</span>)</code> may produce two distinct results. </p>
+<p>
+Now consider the following definition:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">random-n-m</span> <span class="selfeval">:</span> <span class="variable">integer</span> <span class="variable">integer</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">integer</span></code></span>
+<span class="comment">;; <tt>...</tt> </span>
+<span class="comment">;; Assume: <em>n</em> &lt; <em>m</em></span>
+(<span class="keyword">define</span> (<span class="variable">random-n-m</span> <span class="variable">n</span> <span class="variable">m</span>)
+  (<span class="builtin">+</span> (<span class="builtin">random</span> (<span class="builtin">-</span> <span class="variable">m</span> <span class="variable">n</span>)) <span class="variable">n</span>))
+</pre></div><p>
+Formulate a succinct and precise purpose statement for <code class="scheme"><span class="variable">random-n-m</span></code>.
+Use a number line with an interval to explain the result of <code class="scheme">(<span class="builtin">random</span>
+<span class="variable">n</span>)</code>.  Use a symbolic evaluation to support your
+explanation.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/random.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.3.2"></a>
+<b>Exercise 11.3.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">tie-dyed</span></code>. It consumes a natural number and
+produces a list of that many numbers, each randomly chosen in the range
+from <code class="scheme"><span class="selfeval">20</span></code> and <code class="scheme"><span class="selfeval">120</span></code>. Use <code class="scheme"><span class="variable">tie-dyed</span></code> to apply
+<code class="scheme"><span class="variable">draw-circles</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.5.8">9.5.8</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/random3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.3.3"></a>
+<b>Exercise 11.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">create-temps</span></code>.  It consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and two integers, called <code class="scheme"><span class="variable">low</span></code> and <code class="scheme"><span class="variable">high</span></code>. It
+produces a list of <code class="scheme"><span class="variable">n</span></code> integers that are between <code class="scheme"><span class="variable">low</span></code> and
+<code class="scheme"><span class="variable">high</span></code>.</p>
+<p>
+Use <code class="scheme"><span class="variable">create-temps</span></code> to test <code class="scheme"><span class="variable">check-range</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.5.4">9.5.4</a>. </p>
+<p>
+Finally, discuss the following questions. Can we simply feed the result of
+<code class="scheme"><span class="variable">create-temps</span></code> into <code class="scheme"><span class="variable">check-range</span></code> or do we need to know the
+list that <code class="scheme"><span class="variable">create-temps</span></code> produced? Are there values for <code class="scheme"><span class="variable">low</span></code>
+and <code class="scheme"><span class="variable">high</span></code> such that we don't need to know the result of
+<code class="scheme"><span class="variable">create-temps</span></code> and yet we can predict the result of the test? Which
+function tests which? What does this tell us about testing with
+automatically generated test data?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/random2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.3.4"></a>
+<b>Exercise 11.3.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">create-prices</span></code>, which consumes a natural
+number and produces a list with a corresponding number of prices between
+$.10 and $10.00 with increments of a dime. Use <code class="scheme"><span class="variable">create-prices</span></code> to
+test <code class="scheme"><span class="variable">dollar-store?</span></code> from exercise&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.5.3">9.5.3</a>.</p>
+<p>
+<strong>Hint:</strong> How many dimes are there between $.10 and $10.00?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/random4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.3.5"></a>
+<b>Exercise 11.3.5.</b>&nbsp;&nbsp; 
+Develop a program that visualizes a student riot.  In preparation of a
+student riot, a small group of students meets to make paint-filled
+balloons. The typical riot uses <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> only. Then, on the evening of
+the riot, the students enter a university's progressive theater with the
+balloons and throw them all over the seats. </p>
+<p>
+The program's only input should be a natural number, which represents the
+number of balloons thrown. The visualization should use a canvas that
+contains a black grid and the positions of the balls: </p>
+<p>
+
+</p>
+
+ <center><img src="../icons/riot.gif"></center>
+ <p>
+Assume a random distribution of the balls over the theater's
+seats. Each box in the grid represents a seat. Configure the program so
+the change of one variable definition changes the number of columns in the
+grid and a change to another changes the number of rows.</p>
+<p>
+<strong>Hint:</strong> Develop auxiliary functions that draw some given number of lines in the
+vertical and the horizontal direction.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/random1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_11.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_11.4">11.4&nbsp;&nbsp;Alternative Data Definitions for Natural Numbers</a></h2>
+<p> 
+</p>
+<p>
+Using the above, standard data definition for natural numbers makes it
+easy to develop all kinds of functions on numbers. Consider, for example,
+a function that multiplies the first <code class="scheme"><span class="variable">n</span></code> numbers. Put differently,
+it consumes a natural number <code class="scheme"><span class="variable">n</span></code> and multiplies all numbers
+between <code class="scheme"><span class="selfeval">0</span></code> (exclusive) and <code class="scheme"><span class="variable">n</span></code> (inclusive). The function
+is called factorial and has the mathematical notation <code class="scheme"><span class="variable">!</span></code>. Its
+contract is easy to formulate:
+<a name="node_idx_960"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  2  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+It consumes a natural number and produces one.</p>
+<p>
+Specifying its input-output relationship is a bit more tricky. We
+know, of course, what the product of <code class="scheme"><span class="selfeval">1</span></code>, <code class="scheme"><span class="selfeval">2</span></code>, and
+<code class="scheme"><span class="selfeval">3</span></code> is, so we should have
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">!</span> <span class="selfeval">3</span>)
+   <span class="selfeval">6</span>)
+<span class="comment">and, similarly, </span>
+(<span class="builtin">=</span> (<span class="variable">!</span> <span class="selfeval">10</span>)
+   <span class="selfeval">3628800</span>)
+</pre></div><p>
+The real question is what to do with the input <code class="scheme"><span class="selfeval">0</span></code>. According to the
+informal description of the task, <code class="scheme"><span class="variable">!</span></code> is supposed to produce the
+product of all numbers between <code class="scheme"><span class="selfeval">0</span></code> (exclusive) and <code class="scheme"><span class="variable">n</span></code>
+(inclusive), the argument. Since <code class="scheme"><span class="variable">n</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, this request is
+rather strange because there are no numbers between <code class="scheme"><span class="selfeval">0</span></code> (exclusive)
+and <code class="scheme"><span class="selfeval">0</span></code> (inclusive). We solve the problem by following mathematical
+convention and set that <code class="scheme">(<span class="variable">!</span> <span class="selfeval">0</span>)</code> evaluates to <code class="scheme"><span class="selfeval">1</span></code>.</p>
+<p>
+From here, the rest is straightforward. The template for <code class="scheme"><span class="variable">!</span></code>
+is clearly that of a natural number processing function: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">!</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)) ...]))
+</pre></div><p>
+The answer in the first <code class="scheme"><span class="keyword">cond</span></code>-clause is given: <code class="scheme"><span class="selfeval">1</span></code>. In the
+second clause, the recursion produces the product of the first <code class="scheme"><span class="variable">n</span> <span class="builtin">-</span>
+<span class="selfeval">1</span></code> numbers. To get the product of the first <code class="scheme"><span class="variable">n</span></code> numbers, we just
+need to multiply the (value of the) recursion by
+<code class="scheme"><span class="variable">n</span></code>. Figure&nbsp;<a href="#node_fig_Temp_73">31</a> contains the complete definition of
+<code class="scheme"><span class="variable">!</span></code>.</p>
+<p>
+</p>
+<p><a name="node_thm_11.4.1"></a>
+<b>Exercise 11.4.1.</b>&nbsp;&nbsp; 
+Determine the value of <code class="scheme">(<span class="variable">!</span> <span class="selfeval">2</span>)</code> by hand and with DrScheme. 
+Also test <code class="scheme"><span class="variable">!</span></code> with <code class="scheme"><span class="selfeval">10</span></code>, <code class="scheme"><span class="selfeval">100</span></code>, and <code class="scheme"><span class="selfeval">1000</span></code>.</p>
+<p>
+</p>
+<p></p>
+<p><strong>Note</strong>:  The results of these expressions are large numbers, well
+beyond the native capacities of many other 
+<a name="node_idx_962"></a>programming languages.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/test-fact.html">Solution</a></p>
+<p></p>
+<p>
+Now suppose we wish to design the function <code class="scheme"><span class="variable">product-from-20</span></code>, which computes the
+product from <code class="scheme"><span class="selfeval">20</span></code> (exclusive) to some number <code class="scheme"><span class="variable">n</span></code> (inclusive)
+that is greater or equal to <code class="scheme"><span class="selfeval">20</span></code>.  We have several choices
+here. First, we could define a function that computes <code class="scheme">(<span class="variable">!</span> <span class="variable">n</span>)</code> and
+<code class="scheme">(<span class="variable">!</span> <span class="selfeval">20</span>)</code> and divides the former by the latter. A simple mathematical
+argument shows that this approach indeed yields the product of all numbers
+between <code class="scheme"><span class="selfeval">20</span></code> (exclusive) and <code class="scheme"><span class="variable">n</span></code> (inclusive):
+</p>
+<div align="center"><img src="curriculum1ba-Z-G-1.gif" border="0" alt="[curriculum1ba-Z-G-1.gif]"></div><p></p>
+<p>
+</p>
+<p><a name="node_thm_11.4.2"></a>
+<b>Exercise 11.4.2.</b>&nbsp;&nbsp; 
+Use the idea to define <code class="scheme"><span class="variable">product</span></code>, a function that consumes two natural
+numbers, <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code>, with <code class="scheme"><span class="variable">m</span> <span class="builtin">&gt;</span> <span class="variable">n</span></code>, and that produces
+the product of the numbers between <code class="scheme"><span class="variable">n</span></code> (exclusive) and <code class="scheme"><span class="variable">m</span></code>
+(inclusive). &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pi1.html">Solution</a></p>
+<p></p>
+<p>
+Second, we can follow our design recipe, starting with a precise
+characterization of the function's input.  Obviously, the inputs belong to
+the natural numbers, but we know more than that. It belongs to the following
+collection of numbers: <code class="scheme"><span class="selfeval">20</span></code>, <code class="scheme"><span class="selfeval">21</span></code>, <code class="scheme"><span class="selfeval">22</span></code>, <tt>...</tt>. By now
+we know how to describe such a set precisely with a data definition: </p>
+<p>
+A <i>natural number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code></i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="selfeval">20</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">add1</span> <span class="variable">n</span>)</code> if <code class="scheme"><span class="variable">n</span></code> is a natural number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code>.
+</p>
+</li></ol><p></p>
+<p>
+Notation: In contracts, we use <code class="scheme"><strong>N</strong> [<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code>
+instead of ``natural numbers <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code>.''</p>
+<p>
+Using the new data definition, we can formulate a contract for
+<code class="scheme"><span class="variable">product-from-20</span></code>: 
+<a name="node_idx_964"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product-from-20:</span> <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="selfeval">20</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  21  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">product-from-20</span> <span class="variable">n-above-20</span>) ...)
+</pre></div><p>
+Here is a first example for <code class="scheme"><span class="variable">product-from-20</span></code>'s input-output specification: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">product-from-20</span> <span class="selfeval">21</span>)
+   <span class="selfeval">21</span>)
+</pre></div><p>
+Since the function multiplies all numbers between <code class="scheme"><span class="selfeval">20</span></code> (exclusively)
+and its input, <code class="scheme">(<span class="variable">product-from-20</span> <span class="selfeval">21</span>)</code> must produce <code class="scheme"><span class="selfeval">21</span></code>,
+which is the only number in the interval. Similarly, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">product-from-20</span> <span class="selfeval">22</span>)
+   <span class="selfeval">462</span>)
+</pre></div><p>
+for the same reason. Finally, we again follow mathematical convention and
+agree that 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">product-from-20</span> <span class="selfeval">20</span>)
+   <span class="selfeval">1</span>)
+</pre></div><p></p>
+<p>
+The template for <code class="scheme"><span class="variable">product-from-20</span></code> is a straightforward adaptation of the
+template for <code class="scheme"><span class="variable">!</span></code>, or any natural number-processing function: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">product-from-20</span> <span class="variable">n-above-20</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n-above-20</span> <span class="selfeval">20</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">product-from-20</span> (<span class="builtin">sub1</span> <span class="variable">n-above-20</span>)) ...]))
+</pre></div><p>
+The input <code class="scheme"><span class="variable">n-above-20</span></code> is either <code class="scheme"><span class="selfeval">20</span></code> or larger. If it is
+<code class="scheme"><span class="selfeval">20</span></code>, it does not have any components according to the data
+definition. Otherwise, it is the result of adding <code class="scheme"><span class="selfeval">1</span></code> to a
+natural number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code>, and we can recover this ``component'' by
+subtracting <code class="scheme"><span class="selfeval">1</span></code>. The value of this selector expression belongs to 
+the same class of data as the input and is thus a candidate for natural
+recursion. </p>
+<p>
+Completing the template is equally straightforward. As specified, the
+result of <code class="scheme">(<span class="variable">product-from-20</span> <span class="selfeval">20</span>)</code> is <code class="scheme"><span class="selfeval">1</span></code>, which determines the
+answer for the first <code class="scheme"><span class="keyword">cond</span></code>-clause. Otherwise,
+<code class="scheme">(<span class="variable">product-from-20</span> (<span class="builtin">sub1</span> <span class="variable">n-above-20</span>))</code> already produces the product
+of all the numbers between <code class="scheme"><span class="selfeval">20</span></code> (exclusive) and <code class="scheme"><span class="variable">n-above-20</span> <span class="builtin">-</span>
+<span class="selfeval">1</span></code>. The only number not included in this range is
+<code class="scheme"><span class="variable">n-above-20</span></code>. Hence <code class="scheme">(<span class="builtin">*</span> <span class="variable">n-above-20</span> (<span class="variable">product-from-20</span> (<span class="builtin">sub1</span>
+<span class="variable">n-above-20</span>)))</code> is the correct answer in the second
+clause. Figure&nbsp;<a href="#node_fig_Temp_73">31</a> contains the complete definition of
+<code class="scheme"><span class="variable">product-from-20</span></code>.</p>
+<p>
+</p>
+<p><a name="node_thm_11.4.3"></a>
+<b>Exercise 11.4.3.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">product-from-minus-11</span></code>.  The function consumes an integer
+<code class="scheme"><span class="variable">n</span></code> greater or equal to <code class="scheme"><span class="selfeval">-11</span></code> and produces the product of all
+the integers between <code class="scheme"><span class="selfeval">-11</span></code> (exclusive) and <code class="scheme"><span class="variable">n</span></code>
+(inclusive). &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pi-11.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.4.4"></a>
+<b>Exercise 11.4.4.</b>&nbsp;&nbsp; 
+In exercise&nbsp;<a href="#node_thm_11.2.2">11.2.2</a>, we developed a function that
+tabulates some mathematical function <code class="scheme"><span class="variable">f</span></code> for an interval 
+of the shape (0,<em>n</em>]. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">tabulate-f20</span></code>, which tabulates the values of
+<code class="scheme"><span class="variable">f</span></code> for natural numbers greater than <code class="scheme"><span class="selfeval">20</span></code>. Specifically,
+the function consumes a natural number <code class="scheme"><span class="variable">n</span></code> greater or equal to
+<code class="scheme"><span class="selfeval">20</span></code> and produces a list of <code class="scheme"><span class="variable">posn</span></code>s, each of which has the
+shape <code class="scheme">(<span class="builtin">make-posn</span> <span class="variable">n</span> (<span class="variable">f</span> <span class="variable">n</span>))</code> for some <code class="scheme"><span class="variable">n</span></code> between
+<code class="scheme"><span class="selfeval">20</span></code> (exclusive) and <code class="scheme"><span class="variable">n</span></code> (inclusive). &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tabulate-f20.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_73"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_966"></a>
+<a name="node_idx_968"></a><a name="node_idx_970"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  2  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n</span> (<span class="variable">!</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">product-from-20:</span> <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="selfeval">20</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  21  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">product-from-20</span> <span class="variable">n-above-20</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n-above-20</span> <span class="selfeval">20</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n-above-20</span> (<span class="variable">product-from-20</span> (<span class="builtin">sub1</span> <span class="variable">n-above-20</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">product:</span> <strong>N</strong>[<span class="variable">limit</span>] <strong>N</strong>[<span class="builtin">&gt;=</span> <span class="variable">limit</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  (<i>limit</i> + 1)  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">limit</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="variable">limit</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n</span> (<span class="variable">product</span> <span class="variable">limit</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 31:</b>&nbsp;&nbsp;Computing factorial, product-from-20, and product</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+A comparison of <code class="scheme"><span class="variable">!</span></code> and <code class="scheme"><span class="variable">product-from-20</span></code> suggests the
+natural question of how to design a function that multiplies <em>all</em>
+natural numbers in some range.  Roughly speaking, <code class="scheme"><span class="variable">product</span></code> is like
+<code class="scheme"><span class="variable">product-from-20</span></code> except that the limit is not a part of the function
+definition. Instead, it is another input, which suggests the following
+contract:
+<a name="node_idx_972"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product:</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;;  to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  (<i>limit</i> + 1)  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">limit</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+The intention is that <code class="scheme"><span class="variable">product</span></code>, like <code class="scheme"><span class="variable">product-from-20</span></code>, computes the
+product from <code class="scheme"><span class="variable">limit</span></code> (exclusive) to some number <code class="scheme"><span class="variable">n</span></code>
+(inclusive) that is greater or equal to <code class="scheme"><span class="variable">limit</span></code>. </p>
+<p>
+Unfortunately, <code class="scheme"><span class="variable">product</span></code>'s contract, in contrast with
+<code class="scheme"><span class="variable">product-from-20</span></code>'s, is rather imprecise. In particular, it does not
+describe the collection of numbers that <code class="scheme"><span class="variable">product</span></code> consumes as the
+second input. Given its first input, <code class="scheme"><span class="variable">limit</span></code>, we know that the
+second input belongs to <code class="scheme"><span class="variable">limit</span></code>, <code class="scheme">(<span class="builtin">add1</span> <span class="variable">limit</span>)</code>,
+<code class="scheme">(<span class="builtin">add1</span> (<span class="builtin">add1</span> <span class="variable">limit</span>))</code>, etc. While it is easy to enumerate
+the possible second inputs, it also shows that the description of the
+collection <em>depends on the first input</em> -- an unusal situation that we
+have not encountered before.</p>
+<p>
+Still, if we assume limit is some number, the data description for the
+second input is nearly obvious: </p>
+<p>
+Let <code class="scheme"><span class="variable">limit</span></code> be a natural number. A <i>natural
+number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="variable">limit</span>]</code></i> (<code class="scheme"><strong>N</strong>[<span class="variable">&gt;=limit</span>]</code>) is either  
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">limit</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">add1</span> <span class="variable">n</span>)</code> if <code class="scheme"><span class="variable">n</span></code> is a natural number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="variable">limit</span>]</code>.
+</p>
+</li></ol><p> 
+In other words, the data definition is like that for natural numbers
+<code class="scheme">[<span class="builtin">&gt;=</span> <span class="variable">limit</span>]</code> with <code class="scheme"><span class="selfeval">20</span></code> replaced by a variable
+<code class="scheme"><span class="variable">limit</span></code>. Of course, in high school, we refer to 
+<code class="scheme"><strong>N</strong>[<span class="variable">&gt;=0</span>]</code> as <em>the</em> natural numbers, and 
+<code class="scheme"><strong>N</strong>[<span class="variable">&gt;=1</span>]</code> as <em>the</em> positive integers. </p>
+<p>
+With this new data definition, we specify the contract for <code class="scheme"><span class="variable">product</span></code> 
+as follows: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product:</span> <strong>N</strong>[<span class="variable">limit</span>] <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="variable">limit</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;;  to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  (<i>limit</i> + 1)  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">limit</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+That is, we name the first input, a natural number, with the notation
+<code class="scheme">[<span class="variable">limit</span>]</code> and specify the second input using the name for the
+first one. </p>
+<p>
+The rest of the program development is straightforward. It is basically
+the same as that for <code class="scheme"><span class="variable">product-from-20</span></code> with <code class="scheme"><span class="selfeval">20</span></code> replaced by
+<code class="scheme"><span class="variable">limit</span></code> throughout. The only modification concerns the natural
+recusion in the function template. Since the function consumes a
+<code class="scheme"><span class="variable">limit</span></code> and a <code class="scheme"><strong>N</strong> [<span class="builtin">&gt;=</span> <span class="variable">limit</span>]</code>, the template
+must contain an application of <code class="scheme"><span class="variable">product</span></code> to <code class="scheme"><span class="variable">limit</span></code> and
+<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">n</span>)</code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">limit</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="variable">limit</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">product</span> <span class="variable">limit</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)) ...]))
+</pre></div><p>
+Otherwise things remain the same. The full function definition is
+contained in figure&nbsp;<a href="#node_fig_Temp_73">31</a>.</p>
+<p>
+</p>
+<p><a name="node_thm_11.4.5"></a>
+<b>Exercise 11.4.5.</b>&nbsp;&nbsp; 
+In exercises&nbsp;<a href="#node_thm_11.2.2">11.2.2</a> and <a href="#node_thm_11.4.4">11.4.4</a>, we developed
+functions that tabulate <code class="scheme"><span class="variable">f</span></code> from some natural number or natural
+number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">20</span>]</code> down to <code class="scheme"><span class="selfeval">0</span></code> or <code class="scheme"><span class="selfeval">20</span></code> (exclusive),
+respectively. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">tabulate-f-lim</span></code>, which tabulates the values of
+<code class="scheme"><span class="variable">f</span></code> in an analogous manner from some natural number <code class="scheme"><span class="variable">n</span></code>
+down to some other natural number <code class="scheme"><span class="variable">limit</span></code>. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tabulate-f-limit.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.4.6"></a>
+<b>Exercise 11.4.6.</b>&nbsp;&nbsp; 
+In exercises&nbsp;<a href="#node_thm_11.2.2">11.2.2</a>, <a href="#node_thm_11.4.4">11.4.4</a>,
+and&nbsp;<a href="#node_thm_11.4.5">11.4.5</a>, we developed
+functions that tabulate the mathematical function <code class="scheme"><span class="variable">f</span></code> in various
+ranges. In both cases, the final function produced a list of <code class="scheme"><span class="variable">posn</span></code>s
+that was ordered in <em>descending</em> order. That is, an expression like
+<code class="scheme">(<span class="variable">tabulate-f</span> <span class="selfeval">3</span>)</code> yields the list
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">2.4</span>)
+  (<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">2</span> <span class="selfeval">3.4</span>)
+    (<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">3.6</span>)
+      (<span class="builtin">cons</span> (<span class="builtin">make-posn</span> <span class="selfeval">0</span> <span class="selfeval">3.0</span>)
+        <span class="builtin">empty</span>))))
+</pre></div><p></p>
+<p>
+If we prefer a list of <code class="scheme"><span class="variable">posn</span></code>s in <em>ascending</em> order, we
+must look at a  different data collection, natural numbers up to a
+certain point in the chain: </p>
+<p>
+A <i>natural number <code class="scheme">[<span class="builtin">&lt;=</span> <span class="selfeval">20</span>]</code></i> (<code class="scheme"><strong>N</strong>[<span class="variable">&lt;=20</span>]</code>)
+is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="selfeval">20</span></code> or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">sub1</span> <span class="variable">n</span>)</code> if <code class="scheme"><span class="variable">n</span></code> is a natural number <code class="scheme">[<span class="builtin">&lt;=</span> <span class="selfeval">20</span>]</code>.  
+</p>
+</li></ol><p></p>
+<p>
+Of course, in high school, we refer to <code class="scheme"><strong>N</strong>[<span class="variable">&lt;=-1</span>]</code> 
+as <em>the</em> negative integers.</p>
+<p>
+Develop the function 
+<a name="node_idx_974"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">tabulate-f-up-to-20</span> <span class="selfeval">:</span> <strong>N</strong> [<span class="builtin">&lt;=</span> <span class="selfeval">20</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+(<span class="keyword">define</span> (<span class="variable">tabulate-f-up-to-20</span> <span class="variable">n-below-20</span>) ...)
+</pre></div><p>
+which tabulates the values of <code class="scheme"><span class="variable">f</span></code> for natural numbers less than
+<code class="scheme"><span class="selfeval">20</span></code>. Specifically, it consumes a natural number <code class="scheme"><span class="variable">n</span></code> less
+than or equal to <code class="scheme"><span class="selfeval">20</span></code> and produces a list of <code class="scheme"><span class="variable">posn</span></code>s, each of
+which has the shape <code class="scheme">(<span class="builtin">make-posn</span> <span class="variable">n</span> (<span class="variable">f</span> <span class="variable">n</span>))</code> for some <code class="scheme"><span class="variable">n</span></code>
+between <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="variable">n</span></code>
+(inclusively). &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tabulate-f-up-to-20.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.4.7"></a>
+<b>Exercise 11.4.7.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">is-not-divisible-by&lt;=i</span></code>. It consumes a
+natural number <code class="scheme">[<span class="builtin">&gt;=</span> <span class="selfeval">1</span>]</code>, <code class="scheme"><span class="variable">i</span></code>, and a natural number
+<code class="scheme"><span class="variable">m</span></code>, with <code class="scheme"><span class="variable">i</span> <span class="builtin">&lt;</span> <span class="variable">m</span></code>. If <code class="scheme"><span class="variable">m</span></code> is not divisible by any
+number between <code class="scheme"><span class="selfeval">1</span></code> (exclusive) and <code class="scheme"><span class="variable">i</span></code> (inclusive), the
+function produces <code class="scheme">true</code>; otherwise, its output is <code class="scheme">false</code>.</p>
+<p>
+Use <code class="scheme"><span class="variable">is-not-divisible-by&lt;=i</span></code> to define <code class="scheme"><span class="variable">prime?</span></code>, which
+consumes a natural number and determines whether or not it is prime. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/prime.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_11.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_11.5">11.5&nbsp;&nbsp;More on the Nature of Natural Numbers</a></h2>
+<p> 
+</p>
+<p>
+The natural numbers are a small subset of Scheme's numbers, not all of
+them. Hence the function template above <em>cannot</em> be used for
+processing arbitrary numbers, in particular, inexact numbers. Still, the template is
+a good starting point for functions whose definitions involve both natural
+numbers and other Scheme numbers. To illustrate this point, let us design
+the function <code class="scheme"><span class="variable">add-to-pi</span></code>, which consumes a natural number <code class="scheme"><span class="variable">n</span></code>
+and produces <code class="scheme"><span class="variable">n</span> <span class="builtin">+</span> <span class="selfeval">3.14</span></code> without using <code class="scheme"><span class="builtin">+</span></code>.</p>
+<p>
+Following the design recipe, we start with 
+<a name="node_idx_976"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-to-pi</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute <em>n</em> + 3.14 without using <code class="scheme"><span class="builtin">+</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-pi</span> <span class="variable">n</span>) ...)
+</pre></div><p>
+Another easy step is to determine the output for a few sample inputs: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">add-to-pi</span> <span class="selfeval">0</span>) <span class="selfeval">3.14</span>)
+(<span class="builtin">=</span> (<span class="variable">add-to-pi</span> <span class="selfeval">2</span>) <span class="selfeval">5.14</span>)
+(<span class="builtin">=</span> (<span class="variable">add-to-pi</span> <span class="selfeval">6</span>) <span class="selfeval">9.14</span>)
+</pre></div><p></p>
+<p>
+The difference between <code class="scheme"><span class="variable">hellos</span></code>'s contract (see exercise&nbsp;<a href="#node_thm_11.2.1">11.2.1</a>)
+and that of <code class="scheme"><span class="variable">add-to-pi</span></code> is the output, but as we have seen this
+does not affect the template design.  We obtain the template for
+<code class="scheme"><span class="variable">add-to-pi</span></code> by renaming <code class="scheme"><span class="variable">hellos</span></code> appropriately:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">add-to-pi</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">add-to-pi</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)) ... ])))
+</pre></div><p>
+In combination with the examples, the template immediately suggests how to
+complete the function. If the input is <code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="variable">add-to-pi</span></code>'s
+answer is <code class="scheme"><span class="selfeval">3.14</span></code>. Otherwise, <code class="scheme">(<span class="variable">add-to-pi</span> (<span class="builtin">sub1</span> <span class="variable">n</span>))</code>
+produces <code class="scheme">(<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>) <span class="builtin">+</span> <span class="selfeval">3.14</span></code>; since the correct answer is <code class="scheme"><span class="selfeval">1</span></code>
+more than this value, the answer expression in the second
+<code class="scheme"><span class="keyword">cond</span></code>-line is <code class="scheme">(<span class="builtin">add1</span> (<span class="variable">add-to-pi</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))</code>. Figure&nbsp;<a href="#node_fig_Temp_74">32</a> contains the complete function definition.</p>
+<p>
+</p>
+<p><a name="node_thm_11.5.1"></a>
+<b>Exercise 11.5.1.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">add</span></code>, which consumes two natural numbers, <code class="scheme"><span class="variable">n</span></code> and
+<code class="scheme"><span class="variable">x</span></code>, and produces <code class="scheme"><span class="variable">n</span> <span class="builtin">+</span> <span class="variable">x</span></code> without using Scheme's
+<code class="scheme"><span class="builtin">+</span></code>. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/add.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.5.2"></a>
+<b>Exercise 11.5.2.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">multiply-by-pi</span></code>, which consumes a natural
+number and multiplies it by <code class="scheme"><span class="selfeval">3.14</span></code> without using <code class="scheme"><span class="builtin">*</span></code>. For
+example, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">multiply-by-pi</span> <span class="selfeval">0</span>) <span class="selfeval">0</span>)
+(<span class="builtin">=</span> (<span class="variable">multiply-by-pi</span> <span class="selfeval">2</span>) <span class="selfeval">6.28</span>)
+(<span class="builtin">=</span> (<span class="variable">multiply-by-pi</span> <span class="selfeval">3</span>) <span class="selfeval">9.42</span>)
+</pre></div><p></p>
+<p>
+Define <code class="scheme"><span class="variable">multiply</span></code>, which consumes two natural numbers, <code class="scheme"><span class="variable">n</span></code>
+and <code class="scheme"><span class="variable">x</span></code>, and produces <code class="scheme"><span class="variable">n</span> <span class="builtin">*</span> <span class="variable">x</span></code> without using Scheme's
+<code class="scheme"><span class="builtin">*</span></code>. Eliminate <code class="scheme"><span class="builtin">+</span></code> from this definition, too.</p>
+<p>
+<strong>Hint:</strong>  Recall that multiplying <code class="scheme"><span class="variable">x</span></code> by <code class="scheme"><span class="variable">n</span></code> means adding
+<code class="scheme"><span class="variable">x</span></code> to itself <code class="scheme"><span class="variable">n</span></code> times.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mult.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.5.3"></a>
+<b>Exercise 11.5.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">exponent</span></code>, which consumes a natural number
+<code class="scheme"><span class="variable">n</span></code> and a number <code class="scheme"><span class="variable">x</span></code> and computes </p>
+<div align="center"><img src="curriculum1ba-Z-G-2.gif" border="0" alt="[curriculum1ba-Z-G-2.gif]"></div><p> Eliminate
+<code class="scheme"><span class="builtin">*</span></code> from this definition, too.</p>
+<p>
+<strong>Hint:</strong>  Recall that exponentiating <code class="scheme"><span class="variable">x</span></code> by <code class="scheme"><span class="variable">n</span></code> means multiplying
+<code class="scheme"><span class="variable">x</span></code> with itself <code class="scheme"><span class="variable">n</span></code> times.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/expt.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_11.5.4"></a>
+<b>Exercise 11.5.4.</b>&nbsp;&nbsp; 
+Deep lists (see exercise&nbsp;<a href="#node_thm_11.2.4">11.2.4</a>) are another representation for
+natural numbers.  Show how to represent <code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="selfeval">3</span></code>, and
+<code class="scheme"><span class="selfeval">8</span></code>.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">addDL</span></code>, which consumes two deep lists,
+representing the natural numbers <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">m</span></code>, and produces a
+deep list representing <code class="scheme"><span class="variable">n</span> <span class="builtin">+</span> <span class="variable">m</span></code>. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/natnum-list.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_74"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-to-pi</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute <em>n</em> + 3.14 without using <code class="scheme"><span class="builtin">+</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-to-pi</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="selfeval">3.14</span>]
+    [<span class="keyword">else</span> (<span class="builtin">add1</span> (<span class="variable">add-to-pi</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 32:</b>&nbsp;&nbsp;Adding a natural number to pi</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_71"></a><a href="#call_footnote_Temp_71"><sup><small>34</small></sup></a> It is important to start
+counting at 0 so that we can use the natural numbers for counting the
+number of items on a list or the members of a family tree.</p>
+<p><a name="footnote_Temp_72"></a><a href="#call_footnote_Temp_72"><sup><small>35</small></sup></a> For that, we
+need to defer to a course on mathematical sets.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-14.html">previous</a></span><span>, <a href="curriculum-Z-H-16.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-15.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

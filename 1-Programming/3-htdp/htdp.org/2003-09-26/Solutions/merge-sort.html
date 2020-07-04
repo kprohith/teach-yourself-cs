@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/merge-sort.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 26.1.2; How to Design Programs </title>
+</head>
+<body>
+<a href="prime-tab.html">26.1.1</a> | <a href="../Book/curriculum-Z-H-33.html#node_thm_26.1.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; merge-sort : Listof[Number] -&gt; Listof[Number]
+;; sort the given list in ascending order
+;; generative recursion: according to the merge sort idea
+(define (merge-sort l)
+   (local (;; Listof[Number] -&gt; Listof[Listof[Number]]
+           ;; create a list of singletons from the given list
+           (define (make-singles l) (map list l))
+
+           ;; Listof[Listof[Number]] -&gt; Listof[Number]
+           ;; gen rec:
+           ;; merge-all-neighbors until there is only one list in the list,
+           ;; produce this last list as the result
+           (define (until l)
+             (cond
+               [(empty? (rest l)) (first l)]
+               [else (until (merge-all-neighbors l))]))
+
+           ;; Listof[Listof[Number]] -&gt; Listof[Listof[Number]]
+           ;; merge all pairs of neighbors, watch for odd-length lists
+           (define (merge-all-neighbors l)
+             (cond
+               [(empty? l) empty]
+               [(empty? (rest l)) l]
+               [else (cons (merge (first l) (second l)) 
+                           (merge-all-neighbors (rest (rest l))))])))
+     (cond
+       [(empty? l) empty]
+       [else (until (make-singles l))])))
+
+;; Listof[Number] Listof[Number] -&gt; Listof[Number]
+;; merege two sorted lists into a single sorted list [section 17]
+(define (merge l1 l2)
+  (cond
+    [(and (empty? l1) (empty? l2)) empty]
+    [(and (cons? l1) (empty? l2)) l1]
+    [(and (empty? l1) (cons? l2)) l2]
+    [else (cond
+            [(&gt; (first l1) (first l2))
+             (cons (first l2) (merge l1 (rest l2)))]
+            [(&lt; (first l1) (first l2))
+             (cons (first l1) (merge (rest l1) l2))]
+            [(= (first l1) (first l2))
+             (cons (first l1)
+                   (cons (first l2) (merge (rest l1) (rest l2))))])]))
+
+(equal? (merge empty empty) empty)
+(equal? (merge (list 1) empty) (list 1))
+(equal? (merge empty (list 1)) (list 1))
+(equal? (merge (list 1) (list 1)) (list 1 1))
+(equal? (merge (list 1) (list 2)) (list 1 2))
+(equal? (merge (list 2) (list 1)) (list 1 2))
+
+(equal? (merge-sort (list)) (list))
+(equal? (merge-sort (list 2 5 9 3)) (list 2 3 5 9))
+(equal? (merge-sort (list 2 5 9 2 3)) (list 2 2 3 5 9))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/merge-sort.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

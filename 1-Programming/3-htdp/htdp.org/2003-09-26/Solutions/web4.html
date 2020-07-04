@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.3.4; How to Design Programs </title>
+</head>
+<body>
+<a href="web3.html">14.3.3</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.3.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="scheme-dd.html">14.4.1</a><pre>;; Language: Intermediate Student
+
+;; depth: web-page -&gt; number
+;; computes the depth of embedded web-pages
+(define (depth a-wp)
+  (cond
+   [(empty? a-wp) 0]
+   [(symbol? (first a-wp))
+    (depth (rest a-wp))]
+   [else
+    (max (+ (depth (first a-wp)) 1)
+         (depth (rest a-wp)))]))
+
+;;; tests
+(check-expect (depth '()) 0)
+(check-expect (depth '(a)) 0)
+(check-expect (depth '(())) 1)
+(check-expect (depth '(a b c)) 0)
+(check-expect (depth '(a (b (c (d))) e (f (g)) h))
+              3)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

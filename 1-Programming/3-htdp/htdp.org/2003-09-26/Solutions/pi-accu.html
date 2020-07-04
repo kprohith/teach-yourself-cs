@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/pi-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 31.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-39.html#node_thm_31.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="length-accu.html">31.3.4</a><pre>;; product : (listof numbers) -&gt; number
+;; to compute the product of the numbers
+(define (product lon)
+  (local [;; product/acc : (listof numbers) number -&gt; number
+          ;; accumulator invariant: acc is the product of the numbers seen so far
+          (define (product/acc lon acc)
+            (cond
+              [(empty? lon) acc]
+              [else 
+               (product/acc (rest lon)
+                            (* (first lon) acc))]))]
+  (product/acc lon 1)))
+
+
+;; examples as tests
+(= (product empty) 1)
+(= (product (list 1 2 3 4)) 24)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/pi-accu.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

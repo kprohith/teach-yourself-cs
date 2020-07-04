@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/vehicles.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="animals.html">7.2.1</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="compare-template.html">7.3.1</a><pre>;; A vehicle is either 
+;;  - a bus 
+;;  - a limo
+;;  - a car 
+;;  - a police car
+;;  - a subway 
+
+(define-struct bus (plate carries))
+;; A bus is (make-bus symbol number). 
+
+(define-struct limo (plate carries))
+;; A limo is (make-limo symbol number). 
+
+(define-struct auto (plate carries))
+;; A car is (make-auto symbol number). 
+
+(define-struct police-car (siren-on? carries))
+;; A police-car is (make-police-car boolean number)
+
+(define-struct subway (elevated? carries))
+;; A subway is (make-subway boolean number). 
+
+;; Examples
+
+(make-bus 'xyz123 12)
+(make-limo 'mrbig 10)
+(make-auto 'beepbeep 2)
+(make-police-car false 3)
+(make-subway true 200)
+
+;; TEMPLATE
+;; pro-vehicle? : vehicle -&gt; ???
+;; consumes a vehicle V
+
+;(define (pro-vehicle V)
+;  (cond
+;    ((bus? V) ... (bus-plate V) ... (bus-carries V) ...)
+;    ((limo? V) ... (limo-plate V) ... (limo-carries V) ...)
+;    ((car? V) ... (car-plate V) ... (car-carries V) ...)
+;    ((police-car? V) ... (police-car-siren-on? V) ...
+;                     ... (police-car-carries V) ...)
+;    ((subway? V) ... (subway-elevated? V) 
+;                 ... (subway-carries V) ...)))
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/vehicles.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

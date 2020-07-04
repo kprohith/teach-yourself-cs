@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/movie-theater.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="sum-coins.html">2.3.2</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="syn-error-exp.html">2.4.1</a><pre>;; total-profit : number -&gt; number
+;; calculates the total profit of a showing, 
+;; given the number of people attending
+
+;; EXAMPLES
+;; if 5 people come, they make $2.50
+;; if 2 people come, they lose $11.
+;; if 100 people come, they make $430
+
+(define (total-profit customers)
+  (- (* 5 customers) (+ 20 (* .50 customers))))
+
+;; EXAMPLES TURNED INTO TESTS
+
+(total-profit 5) "should be" 2.50
+(total-profit 2) "should be" -11.00
+(total-profit 100) "should be" 430.00
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/movie-theater.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

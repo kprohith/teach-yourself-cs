@@ -1,0 +1,349 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum.html">previous</a></span><span>, <a href="curriculum-Z-H-2.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span class="disable">contents</span><span><span class="disable">; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_Temp_1"></a>
+<h1 class="chapter">
+<div class="chapterheading">&nbsp;</div><br>
+<a href="#node_toc_node_chap_Temp_1">Contents</a></h1>
+<p><a name="node_toc_start"></a></p>
+<p><b>
+&nbsp; &nbsp; <a href="curriculum-Z-H-2.html">Preface</a></b><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_I"></a><a href="curriculum-Z-H-3.html#node_part_I">I&nbsp;&nbsp;Processing Simple Forms of Data</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_1"></a><a href="curriculum-Z-H-4.html#node_chap_1">1&nbsp;&nbsp;Students, Teachers, and Computers</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_2"></a><a href="curriculum-Z-H-5.html#node_chap_2">2&nbsp;&nbsp;Numbers, Expressions, Simple Programs</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_2.1"></a><a href="curriculum-Z-H-5.html#node_sec_2.1">2.1&nbsp;&nbsp;Numbers and Arithmetic</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_2.2"></a><a href="curriculum-Z-H-5.html#node_sec_2.2">2.2&nbsp;&nbsp;Variables and Programs</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_2.3"></a><a href="curriculum-Z-H-5.html#node_sec_2.3">2.3&nbsp;&nbsp;Word Problems</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_2.4"></a><a href="curriculum-Z-H-5.html#node_sec_2.4">2.4&nbsp;&nbsp;Errors</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_2.5"></a><a href="curriculum-Z-H-5.html#node_sec_2.5">2.5&nbsp;&nbsp;Designing Programs</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_3"></a><a href="curriculum-Z-H-6.html#node_chap_3">3&nbsp;&nbsp;Programs are Function Plus Variable Definitions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_3.1"></a><a href="curriculum-Z-H-6.html#node_sec_3.1">3.1&nbsp;&nbsp;Composing Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_3.2"></a><a href="curriculum-Z-H-6.html#node_sec_3.2">3.2&nbsp;&nbsp;Variable Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_3.3"></a><a href="curriculum-Z-H-6.html#node_sec_3.3">3.3&nbsp;&nbsp;Finger Exercises on Composing Functions</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_4"></a><a href="curriculum-Z-H-7.html#node_chap_4">4&nbsp;&nbsp;Conditional Expressions and Functions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_4.1"></a><a href="curriculum-Z-H-7.html#node_sec_4.1">4.1&nbsp;&nbsp;Booleans and Relations</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_4.2"></a><a href="curriculum-Z-H-7.html#node_sec_4.2">4.2&nbsp;&nbsp;Functions that Test Conditions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_4.3"></a><a href="curriculum-Z-H-7.html#node_sec_4.3">4.3&nbsp;&nbsp;Conditionals and Conditional Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_4.4"></a><a href="curriculum-Z-H-7.html#node_sec_4.4">4.4&nbsp;&nbsp;Designing Conditional Functions</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_5"></a><a href="curriculum-Z-H-8.html#node_chap_5">5&nbsp;&nbsp;Symbolic Information</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_5.1"></a><a href="curriculum-Z-H-8.html#node_sec_5.1">5.1&nbsp;&nbsp;Finger Exercises with Symbols</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_6"></a><a href="curriculum-Z-H-9.html#node_chap_6">6&nbsp;&nbsp;Compound Data, Part 1: Structures</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.1"></a><a href="curriculum-Z-H-9.html#node_sec_6.1">6.1&nbsp;&nbsp;Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.2"></a><a href="curriculum-Z-H-9.html#node_sec_6.2">6.2&nbsp;&nbsp;Extended Exercise: Drawing Simple Pictures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.3"></a><a href="curriculum-Z-H-9.html#node_sec_6.3">6.3&nbsp;&nbsp;Structure Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.4"></a><a href="curriculum-Z-H-9.html#node_sec_6.4">6.4&nbsp;&nbsp;Data Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.5"></a><a href="curriculum-Z-H-9.html#node_sec_6.5">6.5&nbsp;&nbsp;Designing Functions for Compound Data</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.6"></a><a href="curriculum-Z-H-9.html#node_sec_6.6">6.6&nbsp;&nbsp;Extended Exercise: Moving Circles and Rectangles</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_6.7"></a><a href="curriculum-Z-H-9.html#node_sec_6.7">6.7&nbsp;&nbsp;Extended Exercise: Hangman</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_7"></a><a href="curriculum-Z-H-10.html#node_chap_7">7&nbsp;&nbsp;The Varieties of Data</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_7.1"></a><a href="curriculum-Z-H-10.html#node_sec_7.1">7.1&nbsp;&nbsp;Mixing and Distinguishing Data</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_7.2"></a><a href="curriculum-Z-H-10.html#node_sec_7.2">7.2&nbsp;&nbsp;Designing Functions for Mixed Data</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_7.3"></a><a href="curriculum-Z-H-10.html#node_sec_7.3">7.3&nbsp;&nbsp;Composing Functions, Revisited</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_7.4"></a><a href="curriculum-Z-H-10.html#node_sec_7.4">7.4&nbsp;&nbsp;Extended Exercise: Moving Shapes</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_7.5"></a><a href="curriculum-Z-H-10.html#node_sec_7.5">7.5&nbsp;&nbsp;Input Errors</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_8"></a><a href="curriculum-Z-H-11.html#node_chap_8">8&nbsp;&nbsp;Intermezzo 1: Syntax and Semantics</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.1"></a><a href="curriculum-Z-H-11.html#node_sec_8.1">8.1&nbsp;&nbsp;The Scheme Vocabulary</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.2"></a><a href="curriculum-Z-H-11.html#node_sec_8.2">8.2&nbsp;&nbsp;The Scheme Grammar</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.3"></a><a href="curriculum-Z-H-11.html#node_sec_8.3">8.3&nbsp;&nbsp;The Meaning of Scheme</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.4"></a><a href="curriculum-Z-H-11.html#node_sec_8.4">8.4&nbsp;&nbsp;Errors</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.5"></a><a href="curriculum-Z-H-11.html#node_sec_8.5">8.5&nbsp;&nbsp;Boolean Expressions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.6"></a><a href="curriculum-Z-H-11.html#node_sec_8.6">8.6&nbsp;&nbsp;Variable Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_8.7"></a><a href="curriculum-Z-H-11.html#node_sec_8.7">8.7&nbsp;&nbsp;Structure Definitions</a><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_II"></a><a href="curriculum-Z-H-12.html#node_part_II">II&nbsp;&nbsp;Processing Arbitrarily Large Data</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_9"></a><a href="curriculum-Z-H-13.html#node_chap_9">9&nbsp;&nbsp;Compound Data, Part 2: Lists</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_9.1"></a><a href="curriculum-Z-H-13.html#node_sec_9.1">9.1&nbsp;&nbsp;Lists</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_9.2"></a><a href="curriculum-Z-H-13.html#node_sec_9.2">9.2&nbsp;&nbsp;Data Definitions for Lists of Arbitrary Length</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_9.3"></a><a href="curriculum-Z-H-13.html#node_sec_9.3">9.3&nbsp;&nbsp;Processing Lists of Arbitrary Length</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_9.4"></a><a href="curriculum-Z-H-13.html#node_sec_9.4">9.4&nbsp;&nbsp;Designing Functions for Self-Referential Data Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_9.5"></a><a href="curriculum-Z-H-13.html#node_sec_9.5">9.5&nbsp;&nbsp;More on Processing Simple Lists</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_10"></a><a href="curriculum-Z-H-14.html#node_chap_10">10&nbsp;&nbsp;More on Processing Lists</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_10.1"></a><a href="curriculum-Z-H-14.html#node_sec_10.1">10.1&nbsp;&nbsp;Functions that Produce Lists</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_10.2"></a><a href="curriculum-Z-H-14.html#node_sec_10.2">10.2&nbsp;&nbsp;Lists that Contain Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_10.3"></a><a href="curriculum-Z-H-14.html#node_sec_10.3">10.3&nbsp;&nbsp;Extended Exercise: Moving Pictures</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_11"></a><a href="curriculum-Z-H-15.html#node_chap_11">11&nbsp;&nbsp;Natural Numbers</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_11.1"></a><a href="curriculum-Z-H-15.html#node_sec_11.1">11.1&nbsp;&nbsp;Defining Natural Numbers</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_11.2"></a><a href="curriculum-Z-H-15.html#node_sec_11.2">11.2&nbsp;&nbsp;Processing Natural Numbers of Arbitrary Size</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_11.3"></a><a href="curriculum-Z-H-15.html#node_sec_11.3">11.3&nbsp;&nbsp;Extended Exercise: Creating Lists, Testing Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_11.4"></a><a href="curriculum-Z-H-15.html#node_sec_11.4">11.4&nbsp;&nbsp;Alternative Data Definitions for Natural Numbers</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_11.5"></a><a href="curriculum-Z-H-15.html#node_sec_11.5">11.5&nbsp;&nbsp;More on the Nature of Natural Numbers</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_12"></a><a href="curriculum-Z-H-16.html#node_chap_12">12&nbsp;&nbsp;Composing Functions, Revisited Again</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_12.1"></a><a href="curriculum-Z-H-16.html#node_sec_12.1">12.1&nbsp;&nbsp;Designing Complex Programs</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_12.2"></a><a href="curriculum-Z-H-16.html#node_sec_12.2">12.2&nbsp;&nbsp;Recursive Auxiliary Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_12.3"></a><a href="curriculum-Z-H-16.html#node_sec_12.3">12.3&nbsp;&nbsp;Generalizing Problems, Generalizing Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_12.4"></a><a href="curriculum-Z-H-16.html#node_sec_12.4">12.4&nbsp;&nbsp;Extended Exercise: Rearranging Words</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_13"></a><a href="curriculum-Z-H-17.html#node_chap_13">13&nbsp;&nbsp;Intermezzo 2: List Abbreviations</a></b><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_III"></a><a href="curriculum-Z-H-18.html#node_part_III">III&nbsp;&nbsp;More on Processing Arbitrarily Large Data</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_14"></a><a href="curriculum-Z-H-19.html#node_chap_14">14&nbsp;&nbsp;More Self-referential Data Definitions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_14.1"></a><a href="curriculum-Z-H-19.html#node_sec_14.1">14.1&nbsp;&nbsp;Structures in Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_14.2"></a><a href="curriculum-Z-H-19.html#node_sec_14.2">14.2&nbsp;&nbsp;Extended Exercise: Binary Search Trees</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_14.3"></a><a href="curriculum-Z-H-19.html#node_sec_14.3">14.3&nbsp;&nbsp;Lists in Lists</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_14.4"></a><a href="curriculum-Z-H-19.html#node_sec_14.4">14.4&nbsp;&nbsp;Extended Exercise: Evaluating Scheme</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_15"></a><a href="curriculum-Z-H-20.html#node_chap_15">15&nbsp;&nbsp;Mutually Referential Data Definitions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_15.1"></a><a href="curriculum-Z-H-20.html#node_sec_15.1">15.1&nbsp;&nbsp;Lists of Structures, Lists in Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_15.2"></a><a href="curriculum-Z-H-20.html#node_sec_15.2">15.2&nbsp;&nbsp;Designing Functions for Mutually Referential Definitions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_15.3"></a><a href="curriculum-Z-H-20.html#node_sec_15.3">15.3&nbsp;&nbsp;Extended Exercise: More on Web Pages</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_16"></a><a href="curriculum-Z-H-21.html#node_chap_16">16&nbsp;&nbsp;Development through Iterative Refinement</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_16.1"></a><a href="curriculum-Z-H-21.html#node_sec_16.1">16.1&nbsp;&nbsp;Data Analysis</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_16.2"></a><a href="curriculum-Z-H-21.html#node_sec_16.2">16.2&nbsp;&nbsp;Defining Data Classes and Refining Them</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_16.3"></a><a href="curriculum-Z-H-21.html#node_sec_16.3">16.3&nbsp;&nbsp;Refining Functions and Programs</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_17"></a><a href="curriculum-Z-H-22.html#node_chap_17">17&nbsp;&nbsp;Processing Two Complex Pieces of Data</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.1"></a><a href="curriculum-Z-H-22.html#node_sec_17.1">17.1&nbsp;&nbsp;Processing Two Lists Simultaneously: Case 1</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.2"></a><a href="curriculum-Z-H-22.html#node_sec_17.2">17.2&nbsp;&nbsp;Processing Two Lists Simultaneously: Case 2</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.3"></a><a href="curriculum-Z-H-22.html#node_sec_17.3">17.3&nbsp;&nbsp;Processing Two Lists Simultaneously: Case 3</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.4"></a><a href="curriculum-Z-H-22.html#node_sec_17.4">17.4&nbsp;&nbsp;Function Simplification</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.5"></a><a href="curriculum-Z-H-22.html#node_sec_17.5">17.5&nbsp;&nbsp;Designing Functions that Consume Two Complex Inputs</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.6"></a><a href="curriculum-Z-H-22.html#node_sec_17.6">17.6&nbsp;&nbsp;Exercises on Processing Two Complex Inputs</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.7"></a><a href="curriculum-Z-H-22.html#node_sec_17.7">17.7&nbsp;&nbsp;Extended Exercise: Evaluating Scheme, Part 2</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_17.8"></a><a href="curriculum-Z-H-22.html#node_sec_17.8">17.8&nbsp;&nbsp;Equality and Testing</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_18"></a><a href="curriculum-Z-H-23.html#node_chap_18">18&nbsp;&nbsp;Intermezzo 3: Local Definitions and Lexical Scope</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_18.1"></a><a href="curriculum-Z-H-23.html#node_sec_18.1">18.1&nbsp;&nbsp;Organizing Programs with <strong>local</strong></a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_18.2"></a><a href="curriculum-Z-H-23.html#node_sec_18.2">18.2&nbsp;&nbsp;Lexical Scope and Block Structure</a><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_IV"></a><a href="curriculum-Z-H-24.html#node_part_IV">IV&nbsp;&nbsp;Abstracting Designs</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_19"></a><a href="curriculum-Z-H-25.html#node_chap_19">19&nbsp;&nbsp;Similarities in Definitions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_19.1"></a><a href="curriculum-Z-H-25.html#node_sec_19.1">19.1&nbsp;&nbsp;Similarities in Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_19.2"></a><a href="curriculum-Z-H-25.html#node_sec_19.2">19.2&nbsp;&nbsp;Similarities in Data Definitions</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_20"></a><a href="curriculum-Z-H-26.html#node_chap_20">20&nbsp;&nbsp;Functions are Values</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_20.1"></a><a href="curriculum-Z-H-26.html#node_sec_20.1">20.1&nbsp;&nbsp;Syntax and Semantics</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_20.2"></a><a href="curriculum-Z-H-26.html#node_sec_20.2">20.2&nbsp;&nbsp;Contracts for Abstract and Polymorphic Functions</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_21"></a><a href="curriculum-Z-H-27.html#node_chap_21">21&nbsp;&nbsp;Designing Abstractions from Examples</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_21.1"></a><a href="curriculum-Z-H-27.html#node_sec_21.1">21.1&nbsp;&nbsp;Abstracting from Examples</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_21.2"></a><a href="curriculum-Z-H-27.html#node_sec_21.2">21.2&nbsp;&nbsp;Finger Exercises with Abstract List Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_21.3"></a><a href="curriculum-Z-H-27.html#node_sec_21.3">21.3&nbsp;&nbsp;Abstraction and a Single Point of Control</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_21.4"></a><a href="curriculum-Z-H-27.html#node_sec_21.4">21.4&nbsp;&nbsp;Extended Exercise: Moving Pictures, Again</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_21.5"></a><a href="curriculum-Z-H-27.html#node_sec_21.5">21.5&nbsp;&nbsp;Note: Designing Abstractions from Templates</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_22"></a><a href="curriculum-Z-H-28.html#node_chap_22">22&nbsp;&nbsp;Designing Abstractions with First-Class Functions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_22.1"></a><a href="curriculum-Z-H-28.html#node_sec_22.1">22.1&nbsp;&nbsp;Functions that Produce Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_22.2"></a><a href="curriculum-Z-H-28.html#node_sec_22.2">22.2&nbsp;&nbsp;Designing Abstractions with Functions-as-Values</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_22.3"></a><a href="curriculum-Z-H-28.html#node_sec_22.3">22.3&nbsp;&nbsp;A First Look at Graphical User Interfaces</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_23"></a><a href="curriculum-Z-H-29.html#node_chap_23">23&nbsp;&nbsp;Mathematical Examples</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_23.1"></a><a href="curriculum-Z-H-29.html#node_sec_23.1">23.1&nbsp;&nbsp;Sequences and Series</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_23.2"></a><a href="curriculum-Z-H-29.html#node_sec_23.2">23.2&nbsp;&nbsp;Arithmetic Sequences and Series</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_23.3"></a><a href="curriculum-Z-H-29.html#node_sec_23.3">23.3&nbsp;&nbsp;Geometric Sequences and Series</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_23.4"></a><a href="curriculum-Z-H-29.html#node_sec_23.4">23.4&nbsp;&nbsp;The Area Under a Function</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_23.5"></a><a href="curriculum-Z-H-29.html#node_sec_23.5">23.5&nbsp;&nbsp;The Slope of a Function</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_24"></a><a href="curriculum-Z-H-30.html#node_chap_24">24&nbsp;&nbsp;Intermezzo 4: Defining Functions on the Fly</a></b><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_V"></a><a href="curriculum-Z-H-31.html#node_part_V">V&nbsp;&nbsp;Generative Recursion</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_25"></a><a href="curriculum-Z-H-32.html#node_chap_25">25&nbsp;&nbsp;A New Form of Recursion</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_25.1"></a><a href="curriculum-Z-H-32.html#node_sec_25.1">25.1&nbsp;&nbsp;Modeling a Ball on a Table</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_25.2"></a><a href="curriculum-Z-H-32.html#node_sec_25.2">25.2&nbsp;&nbsp;Sorting Quickly</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_26"></a><a href="curriculum-Z-H-33.html#node_chap_26">26&nbsp;&nbsp;Designing Algorithms</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_26.1"></a><a href="curriculum-Z-H-33.html#node_sec_26.1">26.1&nbsp;&nbsp;Termination</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_26.2"></a><a href="curriculum-Z-H-33.html#node_sec_26.2">26.2&nbsp;&nbsp;Structural versus Generative Recursion</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_26.3"></a><a href="curriculum-Z-H-33.html#node_sec_26.3">26.3&nbsp;&nbsp;Making Choices</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_27"></a><a href="curriculum-Z-H-34.html#node_chap_27">27&nbsp;&nbsp;Variations on a Theme</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_27.1"></a><a href="curriculum-Z-H-34.html#node_sec_27.1">27.1&nbsp;&nbsp;Fractals</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_27.2"></a><a href="curriculum-Z-H-34.html#node_sec_27.2">27.2&nbsp;&nbsp;From Files to Lines, from Lists to Lists of Lists</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_27.3"></a><a href="curriculum-Z-H-34.html#node_sec_27.3">27.3&nbsp;&nbsp;Binary Search</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_27.4"></a><a href="curriculum-Z-H-34.html#node_sec_27.4">27.4&nbsp;&nbsp;Newton's Method</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_27.5"></a><a href="curriculum-Z-H-34.html#node_sec_27.5">27.5&nbsp;&nbsp;Extended Exercise: Gaussian Elimination</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_28"></a><a href="curriculum-Z-H-35.html#node_chap_28">28&nbsp;&nbsp;Algorithms that Backtrack</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_28.1"></a><a href="curriculum-Z-H-35.html#node_sec_28.1">28.1&nbsp;&nbsp;Traversing Graphs</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_28.2"></a><a href="curriculum-Z-H-35.html#node_sec_28.2">28.2&nbsp;&nbsp;Extended Exercise: Checking (on) Queens</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_29"></a><a href="curriculum-Z-H-36.html#node_chap_29">29&nbsp;&nbsp;Intermezzo 5: The Cost of Computing and Vectors</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_29.1"></a><a href="curriculum-Z-H-36.html#node_sec_29.1">29.1&nbsp;&nbsp;Concrete Time, Abstract Time</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_29.2"></a><a href="curriculum-Z-H-36.html#node_sec_29.2">29.2&nbsp;&nbsp;The Definition of ``on the Order of''</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_29.3"></a><a href="curriculum-Z-H-36.html#node_sec_29.3">29.3&nbsp;&nbsp;A First Look at Vectors</a><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_VI"></a><a href="curriculum-Z-H-37.html#node_part_VI">VI&nbsp;&nbsp;Accumulating Knowledge</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_30"></a><a href="curriculum-Z-H-38.html#node_chap_30">30&nbsp;&nbsp;The Loss of Knowledge</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_30.1"></a><a href="curriculum-Z-H-38.html#node_sec_30.1">30.1&nbsp;&nbsp;A Problem with Structural Processing</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_30.2"></a><a href="curriculum-Z-H-38.html#node_sec_30.2">30.2&nbsp;&nbsp;A Problem with Generative Recursion</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_31"></a><a href="curriculum-Z-H-39.html#node_chap_31">31&nbsp;&nbsp;Designing Accumulator-Style Functions</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_31.1"></a><a href="curriculum-Z-H-39.html#node_sec_31.1">31.1&nbsp;&nbsp;Recognizing the Need for an Accumulator</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_31.2"></a><a href="curriculum-Z-H-39.html#node_sec_31.2">31.2&nbsp;&nbsp;Accumulator-Style Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_31.3"></a><a href="curriculum-Z-H-39.html#node_sec_31.3">31.3&nbsp;&nbsp;Transforming Functions into Accumulator-Style</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_32"></a><a href="curriculum-Z-H-40.html#node_chap_32">32&nbsp;&nbsp;More Uses of Accumulation</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_32.1"></a><a href="curriculum-Z-H-40.html#node_sec_32.1">32.1&nbsp;&nbsp;Extended Exercise: Accumulators on Trees</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_32.2"></a><a href="curriculum-Z-H-40.html#node_sec_32.2">32.2&nbsp;&nbsp;Extended Exercise: Missionaries and Cannibals</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_32.3"></a><a href="curriculum-Z-H-40.html#node_sec_32.3">32.3&nbsp;&nbsp;Extended Exercise: Board Solitaire</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_33"></a><a href="curriculum-Z-H-41.html#node_chap_33">33&nbsp;&nbsp;Intermezzo 6: The Nature of Inexact Numbers</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_33.1"></a><a href="curriculum-Z-H-41.html#node_sec_33.1">33.1&nbsp;&nbsp;Fixed-size Number Arithmetic</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_33.2"></a><a href="curriculum-Z-H-41.html#node_sec_33.2">33.2&nbsp;&nbsp;Overflow</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_33.3"></a><a href="curriculum-Z-H-41.html#node_sec_33.3">33.3&nbsp;&nbsp;Underflow</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_33.4"></a><a href="curriculum-Z-H-41.html#node_sec_33.4">33.4&nbsp;&nbsp;DrScheme's Numbers</a><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_VII"></a><a href="curriculum-Z-H-42.html#node_part_VII">VII&nbsp;&nbsp;Changing the State of Variables</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_34"></a><a href="curriculum-Z-H-43.html#node_chap_34">34&nbsp;&nbsp;Memory for Functions</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_35"></a><a href="curriculum-Z-H-44.html#node_chap_35">35&nbsp;&nbsp;Assignment to Variables</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_35.1"></a><a href="curriculum-Z-H-44.html#node_sec_35.1">35.1&nbsp;&nbsp;Simple Assignments at Work</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_35.2"></a><a href="curriculum-Z-H-44.html#node_sec_35.2">35.2&nbsp;&nbsp;Sequencing Expression Evaluations</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_35.3"></a><a href="curriculum-Z-H-44.html#node_sec_35.3">35.3&nbsp;&nbsp;Assignments and Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_35.4"></a><a href="curriculum-Z-H-44.html#node_sec_35.4">35.4&nbsp;&nbsp;A First Useful Example</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_36"></a><a href="curriculum-Z-H-45.html#node_chap_36">36&nbsp;&nbsp;Designing Functions with Memory</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_36.1"></a><a href="curriculum-Z-H-45.html#node_sec_36.1">36.1&nbsp;&nbsp;The Need for Memory</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_36.2"></a><a href="curriculum-Z-H-45.html#node_sec_36.2">36.2&nbsp;&nbsp;Memory and State Variables</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_36.3"></a><a href="curriculum-Z-H-45.html#node_sec_36.3">36.3&nbsp;&nbsp;Functions that Initialize Memory</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_36.4"></a><a href="curriculum-Z-H-45.html#node_sec_36.4">36.4&nbsp;&nbsp;Functions that Change Memory</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_37"></a><a href="curriculum-Z-H-46.html#node_chap_37">37&nbsp;&nbsp;Examples of Memory Usage</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_37.1"></a><a href="curriculum-Z-H-46.html#node_sec_37.1">37.1&nbsp;&nbsp;Initializing State</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_37.2"></a><a href="curriculum-Z-H-46.html#node_sec_37.2">37.2&nbsp;&nbsp;State Changes from User Interactions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_37.3"></a><a href="curriculum-Z-H-46.html#node_sec_37.3">37.3&nbsp;&nbsp;State Changes from Recursion</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_37.4"></a><a href="curriculum-Z-H-46.html#node_sec_37.4">37.4&nbsp;&nbsp;Finger Exercises on State Changes</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_37.5"></a><a href="curriculum-Z-H-46.html#node_sec_37.5">37.5&nbsp;&nbsp;Extended Exercise: Exploring Places</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_38"></a><a href="curriculum-Z-H-47.html#node_chap_38">38&nbsp;&nbsp;Intermezzo 7: The Final Syntax and Semantics</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_38.1"></a><a href="curriculum-Z-H-47.html#node_sec_38.1">38.1&nbsp;&nbsp;The Vocabulary of Advanced Scheme</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_38.2"></a><a href="curriculum-Z-H-47.html#node_sec_38.2">38.2&nbsp;&nbsp;The Grammar of Advanced Scheme</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_38.3"></a><a href="curriculum-Z-H-47.html#node_sec_38.3">38.3&nbsp;&nbsp;The Meaning of Advanced Scheme</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_38.4"></a><a href="curriculum-Z-H-47.html#node_sec_38.4">38.4&nbsp;&nbsp;Errors in Advanced Scheme</a><br>
+</p>
+<p><b>
+<a name="node_toc_node_part_VIII"></a><a href="curriculum-Z-H-48.html#node_part_VIII">VIII&nbsp;&nbsp;Changing Compound Values</a></b><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_39"></a><a href="curriculum-Z-H-49.html#node_chap_39">39&nbsp;&nbsp;Encapsulation</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_39.1"></a><a href="curriculum-Z-H-49.html#node_sec_39.1">39.1&nbsp;&nbsp;Abstracting with State Variables</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_39.2"></a><a href="curriculum-Z-H-49.html#node_sec_39.2">39.2&nbsp;&nbsp;Practice with Encapsulation</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_40"></a><a href="curriculum-Z-H-50.html#node_chap_40">40&nbsp;&nbsp;Mutable Structures</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_40.1"></a><a href="curriculum-Z-H-50.html#node_sec_40.1">40.1&nbsp;&nbsp;Structures from Functions</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_40.2"></a><a href="curriculum-Z-H-50.html#node_sec_40.2">40.2&nbsp;&nbsp;Mutable Functional Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_40.3"></a><a href="curriculum-Z-H-50.html#node_sec_40.3">40.3&nbsp;&nbsp;Mutable Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_40.4"></a><a href="curriculum-Z-H-50.html#node_sec_40.4">40.4&nbsp;&nbsp;Mutable Vectors</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_40.5"></a><a href="curriculum-Z-H-50.html#node_sec_40.5">40.5&nbsp;&nbsp;Changing Variables, Changing Structures</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_41"></a><a href="curriculum-Z-H-51.html#node_chap_41">41&nbsp;&nbsp;Designing Functions that Change Structures</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_41.1"></a><a href="curriculum-Z-H-51.html#node_sec_41.1">41.1&nbsp;&nbsp;Why Mutate Structures</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_41.2"></a><a href="curriculum-Z-H-51.html#node_sec_41.2">41.2&nbsp;&nbsp;Structural Design Recipes and Mutation, Part 1</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_41.3"></a><a href="curriculum-Z-H-51.html#node_sec_41.3">41.3&nbsp;&nbsp;Structural Design Recipes and Mutation, Part 2</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_41.4"></a><a href="curriculum-Z-H-51.html#node_sec_41.4">41.4&nbsp;&nbsp;Extended Exercise: Moving Pictures, a Last Time</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_42"></a><a href="curriculum-Z-H-52.html#node_chap_42">42&nbsp;&nbsp;Equality</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_42.1"></a><a href="curriculum-Z-H-52.html#node_sec_42.1">42.1&nbsp;&nbsp;Extensional Equality</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_42.2"></a><a href="curriculum-Z-H-52.html#node_sec_42.2">42.2&nbsp;&nbsp;Intensional Equality</a><br>
+</p>
+<p><b>
+&nbsp; &nbsp; <a name="node_toc_node_chap_43"></a><a href="curriculum-Z-H-53.html#node_chap_43">43&nbsp;&nbsp;Changing Structures, Vectors, and Objects</a></b><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_43.1"></a><a href="curriculum-Z-H-53.html#node_sec_43.1">43.1&nbsp;&nbsp;More Practice with Vectors</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_43.2"></a><a href="curriculum-Z-H-53.html#node_sec_43.2">43.2&nbsp;&nbsp;Collections of Structures with Cycles</a><br>
+&nbsp; &nbsp; &nbsp; &nbsp; <a name="node_toc_node_sec_43.3"></a><a href="curriculum-Z-H-53.html#node_sec_43.3">43.3&nbsp;&nbsp;Backtracking with State</a><br>
+</p>
+<p>
+</p>
+<p>
+
+ 
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum.html">previous</a></span><span>, <a href="curriculum-Z-H-2.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span class="disable">contents</span><span><span class="disable">; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

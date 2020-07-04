@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-sym.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 5.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="quad1.html">4.4.4</a> | <a href="../Book/curriculum-Z-H-8.html#node_thm_5.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="guess1.html">5.1.2</a><pre>;; reply : symbol -&gt; symbol
+;; to determine a reply for the greeting s
+(define (reply s)
+  (cond
+    [(symbol=? s 'GoodMorning) 'Hi]
+    [(symbol=? s 'HowAreYou?) 'Fine]
+    [(symbol=? s 'GoodAfternoon) 'INeedANap]
+    [(symbol=? s 'GoodEvening) 'BoyAmITired]))
+
+(reply 'HowAreYou?) 
+"should be"
+(cond
+  [(symbol=? 'HowAreYou? 'GoodMorning) 'Hi]
+  [(symbol=? 'HowAreYou? 'HowAreYou?) 'Fine]
+  [(symbol=? 'HowAreYou? 'GoodAfternoon) 'INeedANap]
+  [(symbol=? 'HowAreYou? 'GoodEvening) 'BoyAmITired])
+"should be"
+(cond
+  [false 'Hi]
+  [(symbol=? 'HowAreYou? 'HowAreYou?) 'Fine]
+  [(symbol=? 'HowAreYou? 'GoodAfternoon) 'INeedANap]
+  [(symbol=? 'HowAreYou? 'GoodEvening) 'BoyAmITired])
+"should be"
+(cond
+  [(symbol=? 'HowAreYou? 'HowAreYou?) 'Fine]
+  [(symbol=? 'HowAreYou? 'GoodAfternoon) 'INeedANap]
+  [(symbol=? 'HowAreYou? 'GoodEvening) 'BoyAmITired])
+"should be"
+(cond
+  [true 'Fine]
+  [(symbol=? 'HowAreYou? 'GoodAfternoon) 'INeedANap]
+  [(symbol=? 'HowAreYou? 'GoodEvening) 'BoyAmITired])
+"should be"
+'Fine
+
+(symbol=? (reply 'GoodMorning) 'Hi)
+(symbol=? (reply 'HowAreYou?) 'Fine)
+(symbol=? (reply 'GoodAfternoon) 'INeedANap)
+(symbol=? (reply 'GoodEvening) 'BoyAmITired)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval-sym.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

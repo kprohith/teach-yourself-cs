@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/how-manyS.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.2; How to Design Programs </title>
+</head>
+<body>
+<a href="sum-eval.html">9.5.1</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="dollar-store.html">9.5.3</a><pre>;; how-many-symbols : list-of-symbols -&gt; number
+;; counts the number of symbols on a-list-of-symbols
+#|
+;; Template
+(define (how-many-symbols a-list-of-symbols)
+  (cond
+    [(empty? a-list-of-symbols) ...]
+    [else ... (first a-list-of-symbols) ...
+          ... (how-many-symbols (rest a-list-of-symbols)) ...]))
+|#
+
+(define (how-many-symbols a-list-of-symbols)
+  (cond
+    [(empty? a-list-of-symbols) 0]
+    [else (+ 1 (how-many-symbols (rest a-list-of-symbols)))]))
+
+;; Examples:
+
+(how-many-symbols empty) "should be" 0
+(how-many-symbols (cons 'doll empty)) "should be" 1
+(how-many-symbols (cons 'doll (cons 'rocket (cons 'telephone empty)))) "should be" 3
+
+;; how-many-numbers : list-of-numbers -&gt; number
+;; counts the number of symbols on a-list-of-numbers
+#|
+;; Template
+(define (how-many-numbers a-list-of-numbers)
+  (cond
+    [(empty? a-list-of-numbers) ...]
+    [else ... (first a-list-of-numbers) ...
+          ... (how-many-numbers (rest a-list-of-numbers)) ...]))
+|#
+
+(define (how-many-numbers a-list-of-numbers)
+  (cond
+    [(empty? a-list-of-numbers) 0]
+    [else (+ 1 (how-many-numbers (rest a-list-of-numbers)))]))
+
+;; Examples:
+
+(how-many-numbers empty) "should be" 0
+(how-many-numbers (cons 10 empty)) "should be" 1
+(how-many-numbers (cons 2 (cons 3 (cons 5 empty)))) "should be" 3
+
+;; The only difference is the name of the function and the data it processes.
+;; The functions themselves are identical!
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/how-manyS.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

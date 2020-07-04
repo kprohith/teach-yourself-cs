@@ -1,0 +1,166 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-2.html">previous</a></span><span>, <a href="drscheme-Z-H-4.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_0"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_0">Section  0</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_0">Getting Started with DrScheme</a></h1>
+<p></p>
+<p>
+This DrScheme Companion runs in parallel to <i>How to Design
+Programs</i>. It explains how to use DrScheme as you work through the
+book, providing details about Scheme or DrScheme only as they become
+important.</p>
+<p>
+If you have a question that is not answered along the way, the
+<a href="drscheme-Z-H-32.html#node_part_X">appendix</a> contains a list of ``Frequently Asked Questions'' and
+answers. If the ``FAQ'' does not contain an answer to your question,
+consult one of the other sources of help:
+</p>
+<ul>
+<li><p>The DrScheme documentation: accessed by clicking the
+<strong><tt>Help</tt></strong> menu and selecting <strong><tt>PLT DrScheme:
+Programming Environment Manual</tt></strong>; and</p>
+<p>
+</p>
+<li><p>Additional PLT documentation: available from the DrScheme
+distribution web site.</p>
+<p>
+</p>
+</li></ul><p></p>
+<p>
+<strong>Acknowledgements:</strong>&nbsp;&nbsp;&nbsp; The screen snapshots in
+this book imitate images created by Mark Leone.</p>
+<p>
+</p>
+<a name="node_sec_0.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.1">0.1&nbsp;&nbsp;Getting DrScheme</a></h2>
+<p></p>
+<p>
+DrScheme is available (for free) via
+<br>
+</p>
+<blockquote><code class="scheme"><span class="variable">http://www.drscheme.org/</span></code></blockquote><br>
+<p>
+</p>
+<a name="node_sec_0.2"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.2">0.2&nbsp;&nbsp;Installing and Starting DrScheme</a></h2>
+<p></p>
+<p>
+</p>
+<a name="node_sec_0.2.1"></a>
+<h3><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.2.1">0.2.1&nbsp;&nbsp;Windows (95 and up)</a></h3>
+<p>DrScheme runs under Windows 95 and up. DrScheme <em>does not</em> run
+with earlier versions of Windows, such as Windows 3.1 (even with the
+Win32s extension).</p>
+<p>
+The Windows version of DrScheme is distributed in the installer
+program <strong><tt>plt.exe</tt></strong>. (The floppy-disk distribution consists of
+<strong><tt>plt.exe</tt></strong> on disk 1, <strong><tt>plt.w02</tt></strong> on disk 2, etc.)
+Running the installer unpacks the DrScheme files to your hard drive,
+usually in a subdirectory named <strong><tt>plt</tt></strong> within your main
+<strong><tt>Program Files</tt></strong> directory, and sets up shortcuts for the
+DrScheme programs under the <strong><tt>Start</tt></strong> menu.</p>
+<p>
+The installer also creates <strong><tt>uninstall.exe</tt></strong> in the installed
+<strong><tt>plt</tt></strong> directory. Run <strong><tt>uninstall.exe</tt></strong> to uninstall
+DrScheme before installing a new version. Old versions of the
+uninstaller (before version 100) are not able to remove all the
+files, so you must manually delete the old <strong><tt>plt</tt></strong> directory after
+running <strong><tt>uninstall.exe</tt></strong>.</p>
+<p>
+After installing DrScheme, run it via the <strong><tt>Start</tt></strong> menu by
+selecting <strong><tt>Start</tt></strong> --> <strong><tt>Programs</tt></strong>
+--> <strong><tt>PLT Scheme</tt></strong> -->
+<strong><tt>DrScheme</tt></strong>.</p>
+<p>
+</p>
+<a name="node_sec_0.2.2"></a>
+<h3><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.2.2">0.2.2&nbsp;&nbsp;Macintosh</a></h3>
+<p>DrScheme runs on PowerPC Macintoshes with Mac OS 9 or Mac OS X.</p>
+<p>
+The Macintosh version of DrScheme is distributed as StuffIt files.
+Unpack the StuffIt archive with StuffIt or StuffIt Expander to get a
+<strong><tt>plt</tt></strong> folder. The <strong><tt>DrScheme</tt></strong> application is located
+directly in the <strong><tt>plt</tt></strong> folder. (In Mac OS 9,
+<strong><tt>DrScheme</tt></strong> actually launches the <strong><tt>MrEd</tt></strong> application
+to run DrScheme.)</p>
+<p>
+</p>
+<a name="node_sec_0.2.3"></a>
+<h3><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.2.3">0.2.3&nbsp;&nbsp;Unix/X Window System</a></h3>
+<p>Precompiled DrScheme executables are distributed for some Unix
+architectures, notably Linux. Installation instructions should be
+downloaded at the same time as the distribution archive. (The final
+page for downloading an X distribution includes a link for the
+installation instructions.)</p>
+<p>
+Run DrScheme by executing <strong><tt>plt/bin/drscheme</tt></strong>.</p>
+<p>
+</p>
+<a name="node_sec_0.3"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_0.3">0.3&nbsp;&nbsp;Preparing DrScheme</a></h2>
+<p></p>
+<p>
+<strong>IMPORTANT</strong>: DrScheme provides several languages that customize
+DrScheme for different levels of learning. Initially, you will use
+DrScheme's <strong><tt>Beginning Student</tt></strong> language. <strong><tt>Beginning
+Student</tt></strong> is the default; if it is changed, you can restore the
+language setting as follows:
+</p>
+<ol><p>
+</p>
+<li><p>Select <strong><tt>Choose&nbsp;Language...</tt></strong> from the
+<strong><tt>Languages</tt></strong> menu. A dialog box appears with a choice
+control (a.k.a. ``pop-up menu'') at the top.</p>
+<p>
+</p>
+<li><p>Choose the <strong><tt>Beginning Student</tt></strong> langauge from the
+hierarchical choice list. You may have to click the <strong><tt>How to
+Design Programs</tt></strong> arrow to reveal the <strong><tt>Beginning Student</tt></strong>
+choice. After choosing <strong><tt>Beginning Student</tt></strong>, click
+<strong><tt>OK</tt></strong>.</p>
+<p>
+</p>
+<li><p>Click the <strong><tt>Execute</tt></strong> button. After clicking
+<strong><tt>Execute</tt></strong>, the lower window indicates that the current
+language is <strong><tt>Beginning Student</tt></strong>.</p>
+<p>
+</p>
+</li></ol><p>
+You need to set the language level only once until you change
+languages.  When you quit and restart DrScheme, the langauge setting
+is preserved.</p>
+<p>
+The <strong><tt>Beginning Student</tt></strong> language level is used for Part&nbsp;I,
+Intermezzo&nbsp;1, and Part&nbsp;II.  Starting with Intermezzo&nbsp;2, switch to
+<strong><tt>Beginning Student with List Abbreviations</tt></strong>. Starting with
+Intermezzo 3, switch to <strong><tt>Intermediate Student</tt></strong>. Starting
+with Intermezzo 4, switch to <strong><tt>Intermediate Student with
+lambda</tt></strong>. Finally, starting with Part&nbsp;VII, switch to <strong><tt>Advanced
+Student</tt></strong>.</p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-2.html">previous</a></span><span>, <a href="drscheme-Z-H-4.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

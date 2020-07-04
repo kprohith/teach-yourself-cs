@@ -1,0 +1,871 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-39.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-38.html">previous</a></span><span>, <a href="curriculum-Z-H-40.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_31"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_31">Section  31</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_31">Designing Accumulator-Style Functions</a></h1>
+<p></p>
+<p>
+<a name="node_idx_1984"></a></p>
+<p>
+Section&nbsp;<a href="curriculum-Z-H-38.html#node_chap_30">30</a> illustrated with two examples the need for
+accumulating extra knowledge. In some cases, the accumulation makes it
+easier to understand a function; in others it is necessary for the function
+to work properly. In both cases, however, we first chose one of the
+available design recipes, inspected the function, and then revised or fixed
+it. Put more generally, adding an <small>A</small><small>C</small><small>C</small><small>U</small><small>M</small><small>U</small><small>L</small><small>A</small><small>T</small><small>O</small><small>R</small>,
+<a name="node_idx_1986"></a>that is, a parameter that accumulates knowledge, is something that we add
+to a function after we have designed a function, not before.</p>
+<p>
+</p>
+<p>
+The keys to the development of an accumulator-style function are: 
+</p>
+<ol>
+<li><p>to recognize that the function benefits from, or needs, an accumulator; </p>
+<p>
+</p>
+<li><p>to understand what the accumulator represents.
+</p>
+</li></ol><p>
+The first two subsections address these two questions. Because the second
+one is a difficult topic, the third subsection illustrates how to formulate
+precise claims about accumulators. More concretely, in this section, we
+transform several standard recursive functions into functions that use
+auxiliary functions with accumulators. </p>
+<p>
+</p>
+<a name="node_sec_31.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_31.1">31.1&nbsp;&nbsp;Recognizing the Need for an Accumulator</a></h2>
+<p></p>
+<p>
+Recognizing the need for accumulators is not an easy task. We have seen two
+reasons, and they are the most prevalent reasons for adding accumulator
+parameters. In either case, it is critical that we first built a complete
+function <em>based on a design recipe</em>. Then we study the function and
+look for one of the following characteristics: 
+</p>
+<ol>
+<li><p>If the function is structurally recursive
+<a name="node_idx_1988"></a>and if the result of a
+recursive application is processed by an auxiliary, recursive function, 
+then we should consider the use of an accumulator parameter. </p>
+<p>
+Take the function <code class="scheme"><span class="variable">invert</span></code> as an example: 
+<a name="node_idx_1990"></a><a name="node_idx_1992"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">invert</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct the reverse of <code class="scheme"><span class="variable">alox</span></code></span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">invert</span> <span class="variable">alox</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alox</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="variable">make-last-item</span> (<span class="builtin">first</span> <span class="variable">alox</span>) (<span class="variable">invert</span> (<span class="builtin">rest</span> <span class="variable">alox</span>)))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-last-item</span> <span class="selfeval">:</span> <span class="variable">X</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to add <code class="scheme"><span class="variable">an-x</span></code> to the end of <code class="scheme"><span class="variable">alox</span></code></span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">make-last-item</span> <span class="variable">an-x</span> <span class="variable">alox</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alox</span>) (<span class="builtin">list</span> <span class="variable">an-x</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alox</span>) (<span class="variable">make-last-item</span> <span class="variable">an-x</span> (<span class="builtin">rest</span> <span class="variable">alox</span>)))]))
+</pre></div><p>
+The result of the recursive application produces the reverse of the rest of
+the list. It is processed by <code class="scheme"><span class="variable">make-last-item</span></code>, which adds the first
+item to the reverse of the rest and thus creates the reverse of the entire
+list.  This second, auxiliary function is also recursive. We have thus
+identified a potential candidate. It is now time to study some
+hand-evaluations, as we did in section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.1">30.1</a>, to see
+whether an accumulator helps.</p>
+<p>
+</p>
+<li><p>If we are dealing with a function based on generative recursion, we
+are faced with a much more difficult task. Our goal must be to understand
+whether the algorithm can fail to produce a result for inputs for which we
+expect a result. If so, adding a parameter that accumulates knowledge may
+help. Because these situations are complex, we postpone the discussion of
+an example until section&nbsp;<a href="curriculum-Z-H-40.html#node_sec_32.2">32.2</a>. 
+</p>
+</li></ol><p>
+These two situations are by no means the only ones; they are just the most
+common ones. To sharpen our perception, we will discuss an additional array
+of possibilities in the following section. </p>
+<p>
+</p>
+<a name="node_sec_31.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_31.2">31.2&nbsp;&nbsp;Accumulator-Style Functions</a></h2>
+<p></p>
+<p>
+When we have decided that an accumulator-style function is necessary, we
+introduce it in two steps: 
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Setting-up an accumulator:</b></dt><dd> First, we must understand what knowledge
+the accumulator needs to remember about the parameters proper and then how
+it is to remember it. For example, for the conversion of relative distances
+to absolute distances, it suffices to accumulate the total distance
+encountered so far. For the routing problem, we needed the accumulator to
+remember every node inspected so far. Thus the first accumulator was just a
+number, the second one a list of nodes.<p>
+The best way to discuss the accumulation process is to introduce a template
+of the accumulator-style function via a <code class="scheme"><span class="keyword">local</span></code> definition and to
+name the parameters of the function proper differently from those of the 
+auxiliary function. </p>
+<p>
+Let's take a look at the <code class="scheme"><span class="variable">invert</span></code> example:
+<a name="node_idx_1994"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">invert</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct the reverse of <code class="scheme"><span class="variable">alox</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">invert</span> <span class="variable">alox0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt></span>
+	  (<span class="keyword">define</span> (<span class="variable">rev</span> <span class="variable">alox</span> <span class="variable">accumulator</span>)	
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alox</span>) ...]
+	      [<span class="keyword">else</span> 
+		... (<span class="variable">rev</span> (<span class="builtin">rest</span> <span class="variable">alox</span>) <tt>...</tt> ( first <i>alox</i>) <tt>...</tt> <i>accumulator</i>)
+		... ])))
+    (<span class="variable">rev</span> <span class="variable">alox0</span> ...)))
+</pre></div><p>
+Here we have a definition of <code class="scheme"><span class="variable">invert</span></code> with an auxiliary function
+<code class="scheme"><span class="variable">rev</span></code> in template form. This auxiliary template has one parameter in
+addition to those of <code class="scheme"><span class="variable">invert</span></code>: the accumulating parameter. The box
+in the recursive application indicates that we need an expression that
+maintains the accumulation process and that this process depends on the
+current value of <code class="scheme"><span class="variable">accumulator</span></code> and <code class="scheme">(<span class="builtin">first</span> <span class="variable">alox</span>)</code>, the value
+<code class="scheme"><span class="variable">rev</span></code> is about to forget.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Clearly, <code class="scheme"><span class="variable">invert</span></code> cannot forget anything, because it only reverses
+the order of items on the list. Hence we might just wish to accumulate all
+items that <code class="scheme"><span class="variable">rev</span></code> encounters. This means 
+</p>
+<ol>
+<li><p>that <code class="scheme"><span class="variable">accumulator</span></code> stands for a list, and 
+</p>
+<li><p>that it stands for all those items in <code class="scheme"><span class="variable">alox0</span></code> that precede the
+<code class="scheme"><span class="variable">alox</span></code> argument of <code class="scheme"><span class="variable">rev</span></code>. 
+</p>
+</li></ol><p>
+For the second part of the analysis, it is critical that we can distinguish 
+the original argument, <code class="scheme"><span class="variable">alox0</span></code>, from the current one, <code class="scheme"><span class="variable">alox</span></code>. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Now that we know the rough purpose of the accumulator, let's consider what
+the first value should be and what we should do for the recursion. When we
+apply <code class="scheme"><span class="variable">rev</span></code> in the body of the <strong>local</strong>-expression, it
+receives <code class="scheme"><span class="variable">alox0</span></code>, which means that it hasn't encountered any of its
+items. The initial value for <code class="scheme"><span class="variable">accumulator</span></code> is <code class="scheme"><span class="builtin">empty</span></code>.
+When <code class="scheme"><span class="variable">rev</span></code> recurs, it has just encountered one extra item:
+<code class="scheme">(<span class="builtin">first</span> <span class="variable">alox</span>)</code>. To remember it, we can <code class="scheme"><span class="builtin">cons</span></code> it onto the
+current value of accumulator.</p>
+<p>
+</p>
+<p>
+Here is the enhanced definition: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">invert</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct the reverse of <code class="scheme"><span class="variable">alox</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">invert</span> <span class="variable">alox0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the reversed list of all those items</span>
+	  <span class="comment">;; on <code class="scheme"><span class="variable">alox0</span></code> that precede <code class="scheme"><span class="variable">alox</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">rev</span> <span class="variable">alox</span> <span class="variable">accumulator</span>)	
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alox</span>) ...]
+	      [<span class="keyword">else</span>
+		... (<span class="variable">rev</span> (<span class="builtin">rest</span> <span class="variable">alox</span>) (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alox</span>) <span class="variable">accumulator</span>))
+		...])))
+    (<span class="variable">rev</span> <span class="variable">alox0</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+A close inspection reveals that <code class="scheme"><span class="variable">accumulator</span></code> is not just the items
+on <code class="scheme"><span class="variable">alox0</span></code> that precede but a list of these items in reverse order. </p>
+<p>
+</p>
+</dd><dt><b>Exploiting an accumulator:</b></dt><dd> Once we have decided what knowledge the
+accumulator maintains and how it is maintained, we can move to the question
+of how to exploit this knowledge for our function.<p>
+In the case of <code class="scheme"><span class="variable">invert</span></code>, the answer is almost obvious. If
+<code class="scheme"><span class="variable">accumulator</span></code> is the list of all items on <code class="scheme"><span class="variable">alox0</span></code> that
+precede <code class="scheme"><span class="variable">alox</span></code> in reverse order, then, if <code class="scheme"><span class="variable">alox</span></code> is empty,
+<code class="scheme"><span class="variable">accumulator</span></code> stands for the reverse of <code class="scheme"><span class="variable">alox0</span></code>. Put
+differently: if <code class="scheme"><span class="variable">alox</span></code> is <code class="scheme"><span class="builtin">empty</span></code>, <code class="scheme"><span class="variable">rev</span></code>'s answer is
+<code class="scheme"><span class="variable">accumulator</span></code>, and that is the answer we want in both cases:
+<a name="node_idx_1996"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">invert</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct the reverse of <code class="scheme"><span class="variable">alox</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">invert</span> <span class="variable">alox0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the reversed list of all those items</span>
+	  <span class="comment">;; on <code class="scheme"><span class="variable">alox0</span></code> that precede <code class="scheme"><span class="variable">alox</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">rev</span> <span class="variable">alox</span> <span class="variable">accumulator</span>)	
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alox</span>) <span class="variable">accumulator</span>]
+	      [<span class="keyword">else</span>
+		(<span class="variable">rev</span> (<span class="builtin">rest</span> <span class="variable">alox</span>) (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alox</span>) <span class="variable">accumulator</span>))])))
+    (<span class="variable">rev</span> <span class="variable">alox0</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</dd></dl><p></p>
+<p>
+The key step of this development is the precise description of the role of
+<code class="scheme"><span class="variable">accumulator</span></code>. In general, an <small>A</small><small>C</small><small>C</small><small>U</small><small>M</small><small>U</small><small>L</small><small>A</small><small>T</small><small>O</small><small>R</small> <small>I</small><small>N</small><small>V</small><small>A</small><small>R</small><small>I</small><small>A</small><small>N</small><small>T</small>
+<a name="node_idx_1998"></a><a name="node_idx_2000"></a>describes a relationship between the argument proper of the function, the
+current argument of the auxiliary function, and the accumulator that must
+always hold when an accumulator-style function is used.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_31.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_31.3">31.3&nbsp;&nbsp;Transforming Functions into Accumulator-Style</a></h2>
+<p></p>
+<p>
+The most complex part of the design recipe is the requirement to formulate
+an accumulator invariant.  Without that we cannot produce functioning
+accumulator-style functions. Because formulating invariants is clearly an
+art that deserves a lot of practice, we practice it in this section with
+three small, well-understood structural functions that do not need an
+accumulator. The section concludes with a group of exercises concerning
+this step. </p>
+<p>
+For the first example, consider the function <code class="scheme"><span class="variable">sum</span></code>:
+<a name="node_idx_2002"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of the numbers on <code class="scheme"><span class="variable">alon</span></code></span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div><p>
+Here is the first step toward an accumulator version: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of the numbers on <code class="scheme"><span class="variable">alon0</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">alon0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt> </span>
+	  (<span class="keyword">define</span> (<span class="variable">sum-a</span> <span class="variable">alon</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+	      [<span class="keyword">else</span>
+		... (<span class="variable">sum-a</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) <tt>...</tt> ( first <i>alon</i>) <tt>...</tt> <i>accumulator</i>)
+		... ])))
+    (<span class="variable">sum-a</span> <span class="variable">alon0</span> ...)))
+</pre></div><p>
+As suggested by our first step, we have put the template for <code class="scheme"><span class="variable">sum-a</span></code>
+into a <code class="scheme"><span class="keyword">local</span></code> definition, added an accumulator parameter, and
+renamed <code class="scheme"><span class="variable">sum</span></code>'s parameter.</p>
+<p>
+Our goal is to develop an accumulator invariant for <code class="scheme"><span class="variable">sum</span></code>. To do so,
+we must consider how <code class="scheme"><span class="variable">sum</span></code> proceeds and what the goal of the process
+is. Like <code class="scheme"><span class="variable">rev</span></code>, <code class="scheme"><span class="variable">sum-a</span></code> processes the numbers on the list
+one by one. The goal is to add up these numbers. This suggests that 
+<code class="scheme"><span class="variable">accumulator</span></code> represents the sum of the numbers seen so far: </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme">...
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the sum of the numbers that preceded</span>
+	  <span class="comment">;; those in <code class="scheme"><span class="variable">alon</span></code> on <code class="scheme"><span class="variable">alon0</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">sum-a</span> <span class="variable">alon</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) ...]
+	      [<span class="keyword">else</span>
+		... (<span class="variable">sum-a</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accumulator</span>))
+		... ])))
+    (<span class="variable">sum-a</span> <span class="variable">alon0</span> <span class="selfeval">0</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+When we apply <code class="scheme"><span class="variable">sum-a</span></code> we must use <code class="scheme"><span class="selfeval">0</span></code> as the value of
+<code class="scheme"><span class="variable">accumulator</span></code>, because it hasn't processed any of the numbers on
+<code class="scheme"><span class="variable">alon</span></code> yet. For the second clause, we must add <code class="scheme">(<span class="builtin">first</span> <span class="variable">alon</span>)</code>
+to <code class="scheme"><span class="variable">accumulator</span></code> so that the invariant holds again for the function
+application. </p>
+<p>
+Given a precise invariant, the rest is straightforward again.  If
+<code class="scheme"><span class="variable">alon</span></code> is <code class="scheme"><span class="builtin">empty</span></code>, <code class="scheme"><span class="variable">sum-a</span></code> returns
+<code class="scheme"><span class="variable">accumulator</span></code> because it represents the sum of all numbers on
+<code class="scheme"><span class="variable">alon</span></code> now. Figure&nbsp;<a href="#node_fig_Temp_168">88</a> contains the final
+definition of the accumulator-style version of <code class="scheme"><span class="variable">sum</span></code>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_168"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2004"></a><a name="node_idx_2006"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of the numbers on <code class="scheme"><span class="variable">alon0</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">alon0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the sum of the numbers that preceded</span>
+	  <span class="comment">;; those in <code class="scheme"><span class="variable">alon</span></code> on <code class="scheme"><span class="variable">alon0</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">sum-a</span> <span class="variable">alon</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="variable">accumulator</span>]
+	      [<span class="keyword">else</span> (<span class="variable">sum-a</span> (<span class="builtin">rest</span> <span class="variable">alon</span>) (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>) <span class="variable">accumulator</span>))])))
+    (<span class="variable">sum-a</span> <span class="variable">alon0</span> <span class="selfeval">0</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  2  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the product of all natural numbers in [<code class="scheme"><span class="variable">n0</span></code>, <code class="scheme"><span class="variable">n</span></code>)</span>
+	  (<span class="keyword">define</span> (<span class="variable">!-a</span> <span class="variable">n</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="variable">accumulator</span>]
+	      [<span class="keyword">else</span> (<span class="variable">!-a</span> (<span class="builtin">sub1</span> <span class="variable">n</span>) (<span class="builtin">*</span> <span class="variable">n</span> <span class="variable">accumulator</span>))])))
+    (<span class="variable">!-a</span> <span class="variable">n0</span> <span class="selfeval">1</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 88:</b>&nbsp;&nbsp;Some simple accumulator-style functions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Let's compare how the original definition of <code class="scheme"><span class="variable">sum</span></code> and the
+accumulator-style definition produce an answer for the same input: 
+</p>
+<div align="center"><table><tr><td>
+</td><td><div align="left"><pre class="scheme">  (<span class="variable">sum</span> (<span class="builtin">list</span> <span class="selfeval">10.23</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> (<span class="variable">sum</span> (<span class="builtin">list</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> (<span class="builtin">+</span> <span class="selfeval">4.50</span> (<span class="variable">sum</span> (<span class="builtin">list</span> <span class="selfeval">5.27</span>))))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> (<span class="builtin">+</span> <span class="selfeval">4.50</span> (<span class="builtin">+</span> <span class="selfeval">5.27</span> (<span class="variable">sum</span> <span class="builtin">empty</span>))))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> (<span class="builtin">+</span> <span class="selfeval">4.50</span> (<span class="builtin">+</span> <span class="selfeval">5.27</span> <span class="selfeval">0</span>)))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> (<span class="builtin">+</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>))
+<span class="builtin">=</span> (<span class="builtin">+</span> <span class="selfeval">10.23</span> <span class="selfeval">9.77</span>)
+<span class="builtin">=</span> <span class="selfeval">20.0</span>
+</pre></div></td><td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">  (<span class="variable">sum</span> (<span class="builtin">list</span> <span class="selfeval">10.23</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>))
+<span class="builtin">=</span> (<span class="variable">sum-a</span> (<span class="builtin">list</span> <span class="selfeval">10.23</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>) <span class="selfeval">0</span>)
+<span class="builtin">=</span> (<span class="variable">sum-a</span> (<span class="builtin">list</span> <span class="selfeval">4.50</span> <span class="selfeval">5.27</span>) <span class="selfeval">10.23</span>)
+<span class="builtin">=</span> (<span class="variable">sum-a</span> (<span class="builtin">list</span> <span class="selfeval">5.27</span>) <span class="selfeval">14.73</span>)
+<span class="builtin">=</span> (<span class="variable">sum-a</span> <span class="builtin">empty</span> <span class="selfeval">20.0</span>)
+<span class="builtin">=</span> <span class="selfeval">20.0</span>
+
+
+</pre></div></td><td>
+</td></tr></table></div>
+
+On the left side, we see how the plain recursive function descends the list
+of numbers all the way to the end and sets up addition operations on the
+way. On the right side, we see how the accumulator-style version adds up
+the numbers as it goes. Furthermore, we see that for each application of
+<code class="scheme"><span class="variable">sum-a</span></code> the invariant holds with respect to the application of
+<code class="scheme"><span class="variable">sum</span></code>. When <code class="scheme"><span class="variable">sum-a</span></code> is finally applied to <code class="scheme"><span class="builtin">empty</span></code>, the
+accumulator is the final result, and <code class="scheme"><span class="variable">sum-a</span></code> returns it.<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_31.3.1"></a>
+<b>Exercise 31.3.1.</b>&nbsp;&nbsp; 
+A second difference between the two functions concerns the order of
+addition. While the original version of <code class="scheme"><span class="variable">sum</span></code> adds up the numbers
+from right to left, the accumulator-style version adds them up from left to
+right. For exact numbers, this difference has no effect on the final
+result. For inexact numbers, the difference is significant.</p>
+<p>
+Consider the following definition: 
+<a name="node_idx_2008"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">g-series</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">expt</span> <span class="selfeval">-0.99</span> <span class="variable">n</span>) (<span class="variable">g-series</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p>
+Applying <code class="scheme"><span class="variable">g-series</span></code> to a natural number produces the beginning of a
+decreasing geometric series (see section&nbsp;<a href="curriculum-Z-H-29.html#node_sec_23.1">23.1</a>). </p>
+<p>
+Depending on which function we use to sum up the items of this list, we
+get vastly different results. Evaluate the expression
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">sum</span> (<span class="variable">g-series</span> <span class="selfeval">#i1000</span>))
+</pre></div><p>
+with both the original version of <code class="scheme"><span class="variable">sum</span></code> as well as its
+accumulator-style version. Then evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">*</span> <span class="selfeval">10e15</span> (<span class="variable">sum</span> (<span class="variable">g-series</span> <span class="selfeval">#i1000</span>)))
+</pre></div><p>
+which proves that, depending on the context, the difference can be
+arbitrarily large.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sum-accu-inex.html">Solution</a></p>
+<p></p>
+<p>
+For the second example, we return to the factorial function from
+part&nbsp;<a href="curriculum-Z-H-12.html#node_part_II">II</a>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  2  &middot;  1</span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> <span class="variable">n</span> (<span class="variable">!</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div><p>
+While <code class="scheme"><span class="variable">relative-2-absolute</span></code> and <code class="scheme"><span class="variable">invert</span></code> processed lists,
+the factorial function works on natural numbers. Its template is that for
+<code class="scheme"><strong>N</strong></code>-processing functions.</p>
+<p>
+We proceed as before by creating a <code class="scheme"><span class="keyword">local</span></code> definition of <code class="scheme"><span class="variable">!</span></code>: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">!</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to compute <em>n</em>  &middot;  (<em>n</em> <tt>-</tt> 1)  &middot;  <tt>...</tt>  &middot;  2  &middot;  1</span>
+(<span class="keyword">define</span> (<span class="variable">!</span> <span class="variable">n0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt> </span>
+	  (<span class="keyword">define</span> (<span class="variable">!-a</span> <span class="variable">n</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+	      [<span class="keyword">else</span> 
+		... (<span class="variable">!-a</span> (<span class="builtin">sub1</span> <span class="variable">n</span>) <tt>...</tt> n <tt>...</tt> <i>accumulator</i>) ...])))
+    (<span class="variable">!-a</span> <span class="variable">n0</span> ...)))
+</pre></div><p>
+This sketch suggests that if <code class="scheme"><span class="variable">!</span></code> is applied to the natural number
+<em>n</em>, <code class="scheme"><span class="variable">!-a</span></code> processes <em>n</em>, then <em>n</em> <tt>-</tt> 1, <em>n</em> <tt>-</tt> 2, and so on until it
+reaches <code class="scheme"><span class="selfeval">0</span></code>. Since the goal is to multiply these numbers, the
+accumulator should be the product of all those numbers that <code class="scheme"><span class="variable">!-a</span></code>
+has encountered: 
+</p>
+<div align="left"><pre class="scheme">...
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the product of all natural numbers between</span>
+	  <span class="comment">;; <code class="scheme"><span class="variable">n0</span></code> (inclusive) and <code class="scheme"><span class="variable">n</span></code> (exclusive)</span>
+	  (<span class="keyword">define</span> (<span class="variable">!-a</span> <span class="variable">n</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+	      [<span class="keyword">else</span> 
+		... (<span class="variable">!-a</span> (<span class="builtin">sub1</span> <span class="variable">n</span>) (<span class="builtin">*</span> <span class="variable">n</span> <span class="variable">accumulator</span>)) ...])))
+    (<span class="variable">!-a</span> <span class="variable">n0</span> <span class="selfeval">1</span>)))
+</pre></div><p>
+To make the invariant true at the beginning, we must use <code class="scheme"><span class="selfeval">1</span></code> for the
+accumulator. When <code class="scheme"><span class="variable">!-a</span></code> recurs, we must multiply the current value
+of the accumulator with <code class="scheme"><span class="variable">n</span></code> to reestablish the invariant.</p>
+<p>
+From the purpose statement for the accumulator of <code class="scheme"><span class="variable">!-a</span></code>, we can see
+that if <code class="scheme"><span class="variable">n</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, the accumulator is the product of
+<code class="scheme"><span class="variable">n</span></code>, <tt>...</tt>, <code class="scheme"><span class="selfeval">1</span></code>. That is, it is the desired result. So, 
+like <code class="scheme"><span class="variable">sum</span></code>, <code class="scheme"><span class="variable">!-a</span></code> returns <code class="scheme"><span class="variable">accumulator</span></code> in the first
+case and simply recurs in the second
+one. Figure&nbsp;<a href="#node_fig_Temp_168">88</a> contains the complete definition. </p>
+<p>
+It is instructive to compare hand-evaluations for the two versions of
+<code class="scheme"><span class="variable">!</span></code>: 
+</p>
+<div align="center"><table><tr><td>
+</td><td><div align="left"><pre class="scheme">  (<span class="variable">!</span> <span class="selfeval">3</span>)
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="variable">!</span> <span class="selfeval">2</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="variable">!</span> <span class="selfeval">1</span>)))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">*</span> <span class="selfeval">1</span> (<span class="variable">!</span> <span class="selfeval">0</span>))))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="selfeval">2</span> (<span class="builtin">*</span> <span class="selfeval">1</span> <span class="selfeval">1</span>)))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> (<span class="builtin">*</span> <span class="selfeval">2</span> <span class="selfeval">1</span>))
+<span class="builtin">=</span> (<span class="builtin">*</span> <span class="selfeval">3</span> <span class="selfeval">2</span>)
+<span class="builtin">=</span> <span class="selfeval">6</span>
+</pre></div></td><td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">  (<span class="variable">!</span> <span class="selfeval">3</span>)
+<span class="builtin">=</span> (<span class="variable">!-a</span> <span class="selfeval">3</span> <span class="selfeval">1</span>)
+<span class="builtin">=</span> (<span class="variable">!-a</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)
+<span class="builtin">=</span> (<span class="variable">!-a</span> <span class="selfeval">1</span> <span class="selfeval">6</span>)
+<span class="builtin">=</span> (<span class="variable">!-a</span> <span class="selfeval">0</span> <span class="selfeval">6</span>)
+<span class="builtin">=</span> <span class="selfeval">6</span>
+
+
+</pre></div></td><td>
+</td></tr></table></div>
+
+The left column shows how the original version works, the right one how the
+accumulator-style function proceeds. Both traverse the natural number until
+they reach <code class="scheme"><span class="selfeval">0</span></code>, but while the original version only schedules
+multiplications, the new one multiplies the numbers as they are processed.
+In addition, the right column illustrates how the new factorial function
+maintains the accumulator invariant. For each application, the accumulator
+is the product of <code class="scheme"><span class="selfeval">3</span></code> to <code class="scheme"><span class="variable">n</span></code> where <code class="scheme"><span class="variable">n</span></code> is the first
+argument to <code class="scheme"><span class="variable">!-a</span></code>. <p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_31.3.2"></a>
+<b>Exercise 31.3.2.</b>&nbsp;&nbsp; 
+Like <code class="scheme"><span class="variable">sum</span></code>, <code class="scheme"><span class="variable">!</span></code> performs the primitive computation steps
+(multiplication) in reverse order. Surprisingly, this affects the
+performance of the function in a negative manner. </p>
+<p>
+Use DrScheme's <code class="scheme"><span class="keyword">time</span></code>-facility to determine how long the two
+variants need to evaluate <code class="scheme">(<span class="variable">!</span> <span class="selfeval">20</span>)</code> 1000 times.</p>
+<p>
+<strong>Hint:</strong>  (1) Develop the function
+<a name="node_idx_2010"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">many</span> <span class="selfeval">:</span> <strong>N</strong> (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="builtin">true</span></code></span>
+<span class="comment">;; to evaluate <code class="scheme">(<span class="variable">f</span> <span class="selfeval">20</span>)</code> <code class="scheme"><span class="variable">n</span></code> times </span>
+(<span class="keyword">define</span> (<span class="variable">many</span> <span class="variable">n</span> <span class="variable">f</span>) ...)
+</pre></div><p></p>
+<p>
+(2) Evaluating <code class="scheme">(<span class="keyword">time</span> <span class="variable">an-expression</span>)</code> determines how much
+time the evaluation of <code class="scheme"><span class="variable">an-expression</span></code>
+takes.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/time-factorial.html">Solution</a></p>
+<p></p>
+<p>
+For the last example, we study a function on simplified binary trees. The
+example illustrates that accumulator-style programming is not just for data
+definitions with a single self-reference. Indeed, it is as common for
+complicated data definitions as it is for lists and natural numbers.</p>
+<p>
+Here is the structure definition for stripped-down binary trees:
+<a name="node_idx_2012"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">node</span> (<span class="variable">left</span> <span class="variable">right</span>))
+</pre></div><p>
+and here is its companion data definition: </p>
+<p>
+<a name="node_idx_2014"></a><a name="node_idx_2016"></a>A <i>binary-tree</i> (short: <i>tree</i>) is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-node</span> <span class="variable">tl</span> <span class="variable">tr</span>)</code> where <code class="scheme"><span class="variable">tl</span></code>, <code class="scheme"><span class="variable">tr</span></code> are <code class="scheme"><span class="variable">trees</span></code>.
+</p>
+</li></ol><p></p>
+<p>
+These trees contain no information, and all of them end in
+<code class="scheme"><span class="builtin">empty</span></code>. Still, there are many different trees as
+figure&nbsp;<a href="#node_fig_Temp_169">89</a> shows. The table indicates how to think of each
+tree as a graphical element, that is, of <code class="scheme"><span class="builtin">empty</span></code> as a plain dot and
+<code class="scheme"><span class="builtin">make-node</span></code> as a dot that combines two trees.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_169"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+
+<table border="1"><tr><td valign="top"><code class="scheme"><span class="builtin">empty</span></code> </td><td valign="top"><img src="curriculum5-Z-G-1.gif" border="0" alt="[curriculum5-Z-G-1.gif]">
+</td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>)</code> </td><td valign="top"><img src="curriculum5-Z-G-2.gif" border="0" alt="[curriculum5-Z-G-2.gif]">
+</td></tr>
+<tr><td valign="top">
+<div align="left"><pre class="scheme">(<span class="builtin">make-node</span> 
+  (<span class="builtin">make-node</span> 
+    <span class="builtin">empty</span> 
+    (<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>)) 
+  <span class="builtin">empty</span>) 
+</pre></div>
+</td><td valign="top"><img src="curriculum5-Z-G-3.gif" border="0" alt="[curriculum5-Z-G-3.gif]">
+</td></tr>
+<tr><td valign="top"></td></tr></table>
+</td></tr></table></div>
+
+</td></tr>
+<tr><td align="center"><b>Figure 89:</b>&nbsp;&nbsp;Some stripped-down binary trees</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Using the graphical representation of binary trees we can easily determine
+properties of trees. For example, we can count how many nodes it contains,
+how many <code class="scheme"><span class="builtin">empty</span></code>s there are, or how high it is. Let's look at the
+function <code class="scheme"><span class="variable">height</span></code>, which consumes a tree and determines how high it
+is: 
+<a name="node_idx_2018"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">height</span> <span class="selfeval">:</span> <span class="variable">tree</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to measure the height of <code class="scheme"><span class="variable">abt0</span></code></span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">height</span> <span class="variable">abt</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">abt</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">max</span> (<span class="variable">height</span> (<span class="builtin">node-left</span> <span class="variable">abt</span>)) (<span class="variable">height</span> (<span class="builtin">node-right</span> <span class="variable">abt</span>))) <span class="selfeval">1</span>)]))
+</pre></div><p>
+Like the data definition, this function definition has two
+self-references.</p>
+<p>
+To transform this function into an accumulator-style function, we follow the
+standard path. We begin with putting an appropriate template into a
+<code class="scheme"><span class="keyword">local</span></code> definition: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">height</span> <span class="selfeval">:</span> <span class="variable">tree</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to measure the height of <code class="scheme"><span class="variable">abt0</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">height</span> <span class="variable">abt0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt> </span>
+	  (<span class="keyword">define</span> (<span class="variable">height-a</span> <span class="variable">abt</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">abt</span>) ...]
+	      [<span class="keyword">else</span>
+		... (<span class="variable">height-a</span> (<span class="builtin">node-left</span> <span class="variable">abt</span>) 
+                              <tt>...</tt> ( node-right <i>abt</i>) <tt>...</tt> <i>accumulator</i>) ...
+		... (<span class="variable">height-a</span> (<span class="builtin">node-right</span> <span class="variable">abt</span>) 
+                              <tt>...</tt> ( node-left <i>abt</i>) <tt>...</tt> <i>accumulator</i>) ... ])))
+    (<span class="variable">height</span> <span class="variable">abt0</span> ...)))
+</pre></div><p>
+The problem, as always, is to determine what knowledge the accumulator
+should represent. </p>
+<p>
+An obvious choice is that <code class="scheme"><span class="variable">accumulator</span></code> should be a number. More
+specifically, <code class="scheme"><span class="variable">accumulator</span></code> should represent the number of
+<code class="scheme"><span class="variable">node</span></code>s that <code class="scheme"><span class="variable">height-a</span></code> has processed so far. Initially, it
+has seen <code class="scheme"><span class="selfeval">0</span></code> nodes; as it descends the tree, it must increase the
+accumulator as it processes a <code class="scheme"><span class="variable">node</span></code>:
+</p>
+<div align="left"><pre class="scheme">...
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> represents how many nodes <code class="scheme"><span class="variable">height-a</span></code> </span>
+          <span class="comment">;; has encountered on its way to <code class="scheme"><span class="variable">abt</span></code> from <code class="scheme"><span class="variable">abt0</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">height-a</span> <span class="variable">abt</span> <span class="variable">accumulator</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">abt</span>) ...]
+              [<span class="keyword">else</span>
+		... (<span class="variable">height-a</span> (<span class="builtin">node-left</span> <span class="variable">abt</span>)  (<span class="builtin">+</span> <span class="variable">accumulator</span> <span class="selfeval">1</span>)) ...
+		... (<span class="variable">height-a</span> (<span class="builtin">node-right</span> <span class="variable">abt</span>) (<span class="builtin">+</span> <span class="variable">accumulator</span> <span class="selfeval">1</span>)) ...])))
+    (<span class="variable">height</span> <span class="variable">abt0</span> <span class="selfeval">0</span>))
+</pre></div><p>
+That is, the accumulator invariant is that <code class="scheme"><span class="variable">accumulator</span></code> counts how
+many steps <code class="scheme"><span class="variable">height-a</span></code> has taken on a particular path into the tree
+<code class="scheme"><span class="variable">abt</span></code>.</p>
+<p>
+The result in the base case is <code class="scheme"><span class="variable">accumulator</span></code> again; after all it
+represents the height or length of the particular path. But, in contrast to
+the first two examples, it is not the final result. In the second
+<code class="scheme"><span class="keyword">cond</span></code>-clause, the new function has two heights to deal with. Given
+that we are interested in the larger one, we use Scheme's <code class="scheme"><span class="variable">max</span></code>
+operation to select it. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_170"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">height</span> <span class="selfeval">:</span> <span class="variable">tree</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to measure the height of <code class="scheme"><span class="variable">abt0</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">height</span> <span class="variable">abt0</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> represents how many nodes <code class="scheme"><span class="variable">height-a</span></code> </span>
+          <span class="comment">;; has encountered on its way to <code class="scheme"><span class="variable">abt</span></code> from <code class="scheme"><span class="variable">abt0</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">height-a</span> <span class="variable">abt</span> <span class="variable">accumulator</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">abt</span>) <span class="variable">accumulator</span>]
+              [<span class="keyword">else</span> (<span class="variable">max</span> (<span class="variable">height-a</span> (<span class="builtin">node-left</span> <span class="variable">abt</span>)  (<span class="builtin">+</span> <span class="variable">accumulator</span> <span class="selfeval">1</span>))
+                         (<span class="variable">height-a</span> (<span class="builtin">node-right</span> <span class="variable">abt</span>) (<span class="builtin">+</span> <span class="variable">accumulator</span> <span class="selfeval">1</span>)))])))
+    (<span class="variable">height-a</span> <span class="variable">abt0</span> <span class="selfeval">0</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 90:</b>&nbsp;&nbsp;The accumulator-style version of <i>height</i></td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_170">90</a> contains the complete definition for
+<code class="scheme"><span class="variable">height</span></code>. Our final step is to check out a hand-evaluation of  the
+new function. We use the most complex example from the above table: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">height</span> (<span class="builtin">make-node</span>
+	    (<span class="builtin">make-node</span> <span class="builtin">empty</span> 
+	               (<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>)) 
+	    <span class="builtin">empty</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">height-a</span> (<span class="builtin">make-node</span>
+	      (<span class="builtin">make-node</span> <span class="builtin">empty</span> 
+		         (<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>)) 
+	      <span class="builtin">empty</span>)
+            <span class="selfeval">0</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">max</span> (<span class="variable">height-a</span>
+	 (<span class="builtin">make-node</span> <span class="builtin">empty</span> 
+		    (<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>))
+	 <span class="selfeval">1</span>)
+       (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">1</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">max</span> (<span class="variable">max</span> 
+	 (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">2</span>)
+	 (<span class="variable">height-a</span> (<span class="builtin">make-node</span> <span class="builtin">empty</span> <span class="builtin">empty</span>) <span class="selfeval">2</span>))
+       (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">1</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">max</span> (<span class="variable">max</span> 
+	 (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">2</span>)
+	 (<span class="variable">max</span> (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">3</span>) (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">3</span>)))
+       (<span class="variable">height-a</span> <span class="builtin">empty</span> <span class="selfeval">1</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">max</span> (<span class="variable">max</span> 
+	 <span class="selfeval">2</span>
+	 (<span class="variable">max</span> <span class="selfeval">3</span> <span class="selfeval">3</span>))
+       <span class="selfeval">1</span>)
+
+<span class="builtin">=</span> <span class="selfeval">3</span>
+</pre></div><p>
+It shows how <code class="scheme"><span class="variable">height-a</span></code> increments the accumulator at each step and
+that the accumulator at the top of a path represents the number of lines
+traversed. The hand-evaluation also shows that the results of the various
+branches are combined at each branching point. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_31.3.3"></a>
+<b>Exercise 31.3.3.</b>&nbsp;&nbsp; 
+Develop an accumulator-style version of <code class="scheme"><span class="variable">product</span></code>, the function that
+computes the product of a list of numbers. Show the stage that explains
+what the accumulator represents.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/pi-accu.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_31.3.4"></a>
+<b>Exercise 31.3.4.</b>&nbsp;&nbsp; 
+Develop an accumulator-style version of <code class="scheme"><span class="variable">how-many</span></code>, which is the function
+that determines the number of items on a list. Show the stage that explains
+what the accumulator represents.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/length-accu.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_31.3.5"></a>
+<b>Exercise 31.3.5.</b>&nbsp;&nbsp; 
+Develop an accumulator-style version of <code class="scheme"><span class="variable">add-to-pi</span></code>, the function
+that adds a natural number to <code class="scheme"><span class="variable">pi</span></code> without using <code class="scheme"><span class="builtin">+</span></code> (see
+section&nbsp;<a href="curriculum-Z-H-15.html#node_sec_11.5">11.5</a>). Show the stage that explains what the
+accumulator represents.</p>
+<p>
+Generalize the function so that it adds two numbers, the first one a natural
+number, without using <code class="scheme"><span class="builtin">+</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/add-pi-accu.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_31.3.6"></a>
+<b>Exercise 31.3.6.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">make-palindrome</span></code>, which accepts a non-empty
+list and constructs a palindrome by mirroring the list around the last
+item.  Thus, if we were to represent the word ``abc'' and apply
+<code class="scheme"><span class="variable">make-palindrome</span></code>, we would get back the representation of
+``abcba''.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/palindrome.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_31.3.7"></a>
+<b>Exercise 31.3.7.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">to10</span></code>. It consumes a list of digits and produces the
+corresponding number. The first item on the list is the most
+significant digit.</p>
+<p>
+Examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">to10</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)) 
+   <span class="selfeval">102</span>)
+
+(<span class="builtin">=</span> (<span class="variable">to10</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span>))
+   <span class="selfeval">21</span>)
+</pre></div><p></p>
+<p>
+Now generalize the function so that it consumes a base <em>b</em> and a list of
+<em>b</em>-digits. The conversion produces the decimal (10-based) value of the
+list. The base is between <code class="scheme"><span class="selfeval">2</span></code> and <code class="scheme"><span class="selfeval">10</span></code>. A <em>b</em>-digit is a
+number between 0 and <em>b</em> <tt>-</tt> 1. </p>
+<p>
+Examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">to10-general</span> <span class="selfeval">10</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)) 
+   <span class="selfeval">102</span>)
+
+(<span class="builtin">=</span> (<span class="variable">to10-general</span> <span class="selfeval">08</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">2</span>)) 
+   <span class="selfeval">66</span>)
+</pre></div><p></p>
+<p>
+<strong>Hint:</strong>  In the first example, the result is determined by
+</p>
+<div align="center"><img src="curriculum5-Z-G-4.gif" border="0" alt="[curriculum5-Z-G-4.gif]"></div><p>
+the second one is 
+</p>
+<div align="center"><img src="curriculum5-Z-G-5.gif" border="0" alt="[curriculum5-Z-G-5.gif]"></div><p>
+That is, the exponent represents the number of digits that
+follow.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/to10.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_31.3.8"></a>
+<b>Exercise 31.3.8.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">is-prime?</span></code>, which consumes a natural number and
+returns <code class="scheme">true</code> if it is prime and <code class="scheme">false</code> otherwise. A number <em>n</em>
+is prime if it is not divisible by any number between 2 and <em>n</em> <tt>-</tt> 1. </p>
+<p>
+<strong>Hints:</strong>  (1) The design recipe for <code class="scheme"><strong>N</strong>[<span class="variable">&gt;=1</span>]</code> suggests
+the following template: 
+<a name="node_idx_2020"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">is-prime?</span> <span class="selfeval">:</span> <strong>N</strong>[<span class="variable">&gt;=1</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">n</span></code> is a prime number</span>
+(<span class="keyword">define</span> (<span class="variable">is-prime?</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">1</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">is-prime?</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)) ...]))
+</pre></div><p>
+From this outline, we can immediately conclude that the function
+forgets <code class="scheme"><span class="variable">n</span></code>, its initial argument as it recurs. Since <code class="scheme"><span class="variable">n</span></code>
+is definitely needed to determine whether <code class="scheme"><span class="variable">n</span></code> is divisible by 2
+<tt>...</tt> <em>n</em> <tt>-</tt> 1, this suggests that we design an accumulator-style local
+function that remembers <code class="scheme"><span class="variable">n</span></code> as it recurs.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/is-prime.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Pitfalls</strong>: 
+
+People who encounter accumulator-style programming for the first time often
+get the impression that they are always faster or easier to understand
+(design) than their recursive counterparts. Both parts are plain
+wrong. While it is impossible to deal with the full scope of the mistake,
+let us take a look at a small counterexample. </p>
+<p>
+Consider the following table:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">plain factorial </td><td valign="top">accumulator-style factorial </td></tr>
+<tr><td valign="top">5.760&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">5.970 </td></tr>
+<tr><td valign="top">5.780 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">5.940 </td></tr>
+<tr><td valign="top">5.800 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">5.980 </td></tr>
+<tr><td valign="top">5.820 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">5.970 </td></tr>
+<tr><td valign="top">5.870&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">6.690 </td></tr>
+<tr><td valign="top">5.806   </td><td valign="top">6.110
+</td></tr></table>
+</td></tr></table></div>
+
+It represents the results for
+exercise&nbsp;<a href="#node_thm_31.3.2">31.3.2</a>. Specifically, the left column shows the
+number of seconds for 1000 evaluations of <code class="scheme">(<span class="variable">!</span> <span class="selfeval">20</span>)</code> with the plain
+factorial function; the right column shows what the same experiment yields
+when we use the factorial function with an accumulator parameter. The last
+row shows the averages for the two columns. The table shows that the
+performance of the accumulator-style version of factorial is always worse
+than that of the original factorial function.&nbsp;<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-38.html">previous</a></span><span>, <a href="curriculum-Z-H-40.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-39.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

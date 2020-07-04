@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.1; How to Design Programs </title>
+</head>
+<body>
+<a href="scheme-eval-def.html">17.7.4</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-2.html">17.8.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.1 compare the two versions of list=?
+To do this I named the two versions list=?-1 and list=?-2
+------------------------------------------------------------
+;Data Definition:
+a list-of-numbers is either
+  1. empty or
+  2. (cons n lon)
+  where n is a number and lon is a list-of-numbers
+
+;Template considering the data to be unrelated:
+(define (list=?-1 a-list another-list)
+  (cond
+    [(and (empty? a-list) (empty? another-list)) ...]
+    [(and (cons? a-list) (empty? another-list))
+     ... (first a-list) ... (rest a-list) ...]
+    [(and (empty? a-list) (cons? another-list)) 
+    ... (first another-list) ... (rest another-list) ...]
+    [(and (cons? a-list) (cons? another-list))
+     ... (first a-list) ... (first another-list) ...
+     ... (list=?-1 (rest a-list) (rest another-list)) ...
+     ... (list=?-1 a-list (rest another-list)) ...
+     ... (list=?-1 (rest a-list) another-list) ...]))
+|#
+
+;; list=? : list-of-numbers list-of-numbers  -&gt;  boolean
+;; to determine whether a-list and another-list 
+;; contain the same numbers in the same order
+(define (list=?-1 a-list another-list)
+  (cond
+    [(and (empty? a-list) (empty? another-list)) true]
+    [(and (cons? a-list) (empty? another-list)) false]
+    [(and (empty? a-list) (cons? another-list)) false]
+    [(and (cons? a-list) (cons? another-list))
+     (and (= (first a-list) (first another-list))
+          (list=?-1 (rest a-list) (rest another-list)))]))
+
+;Examples as Tests:
+(check-expect
+ (list=?-1 empty empty) 
+ true)
+
+(check-expect
+ (list=?-1 empty (cons 1 empty)) 
+ false)
+
+(check-expect
+ (list=?-1 (cons 1 empty) empty)
+ false)
+
+(check-expect
+ (list=?-1 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 2 (cons 3 empty)))) 
+ true)
+
+(check-expect
+ (list=?-1 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 3 empty))) 
+ false)
+
+(check-expect
+ (list=?-1 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 3 (cons 2 empty)))) 
+ false)
+
+#|
+;Template working with the data simultaneously:
+(define (list=?-2 a-list another-list)
+  (cond
+    [(empty? a-list) ...]
+    [(cons? a-list) 
+     ... (first a-list) ... (first another-list) ...
+     ... (list=?-2 (rest a-list) (rest another-list)) ...]))
+
+|#
+
+;; list=? : list-of-numbers list-of-numbers  -&gt;  boolean
+;; to determine whether a-list and another-list 
+;; contain the same numbers in the same order
+(define (list=?-2 a-list another-list)
+  (cond
+    [(empty? a-list) (empty? another-list)]
+    [(cons? a-list) 
+     (and (cons? another-list)
+          (and (= (first a-list) (first another-list))
+               (list=?-2 (rest a-list) (rest another-list))))]))
+
+;Examples as Tests:
+(check-expect
+ (list=?-2 empty empty) 
+ true)
+
+(check-expect
+ (list=?-2 empty (cons 1 empty)) 
+ false)
+
+(check-expect
+ (list=?-2 (cons 1 empty) empty)
+ false)
+
+(check-expect
+ (list=?-2 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 2 (cons 3 empty)))) 
+ true)
+
+(check-expect
+ (list=?-2 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 3 empty))) 
+ false)
+
+(check-expect
+ (list=?-2 (cons 1 (cons 2 (cons 3 empty))) 
+           (cons 1 (cons 3 (cons 2 empty)))) 
+ false)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

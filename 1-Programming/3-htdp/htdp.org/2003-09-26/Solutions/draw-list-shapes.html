@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/draw-list-shapes.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.8; How to Design Programs </title>
+</head>
+<body>
+<a href="average-price.html">9.5.7</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.8">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="raises.html">10.1.1</a><pre>;; draw-shapes : posn list-of-numbers -&gt; true
+;; draws circles centered at a-posn with radii taken from a-lon
+
+#|
+;; Template
+(define (draw-shapes a-posn a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (draw-shapes a-posn (rest a-lon)) ...]))
+|#
+
+(define (draw-shapes a-posn a-lon)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (draw-circle a-posn (first a-lon))
+               (draw-shapes a-posn (rest a-lon)))]))
+
+;; Examples:
+(start 300 300)
+(draw-shapes (make-posn 10 10) empty)
+(draw-shapes (make-posn 10 10) (cons 5 empty))
+(draw-shapes (make-posn 150 150)
+             (cons 20
+                   (cons 40
+                         (cons 60
+                               (cons 80
+                                     (cons 100
+                                           (cons 120
+                                                 (cons 140
+                                                       empty))))))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/draw-list-shapes.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

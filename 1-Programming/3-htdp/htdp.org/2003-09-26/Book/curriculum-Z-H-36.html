@@ -1,0 +1,1222 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-36.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-35.html">previous</a></span><span>, <a href="curriculum-Z-H-37.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_29"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_29">Section  29</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_29">Intermezzo 5: The Cost of Computing and Vectors</a></h1>
+<p></p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-33.html#node_sec_26.3">26.3</a> we discussed the differences between a
+structurally recursive program
+<a name="node_idx_1872"></a>and an equivalent, generative version.
+<a name="node_idx_1874"></a>
+The comparison revealed that the generative one is much faster than the
+structural version. We used both informal arguments, using the number of
+recursive calls, and measurements, using <code class="scheme"><span class="keyword">time</span></code> expressions
+(exercises&nbsp;<a href="curriculum-Z-H-33.html#node_thm_26.3.1">26.3.1</a> and&nbsp;<a href="curriculum-Z-H-33.html#node_thm_26.3.3">26.3.3</a>), to support
+our conclusion.</p>
+<p>
+While timing the application of a program to specific arguments can help us
+understand a program's behavior in one situation, it is not a fully
+convincing argument. After all, applying the same program to some other
+inputs may require a radically different amount of time. In short, timing
+programs for specific inputs has the same status as testing programs for
+specific examples. Just as testing may reveal bugs, timing may reveal
+anomalies concerning the execution behavior for specific inputs. It does
+not provide a firm foundation for general statements about the behavior of
+a program.</p>
+<p>
+This intermezzo introduces a tool for making general statements about the
+time that programs take to compute a result. The first subsection motivates
+the tool and illustrates it with several examples, though on an informal
+basis. The second one provides a rigorous definition. The last one uses the
+tool to motivate an additional class of Scheme data and some of its basic
+operations.</p>
+<p>
+
+</p>
+<a name="node_sec_29.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_29.1">29.1&nbsp;&nbsp;Concrete Time, Abstract Time</a></h2>
+<p></p>
+<p>
+Let's study the behavior of <code class="scheme"><span class="variable">how-many</span></code>, a function that we understand
+well:
+<a name="node_idx_1876"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">how-many</span> <span class="variable">a-list</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> <span class="variable">a-list</span>)) <span class="selfeval">1</span>)]))
+</pre></div><p>
+It consumes a list and computes how many items the list contains. </p>
+<p>
+Here is a sample evaluation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">how-many</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))
+</pre></div><p></p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)) <span class="selfeval">1</span>)
+</pre></div><p></p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">c</span>)) <span class="selfeval">1</span>) <span class="selfeval">1</span>)
+</pre></div><p></p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">+</span> (<span class="builtin">+</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> <span class="builtin">empty</span>) <span class="selfeval">1</span>) <span class="selfeval">1</span>) <span class="selfeval">1</span>)
+</pre></div><p></p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> <span class="selfeval">3</span>
+</pre></div><p>
+It consists of only those steps that are natural recursions. The steps in
+between are always the same. For example, to get from the original
+application to the first natural recursion, we go through the following
+steps:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">how-many</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>)) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))) <span class="selfeval">1</span>)])
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">cond</span>
+    [<span class="builtin">false</span> <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))) <span class="selfeval">1</span>)])
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="keyword">cond</span>
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))) <span class="selfeval">1</span>)])
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">c</span>))) <span class="selfeval">1</span>)
+</pre></div><p>
+The steps between the remaing natural recursions differ only as far as the
+substitution for <code class="scheme"><span class="variable">a-list</span></code> is concerned. </p>
+<p>
+If we apply <code class="scheme"><span class="variable">how-many</span></code> to a shorter list, we need fewer natural
+recursion steps: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">how-many</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">e</span>))
+<span class="builtin">=</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> <span class="builtin">empty</span>) <span class="selfeval">1</span>)
+<span class="builtin">=</span> <span class="selfeval">1</span>
+</pre></div><p>
+If we apply <code class="scheme"><span class="variable">how-many</span></code> to a longer list, we need more natural
+recursion steps. The number of steps between natural recursions remains the
+same. </p>
+<p>
+The example suggests that, not surprisingly, the number of evaluation steps
+depends on the size of the input. More importantly, though, it also implies
+that the number of natural recrusions is a good measure of the size of an
+evaluation sequence. After all, we can reconstruct the actual number of
+steps from this measure and the function definition. For this reason,
+programmers have come to express the <small>A</small><small>B</small><small>S</small><small>T</small><small>R</small><small>A</small><small>C</small><small>T</small> <small>R</small><small>U</small><small>N</small><small>N</small><small>I</small><small>N</small><small>G</small> <small>T</small><small>I</small><small>M</small><small>E</small>
+<a name="node_idx_1878"></a>of a program as a relationship between the size of the input and the number
+of recursion
+<a name="node_idx_1880"></a>steps in an evaluation.<a name="call_footnote_Temp_157"></a><a href="#footnote_Temp_157"><sup><small>62</small></sup></a></p>
+<p>
+In our first example, the size of the input is simply the size of the
+list. More specifically, if the list contains one item, the evaluation
+requires one natural recursion.
+<a name="node_idx_1882"></a>For two items, we recur twice. For a list with <i>N</i> items, the
+evaluation requires <i>N</i> steps.  </p>
+<p>
+Not all functions have such a uniform measure for their abstract running time. 
+Take a look at our first recursive function:
+<a name="node_idx_1884"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) <span class="keyword">'</span><span class="variable">doll</span>) true]
+	    [<span class="keyword">else</span> (<span class="variable">contains-doll?</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>))])]))
+</pre></div><p>
+If we evaluate 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">contains-doll?</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="keyword">'</span><span class="variable">game-boy</span> <span class="keyword">'</span><span class="variable">pokemon</span>))
+</pre></div><p>
+the application requires no natural recursion step. In contrast, for the
+expression
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">contains-doll?</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="keyword">'</span><span class="variable">game-boy</span> <span class="keyword">'</span><span class="variable">pokemon</span> <span class="keyword">'</span><span class="variable">doll</span>))
+</pre></div><p>
+the evaluation requires as many natural recursion steps as there are items
+in the list.  Put differently, in the best case, the function can find the
+answer immediately; in the worst case, the function must search the entire
+input list.</p>
+<p>
+Programmers cannot assume that inputs are always of the best posisble
+shape; and they must hope that the inputs are not of the worst possible
+shape. Instead, they must analyze how much time their functions take on
+the average.  For example, <code class="scheme"><span class="variable">contains-doll?</span></code> may -- on the
+average -- find <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> somewhere in the middle of the list. Thus, we
+could say that if the input contains <i>N</i> items, the abstract running time
+of <code class="scheme"><span class="variable">contains-doll?</span></code> is (roughly)
+</p>
+<div align="center"><img src="curriculumD-Z-G-1.gif" border="0" alt="[curriculumD-Z-G-1.gif]"></div><p>
+ -- that is, it naturally recurs half as often as the number of items on the
+input. Because we already measure the running time of a function in an
+abstract manner, we can ignore the division by 2. More precisely, we assume
+that each basic step takes <em>K</em> units of time. If, instead, we use <em>K</em>/2 as
+the constant, we can calculate
+</p>
+<div align="center"><img src="curriculumD-Z-G-2.gif" border="0" alt="[curriculumD-Z-G-2.gif]"></div><p>
+which shows that we can ignore other constant factors.  To indicate that we
+are hiding such constants we say that <code class="scheme"><span class="variable">contains-doll?</span></code> takes ``on
+the order of <i>N</i> steps'' to find <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> in a list of <i>N</i> items.</p>
+<p>
+Now consider our standard sorting function from figure&nbsp;<a href="curriculum-Z-H-16.html#node_fig_Temp_76">33</a>. 
+Here is a hand-evaluation for a small input:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">sort</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">1</span> <span class="selfeval">2</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="variable">sort</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="variable">insert</span> <span class="selfeval">1</span> (<span class="variable">sort</span> (<span class="builtin">list</span> <span class="selfeval">2</span>))))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="variable">insert</span> <span class="selfeval">1</span> (<span class="variable">insert</span> <span class="selfeval">2</span> (<span class="variable">sort</span> <span class="builtin">empty</span>))))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="variable">insert</span> <span class="selfeval">1</span> (<span class="variable">insert</span> <span class="selfeval">2</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="variable">insert</span> <span class="selfeval">1</span> (<span class="builtin">list</span> <span class="selfeval">2</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="variable">insert</span> <span class="selfeval">1</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="variable">insert</span> <span class="selfeval">3</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">1</span>))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">=</span> (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">2</span> <span class="selfeval">1</span>)
+</pre></div><p>
+The evaluation is more complicated than those for <code class="scheme"><span class="variable">how-many</span></code> or
+<code class="scheme"><span class="variable">contains-doll?</span></code>. It also consists of two phases. During the first
+one, the natural recursions for <code class="scheme"><span class="variable">sort</span></code> set up as many applications
+of <code class="scheme"><span class="variable">insert</span></code> as there are items in the list. During the second phase,
+each application of <code class="scheme"><span class="variable">insert</span></code> traverses a list of 1, 2, 3, <tt>...</tt> up
+to the number of items in the original list (minus one). </p>
+<p>
+Inserting an item is similar to finding an item, so it is not surprising
+that <code class="scheme"><span class="variable">insert</span></code> behaves like <code class="scheme"><span class="variable">contains-doll?</span></code>. More
+specifically, the applications of <code class="scheme"><span class="variable">insert</span></code> to a list of <em>N</em>
+items may trigger <em>N</em> natural recursions or none. On the average, we
+assume it requires <em>N</em>/2, which means on the order of <em>N</em>. Because
+there are <em>N</em> applications of <code class="scheme"><span class="variable">insert</span></code>, we have an average of
+on the order of <em>N</em><sup>2</sup> natural recursions of <code class="scheme"><span class="variable">insert</span></code>.</p>
+<p>
+In summary, if <code class="scheme"><span class="variable">l</span></code> contains <em>N</em> items, evaluating
+<code class="scheme">(<span class="variable">sort</span> <span class="variable">l</span>)</code> always requires <i>N </i> natural recursions of
+<code class="scheme"><span class="variable">sort</span></code> and on the order of <em>N</em><sup>2</sup> natural recursions of
+<code class="scheme"><span class="variable">insert</span></code>. Taken together, we get 
+</p>
+<div align="center"><img src="curriculumD-Z-G-3.gif" border="0" alt="[curriculumD-Z-G-3.gif]"></div><p>
+steps, but we will see in exercise&nbsp;<a href="#node_thm_29.2.1">29.2.1</a> that this is equivalent
+to saying that insertion sort requires on the order of <em>N</em><sup>2</sup> steps.</p>
+<p>
+Our final example is the function <code class="scheme"><span class="variable">maxi</span></code>: 
+<a name="node_idx_1886"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">maxi</span> <span class="selfeval">:</span> <span class="variable">ne-list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the maximum of a non-empty list of numbers </span>
+(<span class="keyword">define</span> (<span class="variable">maxi</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&gt;</span> (<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="variable">maxi</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))]
+	    [<span class="keyword">else</span> (<span class="builtin">first</span> <span class="variable">alon</span>)])]))
+</pre></div><p>
+In exercise&nbsp;<a href="curriculum-Z-H-23.html#node_thm_18.1.12">18.1.12</a>, we investigated its behavior and the
+behavior of an observationally equivalent function that uses
+<code class="scheme"><span class="keyword">local</span></code>. Here we study its abstract running time rather than just
+observe some concrete running time. </p>
+<p>
+Let's start with a small example: <code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>.  We know
+that the result is <code class="scheme"><span class="selfeval">3</span></code>. Here is the first important step of a
+hand-evaluation: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&gt;</span> <span class="variable"><u><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code></u></span> <span class="selfeval">0</span>) <span class="variable"><u><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code></u></span>]
+    [<span class="keyword">else</span> <span class="selfeval">0</span>])
+</pre></div><p>
+From here, we must evaluate the left of the two underlined natural
+recursions. Because the result is <code class="scheme"><span class="selfeval">3</span></code> and the condition is thus
+<code class="scheme"><span class="builtin">true</span></code>, we must evaluate the second underlined natural recursion as
+well. </p>
+<p>
+Focusing on just the natural recursion we see that its hand-evaluation
+begins with similar steps: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&gt;</span> (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>)) <span class="selfeval">1</span>) (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))]
+    [<span class="keyword">else</span> <span class="selfeval">1</span>])
+</pre></div><p>
+Again, <code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code> is evaluated twice because it produces the
+maximum. Finally, even determining the maximum of <code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>
+requires two natural recursions: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+<span class="builtin">=</span> (<span class="keyword">cond</span>
+    [(<span class="builtin">&gt;</span> (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">3</span>)) <span class="selfeval">2</span>) (<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">3</span>))]
+    [<span class="keyword">else</span> <span class="selfeval">2</span>])
+</pre></div><p></p>
+<p>
+To summarize, <code class="scheme"><span class="variable">maxi</span></code> requires two natural recursions for each
+application. The following table counts the instances for our example:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">original expression    </td><td valign="top">requires 2 evaluations of </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code> </td><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>  </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>   </td><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>  </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>     </td><td valign="top"><code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">3</span>))</code>  
+</td></tr></table>
+</td></tr></table></div>
+
+Altogether the hand-evaluation requires eight natural recursions for a list
+of four items. If we add <code class="scheme"><span class="selfeval">4</span></code> (or a larger number) at the end of the
+list, we need to double the number of natural recursions. Thus, in general
+we need on the order of <div align="center"><img src="curriculumD-Z-G-4.gif" border="0" alt="[curriculumD-Z-G-4.gif]"></div><p> recursions for a list of <em>N</em> numbers
+when the last number is the maximum.<a name="call_footnote_Temp_158"></a><a href="#footnote_Temp_158"><sup><small>63</small></sup></a></p>
+<p>
+While the scenario we considered is the worst possible case, the analysis
+of <code class="scheme"><span class="variable">maxi</span></code>'s abstract running time explains the phenomenon we studied
+in exercise&nbsp;<a href="curriculum-Z-H-23.html#node_thm_18.1.12">18.1.12</a>. It also explains why a version of
+<code class="scheme"><span class="variable">maxi</span></code> that uses a <strong>local</strong>-expression to name the result of
+the natural recursion is faster: 
+<a name="node_idx_1888"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">maxi2</span> <span class="selfeval">:</span> <span class="variable">ne-list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine the maximum of a list of numbers </span>
+(<span class="keyword">define</span> (<span class="variable">maxi2</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)) (<span class="builtin">first</span> <span class="variable">alon</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">max-of-rest</span> (<span class="variable">maxi2</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))))
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">&gt;</span> <span class="variable">max-of-rest</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) <span class="variable">max-of-rest</span>]
+	      [<span class="keyword">else</span> (<span class="builtin">first</span> <span class="variable">alon</span>)])])))
+</pre></div><p>
+Instead of recomputing the maximum of the rest of the list, this version
+just refers to the variable twice when the variable stands for the
+maximum of the rest of the list. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_29.1.1"></a>
+<b>Exercise 29.1.1.</b>&nbsp;&nbsp; 
+A number tree is either a number or a pair of number trees. Develop the
+function <code class="scheme"><span class="variable">sum-tree</span></code>, which determines the sum of the numbers in a
+tree. How should we measure the size of a tree? What is its abstract
+running time?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/order-of-2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.1.2"></a>
+<b>Exercise 29.1.2.</b>&nbsp;&nbsp; 
+Hand-evaluate <code class="scheme">(<span class="variable">maxi2</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code> in a manner similar to our
+evaluation of <code class="scheme">(<span class="variable">maxi</span> (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))</code>.  What is the abstract running
+time of <code class="scheme"><span class="variable">maxi2</span></code>?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/order-of-1.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_29.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_29.2">29.2&nbsp;&nbsp;The Definition of ``on the Order of''</a></h2>
+<p></p>
+<p>
+It is time to introduce a rigorous description of the phrase ``on the order
+of'' and to explain why it is acceptable to ignore some constants. Any
+serious programmer must be thoroughly familiar with this notion. It is the
+most fundamental method for analyzing and comparing the behavior of
+programs. This intermezzo provides a first glimpse at the idea; a second
+course on computing usually provides some more in-depth considerations. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_159"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="center"><table><tr><td>
+
+
+<img src="curriculumD-Z-G-6.gif" border="0" alt="[curriculumD-Z-G-6.gif]">
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 80:</b>&nbsp;&nbsp;A comparison of two running time expressions</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Let's consider a sample ``order of'' claim with concrete examples before we
+agree on a definition. Recall that a function <code class="scheme"><span class="variable">F</span></code> may require on the
+order of <em>N</em> steps and a function <code class="scheme"><span class="variable">G</span></code> <em>N</em><sup>2</sup> steps, even though
+both compute the same results for the same inputs. Now suppose the basic
+time constants are <code class="scheme"><span class="selfeval">1000</span></code> for <code class="scheme"><span class="variable">F</span></code> and 1 for <code class="scheme"><span class="variable">G</span></code>. One
+way to compare the two claims is to tabulate the abstract running time: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top"><em>N</em> </td><td valign="top">1 </td><td valign="top">10 </td><td valign="top">50 </td><td valign="top">100 </td><td valign="top">500  </td><td valign="top">1000 </td></tr>
+<tr><td valign="top"><code class="scheme"><span class="variable">F</span></code> (1000  &middot;  <em>N</em>) </td><td valign="top">1000 </td><td valign="top">10000 </td><td valign="top">50000 </td><td valign="top">100000 </td><td valign="top">500000 </td><td valign="top">1000000 </td></tr>
+<tr><td valign="top"><code class="scheme"><span class="variable">G</span></code> (<em>N</em>  &middot;  <em>N</em>) </td><td valign="top">1 </td><td valign="top">100 </td><td valign="top">2500 </td><td valign="top">10000 </td><td valign="top">250000 </td><td valign="top">1000000 
+</td></tr></table>
+</td></tr></table></div>
+
+At first glance the table seems to say that <code class="scheme"><span class="variable">G</span></code>'s performance is
+better than <code class="scheme"><span class="variable">F</span></code>'s, because for inputs of the same size (<em>N</em>),
+<code class="scheme"><span class="variable">G</span></code>'s running time is always smaller than <code class="scheme"><span class="variable">F</span></code>'s.  But a
+closer look reveals that as the inputs get larger, <code class="scheme"><span class="variable">G</span></code>'s advantage
+decreases. Indeed, for an input of size 1000, the two functions need the
+same number of steps, and thereafter <code class="scheme"><span class="variable">G</span></code> is always slower than
+<code class="scheme"><span class="variable">F</span></code>. Figure&nbsp;<a href="#node_fig_Temp_159">80</a> compares the graphs of the two
+expressions. It shows that the linear graph for 1000  &middot;  <em>N</em> dominates
+the curve of <em>N</em>  &middot;  <em>N</em> for some finite number of points but thereafter it
+is below the curve. <p>
+The concrete example recalls two important facts about our informal
+discussion of abstract running time. First, our abstract description is
+always a claim about the relationship between two 
+quantities: the size of the input and the number of natural recursions
+evaluated. More precisely, the relationship is a (mathematical) function
+that maps an abstract size measure of the input to an abstract measure of
+the running time. Second, when we compare ``on the order of'' properties of
+functions, such as
+</p>
+<div align="center"><img src="curriculumD-Z-G-7.gif" border="0" alt="[curriculumD-Z-G-7.gif]"></div><p>
+we really mean to compare the corresponding functions that consume <i>N</i> and produce the above results. In short, a statement concerning the
+order of things compares two functions on natural numbers
+(<code class="scheme"><strong>N</strong></code>).</p>
+<p>
+The comparison of functions on <code class="scheme"><strong>N</strong></code> is difficult because
+they are infinite. If a function <em>f</em> produces larger outputs than
+some other function <em>g</em> for all natural numbers, then <i>f</i> is
+clearly larger than <em>g</em>. But what if this comparison fails for just a
+few inputs? Or for 1,000 such as the one illustrated in
+figure&nbsp;<a href="#node_fig_Temp_159">80</a>? Because we would still like to make approximate
+judgments, programmers and scientists adapt the mathematical notion of
+comparing functions up to some factor and some finite number of exceptions.</p>
+<p>
+</p>
+<blockquote>
+O<small>R</small><small>D</small><small>E</small><small>R</small>-<small>O</small><small>F</small> (B<small>I</small><small>G</small>-O):
+<a name="node_idx_1890"></a><a name="node_idx_1892"></a><a name="node_idx_1894"></a>Given a function <em>g</em> on the natural numbers,
+<em>O</em>(<em>g</em>) (pronounced: ``big-O of <em>g</em>'') is a class
+of functions on natural numbers.  A function <em>f</em> is in <em>O</em>(<em>g</em>) if
+there exist numbers <em>c</em> and <i>bigEnough</i> such that for all <em>n</em>
+<u>&gt;</u> <i>bigEnough</i>, it is true that 
+<div align="center"><img src="curriculumD-Z-G-8.gif" border="0" alt="[curriculumD-Z-G-8.gif]"></div><p>
+</p>
+</blockquote><p>
+Recall the performance of <i>F</i> and <i>G</i> above. For the
+first, we assumed that it consumed time according to the following function 
+</p>
+<div align="center"><img src="curriculumD-Z-G-9.gif" border="0" alt="[curriculumD-Z-G-9.gif]"></div><p> 
+the performance of second one obeyed the function <i>g</i>: 
+</p>
+<div align="center"><img src="curriculumD-Z-G-10.gif" border="0" alt="[curriculumD-Z-G-10.gif]"></div><p> 
+Using the definition of big-O, we can say that <i>f</i> is <em>O</em>(<em>g</em>), because
+for all <em>n</em> <u>&gt;</u> 1000, 
+</p>
+<div align="center"><img src="curriculumD-Z-G-11.gif" border="0" alt="[curriculumD-Z-G-11.gif]"></div><p>
+which means <i><em>b</em><em>i</em><em>g</em><em>E</em><em>n</em><em>o</em><em>u</em><em>g</em><em>h</em></i>  =  1000 and <em>c</em>  =  1. </p>
+<p>
+More important, the definition of big-O provides us with a shorthand for
+stating claims about a function's running time. For example, from now on, we
+say <code class="scheme"><span class="variable">how-many</span></code>'s running time is <em>O</em>(<em>N</em>). Keep in mind that <em>N</em>
+is the standard abbreviation of the (mathematical) function <em>g</em>(<em>N</em>)  = 
+<em>N</em>. Similarly, we can say that, in the worst case, <code class="scheme"><span class="variable">sort</span></code>'s running
+time is <em>O</em>(<em>N</em><sup>2</sup>) and <code class="scheme"><span class="variable">maxi</span></code>'s is <em>O</em>(2<sup><em>N</em></sup>).  </p>
+<p>
+Finally, the definition of big-O explains why we don't have to pay
+attention to specific constants in our comparsions of abstract running
+time. Consider <code class="scheme"><span class="variable">maxi</span></code> and <code class="scheme"><span class="variable">maxi2</span></code>. We know that <code class="scheme"><span class="variable">maxi</span></code>'s
+worst-case running time is in <em>O</em>(2<sup><em>N</em></sup>), <code class="scheme"><span class="variable">maxi2</span></code>'s is in <em>O</em>(<em>N</em>). Say,
+we need the maximum of a list with 10 numbers. Assuming <code class="scheme"><span class="variable">maxi</span></code> and
+<code class="scheme"><span class="variable">maxi2</span></code> roughly consume the same amount of time per basic step,
+<code class="scheme"><span class="variable">maxi</span></code> will need 2<sup>10</sup>  =  1024 steps and <code class="scheme"><span class="variable">maxi2</span></code> will need 10
+steps, which means <code class="scheme"><span class="variable">maxi2</span></code> will be faster. Now even if
+<code class="scheme"><span class="variable">maxi2</span></code>'s basic step requires twice as much time as <code class="scheme"><span class="variable">maxi</span></code>'s
+basic step, <code class="scheme"><span class="variable">maxi2</span></code> is still around 50 times faster. Futhermore, if
+we double the size of the input list, <code class="scheme"><span class="variable">maxi</span></code>'s apparent disadvantage
+totally disappears. In general, the larger the input is, the less relevant
+are the specific constants. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_29.2.1"></a>
+<b>Exercise 29.2.1.</b>&nbsp;&nbsp; 
+In the first subsection, we stated that the function <em>f</em>(<em>n</em>)  =  <em>n</em><sup>2</sup>  +  <em>n</em>
+belongs to the class <em>O</em>(<em>n</em><sup>2</sup>). Determine the pair of numbers <em>c</em> and <i>bigEnough</i> that verify this claim.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/big-o1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.2.2"></a>
+<b>Exercise 29.2.2.</b>&nbsp;&nbsp; 
+Consider the functions <em>f</em>(<em>n</em>)  =  2<sup><em>n</em></sup> and <em>g</em>(<em>n</em>)  =  1000  &middot;  <em>n</em>. Show that
+<i>g</i> belongs to <em>O</em>(<em>f</em>), which means that <i>f</i> is abstractly
+speaking more (or at least equally) expensive than <i>g</i>. If the input
+size is guaranteed to be between 3 and 12, which function is
+better?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/big-o2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.2.3"></a>
+<b>Exercise 29.2.3.</b>&nbsp;&nbsp; 
+Compare <em>f</em>(<em>n</em>)  =  <em>n</em> log <em>n</em> and <em>g</em>(<em>n</em>)  =  <em>n</em><sup>2</sup>. Does <em>f</em> belong to <em>O</em>(<em>g</em>)
+and/or <em>g</em> to <em>O</em>(<em>f</em>)?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/big-o3.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<a name="node_sec_29.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_29.3">29.3&nbsp;&nbsp;A First Look at Vectors</a></h2>
+<p></p>
+<p>
+Until now we have paid little attention to how much time it takes to
+retrieve data from structures or lists.  Now that we have a tool for
+stating general judgments, let's take a close look at this basic
+computation step.  Recall the last problem of the preceding part: finding a
+route in a graph.  The program <code class="scheme"><span class="variable">find-route</span></code> requires two auxiliaries:
+<code class="scheme"><span class="variable">find-route/list</span></code> and <code class="scheme"><span class="variable">neighbors</span></code>. We paid a lot of attention
+to <code class="scheme"><span class="variable">find-route/list</span></code> and none to <code class="scheme"><span class="variable">neighbors</span></code>. Indeed,
+developing <code class="scheme"><span class="variable">neighbors</span></code> was just an exercise
+(see&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.1.2">28.1.2</a>), because looking up a value in a list is by now
+a routine programming task.</p>
+<p>
+Here is a possible definition for <code class="scheme"><span class="variable">neighbors</span></code>: 
+<a name="node_idx_1896"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">neighbors</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>)</code></span>
+<span class="comment">;; to lookup the <code class="scheme"><span class="variable">node</span></code> in <code class="scheme"><span class="variable">graph</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">neighbors</span> <span class="variable">node</span> <span class="variable">graph</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">graph</span>) (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">neighbors</span> <span class="selfeval">&quot;can't happen&quot;</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> (<span class="builtin">first</span> <span class="variable">graph</span>)) <span class="variable">node</span>) (<span class="builtin">second</span> (<span class="builtin">first</span> <span class="variable">graph</span>))]
+	    [<span class="keyword">else</span> (<span class="variable">neighbors</span> <span class="variable">node</span> (<span class="builtin">rest</span> <span class="variable">graph</span>))])]))
+</pre></div><p>
+The function is similar to <code class="scheme"><span class="variable">contains-doll?</span></code> and has roughly the same
+behavior. More concretely, <code class="scheme"><span class="variable">neighbors</span></code> is <em>O</em>(<em>N</em>) when we assume
+that <code class="scheme"><span class="variable">graph</span></code> is a list of <em>N</em> nodes. </p>
+<p>
+Considering that <code class="scheme"><span class="variable">neighbors</span></code> is used at every stage of the
+evaluation of <code class="scheme"><span class="variable">find-route</span></code>, <code class="scheme"><span class="variable">neighbors</span></code> is possibly a
+bottleneck. As a matter of fact, if the route we are looking for involves
+<code class="scheme"><span class="variable">N</span></code> nodes (the maximum), <code class="scheme"><span class="variable">neighbors</span></code> is applied <em>N</em>
+times, so the algorithm requires <em>O</em>(<em>N</em><sup>2</sup>) steps in <code class="scheme"><span class="variable">neighbors</span></code>.</p>
+<p>
+In contrast to lists, structures deal with value extractions as a constant
+time operation. At first glance this observation seems to suggest that we
+use structures as representations of graphs. A closer look, however, shows
+that this idea doesn't work easily. The graph algorithm works best if we
+are able to work with the names of nodes and access a node's neighbors
+based on the name. A name could be a symbol or the node's number in the
+graph. In general, what we really wish to have in a programming language
+<a name="node_idx_1898"></a>is
+</p>
+<blockquote>
+a class of compound values size with constant lookup time, <br>
+based on ``keys.''
+</blockquote>
+Because the problem is so common, Scheme and most other languages offer at
+least one built-in solution.<p>
+Here we study the class of <i>vector</i>s.
+<a name="node_idx_1900"></a>
+A vector is a well-defined
+mathematical class of data with specific basic operations. For our
+purposes, it suffices to know how to construct them, how to extract values,
+and how to recognize them: 
+</p>
+<ol>
+<li><p>The operation <code class="scheme"><span class="builtin">vector</span></code> is like <code class="scheme"><span class="builtin">list</span></code>. It consumes an
+arbitrary number of values and creates a compound value from them: a
+vector. For example, <code class="scheme">(<span class="builtin">vector</span> <span class="variable">V-0</span> ... <span class="variable">V-n</span>)</code> creates a vector from
+<code class="scheme"><span class="variable">V-0</span></code> through <code class="scheme"><span class="variable">V-n</span></code>. </p>
+<p>
+</p>
+<li><p>DrScheme also provides a vector analogue to <code class="scheme"><span class="builtin">build-list</span></code>. It
+is called <code class="scheme"><span class="builtin">build-vector</span></code>.
+<a name="node_idx_1902"></a>Here is how it works:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">build-vector</span> <span class="variable">N</span> <span class="variable">f</span>) <span class="builtin">=</span> (<span class="builtin">vector</span> (<span class="variable">f</span> <span class="selfeval">0</span>) ... (<span class="variable">f</span> (<span class="builtin">-</span> <span class="variable">N</span> <span class="selfeval">1</span>)))
+</pre></div><p>
+That is, <code class="scheme"><span class="builtin">build-vector</span></code> consumes a natural number <code class="scheme"><span class="variable">N</span></code> and a function
+<code class="scheme"><span class="variable">f</span></code> on natural numbers. It then builds a vector of <code class="scheme"><span class="variable">N</span></code> items by applying
+<code class="scheme"><span class="variable">f</span></code> to <code class="scheme"><span class="selfeval">0</span></code>, <tt>...</tt>, <code class="scheme"><span class="variable">N-1</span></code>.</p>
+<p>
+</p>
+<li><p>The operation <code class="scheme"><span class="builtin">vector-ref</span></code> extracts a value from a vector in
+constant time, that is, for <code class="scheme"><span class="variable">i</span></code> between <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="variable">n</span></code>
+(inclusive): 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector-ref</span> (<span class="builtin">vector</span> <span class="variable">V-0</span> ... <span class="variable">V-n</span>) <span class="variable">i</span>) <span class="builtin">=</span> <span class="variable">V-i</span>
+</pre></div><p>
+In short, extracting values from a vector is <em>O</em>(1). </p>
+<p>
+If <code class="scheme"><span class="builtin">vector-ref</span></code> is applied to a vector and a natural number that is
+smaller than <code class="scheme"><span class="selfeval">0</span></code> or larger than <code class="scheme"><span class="variable">n</span></code>, <code class="scheme"><span class="builtin">vector-ref</span></code>
+signals an error. </p>
+<p>
+</p>
+<li><p>The operation <code class="scheme"><span class="builtin">vector-length</span></code> produces the number of items
+in a vector: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector-length</span> (<span class="builtin">vector</span> <span class="variable">V-0</span> ... <span class="variable">V-n</span>)) <span class="builtin">=</span> (<span class="builtin">+</span> <span class="variable">n</span> <span class="selfeval">1</span>)
+</pre></div><p></p>
+<p>
+</p>
+<li><p>The operation <code class="scheme"><span class="builtin">vector?</span></code> is the vector-predicate: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector?</span> (<span class="builtin">vector</span> <span class="variable">V-0</span> ... <span class="variable">V-n</span>)) <span class="builtin">=</span> <span class="builtin">true</span>
+(<span class="builtin">vector?</span> <span class="variable">U</span>) <span class="builtin">=</span> <span class="builtin">false</span>
+</pre></div><p>
+if <code class="scheme"><span class="variable">U</span></code> is a value that isn't created with <code class="scheme"><span class="builtin">vector</span></code>.
+</p>
+</li></ol><p></p>
+<p>
+We can think of vectors as functions on a small, finite range of natural
+numbers. Their range is the full class of Scheme values. We can also think
+of them as tables that associate a small, finite range of natural numbers
+with Scheme values. Using vectors we can represent graphs like those in
+figures&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_153">76</a> and&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_155">78</a> if we use numbers as
+names. For example:
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">A </td><td valign="top">B </td><td valign="top">C </td><td valign="top">D </td><td valign="top">E </td><td valign="top">F </td><td valign="top">G </td></tr>
+<tr><td valign="top">0 </td><td valign="top">1 </td><td valign="top">2 </td><td valign="top">3 </td><td valign="top">4 </td><td valign="top">5 </td><td valign="top">6 
+</td></tr></table>
+</td></tr></table></div>
+
+Using this translation, we can also produce a vector-based representation of
+the graph in figure&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_153">76</a>:
+<div align="center"><table><tr><td>
+
+</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">Graph-as-list</span>
+  <span class="keyword">'</span>((<span class="variable">A</span> (<span class="variable">B</span> <span class="variable">E</span>))
+    (<span class="variable">B</span> (<span class="variable">E</span> <span class="variable">F</span>))
+    (<span class="variable">C</span> (<span class="variable">D</span>))
+    (<span class="variable">D</span> ())
+    (<span class="variable">E</span> (<span class="variable">C</span> <span class="variable">F</span>))
+    (<span class="variable">F</span> (<span class="variable">D</span> <span class="variable">G</span>))
+    (<span class="variable">G</span> ())))
+</pre></div></td><td>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">Graph-as-vector</span>
+  (<span class="builtin">vector</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">4</span>)
+          (<span class="builtin">list</span> <span class="selfeval">4</span> <span class="selfeval">5</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">3</span>)
+	  <span class="builtin">empty</span>
+	  (<span class="builtin">list</span> <span class="selfeval">2</span> <span class="selfeval">5</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">3</span> <span class="selfeval">6</span>)
+	  <span class="builtin">empty</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+The definition on the left is the original list-based representation; the
+one on the right is a vector representation. The vector's <code class="scheme"><span class="variable">i</span></code>-th
+field contains the list of neighbors of the <code class="scheme"><span class="variable">i</span></code>-th node.<p>
+The data definitions for <code class="scheme"><span class="variable">node</span></code> and <code class="scheme"><span class="variable">graph</span></code> change in the
+expected manner. Let's assume that <em>N</em> is the number of nodes in the given
+graph: </p>
+<p>
+<a name="node_idx_1904"></a>A <i>node</i> is an natural number between 0 and <em>N</em> <tt>-</tt> 1.</p>
+<p>
+<a name="node_idx_1906"></a>A <i>graph</i> is a vector of <code class="scheme"><span class="variable">node</span></code>s: <code class="scheme">(<span class="keyword">vectorof</span>
+(<span class="keyword">listof</span> <span class="variable">node</span>))</code>.</p>
+<p>
+The notation <code class="scheme">(<span class="keyword">vectorof</span> <span class="variable">X</span>)</code> is similar to <code class="scheme">(<span class="keyword">listof</span>
+<span class="variable">X</span>)</code>. It denotes a vector that contains items from some undetermined class
+of data <code class="scheme"><span class="variable">X</span></code>. </p>
+<p>
+Now we can redefine <code class="scheme"><span class="variable">neighbors</span></code>: 
+<a name="node_idx_1908"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">neighbors</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">node</span>)</code></span>
+<span class="comment">;; to lookup the <code class="scheme"><span class="variable">node</span></code> in <code class="scheme"><span class="variable">graph</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">neighbors</span> <span class="variable">node</span> <span class="variable">graph</span>)
+  (<span class="builtin">vector-ref</span> <span class="variable">graph</span> <span class="variable">node</span>))
+</pre></div><p>
+As a result, looking up the neighbors of a node becomes a constant-time
+operation, and we can truly ignore it when we study the abstract running
+time of <code class="scheme"><span class="variable">find-route</span></code>.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_29.3.1"></a>
+<b>Exercise 29.3.1.</b>&nbsp;&nbsp; 
+Test the new <code class="scheme"><span class="variable">neighbors</span></code> function.  Use the strategy of
+section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.8">17.8</a> to formulate the tests as boolean
+expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-neighbors.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.2"></a>
+<b>Exercise 29.3.2.</b>&nbsp;&nbsp; 
+Adapt the rest of the <code class="scheme"><span class="variable">find-route</span></code> program to the new vector
+representation. Adapt the tests from exercises&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.1.3">28.1.3</a>
+through&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.1.5">28.1.5</a> to check the new program.</p>
+<p>
+Measure how much time the two <code class="scheme"><span class="variable">find-route</span></code> programs consume to
+compute a route from node A to node E in the graph of
+figure&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_153">76</a>. Recall that <code class="scheme">(<span class="keyword">time</span> <span class="variable">expr</span>)</code> measures how long
+it takes to evaluate <code class="scheme"><span class="variable">expr</span></code>. It is good practice to evaluate
+<code class="scheme"><span class="variable">expr</span></code>, say, 1000 times when we measure time. This produces more
+accurate measurements.  &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.3"></a>
+<b>Exercise 29.3.3.</b>&nbsp;&nbsp; 
+Translate the cyclic graph from figure&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_155">78</a> into our
+vector representation of graphs.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-cycle.html">Solution</a></p>
+<p></p>
+<p>
+Before we can truly program with vectors, we must understand the data
+definition. The situation is comparable to that when we first encountered
+lists. We know that <code class="scheme"><span class="builtin">vector</span></code>, like <code class="scheme"><span class="builtin">cons</span></code>, is provided by
+Scheme, but we don't have a data definition that directs our program
+development efforts.</p>
+<p>
+So, let us take a look at vectors. Roughly speaking, <code class="scheme"><span class="builtin">vector</span></code> is
+like <code class="scheme"><span class="builtin">cons</span></code>. The <code class="scheme"><span class="builtin">cons</span></code> primitive constructs lists, the
+<code class="scheme"><span class="builtin">vector</span></code> primitive creates vectors.  Since programming with lists
+usually means programming with the selectors <code class="scheme"><span class="builtin">first</span></code> and
+<code class="scheme"><span class="builtin">rest</span></code>, programming with vectors must mean programming with
+<code class="scheme"><span class="builtin">vector-ref</span></code>. Unlike <code class="scheme"><span class="builtin">first</span></code> and <code class="scheme"><span class="builtin">rest</span></code>, however,
+<code class="scheme"><span class="builtin">vector-ref</span></code> requires manipulating the vector and an index into a
+vector. This suggests that programming with vectors really means thinking
+about indices, which are natural numbers. </p>
+<p>
+Let's look at some simple examples to confirm this abstract judgment. Here
+is the first one: 
+<a name="node_idx_1910"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum-for-3</span> <span class="selfeval">:</span> (<span class="builtin">vector</span> <span class="variable">number</span> <span class="variable">number</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum-for-3</span> <span class="variable">v</span>)
+  (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="selfeval">0</span>)
+     (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="selfeval">1</span>)
+     (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="selfeval">2</span>)))
+</pre></div><p>
+The function <code class="scheme"><span class="variable">vector-sum-for-3</span></code> consumes vectors of three numbers
+and produces their sum. It uses <code class="scheme"><span class="builtin">vector-ref</span></code> to extract the three
+numbers and adds them up. What varies in the three selector expressions is
+the index; the vector remains the same. </p>
+<p>
+Consider a second, more interesting example: <code class="scheme"><span class="variable">vector-sum</span></code>, a
+generalization of <code class="scheme"><span class="variable">vector-sum-for-3</span></code>. It consumes an arbitrarily
+large vector of numbers and produces the sum of the numbers:
+<a name="node_idx_1912"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the numbers in <code class="scheme"><span class="variable">v</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum</span> <span class="variable">v</span>) ...)
+</pre></div><p>
+Here are some examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">vector-sum</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">3/4</span> <span class="selfeval">1/4</span>))
+   <span class="selfeval">0</span>)
+
+(<span class="builtin">=</span> (<span class="variable">vector-sum</span> (<span class="builtin">vector</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span>))
+   <span class="selfeval">1</span>)
+
+(<span class="builtin">=</span> (<span class="variable">vector-sum</span> (<span class="builtin">vector</span>))
+   <span class="selfeval">0</span>)
+</pre></div><p>
+The last example suggests that we want a reasonable answer even if the
+vector is empty. As with <code class="scheme"><span class="builtin">empty</span></code>, we use <code class="scheme"><span class="selfeval">0</span></code> as the answer in
+this case. </p>
+<p>
+The problem is that the one natural number associated with <code class="scheme"><span class="variable">v</span></code>, its
+length, is not an argument of <code class="scheme"><span class="variable">vector-sum</span></code>. The length of <code class="scheme"><span class="variable">v</span></code>
+is of course just an indication of how many items in <code class="scheme"><span class="variable">v</span></code> are to be
+processed, which in turn refers to legal indices of <code class="scheme"><span class="variable">v</span></code>. This
+reasoning forces us to develop an auxiliary function that consumes the
+vector and a natural number: 
+<a name="node_idx_1914"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the numbers in <code class="scheme"><span class="variable">v</span></code> relative to <code class="scheme"><span class="variable">i</span></code> </span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="variable">i</span>) ...)
+</pre></div><p>
+The natural choice for the initial value of <code class="scheme"><span class="variable">i</span></code> is the length of
+<code class="scheme"><span class="variable">v</span></code>, which suggests the following completion of <code class="scheme"><span class="variable">vector-sum</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">vector-sum</span> <span class="variable">v</span>) 
+  (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>)))
+</pre></div><p></p>
+<p>
+Based on this definition, we can also adapt the examples for
+<code class="scheme"><span class="variable">vector-sum</span></code> to <code class="scheme"><span class="variable">vector-sum-aux</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">vector-sum-aux</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">3/4</span> <span class="selfeval">1/4</span>) <span class="selfeval">3</span>)
+   <span class="selfeval">0</span>)
+
+(<span class="builtin">=</span> (<span class="variable">vector-sum-aux</span> (<span class="builtin">vector</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span> <span class="selfeval">.1</span>) <span class="selfeval">10</span>)
+   <span class="selfeval">1</span>)
+
+(<span class="builtin">=</span> (<span class="variable">vector-sum-aux</span> (<span class="builtin">vector</span>) <span class="selfeval">0</span>)
+   <span class="selfeval">0</span>)
+</pre></div><p>
+Unfortunately, this doesn't clarify the role of the second argument. To do
+that, we need to proceed to the next stage of the design process: template
+development.</p>
+<p>
+When we develop templates for functions of two arguments, we must first
+decide which of the arguments must be processed, that is, which of the two
+will vary in the course of a computation. The <code class="scheme"><span class="variable">vector-sum-for-3</span></code>
+example suggests that it is the second argument in this case. Because this
+argument belongs to the class of natural numbers, we follow the design recipe
+for those: 
+<a name="node_idx_1916"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="variable">i</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...]))
+</pre></div><p>
+Although we considered <code class="scheme"><span class="variable">i</span></code> to be the length of the vector initially,
+the template suggests that we should consider it the number of items of
+<code class="scheme"><span class="variable">v</span></code> that <code class="scheme"><span class="variable">vector-sum-aux</span></code> must consider and thus as an index
+into <code class="scheme"><span class="variable">v</span></code>. </p>
+<p>
+The elaboration of <code class="scheme"><span class="variable">i</span></code>'s use naturally leads to a better purpose
+statement for <code class="scheme"><span class="variable">vector-sum-aux</span></code>: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the numbers in <code class="scheme"><span class="variable">v</span></code> with index in [<code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="variable">i</span></code>)</span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="variable">i</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...]))
+</pre></div><p>
+Excluding <code class="scheme"><span class="variable">i</span></code> is natural because it is initially
+<code class="scheme">(<span class="builtin">vector-length</span> <span class="variable">v</span>)</code> and thus not an index. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_160"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1918"></a><a name="node_idx_1920"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of the numbers in <code class="scheme"><span class="variable">v</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum</span> <span class="variable">v</span>) 
+  (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">vector-sum-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum the numbers in <code class="scheme"><span class="variable">v</span></code> with index in [<code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="variable">i</span></code>)</span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="variable">i</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) 
+	     (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)))]))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 81:</b>&nbsp;&nbsp;Summing up the numbers in a vector (version 1)</td></tr>
+<tr><td> <p>
+</p>
+<hr><a name="node_idx_1922"></a><a name="node_idx_1924"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">lr-vector-sum</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the numbers in <code class="scheme"><span class="variable">v</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">lr-vector-sum</span> <span class="variable">v</span>)
+  (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="selfeval">0</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">vector-sum</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to sum up the numbers in <code class="scheme"><span class="variable">v</span></code> with index in [<code class="scheme"><span class="variable">i</span></code>, <code class="scheme">(<span class="builtin">vector-length</span> <span class="variable">v</span>)</code>)</span>
+(<span class="keyword">define</span> (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> <span class="variable">i</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">i</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>)) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="variable">i</span>) (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">add1</span> <span class="variable">i</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 82:</b>&nbsp;&nbsp;Summing up the numbers in a vector (version 2)</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+To transform the template into a complete function definition, we consider
+each clause of the <code class="scheme"><span class="keyword">cond</span></code>:
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">i</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, there are no further items to be
+considered because there are no vector fields between <code class="scheme"><span class="selfeval">0</span></code> and
+<code class="scheme"><span class="variable">i</span></code> with <code class="scheme"><span class="variable">i</span></code> excluded. Therefore the result is <code class="scheme"><span class="selfeval">0</span></code>. </p>
+<p>
+</p>
+<li><p>Otherwise, <code class="scheme">(<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code> computes the sum of
+the numbers in <code class="scheme"><span class="variable">v</span></code> between <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>
+[exclusive]. This leaves out the vector field with index <code class="scheme">(<span class="builtin">sub1</span>
+ <span class="variable">i</span>)</code>, which according to the purpose statement must be included.  By adding
+<code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code>, we get the desired result: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) (<span class="variable">vector-sum-aux</span> <span class="variable">v</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)))
+</pre></div><p>
+</p>
+</li></ol><p>
+See figure&nbsp;<a href="#node_fig_Temp_160">81</a> for the complete program. </p>
+<p>
+If we were to evaluate one of the examples for <code class="scheme"><span class="variable">vector-sum-aux</span></code> by
+hand, we would see that it extracts the numbers from the vector in a right
+to left order as <code class="scheme"><span class="variable">i</span></code> decreases to <code class="scheme"><span class="selfeval">0</span></code>. A natural question is
+whether we can invert this order. In other words: is there a function that
+extracts the numbers in a left to right order?</p>
+<p>
+The answer is to develop a function that processes the class of natural
+numbers below <code class="scheme">(<span class="builtin">vector-length</span> <span class="variable">v</span>)</code> and to start at the first feasible
+index: <code class="scheme"><span class="selfeval">0</span></code>. Developing this function is just another instance of the
+design recipe for variants of natural numbers from
+section&nbsp;<a href="curriculum-Z-H-15.html#node_sec_11.4">11.4</a>.  The new function definition is shown in
+figure&nbsp;<a href="#node_fig_Temp_160">82</a>. The new auxiliary function now consumes
+<code class="scheme"><span class="selfeval">0</span></code> and counts up to <code class="scheme">(<span class="builtin">vector-length</span> <span class="variable">v</span>)</code>. A hand-evaluation
+of
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">lr-vector-sum</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>))
+</pre></div><p>
+shows that <code class="scheme"><span class="variable">vector-sum-aux</span></code> indeed extracts the items from
+<code class="scheme"><span class="variable">v</span></code> from left to right. </p>
+<p>
+The definition of <code class="scheme"><span class="variable">lr-vector-sum</span></code> shows why we need to study
+alternative definitions of classes of natural numbers. Sometimes it is
+necessary to count down to <code class="scheme"><span class="selfeval">0</span></code>. But at other times it is equally
+useful, and natural, to count from <code class="scheme"><span class="selfeval">0</span></code> up to some other number.</p>
+<p>
+The two functions also show how important it is to reason about
+intervals. The auxiliary vector-processing functions process intervals of
+the given vector. A good purpose statement specifies the exact interval
+that the function works on. Indeed, once we understand the exact interval
+specification, formulating the full function is relatively
+straightforward. We will see the importance of this point when we return to
+the study of vector-processing functions in the last section. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_29.3.4"></a>
+<b>Exercise 29.3.4.</b>&nbsp;&nbsp;  Evaluate <code class="scheme">(<span class="variable">vector-sum-aux</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">3/4</span> <span class="selfeval">1/4</span>) <span class="selfeval">3</span>)</code> by hand. Show the
+major steps only. Check the evaluation with DrScheme's stepper. In what
+order does the function add up the numbers of the vector? </p>
+<p>
+Use a <strong>local</strong>-expression to define a single function
+<code class="scheme"><span class="variable">vector-sum</span></code>. Then remove the vector argument from the inner
+function definition. Why can we do that?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-sum.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.5"></a>
+<b>Exercise 29.3.5.</b>&nbsp;&nbsp;  Evaluate <code class="scheme">(<span class="variable">lr-vector-sum</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">3/4</span> <span class="selfeval">1/4</span>))</code> by hand. Show the
+major steps only. Check the evaluation with DrScheme's stepper. In what
+order does the function add up the numbers of the vector?</p>
+<p>
+Use a <strong>local</strong>-expression to define a single function
+<code class="scheme"><span class="variable">lr-vector-sum</span></code>. Then remove those arguments from the inner function
+definition that remain the same during an evaluation. Also introduce
+definitions for those expressions that always evaluate to the same
+value during the evaluation. Why is this useful?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/lr-vector-sum.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.6"></a>
+<b>Exercise 29.3.6.</b>&nbsp;&nbsp;  The list-based analogue of <code class="scheme"><span class="variable">vector-sum</span></code> is <code class="scheme"><span class="variable">list-sum</span></code>: 
+<a name="node_idx_1926"></a><a name="node_idx_1928"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">list-sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code> </span>
+<span class="comment">;; to compute the sum of the numbers on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">list-sum</span> <span class="variable">alon</span>)
+  (<span class="variable">list-sum-aux</span> <span class="variable">alon</span> (<span class="builtin">length</span> <span class="variable">alon</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">list-sum-aux</span> <span class="selfeval">:</span> <strong>N</strong> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code> </span>
+<span class="comment">;; to compute the sum of the first <code class="scheme"><span class="variable">L</span></code> numbers on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">list-sum-aux</span> <span class="variable">L</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">L</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">list-ref</span> <span class="variable">alon</span> (<span class="builtin">sub1</span> <span class="variable">L</span>)) (<span class="variable">list-sum-aux</span> (<span class="builtin">sub1</span> <span class="variable">L</span>) <span class="variable">alon</span>))]))
+</pre></div><p>
+Instead of using the structural definition of the list, the developer of
+this program used the size of the list -- a natural number -- as the guiding
+element in the design process.  </p>
+<p>
+The resulting definition uses Scheme's <code class="scheme"><span class="builtin">list-ref</span></code> function to access
+each item on the list.  Looking up an item in a list with <code class="scheme"><span class="builtin">list-ref</span></code>
+is an <em>O</em>(<em>N</em>) operation for lists of <em>N</em> items. Determine the abstract
+running time of <code class="scheme"><span class="variable">sum</span></code> (from section&nbsp;<a href="curriculum-Z-H-13.html#node_sec_9.5">9.5</a>),
+<code class="scheme"><span class="variable">vector-sum-aux</span></code> and <code class="scheme"><span class="variable">list-sum-aux</span></code>. What does this suggest
+about program development?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-list.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.7"></a>
+<b>Exercise 29.3.7.</b>&nbsp;&nbsp;  Develop the function <code class="scheme"><span class="variable">norm</span></code>, which consumes a vector of numbers and
+produces the square root of the sum of the squares of its numbers. Another name for
+<code class="scheme"><span class="variable">norm</span></code> is <code class="scheme"><span class="variable">distance-to-0</span></code>, because the result is the distance
+of a vector to the origin, when we interpret the vector as a
+point.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-norm.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.8"></a>
+<b>Exercise 29.3.8.</b>&nbsp;&nbsp;  Develop the function <code class="scheme"><span class="variable">vector-contains-doll?</span></code>. It consumes a vector
+of symbols and determines whether the vector contains the symbol
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. If so, it produces the index of <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>'s field;
+otherwise, it produces <code class="scheme"><span class="builtin">false</span></code>.</p>
+<p>
+Determine the abstract running time of <code class="scheme"><span class="variable">vector-contains-doll?</span></code> and
+compare with that of <code class="scheme"><span class="variable">contains-doll?</span></code>, which we discussed in the
+preceding subsection. </p>
+<p>
+Now discuss the following problem. Suppose we are to represent a collection
+of symbols. The only interesting problem concerning the collection is to
+determine whether it contains some given symbol. Which data representation is
+preferable for the collection: lists or vectors? Why?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-find.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.9"></a>
+<b>Exercise 29.3.9.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">binary-contains?</span></code>. It consumes a sorted vector
+of numbers and a key, which is also a number. The goal is to determine the
+index of the key, if it occurs in the vector, or <code class="scheme"><span class="builtin">false</span></code>. Use the
+binary-search algorithm from section&nbsp;<a href="curriculum-Z-H-34.html#node_sec_27.3">27.3</a>. </p>
+<p>
+Determine the abstract running time of <code class="scheme"><span class="variable">binary-contains?</span></code> and
+compare with that of <code class="scheme"><span class="variable">contains?</span></code>, the function that searches for a
+key in a vector in the linear fashion of <code class="scheme"><span class="variable">vector-contains-doll?</span></code>. </p>
+<p>
+Suppose we are to represent a collection of numbers. The only interesting
+problem concerning the collection is to determine whether it contains some
+given number. Which data representation is preferable for the collection:
+lists or vectors?  Why?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-binary-find.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.10"></a>
+<b>Exercise 29.3.10.</b>&nbsp;&nbsp;  Develop the function <code class="scheme"><span class="variable">vector-count</span></code>. It consumes a vector <code class="scheme"><span class="variable">v</span></code>
+of symbols and a symbol <code class="scheme"><span class="variable">s</span></code>. Its result is the number of <code class="scheme"><span class="variable">s</span></code>
+that occur in <code class="scheme"><span class="variable">v</span></code>. </p>
+<p>
+Determine the abstract running time of <code class="scheme"><span class="variable">vector-count</span></code> and compare
+with that of <code class="scheme"><span class="variable">count</span></code>, which counts how many times <code class="scheme"><span class="variable">s</span></code> occurs
+in a list of symbols. </p>
+<p>
+Suppose we are to represent a collection of symbols. The only interesting
+problem concerning the collection is to determine how many times it
+contains some given symbol. Which data representation is preferable for the
+collection: lists or vectors?  Why? What do exercises&nbsp;<a href="#node_thm_29.3.8">29.3.8</a>,
+<a href="#node_thm_29.3.9">29.3.9</a>, and this exercise
+suggest?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-count.html">Solution</a></p>
+<p></p>
+<p>
+While accessing the items of a vector is one kind of programming problem,
+constructing vectors is an entirely different problem. When we know the
+number of items in a vector, we can construct it using
+<code class="scheme"><span class="builtin">vector</span></code>. When we we wish to write programs that work on a large
+class of vectors independent of their size, however, we need
+<code class="scheme"><span class="builtin">build-vector</span></code>.</p>
+<p>
+Consider the following simple example. Suppose we represent the velocity of
+an object with a vector. For example, <code class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code> represents the
+velocity of an object on a plane that moves <code class="scheme"><span class="selfeval">1</span></code> unit to the right
+and <code class="scheme"><span class="selfeval">2</span></code> down in each time unit. For comparison, <code class="scheme">(<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">2</span>
+<span class="selfeval">1</span>)</code> is the veloicity of an object in space; it moves 
+<code class="scheme"><span class="selfeval">-6</span></code> units in the <em>x</em> direction in 6 time units,
+<code class="scheme"><span class="selfeval">12</span></code> units in the <em>y</em> direction in 6 time units, and
+<code class="scheme"><span class="selfeval">6</span></code> units in the <em>z</em> direction in 6 time units. We call <code class="scheme">(<span class="builtin">vector</span> <span class="selfeval">-6</span>
+<span class="selfeval">12</span> <span class="selfeval">6</span>)</code> the <i>displacement</i> 
+<a name="node_idx_1930"></a>of the object in 6 time units. </p>
+<p>
+Let's develop a function that computes the displacement for an object with
+some velocity <code class="scheme"><span class="variable">v</span></code> in <code class="scheme"><span class="variable">t</span></code> time units:
+<a name="node_idx_1932"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">displacement</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">vectorof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to compute the displacement of <code class="scheme"><span class="variable">v</span></code> and <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">displacement</span> <span class="variable">v</span> <span class="variable">t</span>) ...)
+</pre></div><p>
+Computing the displacement is straightforward for some examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">displacement</span> (<span class="builtin">vector</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">3</span>) 
+        (<span class="builtin">vector</span> <span class="selfeval">3</span> <span class="selfeval">6</span>))
+
+(<span class="builtin">equal?</span> (<span class="variable">displacement</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">2</span> <span class="selfeval">1</span>) <span class="selfeval">6</span>) 
+        (<span class="builtin">vector</span> <span class="selfeval">-6</span> <span class="selfeval">12</span> <span class="selfeval">6</span>))
+
+(<span class="builtin">equal?</span> (<span class="variable">displacement</span> (<span class="builtin">vector</span> <span class="selfeval">-1</span> <span class="selfeval">-2</span>) <span class="selfeval">2</span>) 
+        (<span class="builtin">vector</span> <span class="selfeval">-2</span> <span class="selfeval">-4</span>))
+</pre></div><p>
+We just multiply each component of the object with the number, which yields
+a new vector. </p>
+<p>
+The examples' meaning for our programming problem is that
+<code class="scheme"><span class="variable">displacement</span></code> must construct a vector of the same length as
+<code class="scheme"><span class="variable">v</span></code> and must use the items in <code class="scheme"><span class="variable">v</span></code> to compute those of the new
+vectors. Here is how we build a vector of the same how-many as some given
+vector <code class="scheme"><span class="variable">v</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">build-vector</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>) ...)
+</pre></div><p>
+Now we need to replace <tt>...</tt> with a function that computes the
+<code class="scheme"><span class="selfeval">0</span></code>-th, <code class="scheme"><span class="selfeval">1</span></code>-st, and so on items of the new vector: 
+<a name="node_idx_1934"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">new-item</span> <span class="selfeval">:</span>  <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the contents of the new vector at the <code class="scheme"><span class="variable">i</span></code>-th position</span>
+(<span class="keyword">define</span> (<span class="variable">new-item</span> <span class="variable">index</span>) ...)
+</pre></div><p>
+Following our discussion, we multiply <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="variable">i</span>)</code> with
+<code class="scheme"><span class="variable">t</span></code> and that's all.</p>
+<p>
+Take a look at the complete definition: 
+<a name="node_idx_1936"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">displacement</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">vectorof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to compute the displacement of <code class="scheme"><span class="variable">v</span></code> and <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">displacement</span> <span class="variable">v</span> <span class="variable">t</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">new-item</span> <span class="variable">i</span>) (<span class="builtin">*</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="variable">i</span>) <span class="variable">t</span>)))
+    (<span class="builtin">build-vector</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>) <span class="variable">new-item</span>)))
+</pre></div><p>
+The locally defined function is not recursive. We can thus replace it with
+a plain <strong>lambda</strong>-expression: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">displacement</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">vectorof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; to compute the displacement of <code class="scheme"><span class="variable">v</span></code> and <code class="scheme"><span class="variable">t</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">displacement</span> <span class="variable">v</span> <span class="variable">t</span>)
+  (<span class="builtin">build-vector</span> (<span class="builtin">vector-length</span> <span class="variable">v</span>) (<span class="keyword">lambda</span> (<span class="variable">i</span>) (<span class="builtin">*</span> (<span class="builtin">vector-ref</span> <span class="variable">v</span> <span class="variable">i</span>) <span class="variable">t</span>))))
+</pre></div><p>
+Mathematicians call this function <i>scalar product</i>.
+<a name="node_idx_1938"></a>They have also studied many other operations on vectors, and in Scheme we
+can develop those in a natural manner. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_29.3.11"></a>
+<b>Exercise 29.3.11.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">id-vector</span></code>, which consumes a natural number
+and produces a vector of that many <code class="scheme"><span class="selfeval">1</span></code>'s.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.12"></a>
+<b>Exercise 29.3.12.</b>&nbsp;&nbsp;  
+Develop the functions <code class="scheme"><span class="variable">vector+</span></code> and <code class="scheme"><i>vector</i> <tt>-</tt> </code>, which compute
+the pointwise sum and differences of two vectors. That is, each consumes
+two vectors and produces a vector by manipulating corresponding
+programs. Assume the given vectors are of the same length. Also develop
+the functions <code class="scheme"><span class="variable">checked-vector+</span></code> and
+<code class="scheme"><i>checked-vector</i> <tt>-</tt> </code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-delta.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.13"></a>
+<b>Exercise 29.3.13.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">distance</span></code>, which consumes two vectors and
+computes their distance. Think of the distance of two vectors as the length
+of the line between them.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-distance.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.14"></a>
+<b>Exercise 29.3.14.</b>&nbsp;&nbsp; 
+Develop a vector representation for chessboards of size <em>n</em> &times; <em>n</em> for
+<em>n</em> in <code class="scheme"><strong>N</strong></code>. Then develop the following two functions on
+chessboards: 
+<a name="node_idx_1940"></a><a name="node_idx_1942"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">build-board</span> <span class="selfeval">:</span> <strong>N</strong> (<strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">board</span></code></span>
+<span class="comment">;; to create a board of size <code class="scheme"><span class="variable">n</span></code> x <code class="scheme"><span class="variable">n</span></code>, </span>
+<span class="comment">;; fill each position with indices <code class="scheme"><span class="variable">i</span></code> and <code class="scheme"><span class="variable">j</span></code> with <code class="scheme">(<span class="variable">f</span> <span class="variable">i</span> <span class="variable">j</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">build-board</span> <span class="variable">n</span> <span class="variable">f</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">board-ref</span> <span class="selfeval">:</span> <span class="variable">board</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to access a position with indices <code class="scheme"><span class="variable">i</span></code>, <code class="scheme"><span class="variable">j</span></code> on <code class="scheme"><span class="variable">a-board</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">board-ref</span> <span class="variable">a-board</span> <span class="variable">i</span> <span class="variable">j</span>) ...)
+</pre></div><p>
+Can we now run the program of section&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.2">28.2</a> using vectors
+instead of lists? Inspect the solution of exercises&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.2.3">28.2.3</a>
+and&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.2.4">28.2.4</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-chess.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_29.3.15"></a>
+<b>Exercise 29.3.15.</b>&nbsp;&nbsp;  
+A matrix is a chessboard of numbers. Use the chessboard representation 
+of exercise&nbsp;<a href="#node_thm_29.3.14">29.3.14</a> to represent the matrix
+</p>
+<div align="center"><img src="curriculumD-Z-G-12.gif" border="0" alt="[curriculumD-Z-G-12.gif]"></div><p></p>
+<p>
+Using <code class="scheme"><span class="variable">build-board</span></code>, develop the function <code class="scheme"><span class="variable">transpose</span></code>, which
+creates a mirror image of the matrix along its diagonal from the upper-left
+corner to the lower-right one. For example, the given matrix turns into 
+</p>
+<div align="center"><img src="curriculumD-Z-G-13.gif" border="0" alt="[curriculumD-Z-G-13.gif]"></div><p>
+More generally, the item at (<em>i</em>,<em>j</em>) becomes the item at
+(<em>j</em>,<em>i</em>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/vector-matrix.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+
+ <p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+
+
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_157"></a><a href="#call_footnote_Temp_157"><sup><small>62</small></sup></a> We speak of an abstract
+running time because the measure ignores the details of how much time
+primitive steps take and how much time the overall evaluation takes.</p>
+<p><a name="footnote_Temp_158"></a><a href="#call_footnote_Temp_158"><sup><small>63</small></sup></a> More precisely, the
+evaluation consists of 2<sup><em>N</em><tt>-</tt>1</sup> steps, but </p>
+<div align="center"><img src="curriculumD-Z-G-5.gif" border="0" alt="[curriculumD-Z-G-5.gif]"></div><p> which shows that we ignore a (small) constant when we say on
+the order of 2<sup><em>N</em></sup>.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-35.html">previous</a></span><span>, <a href="curriculum-Z-H-37.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-36.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

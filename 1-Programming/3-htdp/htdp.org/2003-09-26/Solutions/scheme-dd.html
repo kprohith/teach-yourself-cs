@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.4.1; How to Design Programs </title>
+</head>
+<body>
+<a href="web4.html">14.3.4</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.4.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="scheme-numeric.html">14.4.2</a><pre>#|
+
+A scheme-expression is either:
+
+  - number,
+  - symbol,
+  - (make-add scheme-expression scheme-expression)
+  - (make-mul scheme-expression scheme-expression)
+
+|#
+
+(define-struct add (lhs rhs))
+(define-struct mul (lhs rhs))
+
+;; EXAMPLES
+
+;; 1. (+ 10 -10) 
+(make-add 10 -10)
+
+;; 2. (+ (* 20 3) 33) 
+(make-add (make-mul 20 3) 33)
+
+;; 3. (* 3.14 (* r r)) 
+(make-mul 3.14 (make-mul 'r 'r))
+
+;; 4. (+ (* 9/5 c) 32) 
+(make-add (make-mul 9/5 'c) 32)
+
+;; 5. (+ (* 3.14 (* o o)) (* 3.14 (* i i)))���
+(make-add (make-mul 3.14 (make-mul 'o 'o))
+          (make-mul 3.14 (make-mul 'i 'i)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/scheme-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

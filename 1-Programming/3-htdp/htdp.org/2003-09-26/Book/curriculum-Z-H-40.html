@@ -1,0 +1,716 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-40.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-39.html">previous</a></span><span>, <a href="curriculum-Z-H-41.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_32"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_32">Section  32</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_32">More Uses of Accumulation</a></h1>
+<p></p>
+<p>
+This section presents three extended exercises that require the whole range
+of skills: design by recipe, including generative recursion, and the
+addition of accumulators for various purposes.</p>
+<p>
+</p>
+<a name="node_sec_32.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_32.1">32.1&nbsp;&nbsp;Extended Exercise: Accumulators on Trees</a></h2>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_171"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2022"></a><div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">child</span> (<span class="variable">father</span> <span class="variable">mother</span> <span class="variable">name</span> <span class="variable">date</span> <span class="variable">eyes</span>))
+</pre></div><p></p>
+<p>
+<a name="node_idx_2024"></a><a name="node_idx_2026"></a>
+A <i>node in a family tree</i> (short: <i>ftn</i>) is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">make-child</span> <span class="variable">f</span> <span class="variable">m</span> <span class="variable">na</span> <span class="variable">da</span> <span class="variable">ec</span>)</code> 
+where <code class="scheme"><span class="variable">f</span></code> and <code class="scheme"><span class="variable">m</span></code> are <code class="scheme"><span class="variable">ftn</span></code>s, <code class="scheme"><span class="variable">na</span></code>
+and <code class="scheme"><span class="variable">ec</span></code> are symbols, and <code class="scheme"><span class="variable">da</span></code> is a number. 
+</p>
+</li></ol><p></p>
+<p>
+<a name="node_idx_2028"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to construct a list of all blue-eyed ancestors in <code class="scheme"><span class="variable">a-ftree</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">all-blue-eyed-ancestors</span> <span class="variable">a-ftree</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+                    (<span class="builtin">append</span> (<span class="variable">all-blue-eyed-ancestors</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>))
+                            (<span class="variable">all-blue-eyed-ancestors</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)))))
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+               (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+              [<span class="keyword">else</span> <span class="variable">in-parents</span>]))]))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 91:</b>&nbsp;&nbsp;Collecting family trees with <i>blue-eyed-ancestor?</i></td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_171">91</a> recalls the structure and data
+definitions of family trees from section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.1">14.1</a> where
+we developed the function <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>, which determined
+whether an ancestor family tree contained a blue-eyed family member. In
+contrast, <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span></code>, the function in
+figure&nbsp;<a href="#node_fig_Temp_171">91</a>, collects the names of all blue-eyed
+family in a given family tree.</p>
+<p>
+The function's structure is that of a tree-processing function.  It has two
+cases: one for the empty tree and another one for a <code class="scheme"><span class="variable">child</span></code>
+node. The latter clause contains two self-references: one per parent. These
+recursive applications collect the names of all blue-eyed ancestors from
+the father's and the mother's family tree; <code class="scheme"><span class="builtin">append</span></code> combines the two
+lists into one.</p>
+<p>
+The <code class="scheme"><span class="builtin">append</span></code> function is a structurally recursive function. Here it
+processes the two lists that the natural recursions of
+<code class="scheme"><span class="variable">all-blue-eyed-ancestors</span></code> produce. According to
+section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.1">17.1</a>, this observation suggests that the
+function is a natural candidate for a transformation into
+accumulator-style. </p>
+<p>
+Let's get started: 
+<a name="node_idx_2030"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to construct a list of all blue-eyed ancestors in <code class="scheme"><span class="variable">a-ftree</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">all-blue-eyed-ancestors</span> <span class="variable">a-ftree0</span>) 
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> <tt>...</tt></span>
+          (<span class="keyword">define</span> (<span class="variable">all-a</span> <span class="variable">a-ftree</span> <span class="variable">accumulator</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) ...]
+              [<span class="keyword">else</span> 
+               (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+                         (<span class="variable">all-a</span> ... (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>) ... 
+			        ... <span class="variable">accumulator</span> ...)
+                         (<span class="variable">all-a</span> ... (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>) ...
+			        ... <span class="variable">accumulator</span> ...)))
+                 (<span class="keyword">cond</span>
+                   [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+                    (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+                   [<span class="keyword">else</span> <span class="variable">in-parents</span>]))])))
+    (<span class="variable">all-a</span> <span class="variable">a-ftree0</span> ...)))
+</pre></div><p></p>
+<p>
+Our next goal is the formulation of an accumulator invariant. The general
+purpose of the accumulator is to remember knowledge about <code class="scheme"><span class="variable">a-ftree0</span></code>
+that <code class="scheme"><span class="variable">all-a</span></code> loses as it traverses the tree.  A look at the
+definition in figure&nbsp;<a href="#node_fig_Temp_171">91</a> shows two recursive
+applications. The first one processes <code class="scheme">(<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)</code>,
+which means this application of <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span></code> loses
+knowledge about the mother of <code class="scheme"><span class="variable">a-ftree</span></code>. Conversely, the second
+recursive application has no knowledge of the father of <code class="scheme"><span class="variable">a-ftree</span></code> as
+it processes the mother's family tree.</p>
+<p>
+At this point, we have two choices: 
+</p>
+<ol>
+<li><p>The accumulator could represent all blue-eyed ancestors encountered
+so far, including those in the mother's family tree, as it descends into
+the father's tree. </p>
+<p>
+</p>
+<li><p>The alternative is to have the accumulator stand for the lost items
+in the tree. That is, as <code class="scheme"><span class="variable">all-a</span></code> processes the father's family tree,
+it remembers the mother's tree in the accumulator (and everything else it
+hasn't seen before). 
+</p>
+</li></ol><p>
+Let's explore both possibilities, starting with the first.</p>
+<p>
+Initially, <code class="scheme"><span class="variable">all-a</span></code> has not seen any of the nodes in the family tree,
+so <code class="scheme"><span class="variable">accumulator</span></code> is <code class="scheme"><span class="builtin">empty</span></code>. As <code class="scheme"><span class="variable">all-a</span></code> is about to
+traverse the father's family tree, we must create a list that represents
+all blue-eyed ancestors in the tree that we are about to forget, which is
+the mother's tree. This suggests the following accumulator invariant
+formulation: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the list of blue-eyed ancestors</span>
+<span class="comment">;; encountered on the mother-side trees of the path in</span>
+<span class="comment">;; <code class="scheme"><span class="variable">a-ftree0</span></code> to <code class="scheme"><span class="variable">a-ftree</span></code></span>
+</pre></div><p></p>
+<p>
+To maintain the invariant for the natural recursion, we must collect the
+ancestors on the mother's side of the tree. Since the purpose of
+<code class="scheme"><span class="variable">all-a</span></code> is to collect those ancestors, we use the expression 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">all-a</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>) <span class="variable">accumulator</span>)
+</pre></div><p>
+to compute the new accumulator for the application of <code class="scheme"><span class="variable">all-a</span></code> to
+<code class="scheme">(<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)</code>. Putting everything together for the second
+<code class="scheme"><span class="keyword">cond</span></code>-clause yields this:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+	  (<span class="variable">all-a</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>)
+	    (<span class="variable">all-a</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>)
+	      <span class="variable">accumulator</span>))))
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+     (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+    [<span class="keyword">else</span> <span class="variable">in-parents</span>]))
+</pre></div><p>
+This leaves us with the answer in the first <code class="scheme"><span class="keyword">cond</span></code>-clause.  Since
+<code class="scheme"><span class="variable">accumulator</span></code> represents all blue-eyed ancestors encountered so far,
+it is the result. Figure&nbsp;<a href="#node_fig_Temp_172">92</a> contains the complete
+definition.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_172"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to construct a list of all blue-eyed ancestors in <code class="scheme"><span class="variable">a-ftree</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">all-blue-eyed-ancestors</span> <span class="variable">a-ftree</span>) 
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">accumulator</span></code> is the list of blue-eyed ancestors</span>
+	  <span class="comment">;; encountered on the mother-side trees of the path in</span>
+	  <span class="comment">;; <code class="scheme"><span class="variable">a-ftree0</span></code> to <code class="scheme"><span class="variable">a-ftree</span></code></span>
+          (<span class="keyword">define</span> (<span class="variable">all-a</span> <span class="variable">a-ftree</span> <span class="variable">accumulator</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) <span class="variable">accumulator</span>]
+              [<span class="keyword">else</span> 
+               (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+                         (<span class="variable">all-a</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>) 
+                                (<span class="variable">all-a</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>) <span class="variable">accumulator</span>))))
+                 (<span class="keyword">cond</span>
+                   [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+                    (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+                   [<span class="keyword">else</span> <span class="variable">in-parents</span>]))])))
+    (<span class="variable">all-a</span> <span class="variable">a-ftree</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 92:</b>&nbsp;&nbsp;Collecting blue-eyed ancestors, accumulator-style (version 1)</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+For the second version, we want the accumulator to represent a list of all
+of the family trees that haven't been processed yet. Because of the
+different intention, let us call the accumulator parameter <code class="scheme"><span class="variable">todo</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">todo</span></code> is the list of family trees </span>
+<span class="comment">;; encountered but not processed </span>
+</pre></div><p>
+Like the accumulator-style <code class="scheme"><span class="variable">invert</span></code>, <code class="scheme"><span class="variable">all-a</span></code> initializes
+<code class="scheme"><span class="variable">todo</span></code> to <code class="scheme"><span class="builtin">empty</span></code>. It updates it by extending the list for
+the natural recursion:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+	  (<span class="variable">all-a</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>) 
+	    (<span class="builtin">cons</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>) <span class="variable">todo</span>))))
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+     (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+    [<span class="keyword">else</span> <span class="variable">in-parents</span>]))
+</pre></div><p></p>
+<p>
+The problem now is that when <code class="scheme"><span class="variable">all-a</span></code> is applied to the
+<code class="scheme"><span class="builtin">empty</span></code> tree, <code class="scheme"><span class="variable">todo</span></code> does not represent the result but what
+is left to do for <code class="scheme"><span class="variable">all-a</span></code>. To visit all those family trees,
+<code class="scheme"><span class="variable">all-a</span></code> must be applied to them, one at a time. Of course, if
+<code class="scheme"><span class="variable">todo</span></code> is <code class="scheme"><span class="builtin">empty</span></code>, there is nothing left to do; the result is
+<code class="scheme"><span class="builtin">empty</span></code>. If <code class="scheme"><span class="variable">todo</span></code> is a list, we pick the first tree on the
+list as the next one to be processed: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">empty?</span> <span class="variable">todo</span>) <span class="builtin">empty</span>]
+  [<span class="keyword">else</span> (<span class="variable">all-a</span> (<span class="builtin">first</span> <span class="variable">todo</span>) (<span class="builtin">rest</span> <span class="variable">todo</span>))])
+</pre></div><p>
+The rest of the list is what is now left to do. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_173"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2032"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span> <span class="selfeval">:</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+<span class="comment">;; to construct a list of all blue-eyed ancestors in <code class="scheme"><span class="variable">a-ftree</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">all-blue-eyed-ancestors</span> <span class="variable">a-ftree0</span>) 
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">todo</span></code> is the list of family trees encountered but not processed </span>
+          (<span class="keyword">define</span> (<span class="variable">all-a</span> <span class="variable">a-ftree</span> <span class="variable">todo</span>)
+            (<span class="keyword">cond</span>
+              [(<span class="builtin">empty?</span> <span class="variable">a-ftree</span>) 
+               (<span class="keyword">cond</span>
+                 [(<span class="builtin">empty?</span> <span class="variable">todo</span>) <span class="builtin">empty</span>]
+                 [<span class="keyword">else</span> (<span class="variable">all-a</span> (<span class="builtin">first</span> <span class="variable">todo</span>) (<span class="builtin">rest</span> <span class="variable">todo</span>))])]
+              [<span class="keyword">else</span> 
+               (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">in-parents</span> 
+                         (<span class="variable">all-a</span> (<span class="builtin">child-father</span> <span class="variable">a-ftree</span>) 
+                                (<span class="builtin">cons</span> (<span class="builtin">child-mother</span> <span class="variable">a-ftree</span>) <span class="variable">todo</span>))))
+                 (<span class="keyword">cond</span>
+                   [(<span class="builtin">symbol=?</span> (<span class="builtin">child-eyes</span> <span class="variable">a-ftree</span>) <span class="keyword">'</span><span class="variable">blue</span>) 
+                    (<span class="builtin">cons</span> (<span class="builtin">child-name</span> <span class="variable">a-ftree</span>) <span class="variable">in-parents</span>)]
+                   [<span class="keyword">else</span> <span class="variable">in-parents</span>]))])))
+    (<span class="variable">all-a</span> <span class="variable">a-ftree0</span> <span class="builtin">empty</span>)))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 93:</b>&nbsp;&nbsp;Collecting blue-eyed ancestors, accumulator-style (version 2)</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_173">93</a> contains the complete definition for this
+second accumulator-style variant of <code class="scheme"><span class="variable">all-blue-eyed-ancestors</span></code>. The
+auxiliary definition is the most unusual recursive function definition we
+have seen.  It contains a recursive application of <code class="scheme"><span class="variable">all-a</span></code> in both
+the first and the second <code class="scheme"><span class="keyword">cond</span></code>-clause. That is, the function
+definition does not match the data definition for family trees, the primary
+inputs.  While a function like that can be the result of a careful chain of
+development steps, starting from a working function developed with a design
+recipe, it should never be a starting point. </p>
+<p>
+The use of accumulators is also fairly common in programs that process
+representations of programs. We encountered these forms of data in
+section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.4">14.4</a>, and like family trees, they have complicated
+data definitions. In intermezzo&nbsp;3, we also discussed some concepts
+concerning variables and their mutual association, though without
+processing these concepts. The following exercises introduce simple
+functions that work with the scope of parameters, binding occurrences of
+variables, and other notions. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_32.1.1"></a>
+<b>Exercise 32.1.1.</b>&nbsp;&nbsp; 
+Develop a data representation for the following tiny subset of 
+Scheme expressions: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top"><tt>&lt;exp&gt;</tt> 
+</td><td valign="top">=</td><td valign="top"><tt>&lt;var&gt;</tt> 
+ |  (<strong>lambda</strong> (<tt>&lt;var&gt;</tt>) <tt>&lt;exp&gt;</tt>)
+ |  (<tt>&lt;exp&gt;</tt> <tt>&lt;exp&gt;</tt>)
+</td></tr></table>
+</td></tr></table></div>
+
+The subset contains only three kinds of expressions: variables, functions
+of one argument, and function applications. <p>
+Examples: 
+</p>
+<div align="left"><pre class="scheme"><span class="variable">1.</span> (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">y</span>)
+      
+<span class="variable">2.</span> ((<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>) 
+      (<span class="keyword">lambda</span> (<span class="variable">x</span>) <span class="variable">x</span>))
+
+<span class="variable">3.</span> (((<span class="keyword">lambda</span> (<span class="variable">y</span>)
+	 (<span class="keyword">lambda</span> (<span class="variable">x</span>)
+	   <span class="variable">y</span>))
+       (<span class="keyword">lambda</span> (<span class="variable">z</span>) <span class="variable">z</span>))
+      (<span class="keyword">lambda</span> (<span class="variable">w</span>) <span class="variable">w</span>))
+</pre></div><p>        
+Represent variables as symbols. Call the class of data
+<i>Lam</i>.
+<a name="node_idx_2034"></a></p>
+<p>
+Recall that <strong>lambda</strong>-expressions are functions without names. Thus they bind their
+parameter in the body. In other words, the scope of a <strong>lambda</strong>-expression's parameter
+is the body. Explain the scope of each binding occurrence in the above
+examples. Draw arrows from all bound occurrences to the binding
+occurrences.</p>
+<p>
+If a variable occurs in an expression but has no corresponding binding
+occurrence, the occurrence is said to be free.  Make up an expression in
+which <code class="scheme"><span class="variable">x</span></code> occurs both free and bound.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/free-bound-dd.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.1.2"></a>
+<b>Exercise 32.1.2.</b>&nbsp;&nbsp; 
+Develop the function 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">free-or-bound</span> <span class="selfeval">:</span> <span class="variable">Lam</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Lam</span></code> </span>
+<span class="comment">;; to replace each non-binding occurrence of a variable in <code class="scheme"><span class="variable">a-lam</span></code> </span>
+<span class="comment">;; with <code class="scheme"><span class="keyword">'</span><span class="variable">free</span></code> or <code class="scheme"><span class="keyword">'</span><span class="variable">bound</span></code>, depending on whether the </span>
+<span class="comment">;; occurrence is bound or not.</span>
+(<span class="keyword">define</span> (<span class="variable">free-or-bound</span> <span class="variable">a-lam</span>) ...)
+</pre></div><p>
+where <code class="scheme"><span class="variable">Lam</span></code> is the class of expression representations from
+exercise&nbsp;<a href="#node_thm_32.1.1">32.1.1</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/free-bound0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.1.3"></a>
+<b>Exercise 32.1.3.</b>&nbsp;&nbsp; 
+Develop the function 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">unique-binding</span> <span class="selfeval">:</span> <span class="variable">Lam</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Lam</span></code> </span>
+<span class="comment">;; to replace variables names of binding occurrences and their bound</span>
+<span class="comment">;; counterparts so that no name is used twice in a binding occurrence</span>
+(<span class="keyword">define</span> (<span class="variable">unique-binding</span> <span class="variable">a-lam</span>) ...)
+</pre></div><p>
+where <code class="scheme"><span class="variable">Lam</span></code> is the class of expression representations from
+exercise&nbsp;<a href="#node_thm_32.1.1">32.1.1</a>.</p>
+<p>
+<strong>Hint:</strong>  The function <code class="scheme"><span class="builtin">gensym</span></code> creates a new and unique symbol from a
+given symbol. The result is guaranteed to be distinct from all other
+symbols in the program, including those previously generated with
+<code class="scheme"><span class="builtin">gensym</span></code>.</p>
+<p>
+Use the technique of this section to improve the function. <strong>Hint:</strong>  The
+accumulator relates old parameter names to new parameter
+names.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/free-bound1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_32.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_32.2">32.2&nbsp;&nbsp;Extended Exercise: Missionaries and Cannibals</a></h2>
+<p></p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+On occasion, accumulators are a part of a piece of compound data because a
+function manages many pieces of data (in the same class) at the same time.
+The following story poses just such a problem:
+</p>
+<blockquote>
+Once upon a time, three cannibals were guiding three missionaries through a
+jungle. They were on their way to the nearest mission station. After some
+time, they arrived at a wide river, filled with deadly snakes and
+fish. There was no way to cross the river without a boat. Fortunately,
+they found a row boat with two oars after a short search. Unfortunately,
+the boat was too small to carry all of them. It could barely carry two
+people at a time.  Worse, because of the river's width there was no way to
+bring the boat back other than to row it back.<p>
+Since the missionaries could not trust the cannibals they had to figure out
+a plan to get all six of them safely across the river. The problem was
+that these cannibals would kill and eat missionaries as soon as there were
+more cannibals than missionaries at some place. Thus our
+missionary-programmer had to devise a plan that guaranteed that there were
+never any missionaries in the minority at either side of the river.  The
+cannibals, however, can be trusted to cooperate otherwise. Specifically,
+they won't abandon any potential food, just as the missionaries won't
+abandon any potential converts.</p>
+<p>
+Luckily one of the missionaries had taken a Scheme course and knew how to
+solve this problem.
+</p>
+</blockquote>
+While we can solve the problem by hand, solving it with a Scheme function is
+more fun and more general. If the same story comes up again with different
+numbers of cannibals and missionaries or different boat sizes, we can use
+the same function to solve the problem again.<p>
+As with every problem, we begin by laying out how to represent the problem
+in our data language and then study how to represent certain actions in the
+real world in our programming language. 
+<a name="node_idx_2036"></a>Here are two basic constants concerning the data representation: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">MC</span> <span class="selfeval">3</span>)
+(<span class="keyword">define</span> <span class="variable">BOAT-CAPACITY</span> <span class="selfeval">2</span>)
+</pre></div><p>
+Formulate the function in terms of these constants. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_32.2.1"></a>
+<b>Exercise 32.2.1.</b>&nbsp;&nbsp;  
+Provide a data representation for the states of a river crossing.  A
+state should record the number of missionaries and cannibals on each side
+of the river and the location of the boat.  Here is a graphical
+representation of the states: <br>
+
+</p>
+
+<center><img src="../icons/mc-a.gif"></center>
+<br>
+
+The two lines represent the river, the black and white dots the
+missionaries and cannibals, the black rectangle the boat. Determine the
+initial and final state of the game.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-state.html">Solution</a><p></p>
+<p>
+</p>
+<p><a name="node_thm_32.2.2"></a>
+<b>Exercise 32.2.2.</b>&nbsp;&nbsp;  
+Develop a data representation for boat loads. Define <code class="scheme"><span class="variable">BOAT-LOADS</span></code>,
+the list of all possible boat loads. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">make-BOAT-LOADS</span></code>, which consumes the boat's maximal
+capacity and constructs the list of possible boat loads.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-boatload.html">Solution</a></p>
+<p></p>
+<p>
+One way to deal with search problems in a systematic manner is to generate
+all possible successor states for the states we have reached so far, to
+filter out the interesting ones, and to start the search over from those.
+A successor state is reached by using a feasible transition, for example,
+an enabled move in a game, a boat trip, etc. </p>
+<p>
+Here is a graphical illustration of the situation for our problem:
+
+</p>
+
+<center><img src="../icons/mc-b.gif"></center>
+<p>
+The initial state in the top row has five possible successor states, one
+per feasible boat load. They are shown in the second row. Two of these
+successor states are illegal, because one side contains more cannibals than
+missionaries. One of the legal ones is the state in which one missionary
+and cannibal reached the right side of the river; it has three successor
+states in turn. The following exercises deal with generating the successor
+states and filtering out the interesting ones. </p>
+<p>
+</p>
+<p>
+<a name="node_idx_2038"></a>
+</p>
+<p></p>
+<p><strong>Testing</strong>:  Formulate all tests as boolean-valued expressions that
+produce <code class="scheme"><span class="builtin">true</span></code> if the expected value is the computed one, and 
+<code class="scheme"><span class="builtin">false</span></code> if not.&nbsp;</p>
+<p>
+</p>
+<p><a name="node_thm_32.2.3"></a>
+<b>Exercise 32.2.3.</b>&nbsp;&nbsp;  
+Develop a function that consumes a state and returns a list of all possible
+successor states, that is, all those states that are reachable with one
+boat trip from one side of the river to the other. </p>
+<p>
+Develop a generalized version that consumes a list of states, and returns a
+list of states reachable with one crossing.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-succ.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.2.4"></a>
+<b>Exercise 32.2.4.</b>&nbsp;&nbsp;  
+Develop a function that determines whether a given state is legal. A state
+is legal if it contains the proper number of missionaries and cannibals
+and if the missionaries on each side of the river are safe.</p>
+<p>
+Develop a generalized function that consumes a list of states and returns
+the sublist of legal states.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-legal.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.2.5"></a>
+<b>Exercise 32.2.5.</b>&nbsp;&nbsp;  
+Develop a function that consumes a state and determines if it is final.</p>
+<p>
+Develop a generalized version that consumes a list of states and returns
+the sublist of final states.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-final.html">Solution</a></p>
+<p></p>
+<p>
+The functions we have developed can generate the successor states of a list
+of states and can detect whether any of the states reached so far are
+legal.  Now we can develop a function that determines whether we can
+transport the missionaries and cannibals across the river.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_32.2.6"></a>
+<b>Exercise 32.2.6.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">mc-solvable?</span></code>, which consumes a list of states and
+generates the list of all successor states until it has found a final
+state. The function should simply produce <code class="scheme">true</code> when it finds a final
+state.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-together1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.2.7"></a>
+<b>Exercise 32.2.7.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">mc-solution</span></code>. The function is an adaptation of
+<code class="scheme"><span class="variable">mc-solvable?</span></code> that not only produces <code class="scheme">true</code> when it finds a
+solution but a list of river crossings if a given missionary-and-cannibal
+problem is solvable.</p>
+<p>
+<strong>Hint:</strong>  Modify the state representations so that they accumulate the list of
+crossings that got the group to this particular state. For the initial
+state, this is just the empty list; for a final state, it is the desired
+solution.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-together2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.2.8"></a>
+<b>Exercise 32.2.8.</b>&nbsp;&nbsp;  
+A series of boat trips may bring the group of missionaries and cannibals
+back to the initial state (or some other previous state). The series may
+include two, four, or more boat trips. In short, the ``game'' contains
+cycles.  Make up an example.</p>
+<p>
+The function <code class="scheme"><span class="variable">mc-solution</span></code> generates all those states reachable with,
+say, seven boat trips before it generates all those states reachable with
+eight crossings. Therefore we do not have to worry about cycles in
+solution attempts. Why?  </p>
+<p>
+Modify the solution so that a state reached via a cycle is also illegal. </p>
+<p>
+</p>
+<p></p>
+<p><strong>Note</strong>:  This shows how the accumulator inside the state representation
+has two uses.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/mc-together3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_32.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_32.3">32.3&nbsp;&nbsp;Extended Exercise: Board Solitaire</a></h2>
+<p></p>
+<p>
+</p>
+<p>
+
+
+
+
+
+
+</p>
+<p>
+Peg Solitaire is a board game for individuals.  The board comes in various
+shapes. Here is the simplest one:
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum5-Z-G-6.gif" border="0" alt="[curriculum5-Z-G-6.gif]">
+</td></tr></table></div>
+
+The circle without a black dot represents an unoccupied hole; the other
+circles are holes containing little pegs.<p>
+The goal of the game is to eliminate the pegs one by one, until only one
+peg is left. A player can eliminate a peg if one of the neighboring holes
+is unoccupied and if there is a peg in the hole in the opposite
+direction. In that case, the second peg can jump over the first one and the
+first one is eliminated. Consider the following configuration: 
+</p>
+<div align="center"><table><tr><td>
+
+<img src="curriculum5-Z-G-7.gif" border="0" alt="[curriculum5-Z-G-7.gif]">
+</td></tr></table></div>
+
+Here the pegs labeled&nbsp;1 and&nbsp;2 could jump. If the player decides to move the
+peg labeled&nbsp;2, the next configuration is
+<div align="center"><table><tr><td>
+
+<img src="curriculum5-Z-G-8.gif" border="0" alt="[curriculum5-Z-G-8.gif]"> </td></tr></table></div>
+<p>
+Some configurations are dead-ends. For a simple example, consider the first
+board configuration. Its hole is in the middle of the board. Hence no peg
+can jump, because there are no two pegs in a row, column, or diagonal such
+that one can jump over the other into the hole. A player who discovers a
+dead-end configuration must stop or backtrack by undoing moves and trying
+alternatives.</p>
+<p>
+</p>
+
+
+<p>
+ </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_32.3.1"></a>
+<b>Exercise 32.3.1.</b>&nbsp;&nbsp;  Develop a representation for
+triangular Solitaire boards. </p>
+<p>
+Develop a data representation for peg moves. Pegs can move along a row, a
+column, and a diagonal. </p>
+<p>
+<strong>Hints:</strong>  (1) There are at least four rows, because it is impossible to play
+the game with three or fewer. Still, develop the data definition
+independently of such constraints. (2) Translate our examples from above
+into the chosen data representations.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/peg-sol-data.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_32.3.2"></a>
+<b>Exercise 32.3.2.</b>&nbsp;&nbsp; 
+Develop a function that, given a board and the board position of a peg,
+determines whether or not the peg can jump. We call such a peg <i>enabled</i>.
+<a name="node_idx_2040"></a></p>
+<p>
+Develop a function that, given a board and the board position of an enabled
+peg, creates a board that represents the next
+configuration.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/peg-sol-abs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_32.3.3"></a>
+<b>Exercise 32.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">solitaire</span></code>, which solves a Solitaire problem
+for different sizes of the equilateral triangle. The function should
+consume a board. It produces <code class="scheme">false</code>, if the given problem is not
+solvable. Otherwise, it should produce a list of moves that specifies in
+what order the pegs must be moved to solve the given Solitaire
+problem.</p>
+<p>
+Formulate the tests for all functions as boolean-valued
+expressions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/peg-sol.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-39.html">previous</a></span><span>, <a href="curriculum-Z-H-41.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-40.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

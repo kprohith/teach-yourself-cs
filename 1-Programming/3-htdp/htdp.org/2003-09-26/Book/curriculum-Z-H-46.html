@@ -1,0 +1,1484 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-46.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-45.html">previous</a></span><span>, <a href="curriculum-Z-H-47.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_37"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_37">Section  37</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_37">Examples of Memory Usage</a></h1>
+<p></p>
+<p>
+Designing programs with memory requires experience and practice, which, in
+turn, come from studying examples. In this section we study three more
+examples of programs that use memory. The first one illustrates the
+importance of initializers; the second one demonstrates how to design
+programs whose effects depend on conditions; and the last one shows how
+effects can be useful in recursive functions.  The last two subsections
+provide opportunities for practicing what we've learned.</p>
+<p>
+</p>
+<a name="node_sec_37.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_37.1">37.1&nbsp;&nbsp;Initializing State</a></h2>
+<p></p>
+<p>
+Recall the color-guessing game from exercise&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.5">5.1.5</a>.  One
+player picks two colors for two squares; we call those ``targets.'' The
+other one tries to guess which color is assigned to which square; they are
+guesses.  The first player's response to a guess is to compare the colors
+and to produce one of the following answers:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">perfect!</span></code>, if the first target is equal to the first
+guess and the second target is equal to the second guess; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">OneColorAtCorrectPosition</span></code>, if the first guess is equal to
+the first target or the second guess is equal to the second target; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">OneColorOccurs</span></code>, if either of the guesses is one of the two
+targets; </p>
+<p>
+</p>
+<li><p>and <code class="scheme"><span class="keyword">'</span><span class="variable">NothingCorrect</span></code>, otherwise. 
+</p>
+</li></ol><p>
+These four answers are the only answers that the first player gives. The
+second player is to guess the two chosen target colors in as few guesses
+as possible. </p>
+<p>
+To simplify the game, the choice of colors is limited: see the top of
+figure&nbsp;<a href="#node_fig_Temp_187">102</a>. Our goal is to develop a program that plays the
+role of the master player. That is, we want a program that picks the colors
+and checks the guesses of the second player.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_187"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; <u>Constants</u>:</span>
+
+<span class="comment">;; the legitimate colors </span>
+(<span class="keyword">define</span> <span class="variable">COLORS</span>
+  (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">black</span> <span class="keyword">'</span><span class="variable">white</span> <span class="keyword">'</span><span class="variable">red</span> <span class="keyword">'</span><span class="variable">blue</span> <span class="keyword">'</span><span class="variable">green</span> <span class="keyword">'</span><span class="variable">gold</span> <span class="keyword">'</span><span class="variable">pink</span> <span class="keyword">'</span><span class="variable">orange</span> <span class="keyword">'</span><span class="variable">purple</span> <span class="keyword">'</span><span class="variable">navy</span>))
+
+<span class="comment">;; the number of colors</span>
+(<span class="keyword">define</span> <span class="variable">COL#</span> (<span class="builtin">length</span> <span class="variable">COLORS</span>))
+
+<span class="comment">;; <u>Data Definition</u>:</span>
+<span class="comment">;; A <i>color</i> is a symbol on COLORS. </span>
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 102:</b>&nbsp;&nbsp;Guessing colors</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+The game description suggests that the program must offer two services: one
+for setting up two target colors and another one for checking the
+guesses. Naturally, each service corresponds to a function. Let's call the
+first <code class="scheme"><span class="variable">master</span></code> and the second one <code class="scheme"><span class="variable">master-check</span></code>. 
+Here is a possible dialogue, based on the two functions: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">master</span>)
+<span class="builtin">&gt;</span> (<span class="variable">master-check</span> <span class="keyword">'</span><span class="variable">red</span> <span class="keyword">'</span><span class="variable">red</span>)
+<span class="keyword">'</span><span class="variable">NothingCorrect</span>
+<span class="builtin">&gt;</span> (<span class="variable">master-check</span> <span class="keyword">'</span><span class="variable">black</span> <span class="keyword">'</span><span class="variable">pink</span>)
+<span class="keyword">'</span><span class="variable">OneColorOccurs</span>
+... 
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">master</span>)
+<span class="builtin">&gt;</span> (<span class="variable">master-check</span> <span class="keyword">'</span><span class="variable">red</span> <span class="keyword">'</span><span class="variable">red</span>)
+<span class="keyword">'</span><span class="variable">perfect!</span>
+</pre></div><p>
+The <code class="scheme"><span class="variable">master</span></code> function consumes nothing and produces the invisible
+value; its effect is to initialize the two targets. Depending on what the
+chosen colors are, checking the same two guesses may produce
+<code class="scheme"><span class="keyword">'</span><span class="variable">perfect!</span></code> or <code class="scheme"><span class="keyword">'</span><span class="variable">NothingCorrect</span></code>. In other words,
+<code class="scheme"><span class="variable">master</span></code> sets up some memory that <code class="scheme"><span class="variable">master-check</span></code> uses.  </p>
+<p>
+Let us now study how the design recipe applies to the development of the
+program. The first step is to define the state variables and to specify the
+purpose of each variable. Our analysis suggests that we need two state
+variables, one per target:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">target1</span><span class="keyword">,</span> <span class="variable">target2</span> <span class="selfeval">:</span> <span class="variable">color</span></code></span>
+<span class="comment">;; the variables represent the two colors that the first player chooses</span>
+(<span class="keyword">define</span> <span class="variable">target1</span> (<span class="builtin">first</span> <span class="variable">COLORS</span>))
+(<span class="keyword">define</span> <span class="variable">target2</span> (<span class="builtin">first</span> <span class="variable">COLORS</span>))
+</pre></div><p>
+Both variables are set to the first item from <code class="scheme"><span class="variable">COLORS</span></code>, so that they
+stand for some color.</p>
+<p>
+The second step is to develop an initializer for the two state variables. A
+single initializer is enough because the two variables go together. Indeed,
+the initializer is the desired <code class="scheme"><span class="variable">master</span></code> function: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">master</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: set <code class="scheme"><span class="variable">target1</span></code> and <code class="scheme"><span class="variable">target2</span></code> to randomly chosen items in <code class="scheme"><span class="variable">COLORS</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">master</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">target1</span> (<span class="builtin">list-ref</span> <span class="variable">COLORS</span> (<span class="builtin">random</span> <span class="variable">COL#</span>)))
+    (<span class="keyword">set!</span> <span class="variable">target2</span> (<span class="builtin">list-ref</span> <span class="variable">COLORS</span> (<span class="builtin">random</span> <span class="variable">COL#</span>)))))
+</pre></div><p>
+The effect comment explains how <code class="scheme"><span class="variable">master</span></code> changes the two state
+variables by picking an item from <code class="scheme"><span class="variable">COLORS</span></code> based on a random number
+between 0 and the length of <code class="scheme"><span class="variable">COLORS</span></code>. </p>
+<p>
+Finally, we can turn to the functions that modify and utilize the program's
+memory. As it turns out, the memory isn't modified after the two target
+variables are initialized; it is only used to compare to the two guesses of
+the player. The only other service we need is <code class="scheme"><span class="variable">master-check</span></code>. It
+uses <code class="scheme"><span class="variable">check-color</span></code>, the solution of exercise&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.5">5.1.5</a>,
+to conduct the comparison. For a summary, see figure&nbsp;<a href="#node_fig_Temp_188">103</a>,
+which contains the variable and function definitions that we just
+discussed. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_188"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2168"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">target1</span><span class="keyword">,</span> <span class="variable">target2</span> <span class="selfeval">:</span> <span class="variable">color</span> </code></span>
+<span class="comment">;; the two variables represent the two colors that the first player chose</span>
+(<span class="keyword">define</span> <span class="variable">target1</span> (<span class="builtin">first</span> <span class="variable">COLORS</span>))
+(<span class="keyword">define</span> <span class="variable">target2</span> (<span class="builtin">first</span> <span class="variable">COLORS</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">master</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: set <code class="scheme"><span class="variable">target1</span></code> and <code class="scheme"><span class="variable">target2</span></code> to two randomly chosen items from <code class="scheme"><span class="variable">COLORS</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">master</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">target1</span> (<span class="builtin">list-ref</span> <span class="variable">COLORS</span> (<span class="builtin">random</span> <span class="variable">COL#</span>)))
+    (<span class="keyword">set!</span> <span class="variable">target2</span> (<span class="builtin">list-ref</span> <span class="variable">COLORS</span> (<span class="builtin">random</span> <span class="variable">COL#</span>)))))
+
+<span class="comment">;; <code class="scheme"><span class="variable">master-check</span> <span class="selfeval">:</span> <span class="variable">color</span> <span class="variable">color</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span></code></span>
+<span class="comment">;; to determine how many colors at how many positions are guessed correctly</span>
+<span class="comment">;; The function defers to <code class="scheme"><span class="variable">check-color</span></code>, the solution of exercise&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.5">5.1.5</a>.</span>
+(<span class="keyword">define</span> (<span class="variable">master-check</span> <span class="variable">guess1</span> <span class="variable">guess2</span>)
+  (<span class="variable">check-color</span> <span class="variable">guess1</span> <span class="variable">guess2</span> <span class="variable">target1</span> <span class="variable">target2</span>))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 103:</b>&nbsp;&nbsp;Guessing colors (Part 2)</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.1.1"></a>
+<b>Exercise 37.1.1.</b>&nbsp;&nbsp; 
+Draw a diagram that shows how <code class="scheme"><span class="variable">master</span></code> and <code class="scheme"><span class="variable">master-check</span></code>
+interact with memory.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/master-diagram.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.1.2"></a>
+<b>Exercise 37.1.2.</b>&nbsp;&nbsp; 
+Abstract the repeated expressions in <code class="scheme"><span class="variable">master</span></code> into the function
+<code class="scheme"><span class="variable">random-pick</span></code>. It consumes a list and chooses a random item from
+that list. Then use the function to eliminate the repeated expressions in
+<code class="scheme"><span class="variable">master</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/master-pick.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.1.3"></a>
+<b>Exercise 37.1.3.</b>&nbsp;&nbsp; 
+Modify the color guessing program so that its final answer isn't just
+<code class="scheme"><span class="keyword">'</span><span class="variable">perfect!</span></code> but a list of two items: the symbol <code class="scheme"><span class="variable">perfect!</span></code>
+and the number of guesses that the second player made. Start by modifying
+the diagram of exercise&nbsp;<a href="#node_thm_37.1.1">37.1.1</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/master-count.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.1.4"></a>
+<b>Exercise 37.1.4.</b>&nbsp;&nbsp; 
+Modify the color guessing program so that it automatically restarts the
+game when a player has guessed the correct target colors.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/master-reset.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.1.5"></a>
+<b>Exercise 37.1.5.</b>&nbsp;&nbsp; 
+Develop a graphical user interface, similar to that of the teachpack
+<tt><strong>master.ss</strong></tt>. Instead of colored buttons, use buttons labeled with the
+color. Show the current selection in message fields.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/master-gui.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_37.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_37.2">37.2&nbsp;&nbsp;State Changes from User Interactions</a></h2>
+<p></p>
+<p>
+Recall the hangman game from <a href="curriculum-Z-H-9.html#node_sec_6.7">6.7</a>. The goal of the game is to
+test a person's active vocabulary. One player thinks of a word and draws
+the noose of a gallows; the other player tries to guess the word, one
+letter at a time. For every wrong guess, the first player adds another
+part to the drawing (see figure&nbsp;<a href="curriculum-Z-H-9.html#node_fig_Temp_43">15</a>): first the head, then
+the body, the arms, and the legs. If, however, the player's guess reveals
+new knowledge about the chosen word, the first player indicates where the
+the letter occurs in the word. The game is over when the second player
+guesses the complete word or when the first player has completed the stick
+figure.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_189"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <u>Data Analysis and Definitions</u>:</span>
+
+<span class="comment">;; A <i>letter</i> is a symbol in: <code class="scheme"><span class="keyword">'</span><span class="variable">a</span> ... <span class="keyword">'</span><span class="variable">z</span></code> plus <code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code></span>
+
+<span class="comment">;; A <i>word</i> is a (listof letter).</span>
+
+<span class="comment">;; A <i>body-part</i> is one of the following symbols:</span>
+(<span class="keyword">define</span> <span class="variable">PARTS</span> <span class="keyword">'</span>(<span class="variable">head</span> <span class="variable">body</span> <span class="variable">right-arm</span> <span class="variable">left-arm</span> <span class="variable">right-leg</span> <span class="variable">left-leg</span>))
+
+<span class="comment">;; <u>Constants</u>:</span>
+<span class="comment">;; some guessing words: </span>
+(<span class="keyword">define</span> <span class="variable">WORDS</span> 
+  <span class="keyword">'</span>((<span class="variable">h</span> <span class="variable">e</span> <span class="variable">l</span> <span class="variable">l</span> <span class="variable">o</span>)
+    (<span class="variable">w</span> <span class="variable">o</span> <span class="variable">r</span> <span class="variable">l</span> <span class="variable">d</span>)
+    (<span class="variable">i</span> <span class="variable">s</span>)
+    (<span class="variable">a</span>)
+    (<span class="variable">s</span> <span class="variable">t</span> <span class="variable">u</span> <span class="variable">p</span> <span class="variable">i</span> <span class="variable">d</span>)
+    (<span class="variable">p</span> <span class="variable">r</span> <span class="variable">o</span> <span class="variable">g</span> <span class="variable">r</span> <span class="variable">a</span> <span class="variable">m</span>)
+    (<span class="variable">a</span> <span class="variable">n</span> <span class="variable">d</span>)
+    (<span class="variable">s</span> <span class="variable">h</span> <span class="variable">o</span> <span class="variable">u</span> <span class="variable">l</span> <span class="variable">d</span>)
+    (<span class="variable">n</span> <span class="variable">e</span> <span class="variable">v</span> <span class="variable">e</span> <span class="variable">r</span>)
+    (<span class="variable">b</span> <span class="variable">e</span>)
+    (<span class="variable">u</span> <span class="variable">s</span> <span class="variable">e</span> <span class="variable">d</span>)
+    (<span class="variable">o</span> <span class="variable">k</span> <span class="variable">a</span> <span class="variable">y</span>)
+    ...
+    ))
+
+<span class="comment">;; the number of words we can choose from </span>
+(<span class="keyword">define</span> <span class="variable">WORDS#</span> (<span class="builtin">length</span> <span class="variable">WORDS</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 104:</b>&nbsp;&nbsp;Hangman Basics</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_189">104</a> contains the data definitions for letters,
+words, and body-parts. In particular, <code class="scheme"><span class="variable">PARTS</span></code> not only specifies the
+body parts that are drawn, but also the order in which they are drawn. The
+figure also defines an incomplete list of words so that the hangman program
+can randomly pick a word for us to guess.</p>
+<p>
+The random picking of words occurs at the beginning of the game, which
+suggests a random initialization function, similar to that of the
+color-guessing program in the preceding section.  In contrast to the
+latter, the hangman program must also remember the number of guesses that a
+player made, because there is only a limited number of them.  After
+<code class="scheme"><span class="keyword">'</span><span class="variable">left-leg</span></code> is drawn, the game is over. Counting down the number of
+body parts also implies that as the program checks each guess, it must
+inform the player not only what the guess revealed but also which body
+part, if any, was lost.</p>
+<p>
+Let us capture this thought in a data definition that specifies the legitimate
+class of responses: </p>
+<p>
+<a name="node_idx_2170"></a>A <i>response</i> is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="selfeval">&quot;You won&quot;</span></code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;The End&quot;</span> <span class="variable">word</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;Good guess!&quot;</span> <span class="variable">word</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="variable">body-part</span> <span class="variable">word</span>)</code>
+</p>
+</li></ol><p></p>
+<p>
+Three of the responses are lists so that the program can provide
+several pieces of information at once. Specifically, the first response
+says that filling in the guess turns the status word into the chosen word
+and that the player survived the game. The second response indicates the
+opposite; the list of available body parts is exhausted and the game is
+over because the player did not guess all the letters in the word. In the
+third case, the player's guess was successful and the second item in the
+list shows how much the player knows about the word. Finally, the fourth
+response represents a bad guess, in which case the response is a list of
+three items: a greeting, the lost body part, and a reminder of what the
+player has found about the word.</p>
+<p>
+We can now imagine the role of the two services in the hangman
+program. The first, called <code class="scheme"><span class="variable">hangman</span></code>, picks a new word; the second,
+called <code class="scheme"><span class="variable">hangman-guess</span></code>, consumes a letter and produces one of the four
+possible responses. Here is a feasible dialogue:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">&gt;</span> (<span class="variable">hangman</span>)
+<span class="builtin">&gt;</span> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">a</span>)
+(<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="keyword">'</span><span class="variable">head</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>))
+<span class="builtin">&gt;</span> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">i</span>)
+(<span class="builtin">list</span> <span class="selfeval">&quot;Good guess!&quot;</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">i</span> <span class="keyword">'</span><span class="variable">_</span>))
+<span class="builtin">&gt;</span> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">s</span>)
+(<span class="builtin">list</span> <span class="selfeval">&quot;Good guess!&quot;</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">s</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">i</span> <span class="keyword">'</span><span class="variable">_</span>))
+<span class="builtin">&gt;</span> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">i</span>)
+(<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="keyword">'</span><span class="variable">body</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">s</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">i</span> <span class="keyword">'</span><span class="variable">_</span>))
+...
+<span class="builtin">&gt;</span> (<span class="variable">hangman</span>)
+<span class="builtin">&gt;</span> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">a</span>)
+<span class="selfeval">&quot;You won&quot;</span>
+</pre></div><p>
+The dialogue consists of two rounds of hangman. They show that the results of
+<code class="scheme"><span class="variable">hangman-guess</span></code> depend on the prior use of
+<code class="scheme"><span class="variable">hangman</span></code>. Furthermore, the first round illustrates how
+<code class="scheme"><span class="variable">hangman-guess</span></code> applied to the same guess twice produces two different
+answers. This again means that <code class="scheme"><span class="variable">hangman-guess</span></code> modifies and uses
+memory, specifically, it counts down the body parts as the player makes
+useless guesses.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_190"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2172"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">chosen-word</span> <span class="selfeval">:</span> <span class="variable">word</span></code></span>
+<span class="comment">;; the word that the player is to guess</span>
+(<span class="keyword">define</span> <span class="variable">chosen-word</span> (<span class="builtin">first</span> <span class="variable">WORDS</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">status-word</span> <span class="selfeval">:</span> <span class="variable">word</span></code></span>
+<span class="comment">;; represents which letters the player has and hasn't guessed</span>
+(<span class="keyword">define</span> <span class="variable">status-word</span> (<span class="builtin">first</span> <span class="variable">WORDS</span>))
+
+<span class="comment">;; <code class="scheme"><span class="variable">body-parts-left</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">body-part</span>)</code></span>
+<span class="comment">;; represents the list of body parts that are still &quot;available&quot;</span>
+(<span class="keyword">define</span> <span class="variable">body-parts-left</span> <span class="variable">PARTS</span>)
+
+<span class="comment">;; <code class="scheme"><span class="variable">hangman</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: initialize <code class="scheme"><span class="variable">chosen-word</span></code>, <code class="scheme"><span class="variable">status-word</span></code>, and <code class="scheme"><span class="variable">body-parts-left</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">hangman</span>)
+  (<span class="keyword">begin</span>
+    (<span class="keyword">set!</span> <span class="variable">chosen-word</span> (<span class="builtin">list-ref</span> <span class="variable">WORDS</span> (<span class="builtin">random</span> (<span class="builtin">length</span> <span class="variable">WORDS</span>))))
+    (<span class="keyword">set!</span> <span class="variable">status-word</span> ...)
+    (<span class="keyword">set!</span> <span class="variable">body-parts-left</span> <span class="variable">PARTS</span>)))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 105:</b>&nbsp;&nbsp;Hangman Basics (Part 2)</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+In addition, the dialogue shows that the player loses a body part whenever a
+guess doesn't contribute any new knowledge. Consider the second guess:
+<code class="scheme"><span class="keyword">'</span><span class="variable">i</span></code>. It occurs in the penultimate position of the word and the
+response of <code class="scheme"><span class="variable">hangman-guess</span></code> says so. When the player enters
+<code class="scheme"><span class="keyword">'</span><span class="variable">i</span></code> again as the fourth guess, <code class="scheme"><span class="variable">hangman-guess</span></code> detects no
+progress because the positions of <code class="scheme"><span class="keyword">'</span><span class="variable">i</span></code> have already been
+revealed. In the informal description of the game, this aspect had been
+left open. By putting together an example, we become aware of this
+ambiguity and can make a decision. </p>
+<p>
+Thus far, our reasoning has revealed the need for two services and three
+state variables: 
+</p>
+<ol>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme"><span class="variable">chosen-word</span></code>, which is the word to be guessed; 
+</p>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme"><span class="variable">status-word</span></code>, which records how much of the word has been
+guessed; 
+</p>
+<li><p><b></b>&nbsp;&nbsp; and <code class="scheme"><span class="variable">body-parts-left</span></code>, which remembers how many and which
+imaginary body parts the player can still lose. 
+</p>
+</li></ol><p>
+The first two variables always stand for <code class="scheme"><span class="variable">word</span></code>s, as their name
+says. A natural value for the last one is a list of body parts; indeed, the
+list should always be a suffix of <code class="scheme"><span class="variable">PARTS</span></code>. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_190">105</a> contains the definitions of the state variables
+and their purpose statements. The first two, <code class="scheme"><span class="variable">chosen-word</span></code> and
+<code class="scheme"><span class="variable">status-word</span></code>, are set to the first items of WORDS, so that they
+represent some word. The third one is set to <code class="scheme"><span class="variable">PARTS</span></code> because this
+list represents the entire collection of available body parts. </p>
+<p>
+Next we must develop an initializer for the state variables. As in the
+preceding section, a single initializer suffices. It is the
+<code class="scheme"><span class="variable">hangman</span></code> function, and its purpose is to set up the program's
+memory. Specifically, it picks a word for <code class="scheme"><span class="variable">chosen-word</span></code>, and it sets
+<code class="scheme"><span class="variable">status-word</span></code> and <code class="scheme"><span class="variable">body-parts-left</span></code> to values that reflect
+that the game has just begun. The last one is easy because <code class="scheme"><span class="variable">PARTS</span></code>
+is the appropriate list. The initial value for <code class="scheme"><span class="variable">status-word</span></code>
+requires a short analysis. First, the value must be a word. Second, it must
+consist of as many letters as <code class="scheme"><span class="variable">chosen-word</span></code>. Finally, each of the
+letters is unknown, because the player hasn't made any guesses yet. Thus,
+the matching action is to build a word as long as <code class="scheme"><span class="variable">chosen-word</span></code> from
+<code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code>.</p>
+<p>
+</p>
+<p><a name="node_thm_37.2.1"></a>
+<b>Exercise 37.2.1.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">make-status-word</span></code>, which consumes a word and
+produces an equally long word consisting of just <code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code>. Use the
+function to complete the definition of <code class="scheme"><span class="variable">hangman</span></code> in
+figure&nbsp;<a href="#node_fig_Temp_190">105</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/status-plain.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.2.2"></a>
+<b>Exercise 37.2.2.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="builtin">build-list</span></code> to create the status word in a single
+expression. Complete the definition of <code class="scheme"><span class="variable">hangman</span></code> in
+figure&nbsp;<a href="#node_fig_Temp_190">105</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/status-build-list.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+Now we are ready to deal with the most difficult part: the design of
+<code class="scheme"><span class="variable">hangman-guess</span></code>, a function that uses and modifies the memory.  It
+consumes a letter and produces an answer, specifically a <code class="scheme"><span class="variable">response</span></code>,
+which depends on how the current value of <code class="scheme"><span class="variable">status-word</span></code>,
+<code class="scheme"><span class="variable">chosen-word</span></code>, and <code class="scheme"><span class="variable">guess</span></code> compare.  At the same time, the
+function must affect the state variable <code class="scheme"><span class="variable">status-word</span></code> if the
+player's guess added new knowledge. If not, the function must shorten
+<code class="scheme"><span class="variable">body-parts-left</span></code>, the list of available body parts. The matching
+contract, purpose, and effect statements are as follows: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">hangman-guess</span> <span class="selfeval">:</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">response</span></code></span>
+<span class="comment">;; to determine whether the player has won, lost, or may continue to</span>
+<span class="comment">;; play and, if no progress was made, which body part was lost</span>
+<span class="comment">;; effect:</span>
+<span class="comment">;; (1) if the guess represents progress, update <code class="scheme"><span class="variable">status-word</span></code></span>
+<span class="comment">;; (2) if not, shorten the <code class="scheme"><span class="variable">body-parts-left</span></code> by one </span>
+</pre></div><p></p>
+<p>
+We have already considered a sample dialogue that illustrates the workings
+of <code class="scheme"><span class="variable">hangman-guess</span></code>. By dissecting this dialogue, we can develop
+specific examples for <code class="scheme"><span class="variable">hangman-guess</span></code>.</p>
+<p>
+The sample dialogue and the purpose/effect statements imply that
+the result of <code class="scheme"><span class="variable">hangman-guess</span></code> depends on whether or not the guess
+constitutes progress and, if not, whether or not the guess was the last
+one. Let's use these distinctions for the development of examples:
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>)</code> and
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme"> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;Good guess!&quot;</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>))</code> and
+<code class="scheme"><span class="variable">status-word</span></code> becomes <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>.</p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme"> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">a</span>)
+</pre></div><p>
+produces <code class="scheme"><span class="selfeval">&quot;You won&quot;</span></code>. The evaluation has no effect in this case. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>,
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, and 
+<code class="scheme"><span class="variable">body-parts-left</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">right-leg</span> <span class="keyword">'</span><span class="variable">left-leg</span>)</code>, 
+then evaluating 
+</p>
+<div align="left"><pre class="scheme"> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="keyword">'</span><span class="variable">right-leg</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>))</code> and
+<code class="scheme"><span class="variable">body-parts-left</span></code> becomes <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">left-leg</span>)</code>.</p>
+<p>
+</p>
+<li><p>Finally, if <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>,
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, and 
+<code class="scheme"><span class="variable">body-parts-left</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">left-leg</span>)</code>, 
+then evaluating 
+</p>
+<div align="left"><pre class="scheme"> (<span class="variable">hangman-guess</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;The End&quot;</span> (<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>))</code> and
+<code class="scheme"><span class="variable">body-parts-left</span></code> becomes <code class="scheme"><span class="builtin">empty</span></code>.
+</p>
+</li></ol><p>
+The first two examples illustrate what happens when the player enters a
+guess that reveals new information; the last two focus on those cases where
+the guess contributes nothing. </p>
+<p>
+The case split naturally suggests a basic template based on a distinction
+between the possible situations:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">hangman-guess</span> <span class="variable">guess</span>)
+  (<span class="keyword">cond</span>
+    [... <span class="comment">;; <code class="scheme"><span class="variable">guess</span></code> did reveal new information: </span>
+      (<span class="keyword">cond</span>
+	[... <span class="comment">;; guess completed the search for the word</span>
+	 ...]
+	[... <span class="comment">;; guess did <strong>not</strong> complete the search for the word</span>
+          (<span class="keyword">begin</span> 
+            (<span class="keyword">set!</span> <span class="variable">status-word</span> ...)
+	    ...)])]
+    [... <span class="comment">;; <code class="scheme"><span class="variable">guess</span></code> did <strong>not</strong> reveal any new information: </span>
+     (<span class="keyword">begin</span> 
+       (<span class="keyword">set!</span> <span class="variable">body-parts-left</span> ...)
+       ... )]))
+</pre></div><p>
+The location of the <strong>set!</strong>-expressions in the template's nested
+<code class="scheme"><span class="keyword">cond</span></code>s specify exactly under which conditions effects happen.
+First, the outermost conditional distinguishes whether or not
+<code class="scheme"><span class="variable">guess</span></code> produces new knowledge about the hidden word; if it
+doesn't, the function must modify <code class="scheme"><span class="variable">body-parts-left</span></code>. Second, if
+<code class="scheme"><span class="variable">guess</span></code> reveals new knowledge, the function updates the
+<code class="scheme"><span class="variable">status-word</span></code> variable unless the player has just finished the
+entire word. </p>
+<p>
+Because we haven't considered yet how to express these tests, we use
+comments to indicate what the conditions are. Let us turn to this problem
+first, so that we can start the function-definition step with a
+full-fledged template. The first missing condition concerns the question
+whether <code class="scheme"><span class="variable">guess</span></code> reveals new information. To this end, we must
+compare <code class="scheme"><span class="variable">guess</span></code> with the letters in <code class="scheme"><span class="variable">chosen-word</span></code>. This
+comparison should produce the new status word. Here is the specification
+for the auxiliary function that conducts this computation:
+<a name="node_idx_2174"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span> <span class="selfeval">:</span> <span class="variable">word</span> <span class="variable">word</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">word</span></code></span>
+<span class="comment">;; to compute the new status word from <code class="scheme"><span class="variable">chosen-word</span></code>,</span>
+<span class="comment">;; <code class="scheme"><span class="variable">status-word</span></code>, and <code class="scheme"><span class="variable">guess</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reveal-list</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="variable">guess</span>) ...)
+</pre></div><p>
+Fortunately, we have discussed this auxiliary function twice before (see
+sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.7">6.7</a> and exercise&nbsp;<a href="curriculum-Z-H-22.html#node_thm_17.6.2">17.6.2</a>) and know how to
+define it; figure&nbsp;<a href="#node_fig_Temp_191">106</a> contains a suitable
+definition. Using <code class="scheme"><span class="variable">reveal-list</span></code>, we can now formulate a condition that
+determines whether <code class="scheme"><span class="variable">guess</span></code> reveals new knowledge:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> <span class="variable">status-word</span> (<span class="variable">reveal-list</span> <span class="variable">status-word</span> <span class="variable">chosen-word</span> <span class="variable">guess</span>))
+</pre></div><p>
+The condition uses <code class="scheme"><span class="builtin">equal?</span></code> to compare the current value of
+<code class="scheme"><span class="variable">status-word</span></code> with its new value, as computed by
+<code class="scheme"><span class="variable">reveal-list</span></code>. If the two lists are equal, <code class="scheme"><span class="variable">guess</span></code> doesn't
+produce new knowledge; otherwise it does. </p>
+<p>
+The second missing condition concerns the question whether the given <code class="scheme"><span class="variable">guess</span></code>
+completes the search for the word. If <code class="scheme"><span class="variable">guess</span></code> is equal to all missing
+letters in <code class="scheme"><span class="variable">status-word</span></code>, then the player has found the complete
+word. Here is the corresponding condition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> <span class="variable">chosen-word</span> (<span class="variable">reveal-list</span> <span class="variable">status-word</span> <span class="variable">chosen-word</span> <span class="variable">guess</span>))
+</pre></div><p>
+That is, the game is over if <code class="scheme"><span class="variable">chosen-word</span></code> is equal to the result of
+<code class="scheme"><span class="variable">reveal-list</span></code>. </p>
+<p>
+Let's put everything together in a single template: 
+<a name="node_idx_2176"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">hangman-guess</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">new-status</span> (<span class="variable">reveal-list</span> <span class="variable">status-word</span> <span class="variable">chosen-word</span> <span class="variable">guess</span>)))
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">equal?</span> <span class="variable">new-status</span> <span class="variable">status-word</span>)
+       (<span class="keyword">begin</span> 
+	 (<span class="keyword">set!</span> <span class="variable">body-parts-left</span> ...)
+	 ... )]
+      [<span class="keyword">else</span>
+       (<span class="keyword">cond</span>
+	 [(<span class="builtin">equal?</span> <span class="variable">new-status</span> <span class="variable">chosen-word</span>)
+	  ...]
+	 [<span class="keyword">else</span> 
+	  (<span class="keyword">begin</span> 
+	    (<span class="keyword">set!</span> <span class="variable">status-word</span> ...)
+	    ...)])])))
+</pre></div><p>
+The template uses a <strong>local</strong>-expression because the result of <code class="scheme"><span class="variable">reveal-list</span></code>
+is used twice. Also, the two outer <code class="scheme"><span class="keyword">cond</span></code>-clauses are swapped
+because it is more natural to write <code class="scheme">(<span class="builtin">equal?</span> <span class="variable">new-status</span>
+<span class="variable">status-word</span>)</code> than its negation. We can now turn to the function-design
+step.</p>
+<p>
+Because the template is conditional, we develop each clause separately:
+</p>
+<ol>
+<li><p>Assume that <code class="scheme">(<span class="builtin">equal?</span> <span class="variable">new-status</span> <span class="variable">status-word</span>)</code> evaluates to
+<code class="scheme"><span class="builtin">true</span></code>, that is, the player made no progress. This implies that the
+player loses an imaginary body part. To capture this effect, the
+<strong>set!</strong>-expression must change the value of
+<code class="scheme"><span class="variable">body-parts-left</span></code>. Specifically, it must set the state variable to the
+rest of its current value: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">set!</span> <span class="variable">body-parts-left</span> (<span class="builtin">rest</span> <span class="variable">body-parts-left</span>))
+</pre></div><p></p>
+<p>
+The answer depends on the new value of <code class="scheme"><span class="variable">body-parts-left</span></code>. If it is
+<code class="scheme"><span class="builtin">empty</span></code>, the game is over; the appropriate response is
+<code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;The End&quot;</span> <span class="variable">chosen-word</span>)</code> so that the player finds out what
+the chosen word was.  If <code class="scheme"><span class="variable">body-parts-left</span></code> is not empty, the
+response is <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="variable">???</span> <span class="variable">status-word</span>)</code>.  The response says
+that <code class="scheme"><span class="variable">guess</span></code> is useless. Its last part is the current value of
+<code class="scheme"><span class="variable">status-word</span></code> so that the player sees what he has discovered.  The
+<code class="scheme"><span class="variable">???</span></code> indicates a problem. To understand the problem, take a look
+at what we have: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> 
+  (<span class="keyword">set!</span> <span class="variable">body-parts-left</span> (<span class="builtin">rest</span> <span class="variable">body-parts-left</span>))
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">body-parts-left</span>) (<span class="builtin">list</span> <span class="selfeval">&quot;The End&quot;</span> <span class="variable">chosen-word</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="variable">???</span> <span class="variable">status-word</span>)]))
+</pre></div><p>
+In principle, the question marks should be the body part that the player
+just lost to the gallows. But, because <code class="scheme"><span class="keyword">set!</span></code> modifies
+<code class="scheme"><span class="variable">body-parts-left</span></code>, we can no longer just say <code class="scheme">(<span class="builtin">first</span>
+ <span class="variable">body-parts-left</span>)</code>. As mentioned in section&nbsp;<a href="curriculum-Z-H-44.html#node_sec_35.2">35.2</a>, when
+programming with <code class="scheme"><span class="keyword">set!</span></code> timing matters. We can solve the problem
+with a <strong>local</strong>-expression that names the first item on
+<code class="scheme"><span class="variable">body-parts-left</span></code> before the state variable is modified.</p>
+<p>
+</p>
+<li><p>The second case is much simpler than the first. We distinguish two subcases: </p>
+<p>
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">new-status</span></code> is equal to <code class="scheme"><span class="variable">chosen-word</span></code>, the player has
+won. The response is <code class="scheme"><span class="selfeval">&quot;You won&quot;</span></code>; there is no effect. </p>
+<p>
+</p>
+<li><p>If the two are not equal, the player made some progress and must be
+told. Furthermore, the function must keep track of the progress; a
+<code class="scheme">(<span class="keyword">set!</span> <span class="variable">status-word</span> <span class="variable">new-status</span>)</code> accomplishes this effect. 
+The response consists of an encouragement and the new status. 
+</p>
+</li></ol><p>
+</p>
+</li></ol><p>
+Figure&nbsp;<a href="#node_fig_Temp_191">106</a> contains the complete definition of
+<code class="scheme"><span class="variable">hangman-guess</span></code>. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_191"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2178"></a><a name="node_idx_2180"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">hangman-guess</span> <span class="selfeval">:</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">response</span></code></span>
+<span class="comment">;; to determine whether the player has won, lost, or may continue to play</span>
+<span class="comment">;; and, if so, which body part was lost, if no progress was made</span>
+<span class="comment">;; effects: (1) if the guess represents progress, update <code class="scheme"><span class="variable">status-word</span></code></span>
+<span class="comment">;; (2) if not, shorten the <code class="scheme"><span class="variable">body-parts-left</span></code> by one </span>
+(<span class="keyword">define</span> (<span class="variable">hangman-guess</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">new-status</span> (<span class="variable">reveal-list</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="variable">guess</span>)))
+    (<span class="keyword">cond</span>
+      [(<span class="builtin">equal?</span> <span class="variable">new-status</span> <span class="variable">status-word</span>)
+       (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">next-part</span> (<span class="builtin">first</span> <span class="variable">body-parts-left</span>)))
+         (<span class="keyword">begin</span> 
+           (<span class="keyword">set!</span> <span class="variable">body-parts-left</span> (<span class="builtin">rest</span> <span class="variable">body-parts-left</span>))
+           (<span class="keyword">cond</span>
+             [(<span class="builtin">empty?</span> <span class="variable">body-parts-left</span>) (<span class="builtin">list</span> <span class="selfeval">&quot;The End&quot;</span> <span class="variable">chosen-word</span>)]
+             [<span class="keyword">else</span> (<span class="builtin">list</span> <span class="selfeval">&quot;Sorry&quot;</span> <span class="variable">next-part</span> <span class="variable">status-word</span>)])))]
+      [<span class="keyword">else</span>
+       (<span class="keyword">cond</span>
+         [(<span class="builtin">equal?</span> <span class="variable">new-status</span> <span class="variable">chosen-word</span>) <span class="selfeval">&quot;You won&quot;</span>]
+         [<span class="keyword">else</span> 
+          (<span class="keyword">begin</span> 
+            (<span class="keyword">set!</span> <span class="variable">status-word</span> <span class="variable">new-status</span>)
+            (<span class="builtin">list</span> <span class="selfeval">&quot;Good guess!&quot;</span> <span class="variable">status-word</span>))])])))
+
+<span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span> <span class="selfeval">:</span> <span class="variable">word</span> <span class="variable">word</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">word</span></code></span>
+<span class="comment">;; to compute the new status word</span>
+(<span class="keyword">define</span> (<span class="variable">reveal-list</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">reveal-one</span> <span class="variable">chosen-letter</span> <span class="variable">status-letter</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">symbol=?</span> <span class="variable">chosen-letter</span> <span class="variable">guess</span>) <span class="variable">guess</span>]
+	      [<span class="keyword">else</span> <span class="variable">status-letter</span>])))
+    (<span class="builtin">map</span> <span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span>)))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 106:</b>&nbsp;&nbsp;Hangman Basics (Part 3)</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.2.3"></a>
+<b>Exercise 37.2.3.</b>&nbsp;&nbsp; 
+Draw a diagram that shows how <code class="scheme"><span class="variable">hangman</span></code> and <code class="scheme"><span class="variable">hangman-guess</span></code>
+interact with the state variables.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-diagram.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.2.4"></a>
+<b>Exercise 37.2.4.</b>&nbsp;&nbsp; 
+Formulate the four examples for <code class="scheme"><span class="variable">hangman-guess</span></code> as boolean-valued
+expressions that produce <code class="scheme"><span class="builtin">true</span></code> if <code class="scheme"><span class="variable">hangman-guess</span></code> is
+correct. Develop an additional example for each case; turn these new
+examples into additional tests.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-test.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.2.5"></a>
+<b>Exercise 37.2.5.</b>&nbsp;&nbsp; 
+Develop a graphical user interface, similar to that of the teachpack
+<tt><strong>hangman.ss</strong></tt>. Connect the functions in this section as
+call-backs.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-gui.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.2.6"></a>
+<b>Exercise 37.2.6.</b>&nbsp;&nbsp; 
+Modify the program so that it keeps track of all the guesses. Then, if a
+player enters the same guess twice for the same round of a hangman game,
+the response of <code class="scheme"><span class="variable">hangman-guess</span></code> is <code class="scheme"><span class="selfeval">&quot;You have used this guess
+before.&quot;</span></code>&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-progress.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.2.7"></a>
+<b>Exercise 37.2.7.</b>&nbsp;&nbsp; 
+Consider the following variant of <code class="scheme"><span class="variable">reveal-list!</span></code>:
+<a name="node_idx_2182"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reveal-list!</span> <span class="selfeval">:</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">status-word</span></code> based on a comparison of <code class="scheme"><span class="variable">chosen-word</span></code>,</span>
+<span class="comment">;; the <code class="scheme"><span class="variable">status-word</span></code>, and the player's <code class="scheme"><span class="variable">guess</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reveal-list!</span> <span class="variable">cw</span> <span class="variable">sw</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">reveal-one</span> <span class="variable">chosen-letter</span> <span class="variable">status-letter</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">symbol=?</span> <span class="variable">chosen-letter</span> <span class="variable">guess</span>) <span class="variable">guess</span>]
+	      [<span class="keyword">else</span> <span class="variable">status-letter</span>])))
+    (<span class="keyword">set!</span> <span class="variable">status-word</span> (<span class="builtin">map</span> <span class="variable">reveal-one</span> <span class="variable">cw</span> <span class="variable">sw</span>))))
+</pre></div><p>
+It changes the state variable <code class="scheme"><span class="variable">status-word</span></code> to a value that is computed
+from the old value of <code class="scheme"><span class="variable">status-word</span></code>, <code class="scheme"><span class="variable">chosen-word</span></code>, and the
+guess. </p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+Modify <code class="scheme"><span class="variable">hangman-guess</span></code> so that it works properly with the 
+<code class="scheme"><span class="variable">reveal-list!</span></code> function.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-rev-effect.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_37.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_37.3">37.3&nbsp;&nbsp;State Changes from Recursion</a></h2>
+<p></p>
+<p>
+Functions that affect the memory of a program may not only process simple forms
+of data but also arbitrarily large pieces of data. To understand how this works, 
+let us take a closer look at the purpose of <code class="scheme"><span class="variable">reveal-list</span></code> from the
+hangman game program. </p>
+<p>
+As we have just seen, the function compares <code class="scheme"><span class="variable">guess</span></code> with each letter
+in <code class="scheme"><span class="variable">chosen-word</span></code>. If it is the same, <code class="scheme"><span class="variable">guess</span></code> may uncover new
+knowledge and is included at the appropriate position in the word;
+otherwise, the corresponding letter from <code class="scheme"><span class="variable">status-word</span></code> represents
+what the player knows.</p>
+<p>
+The <code class="scheme"><span class="variable">hangman-guess</span></code> function then compares the result of
+<code class="scheme"><span class="variable">reveal-list</span></code> with the old value of <code class="scheme"><span class="variable">status-word</span></code> to find out
+whether the player uncovered new knowledge. Furthermore, the result is
+compared with <code class="scheme"><span class="variable">chosen-word</span></code> again if the player found new knowledge,
+because <code class="scheme"><span class="variable">guess</span></code> might have matched all remaining unknown
+letters. Clearly, both of these comparisons repeat the computations of
+<code class="scheme"><span class="variable">reveal-one</span></code>. The problem is that the result of <code class="scheme"><span class="variable">reveal-one</span></code>
+is useful to <code class="scheme"><span class="variable">reveal-list</span></code> and that the result of its individual
+comparisons are useful in the conditionals of <code class="scheme"><span class="variable">hangman-guess</span></code>. </p>
+<p>
+We can solve the first part of the problem with the use of an additional
+piece of memory: a state variable that records whether <code class="scheme"><span class="variable">reveal-one</span></code>
+uncovers a letter.  The state variable, let's call it
+<code class="scheme"><span class="variable">new-knowledge</span></code>, is modified by <code class="scheme"><span class="variable">reveal-one</span></code> if it determines
+that <code class="scheme"><span class="variable">guess</span></code> uncovers a currently hidden letter in
+<code class="scheme"><span class="variable">chosen-word</span></code>. The <code class="scheme"><span class="variable">hangman-guess</span></code> function can use
+<code class="scheme"><span class="variable">new-knowledge</span></code> to find out what <code class="scheme"><span class="variable">reveal-one</span></code> discovered.</p>
+<p>
+Let us now translate our idea into new program definitions systematically. 
+First, we need to specify the state variable and its meaning: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">new-knowledge</span> <span class="selfeval">:</span> <span class="variable">boolean</span></code></span>
+<span class="comment">;; the variable represents whether the most recent application of</span>
+<span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span></code> has provided the player with new knowledge</span>
+(<span class="keyword">define</span> <span class="variable">new-knowledge</span> <span class="builtin">false</span>)
+</pre></div><p></p>
+<p>
+Second, we must consider what it means to initialize the new state
+variable.  From what we know, the state variable is used every time
+<code class="scheme"><span class="variable">reveal-list</span></code> is applied to <code class="scheme"><span class="variable">guess</span></code>. When the application
+starts, the state variable should be <code class="scheme"><span class="builtin">false</span></code>; it should change to
+<code class="scheme"><span class="builtin">true</span></code> if <code class="scheme"><span class="variable">guess</span></code> is useful. This suggests that
+<code class="scheme"><span class="variable">new-knowledge</span></code> is to be initialized to <code class="scheme"><span class="builtin">false</span></code> every time
+<code class="scheme"><span class="variable">reveal-list</span></code> is applied. We can achieve this reinitialization by
+changing <code class="scheme"><span class="variable">reveal-list</span></code> so that it sets the state variable before it
+computes anything else:
+<a name="node_idx_2184"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span> <span class="selfeval">:</span> <span class="variable">word</span> <span class="variable">word</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">word</span></code></span>
+<span class="comment">;; to compute the new status word</span>
+<span class="comment">;; effect: to set <code class="scheme"><span class="variable">new-knowledge</span></code> to <code class="scheme"><span class="builtin">false</span></code> first</span>
+(<span class="keyword">define</span> (<span class="variable">reveal-list</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">reveal-one</span> <span class="variable">chosen-letter</span> <span class="variable">status-letter</span>) ...))
+    (<span class="keyword">begin</span>
+      <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">new-knowledge</span> <span class="builtin">false</span>)</code></u></span>
+      (<span class="builtin">map</span> <span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span>))))
+</pre></div><p>
+The underlined expression is the essential modification. The <code class="scheme"><span class="keyword">local</span></code>
+expression defines the auxiliary function <code class="scheme"><span class="variable">reveal-one</span></code> and then
+evaluates the <code class="scheme"><span class="keyword">local</span></code>'s body. The first step of the body is to
+initialize <code class="scheme"><span class="variable">new-knowledge</span></code>. </p>
+<p>
+Third, we must develop the program that modifies <code class="scheme"><span class="variable">new-knowledge</span></code>. Here
+the program already exists: <code class="scheme"><span class="variable">reveal-list</span></code>, so our task is to modify it
+in such a way that it changes the state variable appropriately. Let's describe
+the idea with a modified effect statement: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span> <span class="selfeval">:</span> <span class="variable">word</span> <span class="variable">word</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">word</span></code></span>
+<span class="comment">;; to compute the new status word</span>
+<span class="comment">;; effect: </span>
+<span class="comment">;; (1) to set <code class="scheme"><span class="variable">new-knowledge</span></code> to <code class="scheme"><span class="builtin">false</span></code> first</span>
+<span class="comment">;; (2) to set <code class="scheme"><span class="variable">new-knowledge</span></code> to <code class="scheme"><span class="builtin">true</span></code> if <code class="scheme"><span class="variable">guess</span></code> reveals new knowledge</span>
+</pre></div><p>
+The first part of the effect is necessary for the second one; an experienced
+programmer may drop it. </p>
+<p>
+Next we should modify the examples for the function to illustrate what kind
+of effects happen. The purpose of the function is to compute the new status
+word by checking whether <code class="scheme"><span class="variable">guess</span></code> occurs in the
+<code class="scheme"><span class="variable">chosen-word</span></code>. There are two basic situations depending on whether
+<code class="scheme"><span class="variable">guess</span></code> reveals new knowledge or not: 
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="keyword">'</span><span class="variable">a</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and <code class="scheme"><span class="variable">new-knowledge</span></code> is <code class="scheme"><span class="builtin">true</span></code>. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>)</code> and
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="keyword">'</span><span class="variable">x</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>)</code> and <code class="scheme"><span class="variable">new-knowledge</span></code> is <code class="scheme"><span class="builtin">false</span></code>. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">_</span>)</code> and
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and <code class="scheme"><span class="variable">new-knowledge</span></code> is <code class="scheme"><span class="builtin">true</span></code>. </p>
+<p>
+</p>
+<li><p>Finally, if <code class="scheme"><span class="variable">status-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and 
+<code class="scheme"><span class="variable">chosen-word</span></code> is <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">a</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code>, then evaluating 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="keyword">'</span><span class="variable">l</span>)
+</pre></div><p>
+produces <code class="scheme">(<span class="builtin">list</span> <span class="keyword">'</span><span class="variable">b</span> <span class="keyword">'</span><span class="variable">_</span> <span class="keyword">'</span><span class="variable">l</span> <span class="keyword">'</span><span class="variable">l</span>)</code> and <code class="scheme"><span class="variable">new-knowledge</span></code> is <code class="scheme"><span class="builtin">false</span></code>. </p>
+<p>
+</p>
+</li></ol><p>
+The first two examples cover the basic situations; the third one shows that
+if <code class="scheme"><span class="variable">guess</span></code> reveals several new positions in the word,
+<code class="scheme"><span class="variable">new-knowledge</span></code> also becomes <code class="scheme"><span class="builtin">true</span></code>; and the last shows how
+guessing a letter that has been uncovered before means no new knowledge has
+been added.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_192"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2186"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reveal-list</span> <span class="selfeval">:</span> <span class="variable">word</span> <span class="variable">word</span> <span class="variable">letter</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">word</span></code></span>
+<span class="comment">;; to compute the new status word</span>
+<span class="comment">;; effect: to set <code class="scheme"><span class="variable">new-knowledge</span></code> to <code class="scheme"><span class="builtin">true</span></code> if <code class="scheme"><span class="variable">guess</span></code> reveals new knowledge</span>
+(<span class="keyword">define</span> (<span class="variable">reveal-list</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span> <span class="variable">guess</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">reveal-one</span> <span class="variable">chosen-letter</span> <span class="variable">status-letter</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="keyword">and</span> (<span class="builtin">symbol=?</span> <span class="variable">chosen-letter</span> <span class="variable">guess</span>)
+		    <span class="variable"><u><code class="scheme">(<span class="builtin">symbol=?</span> <span class="variable">status-letter</span> <span class="keyword">'</span><span class="variable">_</span>)</code></u></span>)
+	       (<span class="keyword">begin</span>
+		 <span class="variable"><u><code class="scheme">(<span class="keyword">set!</span> <span class="variable">new-knowledge</span> <span class="builtin">true</span>)</code></u></span>
+		 <span class="variable">guess</span>)]
+	      [<span class="keyword">else</span> <span class="variable">status-letter</span>])))
+    (<span class="keyword">begin</span>
+      (<span class="keyword">set!</span> <span class="variable">new-knowledge</span> <span class="builtin">false</span>)
+      (<span class="builtin">map</span> <span class="variable">reveal-one</span> <span class="variable">chosen-word</span> <span class="variable">status-word</span>))))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 107:</b>&nbsp;&nbsp;The <i>reveal-list</i> function</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Given that we already have a function, we can skip the template step and
+instead focus on the question of what we need to change in the existing
+function. The given version of <code class="scheme"><span class="variable">reveal-list</span></code> maps <code class="scheme"><span class="variable">reveal-one</span></code>
+over the two words, which are lists of letters. It is <code class="scheme"><span class="variable">reveal-one</span></code>
+that compares <code class="scheme"><span class="variable">guess</span></code> with the letters in <code class="scheme"><span class="variable">chosen-word</span></code> and
+that determines whether the player has uncovered new knowledge. Hence we
+must modify the auxiliary function so that it recognizes when <code class="scheme"><span class="variable">guess</span></code>
+represents new knowledge and to set <code class="scheme"><span class="variable">new-knowledge</span></code> to true in that
+case.</p>
+<p>
+As it is currently defined, <code class="scheme"><span class="variable">reveal-one</span></code> merely compares
+<code class="scheme"><span class="variable">guess</span></code> with the letters in <code class="scheme"><span class="variable">chosen-word</span></code>.  It does not check
+whether the player discovers truly new knowledge if <code class="scheme"><span class="variable">guess</span></code> and
+<code class="scheme"><span class="variable">chosen-letter</span></code> are the same.  The letter <code class="scheme"><span class="variable">guess</span></code>, however,
+represents new knowledge only if the matching letter in the status word
+is still <code class="scheme"><span class="keyword">'</span><span class="variable">_</span></code>. This suggests the two modifications shown in
+figure&nbsp;<a href="#node_fig_Temp_192">107</a>. That is, <code class="scheme"><span class="variable">reveal-one</span></code> changes the
+value of <code class="scheme"><span class="variable">new-knowledge</span></code> if, and only if, both <code class="scheme">(<span class="builtin">symbol=?</span>
+<span class="variable">chosen-letter</span> <span class="variable">guess</span>)</code> and <code class="scheme">(<span class="builtin">symbol=?</span>  <span class="variable">status-letter</span> <span class="keyword">'</span><span class="variable">_</span>)</code> are true.</p>
+<p>
+In summary, we can use state variables if we wish to communicate several
+results from one computation to distant places. For such cases, the
+interface of a function is under our control but we choose to design it
+such that the function has both a result and an effect. The proper way to
+achieve these combinations is to develop the computations separately and to
+merge them later, if necessary. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.3.1"></a>
+<b>Exercise 37.3.1.</b>&nbsp;&nbsp; 
+Draw a diagram that shows how <code class="scheme"><span class="variable">hangman</span></code>, <code class="scheme"><span class="variable">hangman-guess</span></code>, and
+<code class="scheme"><span class="variable">reveal-list</span></code> interact with the state
+variables.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-diagram2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.3.2"></a>
+<b>Exercise 37.3.2.</b>&nbsp;&nbsp; 
+Turn the three examples into tests, that is, boolean-valued expressions, and test
+the new version of <code class="scheme"><span class="variable">reveal-list</span></code>. How many times does
+<code class="scheme"><span class="variable">reveal-one</span></code> modify <code class="scheme"><span class="variable">new-knowledge</span></code> for the third test
+case?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/reveal-one-O.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.3.3"></a>
+<b>Exercise 37.3.3.</b>&nbsp;&nbsp; 
+Modify <code class="scheme"><span class="variable">hangman-guess</span></code> in the hangman program to take advantage of the
+additional information that <code class="scheme"><span class="variable">reveal-list</span></code> provides through
+<code class="scheme"><span class="variable">new-knowledge</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-new-knowledge.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.3.4"></a>
+<b>Exercise 37.3.4.</b>&nbsp;&nbsp; 
+Modify the hangman program a second time to eliminate the second
+<code class="scheme"><span class="builtin">equal?</span></code> in <code class="scheme"><span class="variable">hangman-guess</span></code>. <strong>Hint:</strong>  Introduce a state variable
+that counts how many letters the player doesn't know yet.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/hangman-uk-let.html">Solution</a></p>
+<p></p>
+<p>
+Let us study a second example of a function that consumes an arbitrarily
+large piece of data and modifies the program's memory. The example is a
+natural extension of the traffic light simulator in
+section&nbsp;<a href="curriculum-Z-H-45.html#node_chap_36">36</a>. We developed two functions:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">init-traffic-light</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code> </span>
+<span class="comment">;; effects: (1) to initialize <code class="scheme"><span class="variable">current-color</span></code>; (2) to draw traffic light</span>
+</pre></div><p>
+and 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effects: (1) to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+<span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+<span class="comment">;; (2) to redraw the traffic light appropriately </span>
+</pre></div><p>
+The first one starts the process; with the second one, we can repeatedly
+switch the state of the light by evaluating <code class="scheme">(<span class="variable">next</span>)</code> in the
+<tt>Interactions</tt>
+<a name="node_idx_2188"></a>window. </p>
+<p>
+Typing in <code class="scheme">(<span class="variable">next</span>)</code> over and over again is tiring, so it is natural
+to wonder how to write a program that switches the state of the traffic
+light 100 or 1000 or 10000 times. In other words, we should develop a
+program -- let's call it <code class="scheme"><span class="variable">switch</span></code> -- that consumes a natural number
+and that switches the light from one color to another that many times.</p>
+<p>
+The function consumes a natural number and produces <code class="scheme">(void)</code>, after it
+succeeds in switching the traffic light a sufficient number of times. By
+now we can immediately write down all the basics, including the template,
+for a function that consumes a natural number:
+<a name="node_idx_2190"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">switch</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; purpose: it computes nothing of interest</span>
+<span class="comment">;; effect: switch the traffic light <code class="scheme"><span class="variable">n</span></code> times, </span>
+<span class="comment">;; holding each color for three seconds</span>
+(<span class="keyword">define</span> (<span class="variable">switch</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="variable">switch</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)) ...]))
+</pre></div><p>
+The template is that of a conventional, structurally recursive function.
+<a name="node_idx_2192"></a></p>
+<p>
+Making up an example is also straightforward. If we evaluate <code class="scheme">(<span class="variable">switch</span>
+<span class="selfeval">4</span>)</code>, we wish to see a change from <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> again, with each stage visible for three
+seconds.</p>
+<p>
+Defining the full function based on the template is straightforward. We
+proceed by cases. If <code class="scheme"><span class="variable">n</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, the answer is
+<code class="scheme">(void)</code>. Otherwise, we know that 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">switch</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>))
+</pre></div><p>
+simulates all the necessary switching actions but one. To accomplish this
+one additional switch, the function must use <code class="scheme">(<span class="variable">next</span>)</code> to perform all
+the state changes and the change of canvas and must wait three seconds. If
+we put everything together in a <strong>begin</strong>-expression, things happen in
+the right order: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">begin</span> (<span class="variable">sleep-for-a-while</span> <span class="selfeval">3</span>)
+       (<span class="variable">next</span>)
+       (<span class="variable">switch</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)))
+</pre></div><p>
+The top of figure&nbsp;<a href="#node_fig_Temp_193">108</a> is the complete definition for
+<code class="scheme"><span class="variable">switch</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_193"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2194"></a><a name="node_idx_2196"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">switch</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: switch the traffic light <code class="scheme"><span class="variable">n</span></code> times, holding each color for <code class="scheme"><span class="selfeval">3</span></code> seconds</span>
+<span class="comment">;; structural recursion </span>
+(<span class="keyword">define</span> (<span class="variable">switch</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (void)]
+    [<span class="keyword">else</span> (<span class="keyword">begin</span> (<span class="variable">sleep-for-a-while</span> <span class="selfeval">3</span>)
+                 (<span class="variable">next</span>)
+                 (<span class="variable">switch</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)))]))
+</pre></div><p></p>
+<p>
+<a name="node_idx_2198"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">switch-forever</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: switch the traffic light forever, holding each color for <code class="scheme"><span class="selfeval">3</span></code> seconds</span>
+<span class="comment">;; generative recursion </span>
+(<span class="keyword">define</span> (<span class="variable">switch-forever</span>)
+  (<span class="keyword">begin</span> (<span class="variable">sleep-for-a-while</span> <span class="selfeval">3</span>)
+         (<span class="variable">next</span>)
+         (<span class="variable">switch-forever</span>)))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 108:</b>&nbsp;&nbsp;Two ways of switching traffic lights</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+An alternative is to switch the traffic light forever or at least until it
+breaks because of some external event. In this case, the simulator does not
+consume any argument and, when applied, runs forever. This is the simplest
+form of generative recursion
+<a name="node_idx_2200"></a>we can possibly encounter:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">switch-forever</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: switch the traffic light forever, </span>
+<span class="comment">;; holding each color for <code class="scheme"><span class="selfeval">3</span></code> seconds</span>
+(<span class="keyword">define</span> (<span class="variable">switch-forever</span>) 
+  ...
+  (<span class="variable">switch-forever</span>))
+</pre></div><p>
+Because the program does not terminate under any conditions, the template
+contains only one recursive call. This suffices to construct an eternally
+looping function.</p>
+<p>
+Using this template, we can define the complete function as before. Before
+recurring, the function must sleep and switch the light with <code class="scheme"><span class="variable">next</span></code>.
+We can accomplish this with a <strong>begin</strong>-expression, as shown in the
+bottom definition of figure&nbsp;<a href="#node_fig_Temp_193">108</a>.</p>
+<p>
+In summary, when we must develop recursive functions that modify the
+program's memory, we choose the design recipe that best matches our
+situation and proceed accordingly. In particular, if the function has both
+an interesting purpose and an effect, as for example <code class="scheme"><span class="variable">reveal-list</span></code>,
+we should first develop the pure function and then add the effects later.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.3.5"></a>
+<b>Exercise 37.3.5.</b>&nbsp;&nbsp; 
+In section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a>, we discussed how to search for routes
+in simple graphs. The Scheme representation of a simple graph is a list of
+pairs (of symbols). The pairs specify the direct connections between the
+nodes in the graph. Each node is the beginning of exactly one connection,
+but may be the end of several such connections or none. Given two nodes in
+a simple graph, the problem is to find out whether one can go from the
+first to the second. </p>
+<p>
+Recall our first attempt at a function that determines whether the route
+exists (see also figure&nbsp;<a href="curriculum-Z-H-38.html#node_fig_Temp_166">86</a>): 
+<a name="node_idx_2202"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+<span class="comment">;; generative recursion </span>
+(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">orig</span> <span class="variable">dest</span>) true]
+    [<span class="keyword">else</span> (<span class="variable">route-exists?</span> (<span class="variable">neighbor</span> <span class="variable">orig</span> <span class="variable">sg</span>) <span class="variable">dest</span> <span class="variable">sg</span>)]))
+</pre></div><p>
+The function checks whether the origination and destination nodes are the
+same. If not, it generates a new problem by looking up the neighbor of the
+origination node in the graph.</p>
+<p>
+On occasion, <code class="scheme"><span class="variable">route-exists?</span></code> fails to produce an answer if the graph
+contains a cycle. In section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a> we solved the
+problem with an accumulator. It is also possible to solve it with a state
+variable that keeps track of the origination nodes that
+<code class="scheme"><span class="variable">route-exists?</span></code> has visited for one particular attempt. Modify the
+function appropriately.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/route-set.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.3.6"></a>
+<b>Exercise 37.3.6.</b>&nbsp;&nbsp; 
+In section&nbsp;<a href="curriculum-Z-H-21.html#node_sec_16.2">16.2</a>, we developed several simple models of
+a computer's file system. Develop the function <code class="scheme"><span class="variable">dir-listing</span></code>, which
+consumes a directory and produces a list of all file names in the directory
+and all of its subdirectories. The function also sets the state variable 
+<code class="scheme"><span class="variable">how-many-directories</span></code> to the number of subdirectories it encounters
+during the process.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/files-set.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_37.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_37.4">37.4&nbsp;&nbsp;Finger Exercises on State Changes</a></h2>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.4.1"></a>
+<b>Exercise 37.4.1.</b>&nbsp;&nbsp; 
+Modify <code class="scheme"><span class="variable">check-guess-for-list</span></code> from exercise&nbsp;<a href="curriculum-Z-H-13.html#node_thm_9.5.5">9.5.5</a> so that
+it also counts how many times the player has clicked on the ``Check''
+button of the interface. <strong>Hint:</strong>  The call-back function for the button uses
+<code class="scheme"><span class="variable">check-guess-for-list</span></code> once per click.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/number-guess.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.4.2"></a>
+<b>Exercise 37.4.2.</b>&nbsp;&nbsp; 
+Develop a program that manages a task queue. The program should support at
+least four services:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">enter</span></code>, which adds a task to end of the queue; 
+</p>
+<li><p><code class="scheme"><span class="variable">next</span></code>, which determines the next task in the queue, if any; 
+</p>
+<li><p><code class="scheme"><span class="variable">remove</span></code>, which removes the first task from the queue, if any; 
+</p>
+<li><p>and <code class="scheme"><span class="variable">count</span></code>, which computes the number of items in the queue. 
+</p>
+</li></ol><p>
+A user should start the task manager with <code class="scheme"><span class="variable">start-task-manager</span></code>. </p>
+<p>
+After the program is developed and tested, use <tt><strong>gui.ss</strong></tt> to develop a
+graphical user interface to the task manager. The interface should start up
+with a friendly message and should always display the first task in the
+queue and the number of items in the queue:</p>
+<p>
+
+</p>
+
+ <table cellspacing="20" bgcolor="beige">
+ <tr> <td align="left"><img src="../icons/taskq1.gif"></td>
+      <td align="center"><img src="../icons/taskq2.gif"></td>
+      <td align="right"><img src="../icons/taskq3.gif"></td>
+ </tr>
+ </table>
+ <p>
+Unless the queue is empty, clicking the ``Next'' button should
+remove an item from the queue and display the first item in the remainder
+of the queue. If the queue is empty, clicking the ``Next'' button should
+have no effect.</p>
+<p>
+<strong>Hint:</strong>  The greeting and the year are two separate message items.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/taskQ.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.4.3"></a>
+<b>Exercise 37.4.3.</b>&nbsp;&nbsp; 
+In section&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>, we developed a program that moves pictures
+across a canvas. A picture is a list of shapes; the program consists of
+functions that draws, erases, and translates pictures. The main function is
+<code class="scheme"><span class="variable">move</span></code> (exercise&nbsp;<a href="curriculum-Z-H-14.html#node_thm_10.3.6">10.3.6</a>). It consumes a picture and a
+number <code class="scheme"><span class="variable">n</span></code>. It produces a new picture, moved by <code class="scheme"><span class="variable">n</span></code> pixels;
+it also erases the original picture and draws the new one. </p>
+<p>
+Develop the program <code class="scheme"><span class="variable">drive</span></code>. It draws a (fixed) picture on a canvas
+and permits players to move the picture left or right by a player-specified
+number of pixels.</p>
+<p>
+Modify <code class="scheme"><span class="variable">drive</span></code> so that it also keeps track of some given amount of
+fuel. A move by one pixel should consume a fixed amount of
+fuel.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/move-pic-set.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.4.4"></a>
+<b>Exercise 37.4.4.</b>&nbsp;&nbsp; 
+Modify the two functions that control the state of a single traffic light
+so that they control the state of the two traffic lights at an ordinary
+intersection. Each light can assume one of three states: <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>. When one is <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> or
+<code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, the other one must be <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>. </p>
+<p>
+Recall the basics about the two functions for a single traffic light: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">init-traffic-light</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code> </span>
+<span class="comment">;; effects: (1) to initialize <code class="scheme"><span class="variable">current-color</span></code>; (2) to draw traffic light</span>
+</pre></div><p>
+and 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">next</span> <span class="selfeval">:</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effects: (1) to change <code class="scheme"><span class="variable">current-color</span></code> from <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code>, </span>
+<span class="comment">;; <code class="scheme"><span class="keyword">'</span><span class="variable">yellow</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">green</span></code></span>
+<span class="comment">;; (2) to redraw the traffic light appropriately </span>
+</pre></div><p>
+Modify the basics first. </p>
+<p>
+When the program is developed and tested, develop a graphical display like
+the following: </p>
+<p>
+
+</p>
+
+  <center><img src="../icons/traffic.gif" alt="[An intersection]"></center>
+ <p>
+Use the functions <code class="scheme"><span class="variable">init-traffic-light</span></code> and <code class="scheme"><span class="variable">next</span></code>
+to drive the display, but keep the functions that display information
+separate from these two functions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/intersection.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.4.5"></a>
+<b>Exercise 37.4.5.</b>&nbsp;&nbsp; 
+In sections&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.4">14.4</a> and&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.7">17.7</a> we developed
+an evaluator for a portion of Scheme. A typical Scheme implementation also
+provides an <small>I</small><small>N</small><small>T</small><small>E</small><small>R</small><small>A</small><small>C</small><small>T</small><small>I</small><small>V</small><small>E</small> 
+<a name="node_idx_2204"></a>user interface. In DrScheme, the
+<tt>Interactions</tt>
+<a name="node_idx_2206"></a>window plays this role.</p>
+<p>
+An interactive system prompts the reader for definitions and expressions,
+evaluates them appropriately, and possibly produces some result.
+Definitions are added to some repository; to confirm the addition, the
+interactive system may produce a value like <code class="scheme"><span class="builtin">true</span></code>. Expressions are
+evaluated relative to the definition repository. The function
+<code class="scheme"><span class="variable">interpret-with-defs</span></code> from section&nbsp;<a href="curriculum-Z-H-22.html#node_sec_17.7">17.7</a> performs
+this role. </p>
+<p>
+Develop an interaction system around <code class="scheme"><span class="variable">interpret-with-defs</span></code>. The
+system should provide at least two services: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">add-definition</span></code>, which adds (the representation of) some
+function definition to the system's repository; 
+</p>
+<li><p><code class="scheme"><span class="variable">evaluate</span></code>, which consumes (the representation of) some
+expression and evaluates it relative to the current repository. 
+</p>
+</li></ol><p>
+If a user adds two (or more) definitions for some function <code class="scheme"><span class="variable">f</span></code>, the
+last addition is the one that matters. The previous ones can be
+ignored.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/repl.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_37.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_37.5">37.5&nbsp;&nbsp;Extended Exercise: Exploring Places</a></h2>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_194"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p>
+</p>
+
+  <center><img src="../icons/rice-tour.gif" alt="[A Rice University Tour in DrScheme]"></center>
+ <p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 109:</b>&nbsp;&nbsp;A tour of a university</td></tr>
+<tr><td> <p>
+</p>
+<hr><p>
+</p>
+<p></p>
+<p>
+</p>
+
+  <center><img src="../icons/rice-tour2.gif" alt="[A Rice University Tour in DrScheme]"></center>
+ <p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 110:</b>&nbsp;&nbsp;Take the tour</td></tr>
+<tr><td> <p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Early computer games asked players to find their way through dangerous
+mazes and caves. The player wanders from cave to cave, finds treasures,
+encounters creatures of all kinds, fights, kisses, picks up energy, and
+eventually reaches paradise. This section lays out the basics of such a
+game, using our iterative approach to program design.
+<a name="node_idx_2208"></a></p>
+<p>
+Our tour takes place at one of the scariest places of all: campus. A campus
+consists of buildings, some more dangerous than others. Each building has
+a name and is connected to a group of other buildings. </p>
+<p>
+The player is always in a building. We refer to this building as the 
+<i>current location</i>.
+<a name="node_idx_2210"></a>To find out more about the location, the player can
+ask for a picture of the building and for the list of connections. The
+player can also move to one of the connected buildings by issuing a
+<code class="scheme"><span class="variable">go</span></code> command. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.5.1"></a>
+<b>Exercise 37.5.1.</b>&nbsp;&nbsp; 
+Provide structure and data definitions for buildings. Include a picture
+field in the structure. </p>
+<p>
+A campus is a list of buildings. Define a sample campus. See
+figure&nbsp;<a href="#node_fig_Temp_194">109</a> for a small example.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tour-data.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_37.5.2"></a>
+<b>Exercise 37.5.2.</b>&nbsp;&nbsp; 
+Develop a program that permits a player to move through the sample campus
+of exercise&nbsp;<a href="#node_thm_37.5.1">37.5.1</a>. The program should support at least three
+services: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">show-me</span></code>, which produces the picture of the current location:
+see figure&nbsp;<a href="#node_fig_Temp_194">110</a>; 
+</p>
+<li><p><code class="scheme"><span class="variable">where-to-go</span></code>, which produces the list of connected buildings;
+</p>
+<li><p><code class="scheme"><span class="variable">go</span></code>, which changes the current location of the player. 
+</p>
+</li></ol><p>
+If the player issues the command <code class="scheme">(<span class="variable">go</span> <span class="variable">s</span>)</code> and <code class="scheme"><span class="variable">s</span></code> is not
+connected to the current location, the function must report an error. 
+Develop other functions as necessary or as
+desired.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tour-showme.html">Solution</a></p>
+<p></p>
+<p>
+Players of early maze games could also gather objects and trade objects at
+the various sites. Specifically, the player had a bag for carrying objects, 
+and each site contained objects that the player could trade for things in 
+the bag. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_37.5.3"></a>
+<b>Exercise 37.5.3.</b>&nbsp;&nbsp; 
+Modify the tour program so that each building contains one object.
+Furthermore, the player should have a <i>bag</i> 
+<a name="node_idx_2212"></a>that contains (at most)
+one object. At each location, the player can pick up an object, if the bag
+is empty, or swap the object in the bag for the object in the building
+otherwise.</p>
+<p>
+Modify the program further so that the player can carry an arbitrary number
+of objects in the bag.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/tour-trade.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+
+
+<p>
+The three exercises in this section illustrate how maze games work. From
+here it is easy to experiment with various flavors of the game. Taking a
+walk from one building to another may take some energy, and the player may
+have only a finite amount of energy. Creatures may fight or kiss the
+player, which consumes or replenishes the player's energy level. Use your
+imagination to extend the game and have friends take the tour.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-45.html">previous</a></span><span>, <a href="curriculum-Z-H-47.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-46.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

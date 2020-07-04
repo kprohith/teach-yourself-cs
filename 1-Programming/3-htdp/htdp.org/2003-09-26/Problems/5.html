@@ -1,0 +1,75 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 5</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+Develop the function
+<em>describe-temp</em>, 
+which consumes a Celsius temperature and returns
+'Warm if the temperature is 25 or greater, 'Mild if the temperature is
+between 10 and 25, and 'Cold if the temperature is below 10.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol5.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Develop a function that when given a symbol and number returns the
+square root of the number if the symbol is 'squareroot or 
+the tangent of the
+number if the symbol is 'tangent.
+For all other symbols, it returns the original number.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol5.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+Modify <tt>check-guess</tt> from Exercise 5.1.2
+(duplicated below) to add a fourth response,
+'WithinTen, which is returned when the player's guess is in the range
+of ten above or below the target.
+
+<p>
+<b>Exercise 5.1.2</b>
+</p>
+<p>
+Develop the function <tt>check-guess</tt>. It consumes two numbers, <tt>guess</tt>
+and <tt>target</tt>. Depending on how <tt>guess</tt> relates to <tt>target</tt>,
+ the function produces one of the following three answers: <tt>&#39;</tt><tt>TooSmall</tt>,
+ <tt>&#39;</tt><tt>Perfect</tt>, or <tt>&#39;</tt><tt>TooLarge</tt>.
+</p>
+<p>
+The function implements one part of a two-player number guessing game. One player
+ picks a random number between 0 and 99999. The other player's goal is to
+ determine this number, called <tt>target</tt>, with the least number of
+ guesses. To each guess, the first player responds with one of the three responses
+ that <tt>check-guess</tt> implements.
+</p>
+<p>
+The function <tt>check-guess</tt> and the teachpack <tt><b>guess.ss</b></tt> implement the
+ first player. The teachpack picks the random number, pops up a window in which
+ the second player can choose digits, and hands over the <tt>guess</tt> and the
+ <tt>target</tt> to <tt>check-guess</tt>. To play the game, set the
+ teachpack to <tt><b>guess.ss</b></tt> using the <code>Language|Set teachpack</code> option. 
+ Then evaluate the expression
+<pre><tt>(guess-with-gui check-guess)</tt>
+</pre>
+after <tt>check-guess</tt> has been thoroughly tested.&nbsp;
+
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol5.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+<p>
+Inhabitants of the island of knaves always walk around in pairs. 
+Each will respond with 'Yes or 'No individually when asked 
+an appropriate question. 
+You can only be certain of having received an affirmative
+answer if both reply 'Yes. All other combinations imply 'No. 
+</p>
+<p>
+Develop the function <em>discern</em>,
+which will accept all pairwise combinations of 
+knaves' answers and produce 'Yes or 'No accordingly.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol5.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+<p>
+A robot car is confined to a narrow straight track that is marked
+with positions 0 through 99. 
+</p>
+<p>
+Develop the function <em>move</em>.
+It consumes a command
+(either 'Forward or 'Backward), the number of units to move, and the
+current position of the robot, then returns the new position of the
+robot. 
+The robot cannot go off the end of the track, so once it has
+reached either end it will remain there.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol5.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#d9abb8a0b4b6b7bd99babaaaf7b7bcacf7bcbdac">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

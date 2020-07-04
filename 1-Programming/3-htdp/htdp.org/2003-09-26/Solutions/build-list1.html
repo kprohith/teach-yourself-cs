@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/build-list1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 21.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="N-fold.html">21.1.3</a> | <a href="../Book/curriculum-Z-H-27.html#node_thm_21.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="use-map.html">21.2.2</a><pre>
+;; 1. to create the lists (list 0 ... 3) and (list 1 ... 4);
+
+(define (id x) x) ;; aka: identity
+(equal? (build-list 4 id) (list 0 1 2 3))
+(equal? (build-list 4 add1) (list 1 2 3 4))
+
+;; 2.   to create the list (list .1 .01 .001 .0001);
+
+(define (fraction i) (/ 1 (expt 10 (+ i 1))))
+(equal? (build-list 4 fraction) (list .1 .01 .001 .0001))
+
+;; 3.   to define evens, which consumes a natural number n 
+;;      and creates the list of the first n even numbers;
+
+;; evens : Nat -&gt; Listof[Number]
+;; create the list of the first n even numbers
+(define (evens n)
+  (local ((define (even i) (* 2 i)))
+    (build-list n even)))
+
+(equal? (evens 5) (list 0 2 4 6 8))
+
+;; 4.
+;; tabulate : (Nat -&gt; A) Nat -&gt; Listof[A]
+;; tabulate the first n+1 values of f
+
+(define (tabulate.v1 f n)
+   (local ((define (fprime i) (f (- n i))))
+     (build-list (+ n 1) fprime)))
+
+(define (tabulate f n)
+   (reverse (build-list (+ n 1) f)))
+
+;; Examples/Tests:
+(equal? (tabulate identity 4) (list 4 3 2 1 0))
+(equal? (tabulate sin 4) (list (sin 4) (sin 3) (sin 2) (sin 1) (sin 0)))
+(equal? (tabulate.v1 identity 4) (list 4 3 2 1 0))
+(equal? (tabulate.v1 sin 4) (list (sin 4) (sin 3) (sin 2) (sin 1) (sin 0)))
+
+;; 5.   to define diagonal, which consumes a natural number n and creates a list of lists of 0 and 1.
+
+;; diagonal : Nat -&gt; (listof (listof (union 0 1))
+(define (diagonal n)
+  (local ((define (rows i)
+            (local ((define (element j) (cond [(= i j) 1] [else 0])))
+              (build-list n element))))
+    (build-list n rows)))
+
+(equal? (diagonal 3) (list (list 1 0 0)
+                           (list 0 1 0)
+                           (list 0 0 1)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/build-list1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,171 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from drscheme.tex by tex2page, v 2003-08-16
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: DrScheme Companion
+</title>
+<link rel="stylesheet" type="text/css" href="drscheme-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-9.html">previous</a></span><span>, <a href="drscheme-Z-H-11.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+<a name="node_chap_6"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="drscheme-Z-H-1.html#node_toc_node_chap_6">Section  6</a></div><br>
+<a href="drscheme-Z-H-1.html#node_toc_node_chap_6">Compound Data, Part 1: Structures</a></h1>
+<p></p>
+<p>
+</p>
+<a name="node_sec_6.1"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.1">6.1&nbsp;&nbsp;Structures</a></h2>
+<p></p>
+<p>
+The posn structure is built into DrScheme's teaching
+languages, including <code class="scheme"><span class="variable">make-posn</span></code>, <code class="scheme"><span class="variable">posn-x</span></code>, and
+<code class="scheme"><span class="variable">posn-y</span></code>.</p>
+<p>
+When you type
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="variable">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code></blockquote><br>
+in the interaction window, DrScheme replies with
+<br>
+<blockquote><code class="scheme">(<span class="variable">make-posn</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code></blockquote><br>
+DrScheme's reply is the same as your input expression because there is
+no shorter name for the posn containing <code class="scheme"><span class="selfeval">1</span></code> and <code class="scheme"><span class="selfeval">2</span></code>.<p>
+In contrast, enter
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="variable">make-posn</span> (<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>) <span class="selfeval">4</span>)</code></blockquote><br>
+and DrScheme replies with
+<br>
+<blockquote><code class="scheme">(<span class="variable">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)</code></blockquote><br>
+In this case, <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> <span class="selfeval">2</span>)</code> can be reduced to the simpler
+<code class="scheme"><span class="selfeval">3</span></code>.  But, as before, there is no simpler name for a posn
+containing <code class="scheme"><span class="selfeval">3</span></code> and <code class="scheme"><span class="selfeval">4</span></code> other
+than <code class="scheme">(<span class="variable">make-posn</span> <span class="selfeval">3</span> <span class="selfeval">4</span>)</code>.<p>
+</p>
+<a name="node_sec_6.2"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.2">6.2&nbsp;&nbsp;Extended Exercise: Drawing Simple Pictures</a></h2>
+<p></p>
+<p>
+Wehn you evaluate <code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span> <span class="selfeval">300</span>)</code> with the <strong><tt>draw.ss</tt></strong>
+library, DrScheme create a new, empty drawing canvas, like this one:</p>
+<p>
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="emptycanvas.gif" border="0" alt="[emptycanvas.gif]">&nbsp;</div>
+<p></p>
+<p>
+Evaluating a drawing expressions, such as
+<br>
+</p>
+<blockquote><code class="scheme">(<span class="variable">draw-solid-line</span> (<span class="variable">make-posn</span> <span class="selfeval">100</span> <span class="selfeval">100</span>) (<span class="variable">make-posn</span> <span class="selfeval">200</span> <span class="selfeval">200</span>) <span class="keyword">'</span><span class="variable">red</span>)</code></blockquote><br>
+changes the image in the canvas:<p>
+</p>
+<p></p>
+<div align="center">&nbsp;<img src="linecanvas.gif" border="0" alt="[linecanvas.gif]">&nbsp;</div>
+<p></p>
+<p>
+If you try to evaluate drawing expressions before using
+<code class="scheme"><span class="variable">start</span></code>, DrScheme reports an error message that reminds you to
+use <code class="scheme"><span class="variable">start</span></code>.</p>
+<p>
+When the canvas window appears with your images, do not close it,
+because there is no way to re-open a closed canvas window. Instead,
+you have to re-execute your program, or create a new canvas window
+with <code class="scheme"><span class="variable">start</span></code>.</p>
+<p>
+If you use <code class="scheme"><span class="variable">start</span></code> multiple times, drawing commands affect the
+most recently created canvas.</p>
+<p>
+To close a canvas (when you are done with it), you can click the
+canvas window's close box, or evaluate <code class="scheme">(<span class="variable">stop</span>)</code>. Clicking
+DrScheme's <strong><tt>Execute</tt></strong> button also closes canvas windows.</p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p><strong>Exercise Notes</strong></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>Exercise 6.2.1</strong>   To open Help Desk, select the
+<strong><tt>Help|Help Desk</tt></strong> menu item. On Help Desk's home page, the
+third major bullet has a sub-link <strong><tt>Teachpacks</tt></strong> that provides
+a menu of Teachpack documentation links.</p>
+<p>
+</p>
+<a name="node_sec_6.3"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.3">6.3&nbsp;&nbsp;Structure Definitions</a></h2>
+<p></p>
+<p>
+The posn structure is built into DrScheme, so you cannot define it
+yourself. (If you try, DrScheme will report such as ``cannot redefine
+name: <code class="scheme"><span class="variable">make-posn</span></code>'''.)</p>
+<p>
+Structure definitions with <code class="scheme"><span class="variable">define-struct</span></code> are analogous to
+function definitions, in that the definition can appear either before
+or after functions using the structure, but must always precede
+examples using the structure.</p>
+<p>
+</p>
+<a name="node_sec_6.4"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.4">6.4&nbsp;&nbsp;Data Definitions</a></h2>
+<p></p>
+<p>
+To include a data definition in your program file, use a comment (just
+as for contracts):</p>
+<p>
+<br>
+</p>
+<blockquote>
+<div align="left"><pre class="scheme"><span class="comment">;; A star is a structure</span>
+<span class="comment">;;    (make-star last first instrucment sales)</span>
+<span class="comment">;; where last, first, and instrucment are symbols</span>
+<span class="comment">;;   and sales is a number.</span>
+</pre></div></blockquote><br>
+<p>
+</p>
+<a name="node_sec_6.5"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.5">6.5&nbsp;&nbsp;Designing Functions for Compound Data <em>- no notes</em></a></h2>
+<p></p>
+<p>
+<em>No DrScheme notes for this section.</em></p>
+<p>
+</p>
+<a name="node_sec_6.6"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.6">6.6&nbsp;&nbsp;Extended Exercise: Moving Circles and Rectangles</a></h2>
+<p></p>
+<p>
+Use the <strong><tt>draw.ss</tt></strong> teachpack for this exercise. For
+information about selecting a teachpack, see the <strong>Exercise Notes</strong>
+for <a href="drscheme-Z-H-6.html#node_sec_2.2">Exercise 2.2.1</a>.</p>
+<p>
+</p>
+<a name="node_sec_6.7"></a>
+<h2><a href="drscheme-Z-H-1.html#node_toc_node_sec_6.7">6.7&nbsp;&nbsp;Extended Exercise: Hangman</a></h2>
+<p></p>
+<p>
+Initially, use the <strong><tt>draw.ss</tt></strong> teachpack for this exercise,
+then switch to <strong><tt>hangman.ss</tt></strong> as directed. For
+information about selecting a teachpack, see the <strong>Exercise Notes</strong>
+for <a href="drscheme-Z-H-6.html#node_sec_2.2">Exercise 2.2.1</a>.</p>
+<p>
+</p>
+<p>
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="drscheme.html">first</a>, <a href="drscheme-Z-H-9.html">previous</a></span><span>, <a href="drscheme-Z-H-11.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="drscheme-Z-H-1.html#node_toc_start">contents</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Companion/drscheme-Z-H-10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

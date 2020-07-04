@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/guess3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.5; How to Design Programs </title>
+</head>
+<body>
+<a href="check-range1.html">9.5.4</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="delta.html">9.5.6</a><pre>;; CONVERT:
+;; A digit is in 0, ..., 9.
+;; A list of digits is either
+;;  - empty
+;;  - (cons digit lod) where lod is a list of digits.
+
+;; CONTRACT/HEADER/PURPOSE
+;; convert : list-of-DIGIT -&gt; number
+;; to convert a vector of digits into a number 
+;; 0-th digit is right-most digit in number, 
+;; N-th digit is left-most digit in number
+;(define (convert digits) ...)
+
+;; Examples: 
+;; convert (cons 1 (cons 2 (cons 3 empty))) is 321
+;; (convert (cons 4 (cons 5 (cons 6 empty)))) = 654
+
+;; TEMPLATE
+;(define (convert digits) 
+;  (cond
+;    ((empty? digits) ...)
+;    (else ... (first digits) ... (convert (rest digits)) ...)))
+
+;; DEFINITION: 
+(define (convert digits) 
+  (cond
+    ((empty? digits) 0)
+    (else (+ (first digits) (* (convert (rest digits)) 10)))))
+
+
+;; check-guess-for-list : (listof DIGIT) number -&gt; symbol
+;; to determine how guess digits and target relate to each other 
+;; EXAMPLES: see below 
+;; REUSE: check-guess from section 4 (ex 4.1.2)
+(define (check-guess-for-list guess-list target)
+  (check-guess (convert guess-list) target))
+
+;; check-guess : number number -&gt; symbol 
+;; to determine how guess and target relate to each other 
+;; REUSED: ex 4.1.2
+(define (check-guess guess target)
+  (cond
+    ((&lt; target guess) 'TooLarge)
+    ((= target guess) 'Perfect)
+    ((&gt; target guess) 'TooSmall)))
+
+;; TESTS for convert:
+(convert (cons 1 (cons 2 (cons 3 empty)))) "should be" 321
+(convert (cons 4 (cons 5 (cons 6 empty)))) "should be" 654
+
+;; EXAMPLES/TESTS for check-guess-for-list:
+(check-guess-for-list (cons 0 (cons 0 (cons 5 empty))) 631) "should be" 'TooSmall
+(check-guess-for-list (cons 6 (cons 0 (cons 7 empty))) 631) "should be" 'TooLarge
+(check-guess-for-list (cons 1 (cons 3 (cons 6 empty))) 631) "should be" 'Perfect
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/guess3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

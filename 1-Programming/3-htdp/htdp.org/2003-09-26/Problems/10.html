@@ -1,0 +1,90 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 10</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+<p>
+A sound processor filters out frequencies below a low
+frequency threshold and above a high frequency threshold.
+Such a
+processor might be used as part of an MP3 encoder to reduce the
+amount of data to be processed. 
+Given that a frequency is a number, develop the
+function, <em>filter-freq</em>, which consumes two threshold
+frequencies (low and high) and a list of frequencies and returns a
+list of those frequencies between and including the thresholds.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol10.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+<p>
+Develop a data definition for a list of symbols and numbers.
+</p>
+<p>
+Develop the function <em>symbol-count</em>, which
+consumes a list of symbols and numbers
+and returns the number of symbols
+in the list.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol10.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+<p>
+An auction bid contains three pieces of information: bidder number,
+item number, and amount of bid.
+</p>
+<p>
+Develop a structure and data definition for an auction bid.
+Develop a data definition for a list of auction bids.
+</p>
+<p>
+Develop the function <em>highest-bid</em>, which consumes an item
+number and a non-empty list of auction bids and returns the winning bid
+for that item.
+Assume that at least one bid for the item in question is 
+contained in the list.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol10.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+A Substance is a Symbol.
+<br>
+<br>
+A Tank is a structure<br>
+<br>
+<code>(make-tank Substance Number)</code><br>
+<br>
+<code>(define-struct tank (subst liters))</code>
+
+<p>
+A storage company would like to consolidate
+the contents of each tank holding the same substance into a
+single tank for each substance.
+</p>
+
+<p>
+Develop the function <em>remove</em>, which consumes a substance, such as
+'oil, and a list of tanks, and removes any tanks containing the substance
+from the list.
+</p>
+
+<p>
+Develop the function <em>combine</em>,
+which consumes a substance S and a list of tanks.
+It produces the sum of all S found in the list.
+</p>
+
+<p>
+Develop the function <em>consolidate</em>,
+which consumes a list of tanks, some of which
+may contain the same substance, and produces a list containing 
+only one tank for each substance.
+This function should ensure that
+total amount of each substance in the new list is the same
+as the total amount of each substance in the original list. <br>
+<font color="red">Warning: This requires a (simple) generative recursion.</font>
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol10.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+An SB is a list of two items: <code>(cons String (cons Boolean empty))</code><br>
+<br>
+An SB-list is either <br>
+- <code>empty</code><br>
+- <code>(cons SB SB-list)</code><br>
+
+<p>
+Develop the function <em>which-toppings</em>, which consumes an SB-list
+and produces the list of strings that are associated with <code>true</code>.
+</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol10.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#2b594a524644454f6b48485805454e5e054e4f5e">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/10.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

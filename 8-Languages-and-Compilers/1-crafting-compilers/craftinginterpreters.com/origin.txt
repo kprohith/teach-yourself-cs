@@ -1,0 +1,944 @@
+Uri: https://craftinginterpreters.com/contents.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\contents.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/style.css
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\style.css
+Content Type: text/css
+
+Uri: https://craftinginterpreters.com/image/favicon.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\favicon.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\index.htm
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/index.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\index.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/welcome.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\welcome.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/introduction.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\introduction.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/a-map-of-the-territory.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\a-map-of-the-territory.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/the-lox-language.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\the-lox-language.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/a-tree-walk-interpreter.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\a-tree-walk-interpreter.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/scanning.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\scanning.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/representing-code.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\representing-code.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/parsing-expressions.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\parsing-expressions.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/evaluating-expressions.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\evaluating-expressions.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/statements-and-state.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\statements-and-state.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/control-flow.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\control-flow.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/functions.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\functions.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/resolving-and-binding.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\resolving-and-binding.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/classes.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\classes.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/inheritance.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\inheritance.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/a-bytecode-virtual-machine.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\a-bytecode-virtual-machine.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/chunks-of-bytecode.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\chunks-of-bytecode.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/a-virtual-machine.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\a-virtual-machine.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/scanning-on-demand.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\scanning-on-demand.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/compiling-expressions.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\compiling-expressions.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/types-of-values.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\types-of-values.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/strings.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\strings.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/hash-tables.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\hash-tables.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/global-variables.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\global-variables.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/local-variables.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\local-variables.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/jumping-back-and-forth.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\jumping-back-and-forth.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/calls-and-functions.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\calls-and-functions.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/closures.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\closures.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/garbage-collection.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\garbage-collection.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/classes-and-instances.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\classes-and-instances.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/methods-and-initializers.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\methods-and-initializers.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/superclasses.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\superclasses.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/optimization.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\optimization.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/backmatter.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\backmatter.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/appendix-i.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\appendix-i.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/appendix-ii.html
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\appendix-ii.html
+Content Type: text/html
+
+Uri: https://craftinginterpreters.com/jquery-3.4.1.min.js
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\jquery-3.4.1.min.js
+Content Type: application/javascript
+
+Uri: https://craftinginterpreters.com/script.js
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\script.js
+Content Type: application/javascript
+
+Uri: https://craftinginterpreters.com/image/logotype-small.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\logotype-small.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/font/crimson-roman.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-roman.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/font/crimson-italic.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-italic.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/font/crimson-semibold.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-semibold.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/font/crimson-semibolditalic.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-semibolditalic.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/font/crimson-bold.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-bold.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/font/crimson-bolditalic.woff
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\font\crimson-bolditalic.woff
+Content Type: font/woff
+
+Uri: https://craftinginterpreters.com/rows.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\rows.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/rows-22.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\rows-22.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/index.css
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\index.css
+Content Type: text/css
+
+Uri: https://craftinginterpreters.com/image/logotype.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\logotype.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/introduction/little-languages.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\introduction\little-languages.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/introduction/yak.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\introduction\yak.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/introduction/bootstrap.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\introduction\bootstrap.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/mountain.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\mountain.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/string.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\string.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/tokens.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\tokens.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/ast.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\ast.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/plants.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\plants.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-map-of-the-territory/venn.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-map-of-the-territory\venn.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/the-lox-language/class-lookup.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\the-lox-language\class-lookup.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/the-lox-language/prototype-lookup.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\the-lox-language\prototype-lookup.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning/lexemes.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning\lexemes.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning/lexigator.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning\lexigator.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/tree-evaluate.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\tree-evaluate.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/breakfast.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\breakfast.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/table.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\table.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/rows.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\rows.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/columns.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\columns.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/visitor.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\visitor.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/representing-code/expression.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\representing-code\expression.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/parsing-expressions/tokens.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\parsing-expressions\tokens.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/parsing-expressions/syntax-trees.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\parsing-expressions\syntax-trees.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/parsing-expressions/direction.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\parsing-expressions\direction.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/parsing-expressions/sequence.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\parsing-expressions\sequence.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/parsing-expressions/panic.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\parsing-expressions\panic.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/evaluating-expressions/lightning.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\evaluating-expressions\lightning.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/evaluating-expressions/muffin.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\evaluating-expressions\muffin.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/evaluating-expressions/skeleton.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\evaluating-expressions\skeleton.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/statements-and-state/brain.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\statements-and-state\brain.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/statements-and-state/environment.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\statements-and-state\environment.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/statements-and-state/blocks.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\statements-and-state\blocks.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/statements-and-state/chaining.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\statements-and-state\chaining.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/statements-and-state/cactus.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\statements-and-state\cactus.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/control-flow/turing-machine.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\control-flow\turing-machine.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/control-flow/dangling-else.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\control-flow\dangling-else.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/control-flow/sugar.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\control-flow\sugar.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/lambda.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\lambda.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/foreign.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\foreign.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/recursion.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\recursion.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/binding.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\binding.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/global.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\global.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/body.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\body.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/functions/closure.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\functions\closure.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/environment-1.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\environment-1.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/environment-2.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\environment-2.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/environment-3.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\environment-3.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/environment-4.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\environment-4.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/environment-5.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\environment-5.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/resolving-and-binding/split.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\resolving-and-binding\split.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/circle.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\circle.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/zip.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\zip.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/setter.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\setter.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/method.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\method.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/closure.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\closure.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/bound-method.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\bound-method.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes/call.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes\call.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/inheritance/doughnuts.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\inheritance\doughnuts.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/inheritance/classes.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\inheritance\classes.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/inheritance/superclass.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\inheritance\superclass.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/inheritance/environments.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\inheritance\environments.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/inheritance/superhero.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\inheritance\superhero.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/chunks-of-bytecode/ast.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\chunks-of-bytecode\ast.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/chunks-of-bytecode/phases.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\chunks-of-bytecode\phases.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/chunks-of-bytecode/insert.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\chunks-of-bytecode\insert.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/chunks-of-bytecode/grow.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\chunks-of-bytecode\grow.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/chunks-of-bytecode/format.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\chunks-of-bytecode\format.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/ast.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\ast.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/bars.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\bars.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/bars-stacked.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\bars-stacked.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/pancakes.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\pancakes.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/array.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\array.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/stack-empty.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\stack-empty.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/stack-c.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\stack-c.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/stack-crepe.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\stack-crepe.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/reverse.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\reverse.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/a-virtual-machine/chunk.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\a-virtual-machine\chunk.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning-on-demand/pipeline.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning-on-demand\pipeline.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning-on-demand/fields.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning-on-demand\fields.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning-on-demand/axolotl.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning-on-demand\axolotl.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning-on-demand/keywords.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning-on-demand\keywords.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/scanning-on-demand/numbers.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\scanning-on-demand\numbers.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/pipeline.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\pipeline.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/keyhole.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\keyhole.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/mystery.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\mystery.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/connections.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\connections.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/calls.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\calls.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/compiling-expressions/points-to.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\compiling-expressions\points-to.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/types-of-values/struct.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\types-of-values\struct.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/types-of-values/union.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\types-of-values\union.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/types-of-values/value.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\types-of-values\value.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/types-of-values/universe.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\types-of-values\universe.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/types-of-values/memcmp.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\types-of-values\memcmp.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/strings/pstring.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\strings\pstring.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/strings/value.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\strings\value.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/strings/obj.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\strings\obj.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/strings/viola.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\strings\viola.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/strings/stack.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\strings\stack.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/bucket-array.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\bucket-array.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/collision.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\collision.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/pigeons.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\pigeons.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/chaining.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\chaining.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-1.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-1.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-2.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-2.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-3.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-3.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-4.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-4.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-5.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-5.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-6.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-6.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/insert-7.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\insert-7.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/delete-1.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\delete-1.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/delete-2.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\delete-2.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/delete-3.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\delete-3.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/hash-tables/tombstone.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\hash-tables\tombstone.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/global-variables/stack-effect.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\global-variables\stack-effect.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/global-variables/setter.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\global-variables\setter.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/global-variables/ast-good.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\global-variables\ast-good.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/global-variables/ast-bad.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\global-variables\ast-bad.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/local-variables/scopes.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\local-variables\scopes.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/local-variables/block.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\local-variables\block.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/local-variables/declaration.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\local-variables\declaration.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/local-variables/local-slots.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\local-variables\local-slots.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/local-variables/phases.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\local-variables\phases.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/if-without-else.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\if-without-else.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/patch.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\patch.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/bad-else.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\bad-else.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/if-else.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\if-else.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/full-if-else.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\full-if-else.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/and.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\and.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/or.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\or.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/while.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\while.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/jumping-back-and-forth/for.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\jumping-back-and-forth\for.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/calls.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\calls.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/window.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\window.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/argument-stack.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\argument-stack.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/parameter-window.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\parameter-window.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/overlapping-windows.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\overlapping-windows.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/arithmetic.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\arithmetic.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/calls-and-functions/return.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\calls-and-functions\return.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/flying.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\flying.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/obj-closure.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\obj-closure.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/open-upvalue.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\open-upvalue.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/execution-flow.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\execution-flow.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/linked-upvalues.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\linked-upvalues.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/recursion.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\recursion.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/linked-list.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\linked-list.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/closures/closing.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\closures\closing.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/recycle.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\recycle.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/stack.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\stack.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/reachable.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\reachable.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/mark-sweep.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\mark-sweep.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/white.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\white.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/gray.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\gray.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/black.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\black.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/tricolor-trace.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\tricolor-trace.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/unlink.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\unlink.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/latency-throughput.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\latency-throughput.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/garbage-collection/baguette.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\garbage-collection\baguette.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes-and-instances/klass.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes-and-instances\klass.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes-and-instances/lox-clox.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes-and-instances\lox-clox.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/classes-and-instances/stack.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\classes-and-instances\stack.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/method-instructions.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\method-instructions.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/party-hat.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\party-hat.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/bind-method.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\bind-method.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/closure-slot.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\closure-slot.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/init-call-frame.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\init-call-frame.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/methods-and-initializers/benchmark.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\methods-and-initializers\benchmark.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/inherit-stack.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\inherit-stack.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/jlox-resolve.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\jlox-resolve.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/clox-resolve.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\clox-resolve.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/monkey.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\monkey.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/super-instructions.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\super-instructions.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/superclasses/super-invoke.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\superclasses\super-invoke.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/mask.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\mask.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/hash-chart.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\hash-chart.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/union.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\union.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/double.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\double.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/nan.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\nan.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/qnan.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\qnan.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/nil.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\nil.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/bools.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\bools.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/bool-mask.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\bool-mask.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/optimization/obj.png
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\optimization\obj.png
+Content Type: image/png
+
+Uri: https://craftinginterpreters.com/image/wood.jpg
+File Name: C:\Users\rohith\Documents\Projects\teach-yourself-cs\8-Languages-and-Compilers\crafting-compilers\craftinginterpreters.com\image\wood.jpg
+Content Type: image/jpeg
+

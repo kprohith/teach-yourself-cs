@@ -1,0 +1,85 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 11</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+Develop a function that consumes two numbers and subtracts
+the second number from the first without using the minus
+operator. <br>
+<font color="red">Warning: A student may use "binary" recursion rather than
+natural recursion on just the summand. Be prepared to grade harshly or to
+ask for detailed explanations.</font>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol11.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+Develop the function <em>mod-list</em>.
+The function consumes two natural numbers and
+produces a list of numbers between zero and the first
+number that are not evenly divisible by the second number.
+Your function should produce an error if the second
+number is zero.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol11.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+<p>
+One way to describe motion is to compute the location of an object at a
+given point in time: 
+<pre><code>
+; Nat -&gt; Posn 
+; compute location of an object at time t if is at START and moves at VELOCITY
+(define (location t)
+  (add START (mul t VELOCITY)))
+
+(define START ...)
+(define VELOCITY ...)
+</code></pre>
+Assuming the object is at START and moves at VELOCITY then we multiply
+VELOCITY with t and add START to find out where the object is at time t. 
+
+
+<p>
+Develop the function <em>diag2</em>.  The function consumes a time t
+(natural number) and computes the movement of the object as a list of
+point. The first point describes where the object was at time t, the last
+one describes it for time 1. </p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol11.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+Develop the function <em>bm</em>.  The function consumes two numbers
+(<code>n</code> and <code>m</code>) and a symbol (<code>s</code>). It
+produces a list of <code>n</code> lists. Each of these lists is a
+list of <code>m</code> symbols, namely, <code>s</code>. <br>
+
+<font color="red">Hint: You need an auxiliary function.</font> 
+
+<p>Consider the following modification. Instead of using the same symbol
+over and over again, create a string that says "cell23" where 2 and 3 are 
+(running) indices. Recall that <code>string-append</code> concatenates two
+strings and that <code>number-&gt;string</code> creates a string
+representation from a number. This variant is, for example, useful in Web
+programming.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol11.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+<p>
+The following program fragment draws and clears a balloon on a canvas at
+time <code>n</code>:
+<pre><code>
+; Nat -&gt; true 
+(define (clear-balloon n)
+  (and (clear-solid-disk (make-posn 100 (* n 5)) RADIUS 'red)
+       (clear-solid-line (make-posn 100 (+ (* n 5) RADIUS)) 
+                         (make-posn 100 (+ (* n 5) RADIUS LENGTH))
+                         'black)))
+
+; Nat -&gt; true 
+(define (draw-balloon n)
+  (and (draw-solid-disk (make-posn 100 (* n 5)) RADIUS 'red)
+       (draw-solid-line (make-posn 100 (+ (* n 5) RADIUS)) 
+                        (make-posn 100 (+ (* n 5) RADIUS LENGTH))
+                        'black)))
+
+(define RADIUS 20)
+(define LENGTH 80)
+</code>
+</pre>
+The assumption is that the functions work on a canvas that is at least 300
+x 300 large. 
+
+
+<p>Design the function <code>balloons</code>. It consumes a natural
+number. Its task is to clear and draw a balloon that many times, at times
+<code>n</code> through <code>1</code>. Its result is <code>true.</code> To
+achieve a realistic effect, the function should sleep for a while (see docs
+of draw.ss teachpack) after drawing a balloon.</p>
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol11.html#PROBLEM5">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#ed9f8c9480828389ad8e8e9ec3838898c3888998">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

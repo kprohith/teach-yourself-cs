@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tangent2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 23.5.2; How to Design Programs </title>
+</head>
+<body>
+<a href="tangent1.html">23.5.1</a> | <a href="../Book/curriculum-Z-H-29.html#node_thm_23.5.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; line-form-point+slope : posn number -&gt; (number -&gt; number)
+;; to construct a line function from a point on the line and its slope
+(define (line-from-point+slope p m)
+  (local [(define b (- (posn-y p) (* m (posn-x p))))
+          (define (y x)
+            (+ (* m x) b))]
+    y))
+
+;; tests
+(graph-fun (line-from-point+slope (make-posn 0 4) 1) 'green)
+(graph-fun (line-from-point+slope (make-posn 10 0) -1) 'blue)
+(graph-fun (line-from-point+slope (make-posn 4 0) 1) 'green)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tangent2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

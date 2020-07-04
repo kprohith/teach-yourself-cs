@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/predicates.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="hangman-simple.html">6.7.3</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="circumference-test.html">7.1.2</a><pre>(number? (make-posn 2 3)) "should be" false
+
+(number? (+ 12 10)) "should be" (number? 22) "should be" true
+
+(posn? 23) "should be" false
+
+(posn? (make-posn 23 3)) "should be" true
+
+(define-struct employee (last first dob ssn))
+(employee? (make-posn 23 23)) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/predicates.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

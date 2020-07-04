@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/illegal-def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.2.4; How to Design Programs </title>
+</head>
+<body>
+<a href="illegal-exp1.html">8.2.3</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.2.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="eval1.html">8.3.1</a><pre>#|
+
+A definition has (in order):
+  - an open parenthesis, 
+  - the word define,
+  - another open parenthesis,
+  - at least two variables (maybe more),
+  - a close parenthesis
+  - an expression, and finally
+  - a close parenthesis.
+
+1: This is a legal definition.
+   It matches all of the requirements,
+   the variables are f and x and
+   the expression is the symbol 'x.
+   
+2: This is an illegal definition.
+   It has a symbol in place of a variable.
+   It should be
+   
+     (define (f x) x)
+     
+   not
+   
+     (define (f 'x) x)
+
+3: This definition is legal. 
+   It matches all of the requirements.
+   The variables are f, x and y. The
+   expression is a primitive expression
+   whose subexpressions are the symbol 'y
+   and another primitive expression.
+
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/illegal-def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="illegal-def1.html">8.2.4</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="eval def1.html">8.3.2</a><pre>;; 1
+
+(+ (* (/ 12 8) 2/3)
+   (- 20 (sqrt 4)))
+"should be"
+(+ (* 3/2 2/3) (- 20 (sqrt 4)))
+"should be"
+(+ 1 (- 20 (sqrt 4)))
+"should be"
+(+ 1 (- 20 2))
+"should be"
+(+ 1 18)
+"should be"
+19
+
+;; 2
+
+(cond
+  [(= 0 0) false]
+  [(&gt; 0 1) (eq? 'a 'a)]
+  [else (= (/ 1 0) 9)])
+"should be"
+(cond 
+  [true false] 
+  [(&gt; 0 1) (eq? 'a 'a)]
+  [else (= (/ 1 0) 9)])
+"should be"
+false
+
+
+;; 3
+(cond
+  [(= 2 0) false]
+  [(&gt; 2 1) (eq? 'a 'a)]
+  [else (= (/ 1 2) 9)])
+"should be"
+(cond 
+  [false false] 
+  [(&gt; 2 1) (eq? 'a 'a)]
+  [else (= (/ 1 2) 9)])
+"should be"
+(cond  
+  [(&gt; 2 1) (eq? 'a 'a)]
+  [else (= (/ 1 2) 9)])
+"should be"
+(cond  
+  [true (eq? 'a 'a)]
+  [else (= (/ 1 2) 9)])
+"should be"
+(eq? 'a 'a)
+"should be"
+true
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/eval1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

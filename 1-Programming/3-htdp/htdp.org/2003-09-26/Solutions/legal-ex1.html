@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/legal-ex1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="checked3.html">7.5.3</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="legal-def1.html">8.2.2</a><pre>#|
+
+legal expressions:
+
+1: x is a variable, which is a legal expression
+2: Since = is a primitive operation, this expression
+   can only be legal if it has an opening parenthesis,
+   a closing parenthesis, and some number of expressions
+   inside it. The parenthesis are correct and y and z are
+   both expressions, so the entire sentence is a legal expression.
+3: We know from 2: that (= y z) is a legal expression. Thus, since 0
+   is also a legal expression, we know that (= (= y z) 0) contains two
+   legal expressions. In order for it to be a legal expression, it
+   must also have matching parenthesis and an initial primitive operation,
+   which it does.
+
+illegal expressions:
+   
+1: If a sentence begins with a parenthesis, it must continue
+   with either a primitive, a variable or cond. This one does
+   none of those things.
+2: No expression can begin with a primtive, but this sentence
+   does.
+3: If an expression begins with a parenthesis and a variable, it must
+   have at least one expression after the variable. This one does not.
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/legal-ex1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

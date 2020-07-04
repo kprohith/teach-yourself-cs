@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ftn-or.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.1.1; How to Design Programs </title>
+</head>
+<body>
+<a href="quote-list.html">13.0.8</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.1.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="bep-eval.html">14.1.2</a><pre>;; an ftn is either:
+;;  - empty, or
+;;  - (make-ftn f m na da ec)
+;;    where f and m are ftns,
+;;          na and ec are symbols,
+;;      and da is a number.
+(define-struct child (father mother name date eyes))
+
+;; Carl : ftn
+;; an example family tree node
+(define Carl (make-child empty empty 'Carl 1926 'green))
+
+;; blue-eyed-ancestor1? : ftn -&gt; boolean
+;; to determine if there is a blue-eyed ancestor in a-ftn
+(define (blue-eyed-ancestor1? a-ftn)
+  (cond
+    [(empty? a-ftn) false]
+    [else
+     (cond
+       [(symbol=? (child-eyes a-ftn) 'blue) true]
+       [(blue-eyed-ancestor1? (child-father a-ftn)) true]
+       [(blue-eyed-ancestor1? (child-mother a-ftn)) true]
+       [else false])]))
+
+;; blue-eyed-ancestor1? : ftn -&gt; boolean
+;; to determine if there is a blue-eyed ancestor in a-ftn
+(define (blue-eyed-ancestor2? a-ftn)
+  (cond
+    [(empty? a-ftn) false]
+    [else
+     (or (symbol=? (child-eyes a-ftn) 'blue)
+         (blue-eyed-ancestor2? (child-father a-ftn))
+         (blue-eyed-ancestor2? (child-mother a-ftn)))]))
+
+
+(blue-eyed-ancestor1? empty) 
+"should be" 
+(cond
+  [(empty? empty) false]
+  [else
+   (cond
+     [(symbol=? (child-eyes empty) 'blue) true]
+     [(blue-eyed-ancestor1? (child-father empty)) true]
+     [(blue-eyed-ancestor1? (child-mother empty)) true]
+     [else false])])
+"should be"
+(cond
+  [true false]
+  [else
+   (cond
+     [(symbol=? (child-eyes empty) 'blue) true]
+     [(blue-eyed-ancestor1? (child-father empty)) true]
+     [(blue-eyed-ancestor1? (child-mother empty)) true]
+     [else false])])
+"should be"
+false
+
+(blue-eyed-ancestor2? empty)
+"should be"
+(cond
+  [(empty? empty) false]
+  [else
+   (or (symbol=? (child-eyes empty) 'blue)
+       (blue-eyed-ancestor2? (child-father empty))
+       (blue-eyed-ancestor2? (child-mother empty)))])
+"should be"
+(cond
+  [true false]
+  [else
+   (or (symbol=? (child-eyes empty) 'blue)
+       (blue-eyed-ancestor2? (child-father empty))
+       (blue-eyed-ancestor2? (child-mother empty)))])
+"should be"
+false
+
+(blue-eyed-ancestor1? Carl)
+"should be"
+(blue-eyed-ancestor1? (make-child empty empty 'Carl 1926 'green))
+"should be"
+(cond
+  [(empty? (make-child empty empty 'Carl 1926 'green)) false]
+  [else
+   (cond
+     [(symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue) true]
+     [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+     [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+     [else false])])
+"should be"
+(cond
+  [false false]
+  [else
+   (cond
+     [(symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue) true]
+     [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+     [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+     [else false])])
+"should be"
+(cond
+  [else
+   (cond
+     [(symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue) true]
+     [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+     [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+     [else false])])
+"should be"
+(cond
+  [(symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue) true]
+  [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(symbol=? 'green 'blue) true]
+  [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [false true]
+  [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(blue-eyed-ancestor1? (child-father (make-child empty empty 'Carl 1926 'green))) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(blue-eyed-ancestor1? empty) true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(cond
+     [(empty? empty) false]
+     [else
+      (cond
+        [(symbol=? (child-eyes empty) 'blue) true]
+        [(blue-eyed-ancestor1? (child-father empty)) true]
+        [(blue-eyed-ancestor1? (child-mother empty)) true]
+        [else false])])
+   true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(cond
+     [true false]
+     [else
+      (cond
+        [(symbol=? (child-eyes empty) 'blue) true]
+        [(blue-eyed-ancestor1? (child-father empty)) true]
+        [(blue-eyed-ancestor1? (child-mother empty)) true]
+        [else false])])
+   true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [false true]
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(blue-eyed-ancestor1? (child-mother (make-child empty empty 'Carl 1926 'green))) true]
+  [else false])
+"should be"
+(cond
+  [(cond
+     [(empty? empty) false]
+     [else
+      (cond
+        [(symbol=? (child-eyes empty) 'blue) true]
+        [(blue-eyed-ancestor1? (child-father empty)) true]
+        [(blue-eyed-ancestor1? (child-mother empty)) true]
+        [else false])])
+   true]
+  [else false])
+"should be"
+(cond
+  [(cond
+     [true false]
+     [else
+      (cond
+        [(symbol=? (child-eyes empty) 'blue) true]
+        [(blue-eyed-ancestor1? (child-father empty)) true]
+        [(blue-eyed-ancestor1? (child-mother empty)) true]
+        [else false])])
+   true]
+  [else false])
+"should be"
+(cond
+  [false true]
+  [else false])
+"should be"
+(cond
+  [else false])
+"should be"
+false
+
+(blue-eyed-ancestor2? Carl)
+"should be"
+(blue-eyed-ancestor2? (make-child empty empty 'Carl 1926 'green))
+"should be"
+(cond
+  [(empty? (make-child empty empty 'Carl 1926 'green)) false]
+  [else
+   (or (symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue)
+       (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+       (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))])
+"should be"
+(cond
+  [false false]
+  [else
+   (or (symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue)
+       (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+       (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))])
+"should be"
+(cond
+  [else
+   (or (symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue)
+       (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+       (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))])
+"should be"
+(or (symbol=? (child-eyes (make-child empty empty 'Carl 1926 'green)) 'blue)
+    (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or (symbol=? 'green 'blue)
+    (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or false
+    (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or (blue-eyed-ancestor2? (child-father (make-child empty empty 'Carl 1926 'green)))
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or (blue-eyed-ancestor2? empty)
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or (cond
+      [(empty? empty) false]
+      [else
+       (or (symbol=? (child-eyes empty) 'blue)
+           (blue-eyed-ancestor2? (child-father empty))
+           (blue-eyed-ancestor2? (child-mother empty)))])
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or (cond
+      [true false]
+      [else
+       (or (symbol=? (child-eyes empty) 'blue)
+           (blue-eyed-ancestor2? (child-father empty))
+           (blue-eyed-ancestor2? (child-mother empty)))])
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or false
+    (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or false (blue-eyed-ancestor2? (child-mother (make-child empty empty 'Carl 1926 'green))))
+"should be"
+(or false (blue-eyed-ancestor2? empty))
+"should be"
+(or false
+    (cond
+      [(empty? empty) false]
+      [else
+       (or (symbol=? (child-eyes empty) 'blue)
+           (blue-eyed-ancestor2? (child-father empty))
+           (blue-eyed-ancestor2? (child-mother empty)))]))
+"should be"
+(or false
+    (cond
+      [true false]
+      [else
+       (or (symbol=? (child-eyes empty) 'blue)
+           (blue-eyed-ancestor2? (child-father empty))
+           (blue-eyed-ancestor2? (child-mother empty)))]))
+"should be"
+(or false false)
+"should be"
+false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ftn-or.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

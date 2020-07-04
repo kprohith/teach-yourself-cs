@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/raise-prices.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.7; How to Design Programs </title>
+</head>
+<body>
+<a href="inventory1.html">10.2.6</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="recall2.html">10.2.8</a><pre>;; An inventory is either:
+;;   - empty, or
+;;   - (cons IR INV)
+;; where IR is an inventory-record, and
+;;       INV is an inventory
+
+;; An inventory-record is:
+;;   (make-ir S N)
+;; where S is a symbol, and
+;;       N is a number.
+(define-struct ir (name price))
+
+;; raise-prices : inventory -&gt; inventory
+;; raises all prices in an-inv by 5%
+
+#|
+;; TEMPLATE 
+(define (raise-prices an-inv)
+  (cond
+    [(empty? an-inv) ...]
+    [else (ir-name (first an-inv)) ...
+          (ir-price (first an-inv)) ...
+          (raise-prices (rest an-inv)) ...]))
+|#
+(define (raise-prices an-inv)
+  (cond
+    [(empty? an-inv) empty]
+    [else (cons
+           (make-ir (ir-name (first an-inv))
+                    (* 1.05 (ir-price (first an-inv))))
+           (raise-prices (rest an-inv)))]))
+
+;; EXAMPLES AS TESTS
+(raise-prices empty) "should be" empty
+(raise-prices (cons (make-ir 'rocket 1.00) empty)) "should be" (cons (make-ir 'rocket 1.05) empty)
+(raise-prices (cons (make-ir 'rocket 1.00) (cons (make-ir 'doll 1.40) empty))) "should be"
+(cons (make-ir 'rocket 1.05) (cons (make-ir 'doll 1.47) empty))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/raise-prices.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

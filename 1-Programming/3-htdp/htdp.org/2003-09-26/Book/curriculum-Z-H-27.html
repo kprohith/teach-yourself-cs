@@ -1,0 +1,853 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-27.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-26.html">previous</a></span><span>, <a href="curriculum-Z-H-28.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_21"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_21">Section  21</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_21">Designing Abstractions from Examples</a></h1>
+<p> <a name="node_idx_1454"></a></p>
+<p>
+When we first learn to add, we use concrete examples. Later on, we study
+how to add two arbitrary numbers; that is, we form an abstraction of the
+addition operation. Much later still, we learn to formulate abstractions
+directly as expressions: expressions that compute the wage of some
+employee, expressions that convert temperatures, or expressions
+that determine the area of a geometric shape. In short, we initially go from
+concrete examples to abstraction, but eventually we learn to form
+abstractions directly without thinking (much) about concrete instances.</p>
+<p>
+In this section, we discuss a design recipe for creating abstractions from
+concrete examples. Later, in sections&nbsp;<a href="#node_sec_21.5">21.5</a>
+and&nbsp;<a href="curriculum-Z-H-28.html#node_chap_22">22</a> we study additional approaches to
+function abstraction.</p>
+<p>
+</p>
+<a name="node_sec_21.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_21.1">21.1&nbsp;&nbsp;Abstracting from Examples</a></h2>
+<p></p>
+<p>
+Forming abstractions from examples is easy. As we have seen in
+section&nbsp;<a href="curriculum-Z-H-25.html#node_chap_19">19</a>, we start from two concrete function
+definitions, compare them, mark the differences, and abstract. Let us
+formulate these steps as a recipe:
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>The comparison:</b></dt><dd> When we find two function definitions that are
+almost the same except at a few places and for their names, we compare them
+and mark the differences with boxes. If the boxes contain only values, we
+can abstract.<p>
+</p>
+<p></p>
+<p><strong>Warning: Abstracting over Non-values</strong>:  The recipe requires a
+substantial modification for non-values.&nbsp;</p>
+<p>
+Here is a pair of similar function definitions: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1456"></a><a name="node_idx_1458"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">convertCF</span> <span class="selfeval">:</span> <span class="variable">lon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">convertCF</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<font style="background-color: pink"><u>C-&gt;F</u></font> (<span class="builtin">first</span> <span class="variable">alon</span>))
+	(<span class="variable">convertCF</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">names</span> <span class="selfeval">:</span> <span class="variable">loIR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">los</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">names</span> <span class="variable">aloIR</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloIR</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<font style="background-color: pink"><u>IR-name</u></font> (<span class="builtin">first</span> <span class="variable">aloIR</span>))
+	(<span class="variable">names</span> (<span class="builtin">rest</span> <span class="variable">aloIR</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+The two functions apply a function to each item in a list. They differ in
+only one aspect: what they apply to each item on the list. The two boxes
+emphasize the difference. Each contains a functional value, so we can
+abstract. <p>
+</p>
+</dd><dt><b>The abstraction:</b></dt><dd> Next we replace the contents of corresponding pairs
+of boxes with new names and add these names to the parameter list. For
+example, if there are three pairs of boxes, we need three new names.  The
+two definitions must now be the same, except for the function name. To
+obtain the abstraction, we systematically replace the function names with
+one new name.<p>
+For our running example, we obtain the following pair of functions: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1460"></a><a name="node_idx_1462"></a></td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">convertCF</span> <span class="variable">f</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<font style="background-color: pink"><u>f</u></font> (<span class="builtin">first</span> <span class="variable">alon</span>))
+	(<span class="variable">convertCF</span> <span class="variable">f</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">names</span> <span class="variable">f</span> <span class="variable">aloIR</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloIR</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<font style="background-color: pink"><u>f</u></font> (<span class="builtin">first</span> <span class="variable">aloIR</span>))
+	(<span class="variable">names</span> <span class="variable">f</span> (<span class="builtin">rest</span> <span class="variable">aloIR</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+We have replaced the boxed names with <code class="scheme"><span class="variable">f</span></code> and added <code class="scheme"><span class="variable">f</span></code> as a
+parameter. Now we replace <code class="scheme"><span class="variable">convertCF</span></code> and <code class="scheme"><span class="variable">names</span></code> with a new
+name and thus obtain the abstract function: 
+<a name="node_idx_1464"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="builtin">map</span> <span class="variable">f</span> <span class="variable">lon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">lon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="variable">f</span> (<span class="builtin">first</span> <span class="variable">lon</span>))
+	    (<span class="builtin">map</span> <span class="variable">f</span> (<span class="builtin">rest</span> <span class="variable">lon</span>)))]))
+</pre></div><p>
+We use the name <code class="scheme"><span class="builtin">map</span></code> for the result in our running example, because
+it is the traditional name in programming languages
+<a name="node_idx_1466"></a>for this specific function. </p>
+<p>
+</p>
+</dd><dt><b>The test:</b></dt><dd> Now we must validate that the new function is a correct
+abstraction of the original concrete functions. The very definition of
+abstraction suggests that we define the original functions in terms of the
+abstract one and test the new versions with the original examples. <p>
+In most cases, defining the original function based on the abstract one is
+straightforward. Suppose the abstract function is called <code class="scheme"><span class="variable">f-abstract</span></code>,
+and furthermore suppose that one original function is called
+<code class="scheme"><span class="variable">f-original</span></code> and consumes one argument. If <code class="scheme"><span class="variable">f-original</span></code>
+differs from the other concrete function in the use of one value, say,
+<code class="scheme"><span class="variable">boxed-value</span></code>, then we define the following function:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">f-from-abstract</span> <span class="variable">x</span>)
+  (<span class="variable">f-abstract</span> <span class="variable">boxed-value</span> <span class="variable">x</span>))
+</pre></div><p>
+For every proper value <code class="scheme"><span class="variable">V</span></code>, <code class="scheme">(<span class="variable">f-from-abstract</span> <span class="variable">V</span>)</code> now
+produces the same answer as <code class="scheme">(<span class="variable">f-original</span> <span class="variable">V</span>)</code>. </p>
+<p>
+Let us return to our example. Here are the two new definitions:
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1468"></a><a name="node_idx_1470"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">convertCF-from-map</span> <span class="selfeval">:</span> <span class="variable">lon</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">convertCF-from-map</span> <span class="variable">alon</span>)
+  (<span class="builtin">map</span> <i>C</i><tt>-&gt;</tt><i>F</i> <span class="variable">alon</span>))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">names-from-map</span> <span class="selfeval">:</span> <span class="variable">loIR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">los</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">names-from-map</span> <span class="variable">aloIR</span>)
+  (<span class="builtin">map</span> <span class="builtin">IR-name</span> <span class="variable">aloIR</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+To ensure that these two definitions are equivalent to the old one and,
+indirectly, that <code class="scheme"><span class="builtin">map</span></code> is a correct abstraction, we now apply these
+two functions to the examples that we specified for the development of 
+<code class="scheme"><span class="variable">convertCF</span></code> and <code class="scheme"><span class="variable">names</span></code>. <p>
+</p>
+</dd><dt><b>The contract:</b></dt><dd> To make the abstraction truly useful, we must also
+formulate a contract. If the boxed values in stage&nbsp;2 of our recipe are
+functions, a contract requires the use of arrow types. Furthermore, to
+obtain a widely usable contract, we may have to develop or use parametric
+data definitions and formulate a parametric type.<p>
+A case in point is the contract for <code class="scheme"><span class="builtin">map</span></code>. On one hand, if we view
+<code class="scheme"><span class="builtin">map</span></code> as an abstraction of <code class="scheme"><span class="variable">convertCF</span></code>, the contract could be
+construed as
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">map</span> <span class="selfeval">:</span> (<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>) (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+</pre></div><p>
+On the other hand, if we view <code class="scheme"><span class="builtin">map</span></code> as an abstraction of
+<code class="scheme"><span class="variable">names</span></code>, the contract could be construed as
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">map</span> <span class="selfeval">:</span> (<span class="variable">IR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span>) (<span class="keyword">listof</span> <span class="variable">IR</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">symbol</span>)</code></span>
+</pre></div><p>
+But the first contract would be useless in the second case, and vice
+versa. To accommodate both cases, we must understand what <code class="scheme"><span class="builtin">map</span></code>
+does and then fix a contract. </p>
+<p>
+By looking at the definition, we can see that map applies its first
+argument, a function, to every item on the second argument, a list. This
+implies that the function must consume the class of data that the list
+contains. That is, we know <code class="scheme"><span class="variable">f</span></code> has the contract 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">f</span> <span class="selfeval">:</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">???</span></code></span>
+</pre></div><p>
+if <code class="scheme"><span class="variable">lon</span></code> contains <code class="scheme"><span class="variable">X</span></code>s. Furthermore, <code class="scheme"><span class="builtin">map</span></code> creates a
+list from the results of applying <code class="scheme"><span class="variable">f</span></code> to each item. Thus, if
+<code class="scheme"><span class="variable">f</span></code> produces <code class="scheme"><span class="variable">Y</span></code>s, then <code class="scheme"><span class="builtin">map</span></code> produces a list of
+<code class="scheme"><span class="variable">Y</span></code>s. Translated into our language of contracts we get this: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">map</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">Y</span>)</code></span>
+</pre></div><p>
+This contract says that <code class="scheme"><span class="builtin">map</span></code> can produce a list of <code class="scheme"><span class="variable">Y</span></code>s from
+a list of <code class="scheme"><span class="variable">X</span></code>s and a function from <code class="scheme"><span class="variable">X</span></code> to <code class="scheme"><span class="variable">Y</span></code> -- no
+matter for what collection of <code class="scheme"><span class="variable">X</span></code> and <code class="scheme"><span class="variable">Y</span></code> stand.  
+</p>
+</dd></dl><p></p>
+<p>
+Once we have abstracted two (or more) functions, we should check whether
+there are other uses for the abstract function. In many cases, an abstract
+function is useful in a much broader array of contexts than we first
+anticipate and makes functions easier to read, understand, and maintain.
+For example, we can now use <code class="scheme"><span class="builtin">map</span></code> every time we need a function to
+produce a new list by processing all items on an existing list. If that
+function is a primitive operation or a function we have defined, we don't
+even write a function. Instead, we simply write an expression that performs
+the task. Unfortunately, there is no recipe that guides this discovery
+process.  We must practice it and develop an eye for matching abstract
+functions to situations.</p>
+<p>
+</p>
+<p><a name="node_thm_21.1.1"></a>
+<b>Exercise 21.1.1.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">tabulate</span></code>, which is the abstraction of the following two
+functions:  
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1472"></a><a name="node_idx_1474"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">tabulate-sin</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+<span class="comment">;; to tabulate <code class="scheme"><span class="builtin">sin</span></code> between <code class="scheme"><span class="variable">n</span></code> </span>
+<span class="comment">;; and <code class="scheme"><span class="selfeval">0</span></code> (inclusive) in a list</span>
+(<span class="keyword">define</span> (<span class="variable">tabulate-sin</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (<span class="builtin">list</span> (<span class="builtin">sin</span> <span class="selfeval">0</span>))]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<span class="builtin">sin</span> <span class="variable">n</span>)
+	(<span class="variable">tabulate-sin</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">tabulate-sqrt</span> <span class="selfeval">:</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">lon</span></code></span>
+<span class="comment">;; to tabulate <code class="scheme"><span class="builtin">sqrt</span></code> between <code class="scheme"><span class="variable">n</span></code> </span>
+<span class="comment">;; and <code class="scheme"><span class="selfeval">0</span></code> (inclusive) in a list</span>
+(<span class="keyword">define</span> (<span class="variable">tabulate-sqrt</span> <span class="variable">n</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">n</span> <span class="selfeval">0</span>) (<span class="builtin">list</span> (<span class="builtin">sqrt</span> <span class="selfeval">0</span>))]
+    [<span class="keyword">else</span>
+      (<span class="builtin">cons</span> (<span class="builtin">sqrt</span> <span class="variable">n</span>)
+	(<span class="variable">tabulate-sqrt</span> (<span class="builtin">sub1</span> <span class="variable">n</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+Be sure to define the two functions in terms of <code class="scheme"><span class="variable">tabulate</span></code>. 
+Also use <code class="scheme"><span class="variable">tabulate</span></code> to define a tabulation function for
+<code class="scheme"><span class="builtin">sqr</span></code> and <code class="scheme"><span class="builtin">tan</span></code>. What would be a good, general contract?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-tabulate.html">Solution</a><p></p>
+<p>
+</p>
+<p><a name="node_thm_21.1.2"></a>
+<b>Exercise 21.1.2.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">fold</span></code>, which is the abstraction of the following two functions: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1476"></a><a name="node_idx_1478"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of </span>
+<span class="comment">;; the numbers on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the product of </span>
+<span class="comment">;; the numbers on <code class="scheme"><span class="variable">alon</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="selfeval">1</span>]
+    [<span class="keyword">else</span> (<span class="builtin">*</span> (<span class="builtin">first</span> <span class="variable">alon</span>)
+	     (<span class="variable">product</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+Don't forget to test <code class="scheme"><span class="variable">fold</span></code>. <p>
+After <code class="scheme"><span class="variable">fold</span></code> is defined and tested, use it to define
+<code class="scheme"><span class="builtin">append</span></code>, which juxtaposes the items of two lists or, equivalently,
+replaces <code class="scheme"><span class="builtin">empty</span></code> at the end of the first list with the second list:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="builtin">append</span> (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span>) (<span class="builtin">list</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span>))
+        (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">2</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">5</span> <span class="selfeval">6</span> <span class="selfeval">7</span> <span class="selfeval">8</span>))
+</pre></div><p>
+Finally, define <code class="scheme"><span class="builtin">map</span></code> using <code class="scheme"><span class="variable">fold</span></code>. </p>
+<p>
+Compare the four examples to formulate a
+contract.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/abs-sum-prod.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.1.3"></a>
+<b>Exercise 21.1.3.</b>&nbsp;&nbsp; 
+Define <code class="scheme"><span class="variable">natural-f</span></code>, which is the abstraction of the following two
+functions:  
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1480"></a><a name="node_idx_1482"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">copy</span> <span class="selfeval">:</span> <strong>N</strong> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to create a list that contains</span>
+<span class="comment">;; <code class="scheme"><span class="variable">obj</span></code> <code class="scheme"><span class="variable">n</span></code> times</span>
+(<span class="keyword">define</span> (<span class="variable">copy</span> <span class="variable">n</span> <span class="variable">obj</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="builtin">cons</span> <span class="variable">obj</span> 
+                (<span class="variable">copy</span> (<span class="builtin">sub1</span> <span class="variable">n</span>) <span class="variable">obj</span>))]))
+</pre></div></td><td>&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">n-adder</span> <span class="selfeval">:</span> <strong>N</strong> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to add <code class="scheme"><span class="variable">n</span></code> to <code class="scheme"><span class="variable">x</span></code> using</span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">+</span> <span class="selfeval">1</span> ...)</code> only</span>
+(<span class="keyword">define</span> (<span class="variable">n-adder</span> <span class="variable">n</span> <span class="variable">x</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">n</span>) <span class="variable">x</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> <span class="selfeval">1</span>
+             (<span class="variable">n-adder</span> (<span class="builtin">sub1</span> <span class="variable">n</span>) <span class="variable">x</span>))]))
+</pre></div></td><td>
+</td></tr></table></div>
+
+Don't forget to test <code class="scheme"><span class="variable">natural-f</span></code>.  Also use <code class="scheme"><span class="variable">natural-f</span></code> to
+define <code class="scheme"><span class="variable">n-multiplier</span></code>, which consumes <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">x</span></code> and
+produces <code class="scheme"><span class="variable">n</span></code> times <code class="scheme"><span class="variable">x</span></code> with additions only.  Use the examples
+to formulate a contract.<p>
+<strong>Hint:</strong>  The two function differ more than, say, the functions <code class="scheme"><span class="variable">sum</span></code>
+and <code class="scheme"><span class="variable">product</span></code> in exercise&nbsp;<a href="#node_thm_21.1.2">21.1.2</a>. In particular, the
+base case in one instance is a argument of the function, where in the other
+it is just a constant value.  &nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/N-fold.html">Solution</a></p>
+<p></p>
+<p>
+<a name="node_idx_1484"></a></p>
+<p></p>
+<p><strong>Formulating General Contracts</strong>:  To increase the usefulness of an
+abstract function, we must formulate a contract that describes its
+applicability in the most general terms possible. In principle, abstracting
+contracts follows the same recipe that we use for abstracting functions. We
+compare and contrast the old contracts; then we replace the differences
+with variables. But the process is complicated and requires a lot of
+practice.</p>
+<p>
+Let us start with our running example: <code class="scheme"><span class="variable">convertCF</span></code> and <code class="scheme"><span class="variable">names</span></code>:
+
+
+
+</p>
+<div align="center"><table><tr><td>
+<table border="0"><tr><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code></td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>     </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">symbol</span>)</code>
+</td></tr></table>
+</td></tr></table></div>
+Comparing the two contracts shows that they differ in two places. To the
+left of <code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code>, we have <code class="scheme"><span class="variable">number</span></code> and <code class="scheme"><span class="variable">IR</span></code>; to the right,
+it is <code class="scheme"><span class="variable">number</span></code> versus <code class="scheme"><span class="variable">symbol</span></code>.<p>
+Consider the second stage of our abstraction recipe. The most natural
+contracts are as follows: 
+
+
+
+</p>
+<div align="center"><table><tr><td>
+<table border="0"><tr><td valign="top"><code class="scheme">(<span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span>)</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code></td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">IR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span>)</code>     </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>     </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">symbol</span>)</code>
+</td></tr></table>
+</td></tr></table></div>
+These new contracts suggest a pattern. Specifically, they suggest that the
+first argument, a function, consumes the items on the second argument, a
+list, and furthermore, that the results produced by these applications make
+up the output. The second contract is particularly telling. If we replace
+<code class="scheme"><span class="variable">IR</span></code> and <code class="scheme"><span class="variable">symbol</span></code> with variables, we get an abstract
+contract, and it is indeed a contract for <code class="scheme"><span class="builtin">map</span></code>:
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="builtin">map</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">Y</span>)</code>
+</td></tr></table></div>
+
+It is straightforward to check that by replacing <code class="scheme"><span class="variable">X</span></code> with
+<code class="scheme"><span class="variable">number</span></code> and <code class="scheme"><span class="variable">Y</span></code> with <code class="scheme"><span class="variable">number</span></code>, we get the first
+of the intermediate contracts. <p>
+Here is a second pair of examples:
+
+
+
+</p>
+<div align="center"><table><tr><td>
+<table border="0"><tr><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code></td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>     </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>
+</td></tr></table>
+</td></tr></table></div>
+They are the contracts for <code class="scheme"><span class="variable">below</span></code> and <code class="scheme"><span class="variable">below-ir</span></code>. The
+contracts differ in two places: the lists consumed and produced.  As usual,
+the functions of the second stage consume an additional argument:
+
+
+
+<div align="center"><table><tr><td>
+<table border="0"><tr><td valign="top"><code class="scheme">(<span class="variable">number</span> <span class="variable">number</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code> </td><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">number</span>)</code></td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">number</span> <span class="variable">IR</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code>      </td><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>     </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">IR</span>)</code>
+</td></tr></table>
+</td></tr></table></div>
+The new argument is a function, which in the first case consumes a number,
+and in the second case an <code class="scheme"><span class="variable">IR</span></code>.<p>
+A comparison of the two contracts suggests that <code class="scheme"><span class="variable">number</span></code> and
+<code class="scheme"><span class="variable">IR</span></code> occupy related positions and that we should replace them with a
+variable. Doing so makes the two contracts equal: 
+
+
+
+</p>
+<div align="center"><table><tr><td>
+<table border="0"><tr><td valign="top"><code class="scheme">(<span class="variable">number</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code> </td><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code></td></tr>
+<tr><td valign="top"> </td></tr>
+<tr><td valign="top"><code class="scheme">(<span class="variable">number</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>)</code> </td><td valign="top"><code class="scheme"><span class="variable">number</span></code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code> </td><td valign="top"><code class="scheme">&nbsp;<tt>-&gt;</tt>&nbsp;</code> </td><td valign="top"><code class="scheme">(<span class="keyword">listof</span> <span class="variable">X</span>)</code>
+</td></tr></table>
+</td></tr></table></div>
+A closer inspection of <code class="scheme"><span class="variable">filter1</span></code>'s definition shows that we can also
+replace <code class="scheme"><span class="variable">number</span></code> with <code class="scheme"><span class="variable">Y</span></code> because the second argument is
+always just the first argument of <code class="scheme"><span class="variable">filter1</span></code>'s first argument. <p>
+Here is the new contract: 
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="variable">filter1</span> <span class="selfeval">:</span> (<span class="variable">Y</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) <span class="variable">Y</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code>
+</td></tr></table></div>
+
+The result of the first argument must be <code class="scheme"><span class="variable">boolean</span></code>, because it is
+used as a condition. Hence we have found the most general contract
+possible.<p>
+The two examples illustrate how to find general contracts. We compare the
+contracts of the examples from which we create abstractions. By replacing
+specific, distinct classes in corresponding positions, one at a time, we
+make the contract gradually more general. To ensure that our generalized
+contract works, we check that the contract describes the specific instances
+of the abstracted function properly.&nbsp;</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_21.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_21.2">21.2&nbsp;&nbsp;Finger Exercises with Abstract List Functions</a></h2>
+<p></p>
+<p>
+Scheme provides a number of abstract functions for processing lists. 
+Figure&nbsp;<a href="#node_fig_Temp_115">57</a> collects the specification of the
+most important ones. Using these functions greatly simplifies many 
+programming tasks and helps readers understand programs quickly. The
+following exercises provide an opportunity to get acquainted with these 
+functions. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_115"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1486"></a>
+<a name="node_idx_1488"></a><a name="node_idx_1490"></a><a name="node_idx_1492"></a><a name="node_idx_1494"></a><a name="node_idx_1496"></a><a name="node_idx_1498"></a><a name="node_idx_1500"></a><a name="node_idx_1502"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">build-list</span> <span class="selfeval">:</span> <strong>N</strong> (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct <code class="scheme">(<span class="builtin">list</span> (<span class="variable">f</span> <span class="selfeval">0</span>) ... (<span class="variable">f</span> (<span class="builtin">-</span> <span class="variable">n</span> <span class="selfeval">1</span>)))</code></span>
+(<span class="keyword">define</span> (<span class="builtin">build-list</span> <span class="variable">n</span> <span class="variable">f</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">filter</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct a list from all those items on <code class="scheme"><span class="variable">alox</span></code> for which <code class="scheme"><span class="variable">p</span></code> holds </span>
+(<span class="keyword">define</span> (<span class="builtin">filter</span> <span class="variable">p</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">quicksort</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">X</span>) (<span class="variable">X</span> <span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct a list from all items on <code class="scheme"><span class="variable">alox</span></code> in an order according to <code class="scheme"><span class="variable">cmp</span></code></span>
+(<span class="keyword">define</span> (<span class="builtin">quicksort</span> <span class="variable">alox</span> <span class="variable">cmp</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">map</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">Y</span>)</code></span>
+<span class="comment">;; to construct a list by applying <code class="scheme"><span class="variable">f</span></code> to each item on <code class="scheme"><span class="variable">alox</span></code></span>
+<span class="comment">;; that is, <code class="scheme">(<span class="builtin">map</span> <span class="variable">f</span> (<span class="builtin">list</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>))</code> = <code class="scheme">(<span class="builtin">list</span> (<span class="variable">f</span> <span class="variable">x-1</span>) ... (<span class="variable">f</span> <span class="variable">x-n</span>))</code></span>
+(<span class="keyword">define</span> (<span class="builtin">map</span> <span class="variable">f</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">andmap</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">p</span></code> holds for every item on <code class="scheme"><span class="variable">alox</span></code></span>
+<span class="comment">;; that is, <code class="scheme">(<span class="builtin">andmap</span> <span class="variable">p</span> (<span class="builtin">list</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>))</code> = <code class="scheme">(<span class="keyword">and</span> (<span class="variable">p</span> <span class="variable">x-1</span>) (<span class="keyword">and</span> ... (<span class="variable">p</span> <span class="variable">x-n</span>)))</code></span>
+(<span class="keyword">define</span> (<span class="builtin">andmap</span> <span class="variable">p</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">ormap</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">p</span></code> holds for at least one item on <code class="scheme"><span class="variable">alox</span></code></span>
+<span class="comment">;; that is, <code class="scheme">(<span class="builtin">ormap</span> <span class="variable">p</span> (<span class="builtin">list</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>))</code> = <code class="scheme">(<span class="keyword">or</span> (<span class="variable">p</span> <span class="variable">x-1</span>) (<span class="keyword">or</span> ... (<span class="variable">p</span> <span class="variable">x-n</span>)))</code></span>
+(<span class="keyword">define</span> (<span class="builtin">ormap</span> <span class="variable">p</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">foldr</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">Y</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) <span class="variable">Y</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span></code></span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">foldr</span> <span class="variable">f</span> <span class="variable">base</span> (<span class="builtin">list</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>)) <span class="builtin">=</span> (<span class="variable">f</span> <span class="variable">x-1</span> ... (<span class="variable">f</span> <span class="variable">x-n</span> <span class="variable">base</span>))</code> </span>
+(<span class="keyword">define</span> (<span class="builtin">foldr</span> <span class="variable">f</span> <span class="variable">base</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">foldl</span> <span class="selfeval">:</span> (<span class="variable">X</span> <span class="variable">Y</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) <span class="variable">Y</span> (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span></code></span>
+<span class="comment">;; <code class="scheme">(<span class="builtin">foldl</span> <span class="variable">f</span> <span class="variable">base</span> (<span class="builtin">list</span> <span class="variable">x-1</span> ... <span class="variable">x-n</span>)) <span class="builtin">=</span> (<span class="variable">f</span> <span class="variable">x-n</span> ... (<span class="variable">f</span> <span class="variable">x-1</span> <span class="variable">base</span>))</code> </span>
+(<span class="keyword">define</span> (<span class="builtin">foldl</span> <span class="variable">f</span> <span class="variable">base</span> <span class="variable">alox</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="builtin">assf</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">X</span> <span class="variable">Y</span>)) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="builtin">list</span> <span class="variable">X</span> <span class="variable">Y</span>) <span class="keyword">or</span> false</code></span>
+<span class="comment">;; to find the first item on <code class="scheme"><span class="variable">alop</span></code> for whose first item <code class="scheme"><span class="variable">p?</span></code> holds</span>
+(<span class="keyword">define</span> (<span class="builtin">assf</span> <span class="variable">p?</span> <span class="variable">alop</span>) ...)
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 57:</b>&nbsp;&nbsp;Scheme's built-in abstract functions for list-processing</td></tr>
+<tr><td>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_21.2.1"></a>
+<b>Exercise 21.2.1.</b>&nbsp;&nbsp; 
+Use <code class="scheme"><span class="builtin">build-list</span></code> 
+</p>
+<ol>
+<li><p>to create the lists <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">0</span> ... <span class="selfeval">3</span>)</code> and <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">1</span> ... <span class="selfeval">4</span>)</code>;
+</p>
+<li><p>to create the list <code class="scheme">(<span class="builtin">list</span> <span class="selfeval">.1</span> <span class="selfeval">.01</span> <span class="selfeval">.001</span> <span class="selfeval">.0001</span>)</code>;
+</p>
+<li><p>to define <code class="scheme"><span class="variable">evens</span></code>, which consumes a natural number <code class="scheme"><span class="variable">n</span></code>
+and creates the list of the first <code class="scheme"><span class="variable">n</span></code> even numbers; 
+</p>
+<li><p>to define <code class="scheme"><span class="variable">tabulate</span></code> from exercise&nbsp;<a href="#node_thm_21.1.1">21.1.1</a>; and
+</p>
+<li><p>to define <code class="scheme"><span class="variable">diagonal</span></code>, which consumes a natural number <code class="scheme"><span class="variable">n</span></code>
+and creates a list of lists of <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="selfeval">1</span></code>. <br>
+Example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">equal?</span> (<span class="variable">diagonal</span> <span class="selfeval">3</span>)
+        (<span class="builtin">list</span> 
+	  (<span class="builtin">list</span> <span class="selfeval">1</span> <span class="selfeval">0</span> <span class="selfeval">0</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">0</span>)
+	  (<span class="builtin">list</span> <span class="selfeval">0</span> <span class="selfeval">0</span> <span class="selfeval">1</span>)))
+</pre></div><p>
+</p>
+</li></ol><p>
+Use local if function definitions require auxiliary functions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/build-list1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.2.2"></a>
+<b>Exercise 21.2.2.</b>&nbsp;&nbsp;  
+Use <code class="scheme"><span class="builtin">map</span></code> to define the following functions:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">convert-euro</span></code>, which converts a list of U.S. dollar amounts
+into a list of euro amounts based on an exchange rate of 1.22 euro for each
+dollar;</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">convertFC</span></code>, which converts a list of Fahrenheit measurements
+to a list of Celsius measurements; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">move-all</span></code>, which consumes a list of <code class="scheme"><span class="variable">posn</span></code> structures and
+translates each by adding <code class="scheme"><span class="selfeval">3</span></code> to the <em>x</em>-component.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/use-map.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.2.3"></a>
+<b>Exercise 21.2.3.</b>&nbsp;&nbsp; 
+Here is the version of <code class="scheme"><span class="builtin">filter</span></code> that DrScheme provides: 
+<a name="node_idx_1504"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="builtin">filter</span> <span class="selfeval">:</span> (<span class="variable">X</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span>) (<span class="keyword">listof</span> <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">X</span>)</code></span>
+<span class="comment">;; to construct a list of <code class="scheme"><span class="variable">X</span></code> from all those items on <code class="scheme"><span class="variable">alon</span></code></span>
+<span class="comment">;; for which <code class="scheme"><span class="variable">predicate?</span></code> holds </span>
+(<span class="keyword">define</span> (<span class="builtin">filter</span> <span class="variable">predicate?</span> <span class="variable">alon</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">alon</span>) <span class="builtin">empty</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="variable">predicate?</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) 
+	     (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="builtin">filter</span> <span class="variable">predicate?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))]
+	    [<span class="keyword">else</span> (<span class="builtin">filter</span> <span class="variable">predicate?</span> (<span class="builtin">rest</span> <span class="variable">alon</span>))])]))
+</pre></div><p></p>
+<p>
+Use <code class="scheme"><span class="builtin">filter</span></code> to define the following functions:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">eliminate-exp</span></code>, which consumes a number, <code class="scheme"><span class="variable">ua</span></code>, and a
+list of toy structures (containing name and price) and produces a list of
+all those descriptions whose price is below <code class="scheme"><span class="variable">ua</span></code>;</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">recall</span></code>, which consumes the name of a toy, called
+<code class="scheme"><span class="variable">ty</span></code>, and a list of names, called <code class="scheme"><span class="variable">lon</span></code>, and produces a list
+of names that contains all components of <code class="scheme"><span class="variable">lon</span></code> with the exception of
+<code class="scheme"><span class="variable">ty</span></code>; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">selection</span></code>, which consumes two lists of names and selects all
+those from the second one that are also on the
+first.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/use-filter.html">Solution</a></p>
+</li></ol><p>
+
+</p>
+
+   <hr>
+ <p></p>
+<p>
+</p>
+<a name="node_sec_21.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_21.3">21.3&nbsp;&nbsp;Abstraction and a Single Point of Control</a></h2>
+<p></p>
+<p>
+Just like editing papers, abstracting programs has many
+advantages. Creating an abstraction often simplifies other definitions. The
+process of abstracting may uncover problems with existing functions. But,
+the single most important advantage of abstraction is that it creates a
+<small>S</small><small>I</small><small>N</small><small>G</small><small>L</small><small>E</small> <small>P</small><small>O</small><small>I</small><small>N</small><small>T</small> <small>O</small><small>F</small> <small>C</small><small>O</small><small>N</small><small>T</small><small>R</small><small>O</small><small>L</small> 
+<a name="node_idx_1506"></a>for the functionality in a program. In
+other words, it (as much as possible) puts in one place the definitions
+related to some specific task.</p>
+<p>
+Putting the definitions for a specific task in one place makes it easier to
+maintain a program. Roughly put, program maintenance means fixing the
+program so that it functions properly in previously untested cases;
+extending the program so that it can deal with new or unforeseen
+situations; or changing the representation of some information as data (for
+example, calendar dates). With everything in one place, fixing an error
+means fixing it in one function, not four or five similar
+versions. Extending a function's capabilities means fixing one function,
+not its related copies. And changing a data representation means changing a
+general data-traversal function, not all those that came from the same
+template. Translated into a guideline, this becomes:</p>
+<p>
+</p>
+<table bgcolor="pink" align="center">
+<tr><td><font color="maroon" size="+3">
+Guideline on Creating Abstractions
+</font></td></tr>
+<tr><td><font color="maroon"><p>
+Form an abstraction instead of copying
+and modifying a piece of a program.
+</p></font></td></tr>
+</table>
+ <p>
+Experience teaches us that maintaining software is expensive. Programmers
+can reduce the maintenance cost by organizing programs correctly. The
+first principle of function organization is to match the function's
+structure to the structure of its input data. If every programmer
+follows this rule, it is easy to modify and extend functions when the
+set of possible input data changes. The second principle is to
+introduce proper abstractions. Every abstracted function creates a
+single point of control for at least two different functions, often for
+several more.  After we have abstracted, we often find more uses of the
+new function. </p>
+<p>
+Our design recipe for abstracting functions is the most basic tool to
+create abstractions. To use it requires practice. As we practice, we expand
+our capabilities for building and using abstractions. The best programmers
+are those who actively edit their programs to build new abstractions so that
+they collect things related to a task at a single point. Here we use
+functional abstraction to study this practice. While not all
+languages
+<a name="node_idx_1508"></a>provide the freedom to abstract functions as easily as Scheme, modern
+languages often support similar concepts and practicing in powerful
+languages such as Scheme is the best possible preparation.<a name="call_footnote_Temp_116"></a><a href="#footnote_Temp_116"><sup><small>47</small></sup></a></p>
+<p>
+</p>
+<a name="node_sec_21.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_21.4">21.4&nbsp;&nbsp;Extended Exercise: Moving Pictures, Again</a></h2>
+<p> </p>
+<p>
+In sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.6">6.6</a>, <a href="curriculum-Z-H-10.html#node_sec_7.4">7.4</a>,
+and&nbsp;<a href="curriculum-Z-H-14.html#node_sec_10.3">10.3</a>, we studied the problem of moving pictures across a
+canvas. The problem had two parts: moving individual shapes and moving a
+picture, which is a list of shapes. For the first part, we need functions
+to draw, clear, and translate a shape. For the second part, we need
+functions that draw all shapes on a list, that clear all shapes on a list,
+and that translate all shapes on a list. Even the most cursory look at the
+functions shows many repetitions. The following exercises aim to eliminate
+these repetitions via manual abstraction and Scheme's built-in operations.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_21.4.1"></a>
+<b>Exercise 21.4.1.</b>&nbsp;&nbsp;  
+Abstract the functions <code class="scheme"><span class="variable">draw-a-circle</span></code> and <code class="scheme"><span class="variable">clear-a-circle</span></code> into a
+single function <code class="scheme"><span class="variable">process-circle</span></code>. </p>
+<p>
+Define <code class="scheme"><span class="variable">translate-circle</span></code> using <code class="scheme"><span class="variable">process-circle</span></code>.  <strong>Hint:</strong>  If a
+primitive function doesn't quite fit an abstraction, we have to define
+auxiliary functions. For now, use <code class="scheme"><span class="keyword">define</span></code> to do so. Intermezzo&nbsp;4
+introduces a handy and important short-hand for that
+purpose.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-circle-abs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.4.2"></a>
+<b>Exercise 21.4.2.</b>&nbsp;&nbsp;  
+Abstract the functions <code class="scheme"><span class="variable">draw-a-rectangle</span></code> and <code class="scheme"><span class="variable">clear-a-rectangle</span></code> into a
+single function <code class="scheme"><span class="variable">process-rectangle</span></code>. </p>
+<p>
+Define <code class="scheme"><span class="variable">translate-rectangle</span></code> using
+<code class="scheme"><span class="variable">process-rectangle</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-rect-abs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.4.3"></a>
+<b>Exercise 21.4.3.</b>&nbsp;&nbsp;  
+Abstract the functions <code class="scheme"><span class="variable">draw-shape</span></code> and <code class="scheme"><span class="variable">clear-shape</span></code> into a
+single function <code class="scheme"><span class="variable">process-shape</span></code>. Compare the function with the template
+<code class="scheme"><span class="variable">fun-for-shape</span></code>.</p>
+<p>
+Define <code class="scheme"><span class="variable">translate-shape</span></code> using <code class="scheme"><span class="variable">process-shape</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-fig-abs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_21.4.4"></a>
+<b>Exercise 21.4.4.</b>&nbsp;&nbsp;  
+Use Scheme's <code class="scheme"><span class="builtin">map</span></code> and <code class="scheme"><span class="builtin">andmap</span></code> to define <code class="scheme"><span class="variable">draw-losh</span></code>,
+<code class="scheme"><span class="variable">clear-losh</span></code>, and <code class="scheme"><span class="variable">translate-losh</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-list-map.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_117"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center">
+
+<p>
+
+</p>
+
+  <center><img src="../icons/ll.jpg" alt="lunar" lander=""></center>
+  <p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 58:</b>&nbsp;&nbsp;The Apollo 11 lunar lander</td></tr>
+<tr><td> 
+<div align="center">&nbsp;<span class="footnotesize">NASA: National Space Science Data Center</span>&nbsp;</div>
+<p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_21.4.5"></a>
+<b>Exercise 21.4.5.</b>&nbsp;&nbsp;    
+Modify the functions of exercises&nbsp;<a href="#node_thm_21.4.3">21.4.3</a>
+and&nbsp;<a href="#node_thm_21.4.4">21.4.4</a> so that pictures move up and down on a canvas.</p>
+<p>
+Modify all definitions so that a shape can also be a line; a line has a
+start position, an end position, and a color.</p>
+<p>
+Define <code class="scheme"><span class="variable">LUNAR</span></code>, a list that sketches a lunar lander picture (see
+figure&nbsp;<a href="#node_fig_Temp_117">58</a>). The list should consist of rectangles,
+circles, and lines.</p>
+<p>
+Develop the program <code class="scheme"><span class="variable">lunar-lander</span></code>. It places LUNAR at the top of a
+canvas and then uses the modified functions to move the lander up or down. </p>
+<p>
+Use the teachpack <tt><strong>arrow.ss</strong></tt> to give users control over how fast and when
+the lunar lander should move: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">start</span> <span class="selfeval">500</span> <span class="selfeval">100</span>)
+(<span class="variable">draw</span> <span class="variable">LUNAR</span>)
+(<span class="variable">control-up-down</span> <span class="variable">LUNAR</span> <span class="selfeval">10</span> <span class="variable">move-lander</span> <span class="variable">draw-losh</span>)
+</pre></div><p>
+If time permits, modify the function so that a player can move the lander up,
+down, left or right. Use <code class="scheme"><span class="variable">controller</span></code> from <tt><strong>arrow.ss</strong></tt> to control the
+movements in all directions.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/moving-updown.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_21.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_21.5">21.5&nbsp;&nbsp;Note: Designing Abstractions from Templates</a></h2>
+<p>
+<a name="node_idx_1510"></a></p>
+<p>
+At the very beginning of this part of the book, we discussed how we design
+sets of functions from the same template. More specifically, when we
+design a set of functions that all consume the same kind of data, we reuse
+the same template over and over again. It is therefore not surprising that
+the function definitions look similar and that we will abstract them
+later. </p>
+<p>
+Indeed, we could abstract from the templates directly. While this topic is
+highly advanced and still a subject of research in the area of programming
+languages,
+<a name="node_idx_1512"></a>we can discuss it with a short example. Consider the template for lists: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fun-for-l</span> <span class="variable">l</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">l</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">l</span>) ... (<span class="variable">fun-for-l</span> (<span class="builtin">rest</span> <span class="variable">l</span>)) ...]))
+</pre></div><p>
+It contains two gaps, one in each clause. When we define a list-processing
+function, we fill these gaps. In the first clause, we typically place a
+plain value. For the second one, we combine <code class="scheme">(<span class="builtin">first</span> <span class="variable">l</span>)</code> and
+<code class="scheme">(<span class="variable">f</span> (<span class="builtin">rest</span> <span class="variable">l</span>))</code> where <code class="scheme"><span class="variable">f</span></code> is the recursive function. </p>
+<p>
+We can abstract over this programming task with the following function: 
+<a name="node_idx_1514"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reduce</span> <span class="selfeval">:</span> <span class="variable">X</span> (<span class="variable">X</span>  <span class="variable">Y</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span>) (<span class="keyword">listof</span> <span class="variable">Y</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">Y</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reduce</span> <span class="variable">base</span> <span class="variable">combine</span> <span class="variable">l</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">l</span>) <span class="variable">base</span>]
+    [<span class="keyword">else</span> (<span class="variable">combine</span> (<span class="builtin">first</span> <span class="variable">l</span>)
+	    (<span class="variable">reduce</span> <span class="variable">base</span> <span class="variable">combine</span> (<span class="builtin">rest</span> <span class="variable">l</span>)))]))
+</pre></div><p>
+It consumes two extra arguments: <code class="scheme"><span class="variable">base</span></code>, which is the value for the
+base case, and <code class="scheme"><span class="variable">combine</span></code>, which is a function that performs the
+value combination for the second clause. </p>
+<p>
+Using <code class="scheme"><span class="variable">reduce</span></code> we can define many plain list-processing functions as
+well as almost all the functions of figure&nbsp;<a href="#node_fig_Temp_115">57</a>. Here
+are two of them: 
+</p>
+<div align="center"><table><tr><td>
+
+<a name="node_idx_1516"></a><a name="node_idx_1518"></a></td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">l</span>) (<span class="variable">reduce</span> <span class="selfeval">0</span> <span class="builtin">+</span> <span class="variable">l</span>))
+</pre></div></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">product</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">product</span> <span class="variable">l</span>) (<span class="variable">reduce</span> <span class="selfeval">1</span> <span class="builtin">*</span> <span class="variable">l</span>))
+</pre></div></td><td>
+</td></tr></table></div>
+
+For <code class="scheme"><span class="variable">sum</span></code>, the base case always produces <code class="scheme"><span class="selfeval">0</span></code>; adding the
+first item and the result of the natural recursion combines the values of
+the second clause. Analogous reasoning explains <code class="scheme"><span class="variable">product</span></code>. <p>
+To define <code class="scheme"><span class="variable">sort</span></code>, we need to define an auxiliary function first: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort</span> <span class="selfeval">:</span> (<span class="keyword">listof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">listof</span> <span class="variable">number</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">sort</span> <span class="variable">l</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">an</span> <span class="variable">alon</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">empty?</span> <span class="variable">alon</span>) (<span class="builtin">list</span> <span class="variable">an</span>)]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="builtin">&gt;</span> <span class="variable">an</span> (<span class="builtin">first</span> <span class="variable">alon</span>)) (<span class="builtin">cons</span> <span class="variable">an</span> <span class="variable">alon</span>)]
+		      [<span class="keyword">else</span> (<span class="builtin">cons</span> (<span class="builtin">first</span> <span class="variable">alon</span>) (<span class="variable">insert</span> <span class="variable">an</span> (<span class="builtin">rest</span> <span class="variable">alon</span>)))])])))
+    (<span class="variable">reduce</span> <span class="builtin">empty</span> <span class="variable">insert</span> <span class="variable">l</span>)))
+</pre></div><p>
+Other list-processing functions can be defined in a similar manner. </p>
+<p>
+</p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_116"></a><a href="#call_footnote_Temp_116"><sup><small>47</small></sup></a> A
+currently popular method of abstraction is <small>I</small><small>N</small><small>H</small><small>E</small><small>R</small><small>I</small><small>T</small><small>A</small><small>N</small><small>C</small><small>E</small> in
+class-based object-oriented programming languages. Inheritance is quite
+similar to functional abstraction, though it emphasizes those aspects that
+change over those that stay the same.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-26.html">previous</a></span><span>, <a href="curriculum-Z-H-28.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-27.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

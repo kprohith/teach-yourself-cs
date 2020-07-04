@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="random3.html">11.3.2</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="random4.html">11.3.4</a><pre>;; random-n-m : integer integer -&gt; integer
+;; to compute a random number between n and m-1 (inclusive)
+;; Assume: n &lt; m 
+(define (random-n-m n m) 
+  (+ (random (- m n)) n)) 
+
+;; (random n) returns a number in this interval:
+;; ------[--------------)--------
+;;   -1  0  1  2  ...   n
+
+;; Thus, (random (- m n)) return a number in this interval:
+;; ------[--------------)--------
+;;   -1  0  1  2  ...  m-n
+
+;; So, (+ (random (- m n)) n) returns a number
+;; in this interval:
+;; ------[-------------------)----
+;;   -1  n  n+1  n+2  ...  m-n+n
+
+;; That interval is the same as this one:
+;; So, (+ (random (- m n)) n) returns a number
+;; in this interval:
+;; ------[-----------------)----
+;;   -1  n  n+1  n+2  ...  m
+
+; -------------------------------------------------------------------------
+;; Language: Beginning Student
+
+;; check-range1? : list-of-numbers -&gt; boolean
+;; determines if the list of numbers is between 5 and 95
+
+#|
+;; Template 
+(define (check-range1? a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (check-range1? (rest a-lon)) ...]))
+|#
+
+(define (check-range1? a-lon)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (&lt;= 5 (first a-lon) 95)
+               (check-range1? (rest a-lon)))]))
+
+;; Examples:
+
+(check-expect (check-range1? empty) true)
+(check-expect (check-range1? (cons 50 empty)) true)
+(check-expect (check-range1? (cons 101 empty)) false)
+(check-expect (check-range1? (cons 45 (cons 52 (cons 23 (cons 44 (cons 96 (cons 22 empty))))))) false)
+
+;; check-range? : list-of-numbers number number -&gt; boolean
+;; checks to make sure all of the numbers on a-lon are between n1 and n2
+
+#|
+;; Template
+(define (check-range? a-lon n1 n2)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (check-range (rest a-lon) n1 n2) ...]))
+
+|#
+
+(define (check-range? a-lon n1 n2)
+  (cond
+    [(empty? a-lon) true]
+    [else (and (&lt;= n1 (first a-lon) n2)
+               (check-range? (rest a-lon) n1 n2))]))
+
+(check-expect (check-range? empty 1 2) true)
+(check-expect (check-range? (cons 5 empty) 3 7) true)
+(check-expect (check-range? (cons 100 empty) 3 7) false)
+(check-expect (check-range? (cons 1 (cons 3 (cons 54 (cons 12312 empty)))) 0 1000000000) true)
+(check-expect (check-range? (cons 1 (cons 1000000000 (cons -1000000000 empty))) -1 1) false)
+
+; -------------------------------------------------------------------------
+
+;; create-temps : natnum integer integer -&gt; list of integers
+;; to produce a list of n integers that are between low and high
+(define (create-temps n low high)
+  (cond
+    [(zero? n) null]
+    [else (cons (random-n-m low high)
+                (create-temps (sub1 n) low high))]))
+
+;; testing
+
+(equal? (create-temps 0 1 12) 
+        empty)
+
+(check-range
+ (create-temps 1 3 4)
+ 3
+ 4)
+
+(check-range
+ (create-temps 40 100 300)
+ 100
+ 300)
+
+
+#|
+
+Q: Can we simply feed the result of create-temps into check-range or do we need to know the list that create-temps produced? 
+
+A: We cannot simply feed the result of create-temps into check-range to test create-temps; we must also know the low and high arguments to create-temps.
+
+Q: Are there values for low and high such that we don't need to know the result of create-temps and yet we can predict the result of the test? 
+
+A: If low is one greater than high than we know that the entire list must contain low.
+
+Q: Which function tests which? 
+
+A: Each function can test the other one.
+
+Q: What does this tell us about testing with automatically generated test data? 
+
+A: They are good for stress tests, but they are not good for testing in general. 
+
+|#
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/random2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

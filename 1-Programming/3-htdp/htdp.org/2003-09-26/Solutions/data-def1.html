@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/data-def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="eval-cp-x.html">6.3.2</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="def-struct-dd.html">6.4.1</a><pre>;; A jet-fighter is a structure:
+;;  (make-jet-fighter symbol number number number)
+(define-struct jet-fighter (designation acceleration top-speed range))
+
+;; within-range : jet-fighter number -&gt; boolean
+;; to determine if jf can go distance d
+(define (within-range jf d)
+  (&lt;= d (jet-fighter-range jf)))
+
+;; EXAMPLES
+(within-range (make-jet-fighter 'f22 4 1000 600) 400)
+"should be" true
+(within-range (make-jet-fighter 'mig22 10 800 300) 400)
+"should be" false
+
+;; reduce-range : jet-fighter -&gt; jet-fighter
+;; to return a jet-fighter whose range is 80% of jf's.
+(define (reduce-range jf)
+  (make-jet-fighter
+   (jet-fighter-designation jf)
+   (jet-fighter-acceleration jf)
+   (jet-fighter-top-speed jf)
+   (* .8 (jet-fighter-range jf))))
+
+;; EXAMPLE
+(reduce-range
+ (make-jet-fighter 'f22 4 1000 600))
+"should be"
+(make-jet-fighter 'f22 4 1000 480)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/data-def1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

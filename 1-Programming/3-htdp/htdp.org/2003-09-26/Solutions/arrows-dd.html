@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/arrows-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 20.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="sem2-funcs.html">20.1.3</a> | <a href="../Book/curriculum-Z-H-26.html#node_thm_20.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="fancy-contracts.html">20.2.2</a><pre>;; Language: Intermediate Student
+
+;; 1. (number  -&gt;  boolean),
+;; consumes a number and produces a boolean;
+
+;; For example:
+;; g: number -&gt; boolean
+;; consumes a number x, produces true if x &gt; 0, false otherwise.
+(define (g x)
+  (&gt; x 0))
+(check-expect (filter g (list -3 -2 -1 0 1 2)) (list 1 2))
+
+;; 2. (boolean symbol  -&gt;  boolean),
+;; consumes a boolean and a symbol and produces a boolean;
+
+;; For example:
+;; h: boolean symbol -&gt; boolean
+;; consumes a boolean flag and a symbol. a true flag produces the
+;; test of whether the symbol is 'car; a false flag produces the
+;; test of whether the symbol is 'truck.
+(define (h flag sym)
+  (if flag
+      (symbol=? sym 'car)
+      (symbol=? sym 'truck)))
+
+(check-expect (h true 'ford) false)
+(check-expect (h false 'truck) true)
+
+
+;; 3. (number number number  -&gt;  number),
+;; consumes three numbers and produces a number;
+
+;; For example:
+;; j: number number number -&gt; number
+;; consumes an x-coordinate and the coefficients the line
+;; j := ax + b, producing the y-coordinate of the line
+(define (j x a b)
+  (+ (* a x) b))
+
+(check-expect (j 0 1 2) 2)
+(check-expect (j 1 1 2) 3)
+(check-expect (j -1 1 2) 1)
+
+;; 4. (number  -&gt;  (listof number)), and
+;; consumes a number and produces a list of numbers;
+
+;; For example:
+;; p: Nat -&gt; (listof number)
+;; consumes a natural &gt; 0, produces a list of numbers up to Nat
+;; with -1 taking the place of the odd numbers
+(define (p n)
+  (local ((define (i-if-even i)
+            (if (even? i) 
+                i
+                -1)))
+    (build-list n i-if-even)))
+
+(check-expect (p 7) (list 0 -1 2 -1 4 -1 6))
+
+;; 5. ((listof number)  -&gt;  boolean).
+;; consumes a list of numbers and produces a boolean.
+
+;; For example:
+;; q: (listof number) -&gt; boolean
+;; consumes a list of numbers, produces true if all numbers are even
+;; or if the list is empty --- false otherwise.
+(define (q ls)
+  (local ((define (is-even? i)
+            (= (remainder i 2) 0))
+          (define (my-and a b)
+            (and a b)))
+    (foldr my-and true (map is-even? ls))))
+
+(check-expect (q (p 10)) false)
+(check-expect (q (p 12)) false)
+(check-expect (q (p 0)) true)
+(check-expect (q (p 1)) true)
+(check-expect (q (list 0 2 4 6 8 10 12 78)) true)
+(check-expect (q (list 0 1)) false)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/arrows-dd.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

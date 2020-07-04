@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/natnum-list.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.5.4; How to Design Programs </title>
+</head>
+<body>
+<a href="expt.html">11.5.3</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.5.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sort1.html">12.2.1</a><pre>;; A deep-list is either 
+;;  - s where s is some symbol or 
+;;  - (cons dl empty), where dl is a deep-list.
+
+;; depth : deep-list -&gt; natural-number
+;; counts the number of cons's used to create this deep list.
+
+#|
+;; TEMPLATE
+(define (depth a-dl)
+  (cond
+    [(symbol? a-dl) ...]
+    [else (deep-list-template (first a-dl)) ...
+          (rest a-dl) ...]))
+|#
+
+(define (depth a-dl)
+  (cond
+    [(symbol? a-dl) 0]
+    [else (add1 (depth (first a-dl)))]))
+
+;; make-deep : natural-number symbol -&gt; deep-list 
+;; constructs a deep list with s at the bottom of depth n.
+#|
+;; TEMPLATE
+(define (make-deep n s)
+  (cond
+    [(zero? n) ...]
+    [else (make-deep (sub1 n) s) ...]))
+|#
+
+(define (make-deep n s)
+  (cond
+    [(zero? n) s]
+    [else (cons (make-deep (sub1 n) s) empty)]))
+
+;; EXAMPLES AS TESTS
+(depth 'bottom) "should be" 0
+(depth (cons (cons (cons (cons 'bottom empty) empty) empty) empty)) "should be" 4
+
+(make-deep 0 'bottom) "should be" 'bottom
+(make-deep 4 'bottom) "should be" 
+(cons (cons (cons (cons 'bottom empty) empty) empty) empty)
+
+; -------------------------------------------------------------------------
+
+;; 0 is:
+empty
+
+;; 3 is:
+(cons (cons (cons 'bottom empty) empty) empty)
+
+;; 8 is:
+(cons
+ (cons
+  (cons
+   (cons
+    (cons
+     (cons
+      (cons
+       (cons
+        'bottom
+        empty)
+       empty)
+      empty)
+     empty)
+    empty)
+   empty)
+  empty)
+ empty)
+
+;; addDL : deep-list deep-list -&gt; deep-list
+;; to add two deep lists that represent numbers
+(define (addDL n-dl x-dl)
+  (cond
+    [(symbol? n-dl) x-dl]
+    [else (cons (addDL (first n-dl) x-dl) empty)]))
+
+;; EXAMPLES AS TESTS
+(addDL 'bottom 'bottom) "should be" 'bottom
+(addDL (cons (cons 'bottom empty) empty) (cons 'bottom empty))
+"should be"
+(cons (cons (cons 'bottom empty) empty) empty)
+
+(depth (addDL (make-deep 12 'bottom) (make-deep 17 'bottom)))
+"should be" (+ 12 17)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/natnum-list.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

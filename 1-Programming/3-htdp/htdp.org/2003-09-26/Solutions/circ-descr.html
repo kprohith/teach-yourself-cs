@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/circ-descr.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 6.6.1; How to Design Programs </title>
+</head>
+<body>
+<a href="time.html">6.5.2</a> | <a href="../Book/curriculum-Z-H-9.html#node_thm_6.6.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="circ-draw.html">6.6.2</a><pre>;; teachpack: draw.ss
+
+;; DATA DEFINITION
+
+;; A circle is a structure:
+;;   (make-circle P R C)
+;; where P is a posn describing the center of the circle,
+;;       R is a number describing the radius of the circle,
+;;   and C is a color.
+(define-struct circle (center radius color))
+
+;; DATA EXAMPLES
+(make-circle (make-posn 1 1) 1 'red)
+(make-circle (make-posn 10 10) 40 'blue)
+
+#|
+;; TEMPLATE
+
+(define (fun-for-circles a-circle)
+  ... (circle-center a-circle) ...
+  ... (circle-radius a-circle) ...
+  ... (circle-color a-circle) ...)
+
+|#
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/circ-descr.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

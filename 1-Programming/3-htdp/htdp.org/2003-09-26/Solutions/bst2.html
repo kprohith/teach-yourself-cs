@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.2.4; How to Design Programs </title>
+</head>
+<body>
+<a href="bst0.html">14.2.3</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.2.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="bst3.html">14.2.5</a><pre>(define-struct node (ssn name left right))
+
+;; A binary tree is either
+;;   1. false or 
+;;   2. (make-node soc pn lft rgt) 
+;;         where soc is a number, pn is a symbol,
+;;         and lft and rgt are bts. 
+
+
+;; A binary-search-tree (BST) is a BT:
+;;  - false is always a BST
+;;  - (make-node soc pn lft rgt) is a BST if 
+;;    1. lft and rgt are BST s, 
+;;    2. all ssn numbers in lft are smaller than soc, and 
+;;    3. all ssn numbers in rgt are larger than soc.
+
+;; search-bst : number binary-tree -&gt; false or 
+;; returns true if a-n is in a-bt, and false if not.
+(define (search-bt a-n a-bt)
+  (cond
+    [(boolean? a-bt) #f]
+    [else 
+     (cond
+       [(= (node-ssn a-bt) a-n)
+        (node-name a-bt)]
+       [(&lt; (node-ssn a-bt) a-n)
+        (search-bt a-n (node-right a-bt))]
+       [(&gt; (node-ssn a-bt) a-n)
+        (search-bt a-n (node-left a-bt))])]))
+
+;; EXAMPLES as tests
+
+(search-bt 1 false)
+"should be" 
+false
+
+(search-bt 1 (make-node 2 'x false false))
+"should be"
+false
+
+(search-bt 2 (make-node 2 'x false false))
+"should be" 
+'x
+
+(search-bt 1 
+             (make-node 2 
+                        'x
+                        (make-node 1 'y false false)
+                        (make-node 3 'z false false)))
+"should be" 
+'y
+
+(search-bt 3
+             (make-node 2 
+                        'x 
+                        (make-node 1 'y false false)
+                        (make-node 3 'z false false)))
+"should be" 
+'z
+
+
+#|
+
+Like search-sorted, once we examine the value
+at a point in the data structure, we know that
+what we search for can only be in a certain
+place and we can "short-circut" the search.
+
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/file-example3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 16.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="dir-how-many2.html">16.2.5</a> | <a href="../Book/curriculum-Z-H-21.html#node_thm_16.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="dir-how-many3.html">16.3.2</a><pre>;; Language: Beginning Student with List Abbreviations
+
+(define-struct file (name size content))
+
+;; A file is a structure:
+;;   (make-file n s x) 
+;; where n is a symbol, s is a number, and x is some Scheme value.
+
+;; A list-of-files is either
+;;   empty, or
+;;   (cons s lof) where s is a file and lof is a list of files.
+
+(define-struct dir (name dirs files))
+
+;; A dir is a structure:
+;;   (make-dir n ds fs) 
+;; where n is a symbol, ds is a list of directories, and fs is a list of files.
+
+;; A list-of-directories is either
+;;   empty or
+;;   (cons s lod) where s is a dir and lod is a list of directories.
+
+
+;; files: 
+(define hang (make-file 'hang 8 empty))
+(define draw (make-file 'draw 2 empty))
+(define read (make-file 'read! 19 empty))
+(define one  (make-file 'part1 99 empty))
+(define two  (make-file 'part2 52 empty))
+(define thre (make-file 'part3 17 empty))
+(define rdme (make-file 'read 10 empty))
+
+;; directories: 
+(define Code (make-dir 'Code '() (list hang draw)))
+(define Docs (make-dir 'Docs '() (list read)))
+(define Libs (make-dir 'Libs (list Code Docs) '()))
+(define Text (make-dir 'Text '() (list one two thre)))
+(define Top  (make-dir 'TS (list Text Libs) (list rdme)))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/file-example3.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

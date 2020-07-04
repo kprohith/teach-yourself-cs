@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/define-struct-syn.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 8.7.1; How to Design Programs </title>
+</head>
+<body>
+<a href="def-var-sem3.html">8.6.3</a> | <a href="../Book/curriculum-Z-H-11.html#node_thm_8.7.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="define-struct-value.html">8.7.2</a><pre>#|
+1. The define-struct:
+
+  (define-struct personnel-record (name salary dob ssn))
+
+is legal, becuase it begins with an open paren,
+the word define-struct, has an identifier, another open paren, 
+a sequence of names and two close parenthesis.
+
+2. The define-struct:
+
+  (define-struct oops ())
+  
+is legal, becuase it begins with an open paren,
+the word define-struct, has an identifier, another open paren, 
+a sequence of names (in this case, zero) and two close parenthesis.
+
+
+3. The define-struct
+
+  (define-struct child (dob date (- date dob)))
+  
+is illegal because (- date dob) is not legal as a field name.
+
+4. The define-struct:
+
+  (define-struct (child person) (dob date))
+ 
+is not legal because (child person) is not a legal name
+for the structure.
+
+5. The define-struct:
+
+  (define-struct child (parents dob date))
+  
+is legal, becuase it begins with an open paren,
+the word define-struct, has an identifier, another open paren, 
+a sequence of names and two close parenthesis.
+|#
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/define-struct-syn.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

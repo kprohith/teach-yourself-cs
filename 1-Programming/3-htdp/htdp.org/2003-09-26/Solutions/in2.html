@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/in2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.1.4; How to Design Programs </title>
+</head>
+<body>
+<a href="add3.html">9.1.3</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.1.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list5.html">9.2.1</a><pre>;; A list-of-2-symbols is:
+;;  (cons x (cons y empty))
+;; where x is a symbol and y is a symbol
+
+;; Examples:
+(cons 'doll (cons 'rocket empty))
+(cons 'candy (cons 'doll empty))
+(cons 'candy (cons 'rocket empty))
+
+;; contains-2-doll? : list-of-2-symbols -&gt; boolean
+;; returns true if the symbol 'doll is in the input list and
+;; false otherwise
+
+#|
+;; Template
+(define (constains-2-doll? a-lo2s)
+  (first a-lo2s)
+  (first (rest a-lo2s)))
+|#
+
+(define (contains-2-doll? a-lo2s)
+  (or (eq? 'doll (first a-lo2s))
+      (eq? 'doll (first (rest a-lo2s)))))
+
+;; Examples:
+
+(contains-2-doll? (cons 'doll (cons 'rocket empty))) "should be" true
+(contains-2-doll? (cons 'candy (cons 'doll empty))) "should be" true
+(contains-2-doll? (cons 'candy (cons 'rocket empty))) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/in2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

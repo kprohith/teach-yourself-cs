@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.3.1; How to Design Programs </title>
+</head>
+<body>
+<a href="bst4.html">14.2.6</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.3.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web2.html">14.3.2</a><pre>;; EXAMPLE WEB PAGES
+(define dogs-wp
+  (list 'my 'dogs 'web 'page))
+
+(define cats-wp
+  (list 'my 'cats 'web 'page))
+
+(define my-wp
+  (list 'see 'my 'dog dogs-wp
+        'see 'my 'cat cats-wp))
+
+;; occurs1 : WP symbol -&gt; boolean
+;; determines if a-sym appears
+;; in a-wp, without following links
+(define (occurs1 a-wp a-sym)
+  (cond
+    [(empty? a-wp) false]
+    [(symbol? (first a-wp)) (or (symbol=? (first a-wp) a-sym)
+                                (occurs1 (rest a-wp) a-sym))]
+    [else (occurs1 (rest a-wp) a-sym)]))
+
+;; occurs1 tests
+(occurs1 my-wp 'see) "should be" true
+(occurs1 my-wp 'dog) "should be" true
+(occurs1 my-wp 'cat) "should be" true
+(occurs1 my-wp 'dogs) "should be" false
+(occurs1 my-wp 'cats) "should be" false
+(occurs1 my-wp 'nowhere-word) "should be" false
+
+;; occurs2 : WP symbol -&gt; boolean
+;; determines if a-sym appears
+;; in a-wp, or any linked page
+(define (occurs2 a-wp a-sym)
+  (cond
+    [(empty? a-wp) false]
+    [(symbol? (first a-wp)) (or (symbol=? (first a-wp) a-sym)
+                                (occurs2 (rest a-wp) a-sym))]
+    [else (or (occurs2 (first a-wp) a-sym)
+              (occurs2 (rest a-wp) a-sym))]))
+
+;; occurs1 tests
+(occurs2 my-wp 'see) "should be" true
+(occurs2 my-wp 'dog) "should be" true
+(occurs2 my-wp 'cat) "should be" true
+(occurs2 my-wp 'dogs) "should be" true
+(occurs2 my-wp 'cats) "should be" true
+(occurs2 my-wp 'nowhere-word) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

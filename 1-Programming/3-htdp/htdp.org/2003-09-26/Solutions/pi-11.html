@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/pi-11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.4.3; How to Design Programs </title>
+</head>
+<body>
+<a href="pi1.html">11.4.2</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.4.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="tabulate-f20.html">11.4.4</a><pre>;; product-from-minus-11 : N -&gt; N
+;; to compute the product of the numbers from -11
+(define (product-from-minus-11 n)
+  (cond
+    [(= -11 n) 1]
+    [else (* n (product-from-minus-11 (sub1 n)))]))
+
+;; EXAMPLES AS TESTS
+(product-from-minus-11 -11) "should be" 1
+(product-from-minus-11 -2) "should be" -3628800
+(product-from-minus-11 500) "should be" 0
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/pi-11.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

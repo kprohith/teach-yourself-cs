@@ -1,0 +1,2065 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-53.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-52.html">previous</a></span><span>, <a href="curriculum-Z-H-54.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_43"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_43">Section  43</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_43">Changing Structures, Vectors, and Objects</a></h1>
+<p></p>
+<p>
+This section introduces several small projects on programming with mutable
+structures. The ordering of the subsections roughly matches the outline of
+the book, proceeding from simple classes of data to complicated ones and
+from structural recursion
+<a name="node_idx_2536"></a>to generative recursion
+<a name="node_idx_2538"></a>with backtracking and accumulators.</p>
+<p>
+</p>
+<a name="node_sec_43.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_43.1">43.1&nbsp;&nbsp;More Practice with Vectors</a></h2>
+<p></p>
+<p>
+<a name="node_idx_2540"></a>
+Programming with mutable vectors is hardly ever needed in the kinds of
+programs that we encountered. Still, because it is far more prevalent in
+conventional languages,
+<a name="node_idx_2542"></a>it is an important skill and deserves more practice
+than section&nbsp;<a href="curriculum-Z-H-51.html#node_sec_41.2">41.2</a> suggests. This section covers 
+sorting with vectors, but its goal is to practice reasoning about intervals
+when processing vectors. </p>
+<p>
+We encountered the idea of sorting as early as section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.2">12.2</a>,
+where we designed the <code class="scheme"><span class="variable">sort</span></code> function. It consumes a list of numbers
+and produces a list of numbers with the same items in sorted (ascending or
+descending) order. An analogous function for vectors consumes a vector and
+produces a new vector. But, using vector mutation, we can also design a
+function that changes the vector so that it contains the same items as
+before, in a sorted order. Such a function is called an <small>I</small><small>N</small>-<small>P</small><small>L</small><small>A</small><small>C</small><small>E</small> <small>S</small><small>O</small><small>R</small><small>T</small>
+<a name="node_idx_2544"></a><a name="node_idx_2546"></a>because it leaves all the items inside the existing vector.</p>
+<p>
+An in-place-sort function relies exclusively on effects on its input vector
+to accomplish its task:
+<a name="node_idx_2548"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">in-place-sort</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">V</span></code> such that it contains the same items </span>
+<span class="comment">;; as before but in ascending order </span>
+(<span class="keyword">define</span> (<span class="variable">in-place-sort</span> <span class="variable">V</span>) ...)
+</pre></div><p>
+Examples must demonstrate the effect: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">7</span> <span class="selfeval">3</span> <span class="selfeval">0</span> <span class="selfeval">4</span> <span class="selfeval">1</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">in-place-sort</span> <span class="variable">v1</span>)
+    (<span class="builtin">equal?</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">7</span>))))
+</pre></div><p>
+Of course, given that <code class="scheme"><span class="variable">in-place-sort</span></code> consumes a vector, the true
+problem is to design the auxiliary function that works on specific
+segments of the vector. </p>
+<p>
+The standard template for a vector-processing function uses an auxiliary
+function:
+<a name="node_idx_2550"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">in-place-sort</span> <span class="variable">V</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> (<span class="variable">sort-aux</span> <span class="variable">V</span> <span class="variable">i</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">i</span>) ...]
+	      [<span class="keyword">else</span>
+		... (<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...
+		... (<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...])))
+    (<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))))
+</pre></div><p>
+Following the design ideas of intermezzo&nbsp;5, the auxiliary function consumes
+a natural number and uses it as an index into the vector. Because the
+initial argument is <code class="scheme">(<span class="builtin">vector-length</span> <span class="variable">V</span>)</code>, the accessible index is
+always <code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>. </p>
+<p>
+Recall that the key to designing functions such as <code class="scheme"><span class="variable">sort-aux</span></code> is to
+formulate a rigorous purpose and/or effect statement. The statement must
+clarify on which interval of the possible vector indices the function works
+and what exactly it accomplishes. One natural effect statement follows: 
+<a name="node_idx_2552"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to sort the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) of <code class="scheme"><span class="variable">V</span></code> in place </span>
+(<span class="keyword">define</span> (<span class="variable">sort-aux</span> <span class="variable">V</span> <span class="variable">i</span>) ...)
+</pre></div><p>
+To understand this effect statement in the larger context, let's adapt our
+original example:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">7</span> <span class="selfeval">3</span> <span class="selfeval">0</span> <span class="selfeval">4</span> <span class="selfeval">1</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">sort-aux</span> <span class="variable">v1</span> <span class="selfeval">5</span>)
+    (<span class="builtin">equal?</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">7</span>))))
+</pre></div><p>
+If <code class="scheme"><span class="variable">sort-aux</span></code> is applied to a vector's length, it should sort the entire
+vector. This statement implies that if the first argument is less than the
+vector's length only some initial segment of the vector is sorted:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">7</span> <span class="selfeval">3</span> <span class="selfeval">0</span> <span class="selfeval">4</span> <span class="selfeval">1</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">sort-aux</span> <span class="variable">v1</span> <span class="selfeval">4</span>)
+    (<span class="builtin">equal?</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">7</span> <span class="selfeval">1</span>))))
+</pre></div><p>
+In this particular example, the last number remains in its original
+place, and only the first four vector items are sorted. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_217"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2554"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">in-place-sort</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">V</span></code> such that it contains the same items </span>
+<span class="comment">;; as before but in ascending order </span>
+(<span class="keyword">define</span> (<span class="variable">in-place-sort</span> <span class="variable">V</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">sort-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+	  <span class="comment">;; effect: to sort the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) of <code class="scheme"><span class="variable">V</span></code> in place </span>
+	  (<span class="keyword">define</span> (<span class="variable">sort-aux</span> <span class="variable">V</span> <span class="variable">i</span>)
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">i</span>) (void)]
+	      [<span class="keyword">else</span> (<span class="keyword">begin</span>
+		      <span class="comment">;; sort the segment [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>):</span>
+		      (<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))
+		      <span class="comment">;; insert <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code> into the segment </span>
+		      <span class="comment">;; [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) so that it becomes sorted''</span>
+		      (<span class="variable">insert</span> (<span class="builtin">sub1</span> <span class="variable">i</span>) <span class="variable">V</span>))]))
+	  
+	  <span class="comment">;; <code class="scheme"><span class="variable">insert</span> <span class="selfeval">:</span> <strong>N</strong> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+	  <span class="comment">;; to place the value in the <code class="scheme"><span class="variable">i</span></code>-th into its proper place </span>
+	  <span class="comment">;; in the segement [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>] of <code class="scheme"><span class="variable">V</span></code></span>
+	  <span class="comment">;; assume: the segment  [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) of <code class="scheme"><span class="variable">V</span></code> is sorted</span>
+	  (<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">i</span> <span class="variable">V</span>)
+	    ...))
+    (<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 126:</b>&nbsp;&nbsp;An in-place sort function: First part</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Now we can analyze each case in the template of <code class="scheme"><span class="variable">sort-aux</span></code>: 
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">i</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, the interval of the effect statement is
+[<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">0</span></code>). This means that the interval is empty and that the
+function has nothing to do. </p>
+<p>
+</p>
+<li><p>The second clause in the template contains two expressions:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))
+<span class="comment">and</span>
+(<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))
+</pre></div><p>
+The first reminds us that we can use the <em>i</em> <tt>-</tt> 1-st field of <code class="scheme"><span class="variable">V</span></code>; the
+second one reminds us of the natural recursion. In this case, the natural
+recursion sorts the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>). To finish the
+task, we must insert the value of the <em>i</em> <tt>-</tt> 1-st field into its proper place in
+the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>).</p>
+<p>
+The above examples make this case concrete. When we evaluate <code class="scheme">(<span class="variable">sort-aux</span>
+<span class="variable">v1</span> <span class="selfeval">4</span>)</code>, the number in the last field of <code class="scheme"><span class="variable">v1</span></code> remains at its place. The
+first four items in the vectors are: <code class="scheme"><span class="selfeval">0</span></code>, <code class="scheme"><span class="selfeval">3</span></code>, <code class="scheme"><span class="selfeval">4</span></code>, and
+<code class="scheme"><span class="selfeval">7</span></code>. To sort the entire interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">5</span></code>), we must insert
+<code class="scheme"><span class="selfeval">1</span></code>, which is <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="selfeval">5</span>))</code>, between <code class="scheme"><span class="selfeval">0</span></code> and
+<code class="scheme"><span class="selfeval">3</span></code>.
+</p>
+</li></ol><p>
+In short, the design of <code class="scheme"><span class="variable">in-place-sort</span></code> follows the same pattern as
+that of the function <code class="scheme"><span class="variable">sort</span></code> in section&nbsp;<a href="curriculum-Z-H-16.html#node_sec_12.2">12.2</a> up to this
+point. For <code class="scheme"><span class="variable">sort</span></code>, we also designed the main function only to find
+out that we needed to design an auxiliary function for inserting one more
+item into its proper place. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_217">126</a> gathers what we have discussed about
+<code class="scheme"><span class="variable">in-place-sort</span></code> so far. It also includes a specification of
+<code class="scheme"><span class="variable">insert</span></code>, the second auxiliary function. To understand its effect
+statement, we reformulate the example for the second clause of
+<code class="scheme"><span class="variable">sort-aux</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">7</span> <span class="selfeval">1</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">insert</span> <span class="selfeval">4</span> <span class="variable">v1</span>)
+    (<span class="builtin">equal?</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">0</span> <span class="selfeval">1</span> <span class="selfeval">3</span> <span class="selfeval">4</span> <span class="selfeval">7</span>))))
+</pre></div><p>
+In this case, <code class="scheme"><span class="variable">insert</span></code> moves <code class="scheme"><span class="selfeval">1</span></code> over three numbers: first
+<code class="scheme"><span class="selfeval">7</span></code>, then <code class="scheme"><span class="selfeval">4</span></code>, and finally <code class="scheme"><span class="selfeval">3</span></code>. It stops when the next
+number in the leftwards direction, that is, <code class="scheme"><span class="selfeval">0</span></code>, is smaller than the
+number that is being inserted.</p>
+<p>
+Let's look at a second example for <code class="scheme"><span class="variable">insert</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">7</span> <span class="selfeval">3</span> <span class="selfeval">0</span> <span class="selfeval">4</span> <span class="selfeval">1</span>)))
+  (<span class="keyword">begin</span>
+    (<span class="variable">insert</span> <span class="selfeval">1</span> <span class="variable">v1</span>)
+    (<span class="builtin">equal?</span> <span class="variable">v1</span> (<span class="builtin">vector</span> <span class="selfeval">3</span> <span class="selfeval">7</span> <span class="selfeval">0</span> <span class="selfeval">4</span> <span class="selfeval">1</span>))))
+</pre></div><p>
+Here the problem is to insert <code class="scheme"><span class="selfeval">3</span></code> into a segment that contains only
+one number: <code class="scheme"><span class="selfeval">7</span></code>. This means that insert must swap the values in the
+first two fields and must stop then, because <code class="scheme"><span class="selfeval">3</span></code> can't move any
+further to the left. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_218"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_2556"></a><div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">in-place-sort</span> <span class="variable">V</span>)
+  (<span class="keyword">local</span> (<span class="comment">;; <code class="scheme"><span class="variable">sort-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+	  <span class="comment">;; effect: to sort the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) of <code class="scheme"><span class="variable">V</span></code> in place </span>
+	  (<span class="keyword">define</span> (<span class="variable">sort-aux</span> <span class="variable">V</span> <span class="variable">i</span>)
+	    ...)
+	  
+	  <span class="comment">;; <code class="scheme"><span class="variable">insert</span> <span class="selfeval">:</span> <strong>N</strong> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+	  <span class="comment">;; to place the value in the <code class="scheme"><span class="variable">i</span></code>-th into its proper place </span>
+	  <span class="comment">;; in the [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>] segement of <code class="scheme"><span class="variable">V</span></code></span>
+	  (<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">i</span> <span class="variable">V</span>) 
+	    (<span class="keyword">cond</span>
+	      [(<span class="builtin">zero?</span> <span class="variable">i</span>) (void)]
+	      [<span class="keyword">else</span> (<span class="keyword">cond</span>
+		      [(<span class="builtin">&gt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)) 
+		       (<span class="keyword">begin</span>
+			 (<span class="variable">swap</span> <span class="variable">V</span> (<span class="builtin">-</span> <span class="variable">i</span> <span class="selfeval">1</span>) <span class="variable">i</span>)
+			 (<span class="variable">insert</span> (<span class="builtin">sub1</span> <span class="variable">i</span>) <span class="variable">V</span>))]
+		      [<span class="keyword">else</span> (void)])]))
+	  
+	  <span class="comment">;; <code class="scheme"><span class="variable">swap</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">X</span>) <strong>N</strong> <strong>N</strong> <span class="variable">void</span> </code></span>
+	  (<span class="keyword">define</span> (<span class="variable">swap</span> <span class="variable">V</span> <span class="variable">i</span> <span class="variable">j</span>)
+	    (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">temp</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)))
+	      (<span class="keyword">begin</span>
+		(<span class="builtin">vector-set!</span> <span class="variable">V</span> <span class="variable">i</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">j</span>))
+		(<span class="builtin">vector-set!</span> <span class="variable">V</span> <span class="variable">j</span> <span class="variable">temp</span>)))))
+    (<span class="variable">sort-aux</span> <span class="variable">V</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))))
+</pre></div><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 127:</b>&nbsp;&nbsp;An in-place sort function: Second part</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Now take a look at the template for <code class="scheme"><span class="variable">insert</span></code>: 
+<a name="node_idx_2558"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">insert</span> <span class="variable">i</span> <span class="variable">V</span>) 
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) ...]
+    [<span class="keyword">else</span>
+      ... (<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) ...
+      ... (<span class="variable">insert</span> (<span class="builtin">sub1</span> <span class="variable">i</span>) <span class="variable">V</span>) ... ]))
+</pre></div><p>
+It is the standard template for a vector-processing auxiliary function.  As
+usual we distinguish two cases:
+</p>
+<ol>
+<li><p>If <code class="scheme"><span class="variable">i</span></code> is <code class="scheme"><span class="selfeval">0</span></code>, the goal is to insert
+<code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="selfeval">0</span>)</code> into the segment [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">0</span></code>]. Since
+this interval contains only one number, <code class="scheme"><span class="variable">insert</span></code> has accomplished
+its task. </p>
+<p>
+</p>
+<li><p>If <code class="scheme"><span class="variable">i</span></code> is positive, the template implies that we may consider
+another item in <code class="scheme"><span class="variable">V</span></code>, namely <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code>, and that
+we can perform a natural recursion. The immediate question is whether
+<code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code> is smaller or larger than <code class="scheme">(<span class="builtin">vector-ref</span>
+<span class="variable">V</span> <span class="variable">i</span>)</code>, the item that is to be moved around. If so, <code class="scheme"><span class="variable">V</span></code> is sorted on the
+entire interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>], because <code class="scheme"><span class="variable">V</span></code> is sorted 
+on  [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="variable">i</span></code>) by assumption. If not, the item at <code class="scheme"><span class="variable">i</span></code> is
+out of order still. </p>
+<p>
+The <strong>cond</strong>-expression that employs the necessary conditions is
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">cond</span>
+  [(<span class="builtin">&gt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)) ...]
+  [(<span class="builtin">&lt;=</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)) (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)) (void)])
+</pre></div><p>
+The second clause contains <code class="scheme">(void)</code> because there is nothing left to do.  In
+the first clause, <code class="scheme"><span class="variable">insert</span></code> must -- at a minimum -- swap the values in the
+two fields. That is, <code class="scheme"><span class="variable">insert</span></code> must place <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)</code> into
+field&nbsp;<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code> and <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code> into
+field&nbsp;<code class="scheme"><span class="variable">i</span></code>. But even that may not be enough. After all, the value in the
+<code class="scheme"><span class="variable">i</span></code>-th field may have to wander over several fields as the first example
+demonstrated. Fortunately, we can easily solve this problem with the natural
+recursion, which inserts the <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>))</code> into its proper
+place in [0,<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>] after the swapping has taken place.
+</p>
+</li></ol><p>
+Figure&nbsp;<a href="#node_fig_Temp_218">127</a> contains the complete definition of
+<code class="scheme"><span class="variable">insert</span></code> and <code class="scheme"><span class="variable">swap</span></code>. This second function is responsible for
+swapping the value of two fields.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.1.1"></a>
+<b>Exercise 43.1.1.</b>&nbsp;&nbsp; 
+Test the auxiliary functions for <code class="scheme"><span class="variable">in-place-sort</span></code> from
+figures&nbsp;<a href="#node_fig_Temp_217">126</a> and&nbsp;<a href="#node_fig_Temp_218">127</a>.
+Formulate the tests as boolean-valued expressions. </p>
+<p>
+Develop and test more examples for <code class="scheme"><span class="variable">in-place-sort</span></code>. </p>
+<p>
+Integrate the pieces. Test the integrated function. Eliminate superflous
+arguments from the auxiliary programs in the integrated definition, step by
+step, testing the complete function after each step. Finally, change
+<code class="scheme"><span class="variable">in-place-sort</span></code> so that its result is the modified
+vector.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort-ip1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_219"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+<img src="curriculum7b-Z-G-1.gif" border="0" alt="[curriculum7b-Z-G-1.gif]"><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 128:</b>&nbsp;&nbsp;Inserting an item into a sorted vector segment</td></tr>
+<tr><td> <p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.1.2"></a>
+<b>Exercise 43.1.2.</b>&nbsp;&nbsp; 
+The <code class="scheme"><span class="variable">insert</span></code> function of figure&nbsp;<a href="#node_fig_Temp_218">127</a> performs two
+vector mutations for each time the function recurs. Each of these mutations
+pushes <code class="scheme">(<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>)</code>, for the original value of <code class="scheme"><span class="variable">i</span></code>, to the
+left in <code class="scheme"><span class="variable">V</span></code> until its proper place is found.</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_219">128</a> illustrates a slightly better solution. The
+situation in the top row assumes that the values <code class="scheme"><span class="variable">a</span></code>, <code class="scheme"><span class="variable">b</span></code>,
+and <code class="scheme"><span class="variable">c</span></code> are properly arranged, that is, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;</span> <span class="variable">a</span> <span class="variable">b</span> ... <span class="variable">c</span>)
+</pre></div><p>
+holds. Furthermore, <code class="scheme"><span class="variable">d</span></code> is to be inserted and its place is between
+<code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code>, that is, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;</span> <span class="variable">a</span> <span class="variable">d</span> <span class="variable">b</span>)
+</pre></div><p>
+holds, too. The solution is to compare <code class="scheme"><span class="variable">d</span></code> with all the items in
+<em>k</em> + 1 through <em>i</em> and to shift the items to the right if they are larger
+than <code class="scheme"><span class="variable">d</span></code>. Eventually, we find <code class="scheme"><span class="variable">a</span></code> (or the left end of the
+vector) and have a ``hole'' in the vector, where <code class="scheme"><span class="variable">d</span></code> must be
+inserted.  (The hole actually contains <code class="scheme"><span class="variable">b</span></code>.) This situation is
+illustrated in the middle row. The last one shows how <code class="scheme"><span class="variable">d</span></code> is placed
+between <code class="scheme"><span class="variable">a</span></code> and <code class="scheme"><span class="variable">b</span></code>.</p>
+<p>
+Develop a function <code class="scheme"><span class="variable">insert</span></code> that implements its desired effect
+according to this description. <strong>Hint:</strong>  The new function must consume <code class="scheme"><span class="variable">d</span></code>
+as an additional argument.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort-ip2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.1.3"></a>
+<b>Exercise 43.1.3.</b>&nbsp;&nbsp; 
+For many other programs, we could swap the order of the subexpressions in
+<strong>begin</strong>-expressions and still get a working program. Let's consider this idea for
+<code class="scheme"><span class="variable">sort-aux</span></code>: 
+<a name="node_idx_2560"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sort2-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>)  <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sort2-aux</span> <span class="variable">V</span> <span class="variable">i</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">zero?</span> <span class="variable">i</span>) (void)]
+    [<span class="keyword">else</span> (<span class="keyword">begin</span>
+            (<span class="variable">insert2</span> (<span class="builtin">sub1</span> <span class="variable">i</span>) <span class="variable">V</span>)
+            (<span class="variable">sort2-aux</span> <span class="variable">V</span> (<span class="builtin">sub1</span> <span class="variable">i</span>)))]))
+</pre></div><p>
+The order implies that <code class="scheme"><span class="variable">sort2-aux</span></code> first inserts the item from
+<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code> into some already sorted part of <code class="scheme"><span class="variable">V</span></code> and then
+sorts the remainder of <code class="scheme"><span class="variable">V</span></code>. Here is a picture that illustrates the
+situation graphically:</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+
+<blockquote>
+<blockquote>
+
+<table>
+<tr>
+ <td colspan="4">&nbsp;</td>
+ <td align="center" colspan="1"><i>i</i>-1</td>
+ <td colspan="3">&nbsp;</td>
+</tr>
+<tr>
+ <td width="150" bgcolor="wine" colspan="4">&nbsp;</td>
+ <td width="30" align="center" bgcolor="beige" colspan="1"><i>a</i></td>
+ <td width="100" bgcolor="tan" colspan="3">&nbsp;</td>
+</tr>
+<tr>
+ <td align="center" colspan="4">left</td>
+ <td align="right" colspan="1">&nbsp;</td>
+ <td align="center" colspan="3">right</td>
+</tr>
+</table>
+
+</blockquote>
+</blockquote>
+<p>
+The depicted vector consists of three pieces: <code class="scheme"><span class="variable">a</span></code>, the item in
+field&nbsp;<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">i</span>)</code>, the left fragment, and the right fragment. The
+questions are which of the two fragments is sorted and into which fragment
+<code class="scheme"><span class="variable">a</span></code> should be inserted. </p>
+<p>
+Considering that <code class="scheme"><span class="variable">sort2-aux</span></code> decreases its first argument and thus
+sweeps over the vector from right to left, the answers are that the right
+fragment is initially empty and thus sorted in ascending order by default; 
+the left fragment is still unordered; and <code class="scheme"><span class="variable">a</span></code> must be inserted into 
+its proper place in the right fragment. </p>
+<p>
+Develop a precise effect statement for <code class="scheme"><span class="variable">sort-aux</span></code> based on these
+observations. Then develop the function <code class="scheme"><span class="variable">insert2</span></code> so that
+<code class="scheme"><span class="variable">sort2-aux</span></code> sorts vectors properly.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sort-ip3.html">Solution</a></p>
+<p></p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-32.html#node_sec_25.2">25.2</a>, we got to know <code class="scheme"><span class="variable">qsort</span></code>, a function
+based on generative recursion. Given a list, <code class="scheme"><span class="variable">qsort</span></code> constructs
+a sorted version in three steps: 
+</p>
+<ol>
+<li><p>choose an item from the list, call it <code class="scheme"><span class="variable">pivot</span></code>; </p>
+<p>
+</p>
+<li><p>create two sublists: one with all those items strictly smaller than
+<code class="scheme"><span class="variable">pivot</span></code>, another one with all those items strictly larger than
+<code class="scheme"><span class="variable">pivot</span></code>;</p>
+<p>
+</p>
+<li><p>sort each of the two sublists, using the same steps, and then append
+the two lists with the pivot item in the middle. 
+</p>
+</li></ol><p>
+It isn't difficult to see why the result is sorted, why it contains all the
+items from the original list, and why the process stops. After all, at every
+stage, the function removes at least one item from the list so that the two
+sublists are shorter than the given one; eventually the list must be empty.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_220"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+
+<blockquote>
+<blockquote>
+<p>a vector fragment with pivot item <font color="red"><i>p</i></font>: </p>
+
+<table width="300">
+<tr>
+<td align="center"><i>left</i></td>
+<td colspan="4">&nbsp;</td>
+<td><i>right</i></td>
+</tr>
+<tr>
+<td width="40" align="center" bgcolor="red"><i>p</i></td>
+<td align="center" bgcolor="tan"><i>sm-1</i></td>
+<td align="center" bgcolor="beige"><i>la-1</i></td>
+<td align="center" bgcolor="tan"><i>sm-2</i></td>
+<td align="center" bgcolor="tan"><i>sm-3</i></td>
+<td align="center" bgcolor="beige"><i>la-2</i></td>
+</tr>
+</table>
+
+<br><br>
+<hr width="350" align="left">
+
+<p>partitioning the vector fragment into two regions, separated by <font color="red"><i>p</i></font></p>
+
+<table width="300">
+<tr>
+<td align="center"><i>left1</i></td>
+<td>&nbsp;</td>
+<td align="center"><i>right1</i></td>
+<td>&nbsp;</td>
+<td align="center"><i>left2</i></td>
+<td align="center"><i>right2</i></td>
+</tr>
+<tr>
+<td align="center" bgcolor="tan"><i>sm-2</i></td>
+<td align="center" bgcolor="tan"><i>sm-1</i></td>
+<td align="center" bgcolor="tan"><i>sm-3</i></td>
+<td width="40" align="center" bgcolor="red"><i>p</i></td>
+<td align="center" bgcolor="beige"><i>la-1</i></td>
+<td align="center" bgcolor="beige"><i>la-2</i></td>
+</tr>
+</table>
+
+</blockquote>
+</blockquote>
+
+<!-- img src=../icons/qsort-ip1.gif alt="[in-place quick sort]" -->
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 129:</b>&nbsp;&nbsp;The partitioning step for in-place quick-sort</td></tr>
+<tr><td> <p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_220">129</a> illustrates how this idea can be adapted for an
+in-place version that works on vectors. At each stage, the algorithm works
+on a specific fragment of the vector. It picks the first item as the
+<code class="scheme"><span class="variable">pivot</span></code> item and rearranges the fragment so that all items smaller
+than the pivot appear to the left of <code class="scheme"><span class="variable">pivot</span></code> and all items larger
+than <code class="scheme"><span class="variable">pivot</span></code> appear to its right. Then <code class="scheme"><span class="variable">qsort</span></code> is used
+twice: once for the fragment between <code class="scheme"><span class="variable">left1</span></code> and <code class="scheme"><span class="variable">right1</span></code> and
+again for the fragment between <code class="scheme"><span class="variable">left2</span></code> and <code class="scheme"><span class="variable">right2</span></code>. Because
+each of these two intervals is shorter than the originally given interval,
+<code class="scheme"><span class="variable">qsort</span></code> eventually encounters the empty interval and
+stops. After <code class="scheme"><span class="variable">qsort</span></code> has sorted each fragment, there is nothing
+left to do; the partitioning process has arranged the vector into fragments of
+ascending order.</p>
+<p>
+<a name="node_idx_2562"></a><a name="node_idx_2564"></a>Here is the definition of <code class="scheme"><span class="variable">qsort</span></code>, an in-place sorting algorithm for
+vectors: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">qsort</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">vectorof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; effect: to modify <code class="scheme"><span class="variable">V</span></code> such that it contains the same items as before,</span>
+<span class="comment">;; in ascending order  </span>
+(<span class="keyword">define</span> (<span class="variable">qsort</span> <span class="variable">V</span>)
+  (<span class="variable">qsort-aux</span> <span class="variable">V</span> <span class="selfeval">0</span> (<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))))
+
+<span class="comment">;; <code class="scheme"><span class="variable">qsort-aux</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">N</span> <span class="variable">N</span> &nbsp;<tt>-&gt;</tt>&nbsp; (<span class="keyword">vectorof</span> <span class="variable">number</span>)</code></span>
+<span class="comment">;; effect: sort the interval [<code class="scheme"><span class="variable">left</span></code>,<code class="scheme"><span class="variable">right</span></code>] of vector <code class="scheme"><span class="variable">V</span></code></span>
+<span class="comment">;; generative recursion</span>
+(<span class="keyword">define</span> (<span class="variable">qsort-aux</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">&gt;=</span> <span class="variable">left</span> <span class="variable">right</span>) <span class="variable">V</span>]
+    [<span class="keyword">else</span> (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">new-pivot-position</span> (<span class="variable">partition</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>)))
+            (<span class="keyword">begin</span> (<span class="variable">qsort-aux</span> <span class="variable">V</span> <span class="variable">left</span> (<span class="builtin">sub1</span> <span class="variable">new-pivot-position</span>))
+                   (<span class="variable">qsort-aux</span> <span class="variable">V</span> (<span class="builtin">add1</span> <span class="variable">new-pivot-position</span>) <span class="variable">right</span>)))]))
+</pre></div><p>
+The main function's input is a vector, so it uses an auxiliary function to
+do its job. As suggested above, the auxiliary function consumes the vector
+and two boundaries. Each boundary is an index into the vector. Initially,
+the boundaries are <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme">(<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))</code>, which
+means that <code class="scheme"><span class="variable">qsort-aux</span></code> is to sort the entire vector. </p>
+<p>
+The definition of <code class="scheme"><span class="variable">qsort-aux</span></code> closely follows the algoritm's
+description. If <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code> describe a boundary of
+size&nbsp;1 or less, its task is done. Otherwise, it partitions the
+vector. Because the partitioning step is a separate complex process, it
+requires a separate function. It must have both an effect and a result
+proper, the new index for the pivot item, which is now at its proper
+place. Given this index, <code class="scheme"><span class="variable">qsort-aux</span></code> continues to sort <code class="scheme"><span class="variable">V</span></code> on
+the intervals [<code class="scheme"><span class="variable">left</span></code>,<code class="scheme">(<span class="builtin">sub1</span> <span class="variable">new-pivot-position</span>)</code>] and
+[<code class="scheme">(<span class="builtin">add1</span> <span class="variable">new-pivot-position</span>)</code>, <code class="scheme"><span class="variable">right</span></code>]. Both intervals are at
+least one item shorter than the original, which is the termination argument
+for <code class="scheme"><span class="variable">qsort-aux</span></code>. </p>
+<p>
+Naturally, the key problem here is the partitioning step, which is
+implemented by <code class="scheme"><span class="variable">partition</span></code>: 
+<a name="node_idx_2566"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">partition</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to determine the proper position <code class="scheme"><span class="variable">p</span></code> of the pivot-item </span>
+<span class="comment">;; effect: rearrange the vector <code class="scheme"><span class="variable">V</span></code> so that </span>
+<span class="comment">;; -- all items in <code class="scheme"><span class="variable">V</span></code> in [<code class="scheme"><span class="variable">left</span></code>,<code class="scheme"><span class="variable">p</span></code>) are smaller than the pivot item</span>
+<span class="comment">;; -- all items of <code class="scheme"><span class="variable">V</span></code> in (<code class="scheme"><span class="variable">p</span></code>,<code class="scheme"><span class="variable">right</span></code>] are larger than the pivot item</span>
+(<span class="keyword">define</span> (<span class="variable">partition</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>) ...)
+</pre></div><p>
+For simplicity, we choose the left-most item in the given interval as the
+pivot item. The question is how <code class="scheme"><span class="variable">partition</span></code> can accomplish its task, for
+example, whether it is a function based on structural recursion or whether
+it is based on generative recursion. Furthermore, if it is based on
+generative recursion, the question is what the generative step
+accomplishes. </p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_221"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+
+<blockquote>
+<blockquote>
+<p>finding the swapping points for <i>partition</i>:
+
+<table width="400">
+<tr>
+<td align="left" colspan="5"><i>left</i></td>
+<td><i>right</i></td>
+</tr>
+<tr>
+<td align="center" bgcolor="red"><i>p</i></td>
+<td align="center" bgcolor="tan"><i>sm-1</i></td>
+<td align="center" bgcolor="beige"><i>la-1</i></td>
+<td align="center" bgcolor="tan"><i>sm-2</i></td>
+<td align="center" bgcolor="tan"><i>sm-3</i></td>
+<td align="center" bgcolor="beige"><i>la-2</i></td>
+</tr>
+<tr>
+<td align="right" colspan="3"><i>new-left</i></td>
+<td align="right" colspan="2"><i>new-right</i></td>
+</tr>
+</table>
+
+<br><br>
+<hr width="450" align="left">
+
+<p>swapping the items and recuring on a new interval:</p>
+
+<table width="400">
+<tr>
+<td align="right" colspan="2"><i>&nbsp;</i></td>
+<td align="center" colspan="1"><i>left</i></td>
+<td align="right" colspan="1"><i>&nbsp;</i></td>
+<td align="center" colspan="1"><i>right</i></td>
+</tr>
+<tr>
+<td align="center" bgcolor="red"><i>p</i></td>
+<td align="center" bgcolor="tan"><i>sm-1</i></td>
+<td align="center" bgcolor="tan"><i>sm-3</i></td>
+<td align="center" bgcolor="tan"><i>sm-2</i></td>
+<td align="center" bgcolor="beige"><i>la-1</i></td>
+<td align="center" bgcolor="beige"><i>la-2</i></td>
+</tr>
+</table>
+
+<br><br>
+<hr width="450" align="left">
+
+<p> stopping the generative recursion and clean-up:</p>
+
+<table width="400">
+<tr>
+<td align="right" colspan="2"><i>&nbsp;</i></td>
+<td align="center" colspan="1"><i>left</i></td>
+<td align="right" colspan="1"><i>&nbsp;</i></td>
+<td align="center" colspan="1"><i>right</i></td>
+</tr>
+<tr>
+<td align="center" bgcolor="red"><i>p</i></td>
+<td align="center" bgcolor="tan"><i>sm-1</i></td>
+<td align="center" bgcolor="tan"><i>sm-3</i></td>
+<td align="center" bgcolor="tan"><i>sm-2</i></td>
+<td align="center" bgcolor="beige"><i>la-1</i></td>
+<td align="center" bgcolor="beige"><i>la-2</i></td>
+</tr>
+<tr>
+<td align="right" colspan="3"><i>&nbsp;</i></td>
+<td align="center" colspan="1"><i>new-right</i></td>
+<!-- td align=right colspan=1><i>&nbsp;</i></td -->
+<td align="center" colspan="1"><i>new-left</i></td>
+</tr>
+</table>
+
+</blockquote>
+</blockquote>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 130:</b>&nbsp;&nbsp;The partitioning process for in-place quick-sort</td></tr>
+<tr><td> <p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+The best strategy is to consider an example and to see how the partitioning
+step could be accomplished. The first example is a small vector with six
+numbers: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1.1</span> <span class="selfeval">0.75</span> <span class="selfeval">1.9</span> <span class="selfeval">0.35</span> <span class="selfeval">0.58</span> <span class="selfeval">2.2</span>)
+</pre></div><p>
+The pivot's position is <code class="scheme"><span class="selfeval">0</span></code>; the pivot item is <code class="scheme"><span class="selfeval">1.1</span></code>. The
+boundaries are <code class="scheme"><span class="selfeval">0</span></code> and <code class="scheme"><span class="selfeval">5</span></code>. One item, <code class="scheme"><span class="selfeval">1.9</span></code>, is
+obviously out of place. If we swap it with <code class="scheme"><span class="selfeval">0.58</span></code>, then the vector
+is almost perfectly partitioned:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1.1</span> <span class="selfeval">0.75</span> <span class="selfeval">0.58</span> <span class="selfeval">0.35</span> <span class="selfeval">1.9</span> <span class="selfeval">2.2</span>)
+</pre></div><p>
+In this modified vector, the only item out of place is the pivot item
+itself. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_221">130</a> illustrates the swapping process that we just
+described. First, we must find two items to swap. To do that, we search
+<code class="scheme"><span class="variable">V</span></code> for the first item to the right of <code class="scheme"><span class="variable">left</span></code> that is larger than
+the pivot item. Analogously, we search <code class="scheme"><span class="variable">V</span></code> for the first item to the
+left of <code class="scheme"><span class="variable">right</span></code> that is smaller than the pivot item. These searches
+yield two indices: <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code>. Second, we swap
+the items in fields <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code>. The result is
+that the item at <code class="scheme"><span class="variable">new-left</span></code> is now smaller than the pivot item and the
+one at <code class="scheme"><span class="variable">new-right</span></code> is larger. Finally, we can continue the swapping
+process with the new, smaller interval. When the first step yields values for
+<code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code> that are out of order, as in the
+bottom row of figure&nbsp;<a href="#node_fig_Temp_221">130</a>, then we have a mostly partitioned
+vector (fragment).</p>
+<p>
+Working through this first example suggests that <code class="scheme"><span class="variable">partition</span></code> is an
+algorithm, that is, a function based on generative recursion. Following our
+recipe, we must ask and answer four questions: </p>
+<p>
+</p>
+<ol>
+<li><p>What is a trivially solvable problem? </p>
+<p>
+</p>
+<li><p>What is a corresponding solution? </p>
+<p>
+</p>
+<li><p>How do we generate new problems that are more easily solvable
+than the original problem? Is there one new problem that we generate
+or are there several?</p>
+<p>
+</p>
+<li><p>Is the solution of the given problem the same as the solution of (one
+of) the new problems? Or, do we need to perform an additional computation
+to combine these solutions before we have a final solution?  And, if so,
+do we need anything from the original problem data?</p>
+<p>
+</p>
+</li></ol><p> 
+The example addressed issues&nbsp;1, 3, and&nbsp;4. The first step is to determine
+the <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code> indices. If <code class="scheme"><span class="variable">new-left</span></code>
+is smaller than <code class="scheme"><span class="variable">new-right</span></code>, the generative work is to swap items in
+the two fields. Then the process recurs with the two new boundaries. If
+<code class="scheme"><span class="variable">new-left</span></code> is larger than <code class="scheme"><span class="variable">new-right</span></code>, the partitioning
+process is finished except for the placement of the pivot item; placing the
+pivot item answers question&nbsp;2. Assuming we can solve this ``trivially
+solvable'' problem, we also know that the overall problem is solved.</p>
+<p>
+Let's study question&nbsp;2 with some examples. We stopped working on the first
+example when the vector had been changed to 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1.1</span> <span class="selfeval">0.75</span> <span class="selfeval">0.58</span> <span class="selfeval">0.35</span> <span class="selfeval">1.9</span> <span class="selfeval">2.2</span>)
+</pre></div><p>
+and the interval had been narrowed down to [<code class="scheme"><span class="selfeval">2</span></code>,<code class="scheme"><span class="selfeval">4</span></code>]. The
+search for <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code> now yields <code class="scheme"><span class="selfeval">4</span></code>
+and <code class="scheme"><span class="selfeval">3</span></code>, respectively. That is, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">&lt;=</span> <span class="variable">new-right</span> <span class="variable">new-left</span>)
+</pre></div><p>
+holds. Switching the item in field <code class="scheme"><span class="variable">new-right</span></code> with the original
+left-most boundary places the pivot item in the proper spot:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">0.35</span> <span class="selfeval">0.75</span> <span class="selfeval">0.58</span> <span class="selfeval">1.1</span> <span class="selfeval">1.9</span> <span class="selfeval">2.2</span>)
+</pre></div><p>
+because <code class="scheme"><span class="variable">new-right</span></code> points to the right-most item in the vector that
+is smaller than the pivot item.</p>
+<p>
+Before we accept this seemingly simple solution, let's check it with some
+additional examples, especially vector fragments where the pivot item is the
+largest or smallest item. Here is one such example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1.1</span> <span class="selfeval">0.1</span> <span class="selfeval">0.5</span> <span class="selfeval">0.4</span>)
+</pre></div><p>
+Assuming the initial interval is [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme"><span class="selfeval">3</span></code>], the pivot item is
+<code class="scheme"><span class="selfeval">1.1</span></code>. Thus, all other items in the vector are smaller than the
+pivot item, which means that it should end up in the right-most position.</p>
+<p>
+Our process clearly yields <code class="scheme"><span class="selfeval">3</span></code> for <code class="scheme"><span class="variable">new-right</span></code>. After all,
+<code class="scheme"><span class="selfeval">0.4</span></code> is smaller than pivot. The search for <code class="scheme"><span class="variable">new-left</span></code>,
+though, works differently. Since none of the items in the vector is larger
+than the pivot item, it eventually generates <code class="scheme"><span class="selfeval">3</span></code> as an index, which
+is the largest legal index for this vector. At this point the search must
+stop. Fortunately, <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code> are equal at
+this point, which implies that the partitioning process can stop and 
+means that we can still swap the pivot item with the one in field
+<code class="scheme"><span class="variable">new-right</span></code>. If we do that, we get a perfectly well-partitioned
+vector: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">0.4</span> <span class="selfeval">0.1</span> <span class="selfeval">0.5</span> <span class="selfeval">0.4</span> <span class="selfeval">1.1</span>)
+</pre></div><p></p>
+<p>
+The third sample vector's items are all larger than the pivot item: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">vector</span> <span class="selfeval">1.1</span> <span class="selfeval">1.2</span> <span class="selfeval">3.3</span> <span class="selfeval">2.4</span>)
+</pre></div><p>
+In this case, the search for <code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code> must
+discover that the pivot item is already in the proper spot. And indeed, it
+does. The search for <code class="scheme"><span class="variable">new-left</span></code> ends at field&nbsp;1, which is the first
+field that contains an item larger than the pivot item. The search for
+<code class="scheme"><span class="variable">new-right</span></code> ends with <code class="scheme"><span class="selfeval">0</span></code>, because it is the smallest legal
+index and the search must stop there. As a result, <code class="scheme"><span class="variable">new-right</span></code> once
+again points to that field in the vector that must contain the pivot item
+for the vector (fragment) to be properly partitioned.</p>
+<p>
+In short, the examples suggest several things: 
+</p>
+<ol>
+<li><p>The termination condition for <code class="scheme"><span class="variable">partition</span></code> is <code class="scheme">(<span class="builtin">&lt;=</span>
+<span class="variable">new-right</span> <span class="variable">new-left</span>)</code>.</p>
+<p>
+</p>
+<li><p>The value of <code class="scheme"><span class="variable">new-right</span></code> is the final position of the pivot
+item, which is in the original left-most point of the interval of interest.
+It is always acceptable to swap the contents of the two fields. </p>
+<p>
+</p>
+<li><p>The search for <code class="scheme"><span class="variable">new-right</span></code> starts at the right-most boundary
+and continues until it either finds an item that is smaller than the pivot
+item or until it hits the left-most boundary. </p>
+<p>
+</p>
+<li><p>Dually, the search for <code class="scheme"><span class="variable">new-left</span></code> starts at the left-most
+boundary and continues until it either finds an item that is larger than
+the pivot item or until it hits the right-most boundary.
+</p>
+</li></ol><p> 
+And, the two searches are complex tasks that deserve their own function. </p>
+<p>
+We can now gradually translate our discussion into Scheme. First, the
+partitioning process is a function of not just the vector and some
+interval, but also of the original left-most position of the vector and its
+content. This suggests the use of <code class="scheme"><span class="keyword">local</span></code>ly defined functions and
+variables: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">partition</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">pivot-position</span> <span class="variable">left</span>)
+          (<span class="keyword">define</span> <span class="variable">the-pivot</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">left</span>))
+          (<span class="keyword">define</span> (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>) 
+	    ...))
+    (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>)))
+</pre></div><p>
+The alternative is to use an auxiliary function that consumes the pivot's
+original position in addition to the vector and the current interval. </p>
+<p>
+Second, the auxiliary function consumes an interval's boundaries. It
+immediately generates a new pair of indices from these boundaries:
+<code class="scheme"><span class="variable">new-left</span></code> and <code class="scheme"><span class="variable">new-right</span></code>. As mentioned, the searches for the
+two new boundaries are complex tasks and deserve their own functions: 
+<a name="node_idx_2568"></a><a name="node_idx_2570"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">find-new-right</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> <strong>N</strong> <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="variable">left</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to determine an index <code class="scheme"><span class="variable">i</span></code> between <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code> (inclusive)</span>
+<span class="comment">;; such that <code class="scheme">(<span class="builtin">&lt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>) <span class="variable">the-pivot</span>)</code> holds</span>
+(<span class="keyword">define</span> (<span class="variable">find-new-right</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>) ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">find-new-left</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> <strong>N</strong> <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="variable">left</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to determine an index <code class="scheme"><span class="variable">i</span></code> between <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code> (inclusive)</span>
+<span class="comment">;; such that <code class="scheme">(<span class="builtin">&gt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>) <span class="variable">the-pivot</span>)</code> holds</span>
+(<span class="keyword">define</span> (<span class="variable">find-new-left</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>) ...)
+</pre></div><p>
+Using these two functions, <code class="scheme"><span class="variable">partition-aux</span></code> can generate the new
+boundaries: 
+<a name="node_idx_2572"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">partition</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">pivot-position</span> <span class="variable">left</span>)
+          (<span class="keyword">define</span> <span class="variable">the-pivot</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">left</span>))
+          (<span class="keyword">define</span> (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>)
+            (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">new-right</span> (<span class="variable">find-new-right</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>))
+                    (<span class="keyword">define</span> <span class="variable">new-left</span> (<span class="variable">find-new-left</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>)))
+	      ... )))
+    (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>)))
+</pre></div><p>
+From here the rest of the definition is a plain transliteration of our
+discussion into Scheme.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_222"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2574"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">partition</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to determine the proper position <code class="scheme"><span class="variable">p</span></code> of the pivot-item </span>
+<span class="comment">;; effect: rearrange the vector <code class="scheme"><span class="variable">V</span></code> so that </span>
+<span class="comment">;; -- all items in <code class="scheme"><span class="variable">V</span></code> in [<code class="scheme"><span class="variable">left</span></code>,<code class="scheme"><span class="variable">p</span></code>) are smaller than the pivot item</span>
+<span class="comment">;; -- all items of <code class="scheme"><span class="variable">V</span></code> in (<code class="scheme"><span class="variable">p</span></code>,<code class="scheme"><span class="variable">right</span></code>] are larger than the pivot item</span>
+<span class="comment">;; generative recursion</span>
+(<span class="keyword">define</span> (<span class="variable">partition</span> <span class="variable">V</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">pivot-position</span> <span class="variable">left</span>)
+          (<span class="keyword">define</span> <span class="variable">the-pivot</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">left</span>))
+          (<span class="keyword">define</span> (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>)
+            (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">new-right</span> (<span class="variable">find-new-right</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>))
+                    (<span class="keyword">define</span> <span class="variable">new-left</span> (<span class="variable">find-new-left</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>)))
+              (<span class="keyword">cond</span>
+                [(<span class="builtin">&gt;=</span> <span class="variable">new-left</span> <span class="variable">new-right</span>)
+                 (<span class="keyword">begin</span>
+                   (<span class="variable">swap</span> <span class="variable">V</span> <span class="variable">pivot-position</span> <span class="variable">new-right</span>)
+                   <span class="variable">new-right</span>)]
+                [<span class="keyword">else</span> <span class="comment">; <code class="scheme">(<span class="builtin">&lt;</span> <span class="variable">new-left</span> <span class="variable">new-right</span>)</code></span>
+                 (<span class="keyword">begin</span>
+                   (<span class="variable">swap</span> <span class="variable">V</span> <span class="variable">new-left</span> <span class="variable">new-right</span>)
+                   (<span class="variable">partition-aux</span> <span class="variable">new-left</span> <span class="variable">new-right</span>))]))))
+    (<span class="variable">partition-aux</span> <span class="variable">left</span> <span class="variable">right</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">find-new-right</span> <span class="selfeval">:</span> (<span class="keyword">vectorof</span> <span class="variable">number</span>) <span class="variable">number</span> <strong>N</strong> <strong>N</strong> [<span class="builtin">&gt;=</span> <span class="variable">left</span>] &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong></code></span>
+<span class="comment">;; to determine an index <code class="scheme"><span class="variable">i</span></code> between <code class="scheme"><span class="variable">left</span></code> and <code class="scheme"><span class="variable">right</span></code> (inclusive)</span>
+<span class="comment">;; such that <code class="scheme">(<span class="builtin">&lt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>) <span class="variable">the-pivot</span>)</code> holds</span>
+<span class="comment">;; structural recursion: see text</span>
+(<span class="keyword">define</span> (<span class="variable">find-new-right</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> <span class="variable">right</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">=</span> <span class="variable">right</span> <span class="variable">left</span>) <span class="variable">right</span>]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+	    [(<span class="builtin">&lt;</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">right</span>) <span class="variable">the-pivot</span>) <span class="variable">right</span>]
+	    [<span class="keyword">else</span> (<span class="variable">find-new-right</span> <span class="variable">V</span> <span class="variable">the-pivot</span> <span class="variable">left</span> (<span class="builtin">sub1</span> <span class="variable">right</span>))])]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 131:</b>&nbsp;&nbsp;Rearranging a vector fragment into two partitions</td></tr>
+<tr><td> 
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_222">131</a> contains the complete definition of
+<code class="scheme"><span class="variable">partition</span></code>, <code class="scheme"><span class="variable">partition-aux</span></code>, and <code class="scheme"><span class="variable">find-new-right</span></code>; the
+function <code class="scheme"><span class="variable">swap</span></code> is defined in figure&nbsp;<a href="#node_fig_Temp_218">127</a>. The
+definition of the search function uses an unusual structural recursion based on
+subclasses of natural numbers whose limits are parameters of the
+function. Because the search functions are based on a rarely used design
+recipe, it is best to design them separately. Still, they are useful only in
+the context of <code class="scheme"><span class="variable">partition</span></code>, which means that they should be integrated
+into its definition when their design is completed. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.1.4"></a>
+<b>Exercise 43.1.4.</b>&nbsp;&nbsp;  
+Complete the definition of <code class="scheme"><span class="variable">find-new-left</span></code>. The two definitions have
+the same structure; develop the common abstraction. </p>
+<p>
+Use the definitions of <code class="scheme"><span class="variable">find-new-right</span></code> and <code class="scheme"><span class="variable">find-new-left</span></code>
+to provide a termination argument for <code class="scheme"><span class="variable">partition-aux</span></code>.</p>
+<p>
+Use the examples to develop tests for <code class="scheme"><span class="variable">partition</span></code>. Recall that the
+function computes the proper place for the pivot item and rearranges a
+fragment of the vector. Formulate the tests as boolean-valued expressions. </p>
+<p>
+When the functions are properly tested, integrate <code class="scheme"><span class="variable">find-new-right</span></code>
+and <code class="scheme"><span class="variable">find-new-left</span></code> into <code class="scheme"><span class="variable">partition</span></code> and eliminate
+superfluous parameters. </p>
+<p>
+Finally, test <code class="scheme"><span class="variable">qsort</span></code> and produce a single function definition for
+the in-place quick-sort algorithm.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ip-qsort1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.1.5"></a>
+<b>Exercise 43.1.5.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">vector-reverse!</span></code>. It inverts the contents of a
+vector; its result is the modified vector.</p>
+<p>
+<strong>Hint:</strong>  Swap items from both ends until there are no more items to
+swap.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ip-qsort3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.1.6"></a>
+<b>Exercise 43.1.6.</b>&nbsp;&nbsp;  
+Economists, meteorologists, and many others consistently measure various
+things and obtain time series. All of them need to understand the idea of
+``n-item averages'' or ``smoothing.''  Suppose we have weekly prices for
+some basket of groceries: 
+</p>
+<div align="center"><table><tr><td>
+
+<table border="0"><tr><td valign="top">1.10 </td><td valign="top">1.12 </td><td valign="top">1.08 </td><td valign="top">1.09 </td><td valign="top">1.11 
+</td></tr></table>
+</td></tr></table></div>
+
+Computing the corresponding three-item average time series proceeds as
+follows: 
+<div align="center"><table><tr><td>
+
+<img src="curriculum7b-Z-G-2.gif" border="0" alt="[curriculum7b-Z-G-2.gif]">
+</td></tr></table></div>
+
+There are no averages for the end points, which means a series with <em>k</em>
+items turns into <em>k</em> <tt>-</tt> 2 averages. <p>
+Develop the function <code class="scheme"><span class="variable">list-3-average</span></code>, which computes the 3-item
+sliding averages of a list of numbers. That is, we represent a series of
+grocery prices with lists, and <code class="scheme"><span class="variable">list-3-averages</span></code> consumes a list
+such as 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">1.10</span> <span class="selfeval">1.12</span> <span class="selfeval">1.08</span> <span class="selfeval">1.09</span> <span class="selfeval">1.11</span>)
+</pre></div><p>
+and produces 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">list</span> <span class="selfeval">1.10</span> <span class="selfeval">329/300</span> <span class="selfeval">82/75</span>)
+</pre></div><p>
+in return. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">vector-3-averages</span></code>, which computes the 3-item
+sliding averages of a vector of numbers. Since vectors are mutable, this
+gives us the alternative of producing a new vector or mutating the existing
+one.</p>
+<p>
+Develop both versions of the function: one that produces a new vector and
+another one that mutates the vector it is handed. </p>
+<p>
+</p>
+<p></p>
+<p><strong>Warning</strong>:  This is a difficult exercise. Compare all three versions
+and the complexity of designing them.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ip-qsort4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.1.7"></a>
+<b>Exercise 43.1.7.</b>&nbsp;&nbsp; 
+All the examples in this section deal with vector fragments, that is,
+intervals of natural numbers. Processing an interval requires a starting
+point for an interval, an end point, and, as the definitions of
+<code class="scheme"><span class="variable">find-new-right</span></code> and <code class="scheme"><span class="variable">find-new-left</span></code> show, a direction of
+traversal. In addition, processing means applying some function to each
+point in the interval.</p>
+<p>
+Here is a function for processing intervals:
+<a name="node_idx_2576"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">for-interval</span> <span class="selfeval">:</span>  <strong>N</strong> (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong>) (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <strong>N</strong>) (<strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">X</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">X</span></code></span>
+<span class="comment">;; to evaluate <code class="scheme">(<span class="variable">action</span> <span class="variable">i</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>))</code> for <code class="scheme"><span class="variable">i</span></code>, <code class="scheme">(<span class="variable">step</span> <span class="variable">i</span>)</code>, <tt>...</tt></span>
+<span class="comment">;; until <code class="scheme">(<span class="variable">end?</span> <span class="variable">i</span>)</code> holds (inclusive)</span>
+<span class="comment">;; generative recursion: <code class="scheme"><span class="variable">step</span></code> generates new value, <code class="scheme"><span class="variable">end?</span></code> detects end</span>
+<span class="comment">;; termination is not guaranteed </span>
+(<span class="keyword">define</span> (<span class="variable">for-interval</span> <span class="variable">i</span> <span class="variable">end?</span> <span class="variable">step</span> <span class="variable">action</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">end?</span> <span class="variable">i</span>) (<span class="variable">action</span> <span class="variable">i</span>)]
+    [<span class="keyword">else</span> (<span class="keyword">begin</span>
+	    (<span class="variable">action</span> <span class="variable">i</span>)
+	    (<span class="variable">for-interval</span> (<span class="variable">step</span> <span class="variable">i</span>) <span class="variable">end?</span> <span class="variable">step</span> <span class="variable">action</span>)])))
+</pre></div><p>
+It consumes a starting index, called <code class="scheme"><span class="variable">i</span></code>, a function for determining
+whether the end of the interval has been reached, a function that generates
+the next index, and a function that is applied to each point in between.
+Assuming <code class="scheme">(<span class="variable">end?</span> (<span class="variable">step</span> (<span class="variable">step</span> ... (<span class="variable">step</span> <span class="variable">i</span>) ...)))</code> holds,
+<code class="scheme"><span class="variable">for-interval</span></code> satisfies the following equation:
+</p>
+<div align="left"><pre class="scheme">  (<span class="variable">for-interval</span> <span class="variable">i</span> <span class="variable">end?</span> <span class="variable">step</span> <span class="variable">action</span>)
+<span class="builtin">=</span> (<span class="keyword">begin</span> (<span class="variable">action</span> <span class="variable">i</span>)
+         (<span class="variable">action</span> (<span class="variable">step</span> <span class="variable">i</span>))
+         ...
+         (<span class="variable">action</span> (<span class="variable">step</span> (<span class="variable">step</span> ... (<span class="variable">step</span> <span class="variable">i</span>) ...))))
+</pre></div><p>
+Compare the function definition and the equation with those for
+<code class="scheme"><span class="builtin">map</span></code>.</p>
+<p>
+With <code class="scheme"><span class="variable">for-interval</span></code> we can develop (some) functions on vectors without
+the traditional detour through an auxiliary function. Instead, we use
+<code class="scheme"><span class="variable">for-interval</span></code> the way we used <code class="scheme"><span class="builtin">map</span></code> for processing each item on
+a list. Here is a function that adds <code class="scheme"><span class="selfeval">1</span></code> to each vector field:
+<a name="node_idx_2578"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increment-vec-rl</span> <span class="selfeval">:</span> (<span class="builtin">vector</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to increment each item in V by <code class="scheme"><span class="selfeval">1</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">increment-vec-rl</span> <span class="variable">V</span>)
+  (<span class="variable">for-interval</span> (<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>)) <span class="builtin">zero?</span> <span class="builtin">sub1</span> 
+                (<span class="keyword">lambda</span> (<span class="variable">i</span>)
+                  (<span class="builtin">vector-set!</span> <span class="variable">V</span> <span class="variable">i</span> (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>) <span class="selfeval">1</span>)))))
+</pre></div><p>
+It processes the interval [<code class="scheme"><span class="selfeval">0</span></code>,<code class="scheme">(<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))</code>],
+where the left boundary is determined by <code class="scheme"><span class="builtin">zero?</span></code>, the termination
+test.  The starting point, however, is <code class="scheme">(<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>))</code>,
+which is the right-most legal vector index. The third argument to
+<code class="scheme"><span class="variable">for-interval</span></code>, <code class="scheme"><span class="builtin">sub1</span></code>, determines the traversal direction,
+which is from right to left, until the index is <code class="scheme"><span class="selfeval">0</span></code>. Finally, the
+action is to mutate the contents of the <code class="scheme"><span class="variable">i</span></code>-th field by adding
+<code class="scheme"><span class="selfeval">1</span></code>. </p>
+<p>
+Here is a function with the same visible effect on vectors but a different
+processing order:
+<a name="node_idx_2580"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">increment-vec-lr</span> <span class="selfeval">:</span> (<span class="builtin">vector</span> <span class="variable">number</span>) &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to increment each item in V by <code class="scheme"><span class="selfeval">1</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">increment-vec-lr</span> <span class="variable">V</span>)
+  (<span class="variable">for-interval</span> <span class="selfeval">0</span> (<span class="keyword">lambda</span> (<span class="variable">i</span>) (<span class="builtin">=</span> (<span class="builtin">sub1</span> (<span class="builtin">vector-length</span> <span class="variable">V</span>)) <span class="variable">i</span>)) <span class="builtin">add1</span> 
+                (<span class="keyword">lambda</span> (<span class="variable">i</span>)
+                  (<span class="builtin">vector-set!</span> <span class="variable">V</span> <span class="variable">i</span> (<span class="builtin">+</span> (<span class="builtin">vector-ref</span> <span class="variable">V</span> <span class="variable">i</span>) <span class="selfeval">1</span>)))))
+</pre></div><p>
+Its starting point is <code class="scheme"><span class="selfeval">0</span></code> and the end point is the right-most legal
+index of <code class="scheme"><span class="variable">V</span></code>. The <code class="scheme"><span class="builtin">add1</span></code> function determines that the vector
+is processed from left to right. </p>
+<p>
+Develop the following functions, using <code class="scheme"><span class="variable">for-interval</span></code>: 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="variable">rotate-left</span></code>, which moves all items in vector into the
+adjacent field to the left, except for the first item, which moves to the
+last field; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">insert-i-j</span></code>, which moves all items between two indices
+<code class="scheme"><span class="variable">i</span></code> and <code class="scheme"><span class="variable">j</span></code> to the right, except for the right-most one, which
+gets inserted into the <code class="scheme"><span class="variable">i</span></code>-th field
+(cmp. figure&nbsp;<a href="#node_fig_Temp_219">128</a>); </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">vector-reverse!</span></code>, which swaps the left half of a vector with
+its right half;</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">find-new-right</span></code>, that is, an alternative to the definition in
+figure&nbsp;<a href="#node_fig_Temp_222">131</a>;</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="variable">vector-sum!</span></code>, which computes the sum of the numbers in a vector
+using <code class="scheme"><span class="keyword">set!</span></code> (<strong>Hint:</strong>  see section&nbsp;<a href="curriculum-Z-H-46.html#node_sec_37.3">37.3</a>).</p>
+<p>
+</p>
+</li></ol><p>
+The last two tasks show that <code class="scheme"><span class="variable">for-interval</span></code> is useful for
+computations that have no visible effects. Of course,
+exercise&nbsp;<a href="curriculum-Z-H-36.html#node_sec_29.3">29.3</a> shows that there is no need for a clumsy
+formulation such as <code class="scheme"><span class="variable">vector-sum!</span></code>. </p>
+<p>
+Which of these functions can be defined in terms of <code class="scheme"><span class="variable">vec-for-all</span></code>
+from exercise&nbsp;<a href="curriculum-Z-H-51.html#node_thm_41.2.17">41.2.17</a>?</p>
+<p>
+<a name="node_idx_2582"></a></p>
+<p></p>
+<p><strong>Looping Constructs</strong>:  Many programming languages 
+<a name="node_idx_2584"></a>(must) provide
+functions like <code class="scheme"><span class="variable">for-interval</span></code> as built-in constructs, and force
+programmers to use them for processing vectors. As a result, many more
+programs than necessary use <code class="scheme"><span class="keyword">set!</span></code> and require complex temporal
+reasoning.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ip-qsort2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_43.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_43.2">43.2&nbsp;&nbsp;Collections of Structures with Cycles</a></h2>
+<p> </p>
+<p>
+Many objects in our world are related to each other in a circular
+manner. We have parents; our parents have children. A computer may connect
+to another computer, which in turn may connect to the first. And we have
+seen data definitions that refer to each other. </p>
+<p>
+Since data represents information about real-world objects, we will encounter
+situations that call for the design of a class of structures with a circular
+relationship. In the past, we have skirted the issue, or we used a trick to
+represent such collections. The trick is to use an indirection. For example, in
+section&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.1">28.1</a>, we associated each structure with a symbol,
+kept a table of symbols and structures around, and placed symbols into
+structures. Then, when we needed to find out whether some structure refers to
+another, we extracted the relevant symbol and looked in the table to find the
+structure for the symbol. While this use of indirection allows us to represent
+structures with mutual references or structures in a cyclic relationship, it
+also leads to awkward data representations and programs. This section
+demonstrates that we can simplify the representation of collections with
+structure mutation.</p>
+<p>
+To make this idea concrete, we discuss two examples: family trees and
+simple graphs. Consider the case of family trees. Thus far, we have used
+two kinds of family trees to record family relationships. The first is the
+ancestor tree; it relates people to their parents, grandparents, and so
+on. The second is the descendant tree; it relates people to their children,
+grandchildren, and so on. In other words, we have avoided the step of
+combining the two family trees into one, the way it is done in the real
+world. The reason for skirting the joint representation is also
+clear. Translated into our data language, a joint tree requires that a
+structure for a father should contain the structures for his children, and
+each of the child structures should contain the father structure. In the
+past, we couldn't create such collections of structures. With structure
+mutations, we can now create them. </p>
+<p>
+Here is structure definition that makes this discussion concrete: 
+<a name="node_idx_2586"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">person</span> (<span class="variable">name</span> <span class="variable">social</span> <span class="variable">father</span> <span class="variable">mother</span> <span class="variable">children</span>))
+</pre></div><p>
+The goal is to create family trees that consist of <code class="scheme"><span class="variable">person</span></code>
+structures. A person structure has five fields. The content of each is
+specified by the following data definition:</p>
+<p>
+<a name="node_idx_2588"></a><a name="node_idx_2590"></a><a name="node_idx_2592"></a><a name="node_idx_2594"></a><a name="node_idx_2596"></a>An <i>family-tree-node</i> (short: <i>ftn</i>) is either 
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">false</span></code> or </p>
+<p>
+</p>
+<li><p>a <code class="scheme"><span class="variable">person</span></code>.
+</p>
+</li></ol><p></p>
+<p>
+A <i>person</i> is a structure: <br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-person</span> <span class="variable">n</span> <span class="variable">s</span> <span class="variable">f</span> <span class="variable">m</span> <span class="variable">c</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">n</span></code> is a symbol, <code class="scheme"><span class="variable">s</span></code> is number, <code class="scheme"><span class="variable">f</span></code> and
+<code class="scheme"><span class="variable">m</span></code> are <code class="scheme"><span class="variable">ftn</span></code>s, and <code class="scheme"><span class="variable">c</span></code> is a <code class="scheme">(<span class="keyword">listof</span> <span class="variable">person</span>)</code>.
+<p>
+As usual, the <code class="scheme"><span class="builtin">false</span></code> in the definition of <code class="scheme"><span class="variable">family</span>
+<span class="variable">tree</span> <span class="variable">node</span></code>s represents missing information about a portion of the family
+tree.</p>
+<p>
+Using <code class="scheme"><span class="builtin">make-person</span></code> alone, we cannot establish the mutual reference
+between a family tree node for a father and his child. Suppose we follow an
+ancestral tree strategy, that is, we create the structure for the father
+first. Then we can't add any child to the <code class="scheme"><span class="variable">children</span></code> field, because, by
+assumption, the corresponding structure doesn't exist yet. Conversely, if we
+follow a descendant tree strategy, we first create a structure for all of a
+father's children, but those structures can't contain any information about the
+father yet.</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_223"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+
+</p>
+<p></p>
+<p>The (relevant) tree after the creation of the structure for <code class="scheme"><span class="keyword">'</span><span class="variable">Ludwig</span></code>: </p>
+<p>
+
+</p>
+<img src="curriculum7b-Z-G-3.gif" border="0" alt="[curriculum7b-Z-G-3.gif]"><p>
+</p>
+<hr><p>
+</p>
+<p></p>
+<p><tt>...</tt>and after the mutation of the structure for <code class="scheme"><span class="keyword">'</span><span class="variable">Adam</span></code>
+and <code class="scheme"><span class="keyword">'</span><span class="variable">Eve</span></code>:</p>
+<p>
+
+</p>
+<img src="curriculum7b-Z-G-4.gif" border="0" alt="[curriculum7b-Z-G-4.gif]"><p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 132:</b>&nbsp;&nbsp;Adding a child</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+<a name="node_idx_2598"></a></p>
+<p>
+What this suggests is that a simple constructor for this kind of data isn't
+really enough. Instead, we should define a <small>G</small><small>E</small><small>N</small><small>E</small><small>R</small><small>A</small><small>L</small><small>I</small><small>Z</small><small>E</small><small>D</small> <small>C</small><small>O</small><small>N</small><small>S</small><small>T</small><small>R</small><small>U</small><small>C</small><small>T</small><small>O</small><small>R</small>
+<a name="node_idx_2600"></a>that not only creates a <code class="scheme"><span class="variable">person</span></code> structure but also initializes it
+properly when possible. To develop this function, it is best to follow the
+real world, where upon the birth of a child, we create a new entry in the
+family tree, record the child's parents, and record in the existing parents'
+entries that they have a newborn.  Here is the specification for just such a
+function: 
+<a name="node_idx_2602"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-child!</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> <span class="variable">person</span> <span class="variable">person</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">person</span></code></span>
+<span class="comment">;; to construct a <code class="scheme"><span class="variable">person</span></code> structure for a newborn </span>
+<span class="comment">;; effect: to add the new structure to the children of <code class="scheme"><span class="variable">father</span></code> and <code class="scheme"><span class="variable">mother</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-child!</span> <span class="variable">name</span> <span class="variable">soc-sec</span> <span class="variable">father</span> <span class="variable">mother</span>) ...)
+</pre></div><p>
+Its task is to create a new structure for a newborn child and to add the
+structure to an existing family tree. The function consumes the child's
+name, social security number, and the structures representing the father and
+the mother.</p>
+<p>
+The first step of the design of <code class="scheme"><span class="variable">add-child!</span></code> is to create the new
+structure for the child:
+<a name="node_idx_2604"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">add-child!</span> <span class="variable">name</span> <span class="variable">soc-sec</span> <span class="variable">father</span> <span class="variable">mother</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">the-child</span>
+	    (<span class="builtin">make-person</span> <span class="variable">name</span> <span class="variable">soc-sec</span> <span class="variable">father</span> <span class="variable">mother</span> <span class="builtin">empty</span>)))
+    ...))
+</pre></div><p>
+This covers the first part of the contract. By naming the structure in a
+<strong>local</strong>-expression we can mutate it in the body of the expression. </p>
+<p>
+The second step of the design of <code class="scheme"><span class="variable">add-child!</span></code> is to add a body to
+the <strong>local</strong>-expression that performs the desired effects:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">add-child!</span> <span class="variable">name</span> <span class="variable">soc-sec</span> <span class="variable">father</span> <span class="variable">mother</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">the-child</span>
+	    (<span class="builtin">make-person</span> <span class="variable">name</span> <span class="variable">soc-sec</span> <span class="variable">father</span> <span class="variable">mother</span> <span class="builtin">empty</span>)))
+    (<span class="keyword">begin</span>
+      (<span class="builtin">set-person-children!</span> <span class="variable">father</span>
+	                    (<span class="builtin">cons</span> <span class="variable">the-child</span> (<span class="builtin">person-children</span> <span class="variable">father</span>)))
+      (<span class="builtin">set-person-children!</span> <span class="variable">mother</span>
+	                    (<span class="builtin">cons</span> <span class="variable">the-child</span> (<span class="builtin">person-children</span> <span class="variable">mother</span>)))
+      <span class="variable">the-child</span>)))
+</pre></div><p>
+Since there are two specified effects and since the purpose statement
+also specifies a result, the body of the <strong>local</strong>-expression is a <strong>begin</strong>-expression with
+three subexpressions. The first mutates <code class="scheme"><span class="variable">father</span></code>, adding
+<code class="scheme"><span class="variable">the-child</span></code> to the list of children. The second mutates
+<code class="scheme"><span class="variable">mother</span></code> in an analogous manner. The last one produces the desired
+result. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_223">132</a> illustrates the evaluation of an
+application of <code class="scheme"><span class="variable">add-child!</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">add-child!</span> <span class="keyword">'</span><span class="variable">Ludwig</span> <span class="selfeval">3</span>
+            (<span class="builtin">make-person</span> <span class="keyword">'</span><span class="variable">Adam</span> ... ... ...) 
+            (<span class="builtin">make-person</span> <span class="keyword">'</span><span class="variable">Eve</span> ... ... ...))
+</pre></div><p>
+The top-half shows the new structure for <code class="scheme"><span class="keyword">'</span><span class="variable">Ludwig</span></code> and how it refers
+to the <code class="scheme"><span class="variable">father</span></code> and <code class="scheme"><span class="variable">mother</span></code> structures. Just as in
+section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.1">14.1</a>, the picture uses arrows to relate the
+nodes of a family tree. But now this choice isn't just a convenience, it is
+dictated by necessity. As the bottom half of the figure shows, the
+structure mutation of <code class="scheme"><span class="variable">add-child!</span></code> modify the <code class="scheme"><span class="variable">children</span></code>
+fields of the <code class="scheme"><span class="variable">father</span></code> and <code class="scheme"><span class="variable">mother</span></code> structure. They add an
+additional item to the list in this field, and this new item is the
+structure for <code class="scheme"><span class="keyword">'</span><span class="variable">Ludwig</span></code>. Without arrows, we wouldn't be able to draw
+this constellation of structures because it is impossible to draw the two
+structures as nested in each other. </p>
+<p>
+With <code class="scheme"><span class="variable">add-child!</span></code> we can create family trees, one child at a
+time. What we need to learn is how to design functions that process this
+new class of family trees. In this case, we can almost always pick one of
+the two views that we used before: the ancestor family tree or the
+descendant family tree. Either view just ignores certain fields in the
+structures.  Once we have chosen a view, we design the desired functions
+following the known recipes. Even if we decide to use the bi-directional
+relations in the new family tree representation, designing a function is
+usually simply a matter of formulating those auxiliary functions that
+correspond to the real-world family relationships and to compose them
+properly. The following few exercises demonstrate these principles.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.2.1"></a>
+<b>Exercise 43.2.1.</b>&nbsp;&nbsp;  
+Modify <code class="scheme"><span class="variable">add-child!</span></code> so that it has the following contract: 
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-child!</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">number</span> <span class="variable">ftn</span> <span class="variable">ftn</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">person</span></code></span>
+</pre></div><p>
+The function otherwise behaves just like the original version.</p>
+<p>
+Once we have the modified function, there is no need for
+<code class="scheme"><span class="builtin">make-person</span></code> any more. We can create all forms of <code class="scheme"><span class="variable">person</span></code>
+structures with <code class="scheme"><span class="variable">add-child!</span></code> directly. </p>
+<p>
+Transliterate the family tree in figure&nbsp;<a href="curriculum-Z-H-19.html#node_fig_Temp_81">35</a> into the new
+representation; use the new modified <code class="scheme"><span class="variable">add-child!</span></code> function
+exclusively.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ftn-mu1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.2"></a>
+<b>Exercise 43.2.2.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">how-many-ancestors</span></code>, which consumes a family
+tree node and determines how many ancestors there are. The node itself
+counts as an ancestor.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ftn-mu2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.3"></a>
+<b>Exercise 43.2.3.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">how-many-descendants</span></code>, which consumes a family
+tree node and determines how many descendants there are. The node itself
+counts as a descendant.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ftn-mu3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.4"></a>
+<b>Exercise 43.2.4.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">names-of-cousins</span></code>. The function consumes a <code class="scheme"><span class="variable">person</span></code> and
+produces the names of the cousins.</p>
+<p>
+<strong>Hints:</strong>  (1) Don't forget to use Scheme's built-in functions for processing
+lists. (2) Use a sufficiently large portion of your own family tree to test
+the functions. (3) For the testing step,
+<a name="node_idx_2606"></a>compare the names of the results of the auxiliary functions with the
+expected results. Because the structures are mutually referential, it is
+difficult to compare them automatically. Alternatively, use <code class="scheme"><span class="builtin">eq?</span></code>,
+Scheme's intensional equality predicate, to compare two structures. Why
+does this work?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/ftn-mu.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+In sections&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.1">28.1</a> and&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a>, we
+encountered the problem of representing and traversing graphs.  Recall that
+a graph is a collection of nodes and connections between nodes.  The graph
+traversal problem is to determine whether there is a route from a node
+labeled <code class="scheme"><span class="variable">orig</span></code> to one called <code class="scheme"><span class="variable">dest</span></code>. In a simple graph, each
+node has exactly one one-way connection to another node.</p>
+<p>
+Originally, we represented a graph as a list of named nodes. If one node
+was connected to another, the corresponding structure for the first node
+contained the name of the second node, not the node itself.
+Exercise&nbsp;<a href="curriculum-Z-H-38.html#node_thm_30.2.3">30.2.3</a> introduced a vector-based
+representation. Still, all of our representations used the indirection
+trick, so that if we wanted to move from one node to another, we first had
+to look up the connection in a table. </p>
+<p>
+Using structure mutation, we can eliminate this indirection and create
+structures for nodes that contain each other, even if the graph contains a
+cycle. To understand how this works in a concrete manner, let's discuss how
+to model simple graphs such as those in figure&nbsp;<a href="curriculum-Z-H-38.html#node_fig_Temp_165">85</a> and how
+to design programs that find routes through such graphs. First, we need a
+structure definition for nodes:
+<a name="node_idx_2608"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">node</span> (<span class="variable">name</span> <span class="variable">to</span>))
+</pre></div><p>
+The <code class="scheme"><span class="variable">name</span></code> field records the name of the node, and the <code class="scheme"><span class="variable">to</span></code>
+field specifies to which other node it is connected. Second, we need a data
+definition:</p>
+<p>
+<a name="node_idx_2610"></a>A <i>simple-graph-node</i> (<i>node</i>) is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-node</span> <span class="variable">n</span> <span class="variable">t</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">n</span></code> is a symbol and <code class="scheme"><span class="variable">t</span></code> is a <code class="scheme"><span class="variable">node</span></code>.<p>
+The data definition is unusual in that it is self-referential, but it
+doesn't consist of several clauses. This immediately raises the question of how
+we can construct a node that complies with this definition. Clearly, applying
+<code class="scheme"><span class="builtin">make-node</span></code> doesn't work; instead, we need to define a generalized
+constructor that immediately sets the <code class="scheme"><span class="variable">to</span></code> field of a node. </p>
+<p>
+The generalized constructor consumes the atomic data for a <code class="scheme"><span class="variable">node</span></code>
+structure and constructs a legal node structure from there: 
+<a name="node_idx_2612"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-node</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">node</span></code></span>
+<span class="comment">;; to create a simple legal graph node with <code class="scheme"><span class="variable">a-name</span></code> in the name field</span>
+(<span class="keyword">define</span> (<span class="variable">create-node</span> <span class="variable">a-name</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">the-node</span> (<span class="builtin">make-node</span> <span class="variable">a-name</span> <span class="builtin">false</span>))) ...))
+</pre></div><p>
+The natural candidate to place into the <code class="scheme"><span class="variable">to</span></code> field is the node itself.
+In other words, the generalized constructor creates a node that contains
+itself:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-node</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">node</span></code></span>
+<span class="comment">;; to create a simple graph node that contains <code class="scheme"><span class="variable">a-name</span></code> and itself</span>
+(<span class="keyword">define</span> (<span class="variable">create-node</span> <span class="variable">a-name</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">the-node</span> (<span class="builtin">make-node</span> <span class="variable">a-name</span> <span class="builtin">false</span>)))
+    (<span class="keyword">begin</span>
+      (<span class="builtin">set-node-to!</span> <span class="variable">the-node</span> <span class="variable">the-node</span>)
+      <span class="variable">the-node</span>)))
+</pre></div><p>
+The generalized constructor makes the node using the ordinary constructor,
+initializing the <code class="scheme"><span class="variable">name</span></code> field properly and putting <code class="scheme"><span class="builtin">false</span></code>
+into the <code class="scheme"><span class="variable">to</span></code> field. Although the latter is an improper action
+according to our data definition, it is acceptable because it is
+immediately corrected in the <strong>local</strong>-expression's body. Hence an application of
+<code class="scheme"><span class="variable">create-node</span></code> produces a <code class="scheme"><span class="variable">node</span></code> as promised.</p>
+<p>
+With <code class="scheme"><span class="variable">create-node</span></code> we can create the nodes in a graph, but we can't
+establish the connections between them. To connect two nodes, we must
+modify the <code class="scheme"><span class="variable">to</span></code> field of one of the structures so that it contains
+the other. While this suggestion is generally on target, it raises the
+problem of how to identify the nodes. The family tree example suggests one
+solution, namely, to introduce one variable definition per node. Another
+comes from our orginal work with graphs, where we represented graphs as
+lists of symbolic pairs of connections or lists of nodes or vectors of
+nodes. Here we pursue the second option:</p>
+<p>
+<a name="node_idx_2614"></a>A <i>simple-graph</i> is a <code class="scheme">(<span class="keyword">listof</span> <span class="variable">node</span>)</code>.</p>
+<p>
+Assuming we have a list of all nodes, say <code class="scheme"><span class="variable">the-graph</span></code>, and a
+function for looking up the node with a given name, say <code class="scheme"><span class="variable">lookup-node</span></code>, we
+can create a connection from one node to the other with a structure
+mutation: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">set-node-to!</span> (<span class="variable">lookup-node</span> <span class="variable">from-name</span> <span class="variable">the-graph</span>)
+              (<span class="variable">lookup-node</span> <span class="variable">to-name</span> <span class="variable">the-graph</span>))
+</pre></div><p>
+We can make connecting two nodes more convenient than that with an
+auxiliary function: 
+<a name="node_idx_2616"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">connect-nodes</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">symbol</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to mutate the <code class="scheme"><span class="variable">to</span></code> field in the structure with</span>
+<span class="comment">;; <code class="scheme"><span class="variable">from-name</span></code> in the <code class="scheme"><span class="variable">name</span></code> field so that it contains</span>
+<span class="comment">;; the structure with <code class="scheme"><span class="variable">to-name</span></code> in the <code class="scheme"><span class="variable">name</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">connect-nodes</span> <span class="variable">from-name</span> <span class="variable">to-name</span> <span class="variable">a-graph</span>)
+  (<span class="builtin">set-node-to!</span> (<span class="variable">lookup-node</span> <span class="variable">from-name</span> <span class="variable">a-graph</span>)
+                (<span class="variable">lookup-node</span> <span class="variable">to-name</span> <span class="variable">a-graph</span>)))
+</pre></div><p>
+Defining <code class="scheme"><span class="variable">lookup-node</span></code> is an exercise in structural function design,
+though it is best done using Scheme's <code class="scheme"><span class="builtin">assf</span></code> function, which
+abstracts this situation. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_224"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+<a name="node_idx_2618"></a><a name="node_idx_2620"></a><a name="node_idx_2622"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">create-node</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">node</span></code></span>
+<span class="comment">;; to create a simple graph node that contains itself</span>
+(<span class="keyword">define</span> (<span class="variable">create-node</span> <span class="variable">name</span>)
+  (<span class="keyword">local</span> ((<span class="keyword">define</span> <span class="variable">the-node</span> (<span class="builtin">make-node</span> <span class="variable">name</span> <span class="builtin">false</span>)))
+    (<span class="keyword">begin</span>
+      (<span class="builtin">set-node-to!</span> <span class="variable">the-node</span> <span class="variable">the-node</span>)
+      <span class="variable">the-node</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">connect-nodes</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">symbol</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to mutate the <code class="scheme"><span class="variable">to</span></code> field in the structure named </span>
+<span class="comment">;; <code class="scheme"><span class="variable">from-name</span></code> so that it contains the structure named <code class="scheme"><span class="variable">to-name</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">connect-nodes</span> <span class="variable">from-name</span> <span class="variable">to-name</span> <span class="variable">a-graph</span>)
+  (<span class="builtin">set-node-to!</span> (<span class="variable">lookup-node</span> <span class="variable">from-name</span> <span class="variable">a-graph</span>)
+                (<span class="variable">lookup-node</span> <span class="variable">to-name</span> <span class="variable">a-graph</span>)))
+
+<span class="comment">;; <code class="scheme"><span class="variable">lookup-node</span> <span class="selfeval">:</span> <span class="variable">symbol</span> <span class="variable">graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">node</span> <span class="keyword">or</span> <span class="builtin">false</span></code></span>
+<span class="comment">;; to lookup up the node named <code class="scheme"><span class="variable">x</span></code> in <code class="scheme"><span class="variable">a-graph</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">lookup-node</span> <span class="variable">x</span> <span class="variable">a-graph</span>) 
+  ...)
+
+<span class="comment">;; <code class="scheme"><span class="variable">the-graph</span> <span class="selfeval">:</span> <span class="variable">graph</span></code></span>
+<span class="comment">;; the list of all available nodes </span>
+(<span class="keyword">define</span> <span class="variable">the-graph</span>
+  (<span class="builtin">list</span> (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">A</span>)
+        (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">B</span>)
+        (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">C</span>)
+        (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">D</span>)
+        (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">E</span>)
+        (<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">F</span>)))
+
+<span class="comment">;; setting up the graph: </span>
+(<span class="keyword">begin</span>
+  (<span class="variable">connect-nodes</span> <span class="keyword">'</span><span class="variable">A</span> <span class="keyword">'</span><span class="variable">B</span> <span class="variable">the-graph</span>)
+  (<span class="variable">connect-nodes</span> <span class="keyword">'</span><span class="variable">B</span> <span class="keyword">'</span><span class="variable">C</span> <span class="variable">the-graph</span>)
+  (<span class="variable">connect-nodes</span> <span class="keyword">'</span><span class="variable">C</span> <span class="keyword">'</span><span class="variable">E</span> <span class="variable">the-graph</span>)
+  (<span class="variable">connect-nodes</span> <span class="keyword">'</span><span class="variable">D</span> <span class="keyword">'</span><span class="variable">E</span> <span class="variable">the-graph</span>)
+  (<span class="variable">connect-nodes</span> <span class="keyword">'</span><span class="variable">E</span> <span class="keyword">'</span><span class="variable">B</span> <span class="variable">the-graph</span>))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 133:</b>&nbsp;&nbsp;Creating a simple graph via mutation</td></tr>
+<tr><td>  
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Now we can transliterate simple graphs into a Scheme
+representation. Suppose we start with the graph in
+figure&nbsp;<a href="curriculum-Z-H-38.html#node_fig_Temp_165">85</a>, which is reproduced here in a tabular format:
+</p>
+<div align="center"><table><tr><td>
+ 
+<table border="1"><tr><td valign="top"><i>from</i> </td><td valign="top">A </td><td valign="top">B </td><td valign="top">C </td><td valign="top">D </td><td valign="top">E </td><td valign="top">F </td></tr>
+<tr><td valign="top"><i>to</i>   </td><td valign="top">B </td><td valign="top">C </td><td valign="top">E </td><td valign="top">E </td><td valign="top">B </td><td valign="top">F 
+</td></tr></table>
+</td></tr></table></div>
+
+The first step is to create a list of all the nodes and to name it. The second
+step is to establish the connections according to this
+table. Figure&nbsp;<a href="#node_fig_Temp_224">133</a> shows the corresponding Scheme expressions.
+They are straight transliterations of the columns in the tabular representation
+of the graph. There is no need to reconnect the <code class="scheme"><span class="keyword">'</span><span class="variable">F</span></code> node because it is
+already connected to itself.<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.2.5"></a>
+<b>Exercise 43.2.5.</b>&nbsp;&nbsp;  
+Draw a picture of <code class="scheme">(<span class="variable">create-node</span> <span class="keyword">'</span><span class="variable">A</span>)</code> using the boxes-in-boxes
+approach from part&nbsp;<a href="curriculum-Z-H-12.html#node_part_II">II</a> and the boxes-and-arrow approach
+from part&nbsp;<a href="curriculum-Z-H-18.html#node_part_III">III</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.6"></a>
+<b>Exercise 43.2.6.</b>&nbsp;&nbsp;  
+Transliterate the given simple graph without creating a list of all
+nodes.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.7"></a>
+<b>Exercise 43.2.7.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">symbolic-graph-to-structures</span></code>. It consumes a
+list of pairs and creates a <code class="scheme"><span class="variable">graph</span></code>. </p>
+<p>
+Example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">the-graph</span> 
+  (<span class="variable">symbolic-graph-to-structures</span> <span class="keyword">'</span>((<span class="variable">A</span> <span class="variable">B</span>) (<span class="variable">B</span> <span class="variable">C</span>) (<span class="variable">C</span> <span class="variable">E</span>) (<span class="variable">D</span> <span class="variable">E</span>) (<span class="variable">E</span> <span class="variable">B</span>) (<span class="variable">F</span> <span class="variable">F</span>))))
+</pre></div><p>
+Evaluating this definition is equivalent to evaluating the definitions in
+figure&nbsp;<a href="#node_fig_Temp_224">133</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph2.html">Solution</a></p>
+<p></p>
+<p>
+Once we have a method for representing simple graphs, we can turn our
+attention to the problem of finding a route from one node in the graph to
+another. Recall the original specification from
+section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a>: 
+<a name="node_idx_2624"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">route-exists?</span> <span class="selfeval">:</span> <span class="variable">node</span> <span class="variable">node</span> <span class="variable">simple-graph</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether there is a route from <code class="scheme"><span class="variable">orig</span></code> to <code class="scheme"><span class="variable">dest</span></code> in <code class="scheme"><span class="variable">sg</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>) ...)
+</pre></div><p>
+Of course, we must reinterpret the names for our data classes in the new
+context, but otherwise the specification is perfectly fine. </p>
+<p>
+The development of the original function demonstrated two new ideas. First, the
+function uses generative recursion.
+<a name="node_idx_2626"></a>Once it is known that <code class="scheme"><span class="variable">orig</span></code> and
+<code class="scheme"><span class="variable">dest</span></code> are distinct nodes, the search resumes from the node to which
+<code class="scheme"><span class="variable">orig</span></code> is connected. Second, the function requires an accumulator to 
+remember which nodes have been visited. Without the accumulator, the
+function may revisit the same node over and over again. </p>
+<p>
+So, let's start from the template for generative recursion:
+<a name="node_idx_2628"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">eq-node?</span> <span class="variable">orig</span> <span class="variable">dest</span>) <span class="builtin">true</span>]
+    [<span class="keyword">else</span>
+     (<span class="variable">route-exists?</span> ... <span class="variable">the node to which <code class="scheme"><span class="variable">orig</span></code> is connected</span> ... <span class="variable">dest</span> <span class="variable">sg</span>)]))
+</pre></div><p>
+</p>
+<p></p>
+<p>The function <code class="scheme"><span class="variable">eq-node?</span></code> determines whether the two nodes are the same;
+this may just use <code class="scheme"><span class="builtin">eq?</span></code>, Scheme's intentional equality predicate, or
+it may compare the names of the nodes, assuming they are unique.  If the
+nodes are the same, a route exists. If not, we can generate a new,
+potentially useful problem by moving to the node to which <code class="scheme"><span class="variable">orig</span></code> is
+connected. In the graph representation of section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a>,
+this requires looking in <code class="scheme"><span class="variable">sg</span></code>. In our new graph representation, the
+connection is a part of the <code class="scheme"><span class="variable">node</span></code> representation. Hence we can use
+<code class="scheme"><span class="builtin">node-to</span></code> instead of looking in <code class="scheme"><span class="variable">sg</span></code>:
+<a name="node_idx_2630"></a></p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">eq-node?</span> <span class="variable">orig</span> <span class="variable">dest</span>) <span class="builtin">true</span>]
+    [<span class="keyword">else</span> (<span class="variable">route-exists?</span> (<span class="builtin">node-to</span> <span class="variable">orig</span>) <span class="variable">dest</span> <span class="variable">sg</span>)]))
+</pre></div><p>
+</p>
+<p></p>
+<p>The function definition shows that, so far, <code class="scheme"><span class="variable">sg</span></code> is useless. Because a
+node in the new graph representation contains its neighbors, and the neighbor
+contains its neighbor, and so on, there is no need to use the table.</p>
+<p>
+The termination argument for this function fails, just as for the original
+one in section&nbsp;<a href="curriculum-Z-H-38.html#node_sec_30.2">30.2</a>. To see why our new function may
+fail to terminate, take a look at its definition. It doesn't contain
+<code class="scheme"><span class="builtin">false</span></code>, and the function cannot possibly produce
+<code class="scheme"><span class="builtin">false</span></code> -- even though we know that our sample graph, for example,
+doesn't contain a path from <code class="scheme"><span class="keyword">'</span><span class="variable">F</span></code> to <code class="scheme"><span class="keyword">'</span><span class="variable">A</span></code> or anywhere else.
+If we inspect what happens with
+</p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="variable">route-exists?</span> (<span class="variable">lookup-node</span> <span class="variable">the-graph</span> <span class="keyword">'</span><span class="variable">F</span>) 
+               (<span class="variable">lookup-node</span> <span class="variable">the-graph</span> <span class="keyword">'</span><span class="variable">A</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>we see that <code class="scheme"><span class="variable">route-exists?</span></code> repeatedly visits the node <code class="scheme"><span class="keyword">'</span><span class="variable">F</span></code>. In
+short, it forgets what it has processed so far. </p>
+<p>
+We know that equipping <code class="scheme"><span class="variable">route-exists?</span></code> with an accumulator overcomes
+this lack of knowledge, but that requires another table lookup. We can do
+better than that with a structure mutation that records a visit by the
+<code class="scheme"><span class="variable">route-exists?</span></code> function. To do that, the <code class="scheme"><span class="variable">node</span></code> structures
+need an addtional field; we call it <code class="scheme"><span class="variable">visited</span></code>: 
+<a name="node_idx_2632"></a></p>
+<p></p>
+<p></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">node</span> (<span class="variable">name</span> <span class="variable">visited</span> <span class="variable">to</span>))
+</pre></div><p>
+</p>
+<p></p>
+<p>Initially the field contains <code class="scheme"><span class="builtin">false</span></code>. As <code class="scheme"><span class="variable">route-exists?</span></code>
+visits a node, it puts <code class="scheme"><span class="builtin">true</span></code> into the field:
+<a name="node_idx_2634"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">route-exists?</span> <span class="variable">orig</span> <span class="variable">dest</span> <span class="variable">sg</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="variable">eq-node?</span> <span class="variable">orig</span> <span class="variable">dest</span>) <span class="builtin">true</span>]
+    [(<span class="builtin">node-visited</span> <span class="variable">orig</span>) <span class="builtin">false</span>]
+    [<span class="keyword">else</span>
+      (<span class="keyword">begin</span>
+	(<span class="builtin">set-node-visited!</span> <span class="variable">orig</span> <span class="builtin">true</span>)
+	(<span class="variable">route-exists?</span> (<span class="builtin">node-to</span> <span class="variable">orig</span>) <span class="variable">dest</span> <span class="variable">sg</span>))]))
+</pre></div><p>
+To exploit this new knowledge, the function checks the new structure field
+as one of the new termination conditions. If <code class="scheme"><span class="variable">orig</span></code> has been visited
+before, there is no route because the function has discovered a cycle in
+the graph.</p>
+<p>
+The second structure mutation of this example illustrates two ideas. First,
+structure mutation can replace a table-based accumulator. In general,
+though, it is best to study a table-based version and to add structure
+mutations based on a solid understanding of the accumulated
+knowledge. Second, structure mutations can play a role in termination tests
+for generative recursion. After all, state change is motivated by the
+desire to remember things across function applications, and termination
+tests must discover whether things have changed. While the combination is
+rare, it is useful, and it appears time and again in the study of
+algorithms.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.2.8"></a>
+<b>Exercise 43.2.8.</b>&nbsp;&nbsp;  
+The function <code class="scheme"><span class="variable">route-exists?</span></code> assumes that the <code class="scheme"><span class="variable">visited</span></code>
+fields of all the nodes are initially <code class="scheme"><span class="builtin">false</span></code>. A single use of the
+function, however, sets some of the fields in a graph to
+<code class="scheme"><span class="builtin">true</span></code>. This implies that the function cannot be used twice in a
+row. </p>
+<p>
+Develop a revised version of <code class="scheme"><span class="variable">route-exists?</span></code>, with the same
+specification, that sets all <code class="scheme"><span class="variable">visited</span></code> fields to <code class="scheme"><span class="builtin">false</span></code>
+before it searches for a route between the given nodes. </p>
+<p>
+Determine the abstract running time of the new function, assuming the graph
+has <em>N</em> nodes.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.9"></a>
+<b>Exercise 43.2.9.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">reachable</span></code>. It consumes a node in a simple
+graph. Its effect is to place <code class="scheme"><span class="builtin">true</span></code> into the <code class="scheme"><span class="variable">visited</span></code>
+fields of all those nodes that are reachable from the given node and to
+ensure that the <code class="scheme"><span class="variable">visited</span></code> fields of all other nodes are
+<code class="scheme"><span class="builtin">false</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph4.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.2.10"></a>
+<b>Exercise 43.2.10.</b>&nbsp;&nbsp;  
+Develop <code class="scheme"><span class="variable">make-simple-graph</span></code>, a function that manages the state of a
+<code class="scheme"><span class="keyword">local</span></code>ly defined graph. The function accepts a simple graph in the
+form of lists of pairs of symbols: <code class="scheme">(<span class="keyword">listof</span> (<span class="builtin">list</span> <span class="variable">symbol</span> <span class="variable">symbol</span>))</code>. 
+It supports four services: 
+</p>
+<ol>
+<li><p>adding nodes that are connected to already existing nodes (by name); </p>
+<p>
+</p>
+<li><p>changing the connection of a node (by name); </p>
+<p>
+</p>
+<li><p>determining whether a route between two nodes exists; </p>
+<p>
+</p>
+<li><p>and removing nodes that are not reachable from some given node. 
+</p>
+</li></ol><p></p>
+<p>
+<strong>Hint:</strong>  Instead of using a list, the manager should use a node sequence,
+which is analogous to the <code class="scheme"><span class="variable">hand</span></code> structure from
+section&nbsp;<a href="curriculum-Z-H-51.html#node_sec_41.3">41.3</a>. A node sequence relies on the following
+structure: 
+<a name="node_idx_2636"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">sequence</span> (<span class="variable">node</span> <span class="variable">next</span>))
+</pre></div><p>
+A sequence is similar to a list, but it supports structure
+mutations.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/graph.html">Solution</a></p>
+<p></p>
+<p>
+The discussion of this section confirms the usefulness of the design recipes,
+even for collections of structures that refer to each other.  The most
+important lesson is that such situations call for a generalized constructor, a
+function that creates a structure and immediately establishes the necessary
+connections. Generalized constructors correspond to the initializers of
+section&nbsp;<a href="curriculum-Z-H-44.html#node_chap_35">35</a>; we have also seen the idea in
+section&nbsp;<a href="curriculum-Z-H-51.html#node_sec_41.3">41.3</a> where we created a hand from a single card.
+In some cases, such as the one for simple graphs, we may also want to introduce
+auxiliary functions for mutating the structures a second time. Once we have
+those functions, we can use the standard recipes, including those for
+introducing additional structure fields.</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_43.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_43.3">43.3&nbsp;&nbsp;Backtracking with State</a></h2>
+<p></p>
+<p>
+Section&nbsp;<a href="curriculum-Z-H-35.html#node_chap_28">28</a> introduced algorithms that backtrack. An
+algorithm is a recursive function that generates new problems for the
+recursive step rather than using the pieces of its input data. On occasion,
+an algorithm may have to make choices among several branches on the path to
+a solution.  Some of them may lead nowhere. In such cases, an algorithm can
+backtrack. That is, it can restart the search for a solution with a
+different branch to check if it succeeds.</p>
+<p>
+When the data representation for a problem uses structures or vectors, a
+backtracking algorithm can use structure mutation to test different
+approaches to a solution. The key is to design a pair of functions that
+change the state of the problem representation and that undo such a change
+in case the attempt fails. In this section, we discuss two examples of this
+kind: the Queens puzzle and the Peg Solitaire problem. </p>
+<p>
+Recall the Queens puzzle from section&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.2">28.2</a>. The goal of the
+puzzle is to place <code class="scheme"><span class="variable">n</span></code> queens on some board of arbitrary size
+<em>m</em>-by-<em>m</em> such that the queens do not threaten each other. A queen in
+chess threatens all places on the row, the column, and the two diagonals
+going through her own position. Figure&nbsp;<a href="curriculum-Z-H-35.html#node_fig_Temp_156">79</a> illustrates the
+notion with a single queen on an 8-by-8 board.</p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.2">28.2</a>, we represented chessboards with
+lists. When we got to know vectors, we also developed a vector-based
+representation in exercise&nbsp;<a href="curriculum-Z-H-36.html#node_thm_29.3.14">29.3.14</a>, as follows: 
+<a name="node_idx_2638"></a><a name="node_idx_2640"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; A <i>chess-board</i> <code class="scheme"><span class="variable">CB</span></code> is a <code class="scheme">(<span class="keyword">vectorof</span> (<span class="keyword">vectorof</span> <span class="variable">boolean</span>))</code></span>
+<span class="comment">;; such that all vectors have the same size.</span>
+
+<span class="comment">;; <code class="scheme"><span class="variable">make-chess-board</span> <span class="selfeval">:</span> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">CB</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">make-chess-board</span> <span class="variable">m</span>)
+  (<span class="builtin">build-vector</span> <span class="variable">m</span> (<span class="keyword">lambda</span> (<span class="variable">i</span>) (<span class="builtin">build-vector</span> <span class="variable">m</span> (<span class="keyword">lambda</span> (<span class="variable">j</span>) <span class="builtin">true</span>)))))
+</pre></div><p>
+The initial value of <code class="scheme"><span class="builtin">true</span></code> indicates that it is still legitimate to
+place a queen on the corresponding field. </p>
+<p>
+The queen-placement algorithm places a queen on one of the available fields
+on the given board and creates a new board that reflects the addition of
+the queen. This step is repeated until there are no more queens to be
+placed, in which case the puzzle is solved, or until there are no more
+places to choose from. In the second case, the algorithm backtracks. That
+is, the algorithm removes the last queen that was added and chooses some
+other available field. If there are no more fields, it backtracks further. 
+The algorithm signals a complete failure when it becomes impossible to
+backtrack. </p>
+<p>
+On one hand, creating a new board at each stage is acceptable because the
+chosen field may turn out to be the wrong one in which case the old board
+is the starting point for the next step. On the other hand, a human player
+is more likely to place the queen on the board and to remove it if the
+position turns out to be a bad choice. Thus the Queens problem is an
+example of where the ability of computer programs to create many
+alternative ``worlds'' clashes with the human world, which offers extremely
+limited possibilities of this kind<a name="call_footnote_Temp_225"></a><a href="#footnote_Temp_225"><sup><small>78</small></sup></a> and thus
+restricts human imagination. Still, it is worth exploring how the addition
+of vector mutation to our vocablulary enables us to mimic the actions of a
+human player more closely than before.</p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.3.1"></a>
+<b>Exercise 43.3.1.</b>&nbsp;&nbsp; 
+Placing an additional queen on a chessboard means that some of the fields
+on the chessboard have to be set to <code class="scheme"><span class="builtin">false</span></code> because they are now
+threatened and no longer available for future placements of queens. The
+placement of a queen is a function of the given chessboard and the indices
+of the new queen:  
+<a name="node_idx_2642"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">place-queen</span> <span class="selfeval">:</span> <span class="variable">CB</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set those fields in <code class="scheme"><span class="variable">CB</span></code> to <code class="scheme"><span class="builtin">false</span></code> that are threatened by </span>
+<span class="comment">;; a queen on row <code class="scheme"><span class="variable">i</span></code>, column <code class="scheme"><span class="variable">j</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">place-queen</span> <span class="variable">CB</span> <span class="variable">i</span> <span class="variable">j</span>) ...))
+</pre></div><p></p>
+<p>
+<strong>Hints:</strong>  (1) Recall <code class="scheme"><span class="variable">threatened?</span></code> from exercise&nbsp;<a href="curriculum-Z-H-35.html#node_thm_28.2.3">28.2.3</a>.  (2)
+Consider developing an abstract function for processing all items on a
+board. The function is analogous to <code class="scheme"><span class="variable">vec-for-all</span></code> from
+exercise&nbsp;<a href="curriculum-Z-H-51.html#node_thm_41.2.17">41.2.17</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/iqueen0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.2"></a>
+<b>Exercise 43.3.2.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">unplace-queen</span></code>. The function removes a queen and its threats
+from a chessboard:
+<a name="node_idx_2644"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">unplace-queen</span> <span class="selfeval">:</span> <span class="variable">CB</span> <strong>N</strong> <strong>N</strong> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">void</span></code></span>
+<span class="comment">;; effect: to set those fields in <code class="scheme"><span class="variable">CB</span></code> to <code class="scheme"><span class="builtin">false</span></code> that were threatened by </span>
+<span class="comment">;; a queen on row <code class="scheme"><span class="variable">i</span></code>, column <code class="scheme"><span class="variable">j</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">unplace-queen</span> <span class="variable">CB</span> <span class="variable">i</span> <span class="variable">j</span>) ...))
+</pre></div><p></p>
+<p>
+Given any chessboard <code class="scheme"><span class="variable">CB</span></code>, the following equation holds: 
+</p>
+<div align="left"><pre class="scheme">  (<span class="keyword">begin</span> 
+    (<span class="variable">place-queen</span> <span class="variable">CB</span> <span class="variable">i</span> <span class="variable">j</span>)
+    (<span class="variable">unplace-queen</span> <span class="variable">CB</span> <span class="variable">i</span> <span class="variable">j</span>)
+    <span class="variable">CB</span>)
+<span class="builtin">=</span> <span class="variable">CB</span>
+</pre></div><p>
+for all legal positios <code class="scheme"><span class="variable">i</span></code> and <code class="scheme"><span class="variable">j</span></code>. Why is this not true if
+we swap the first two subexpressions?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/iqueen1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.3"></a>
+<b>Exercise 43.3.3.</b>&nbsp;&nbsp; 
+Modify the solution of the Queens problem in section&nbsp;<a href="curriculum-Z-H-35.html#node_sec_28.2">28.2</a> to
+use the vector-based representation of chessboards and the functions
+<code class="scheme"><span class="variable">place-queen</span></code> and <code class="scheme"><span class="variable">unplace-queen</span></code> from
+exercises&nbsp;<a href="#node_thm_43.3.1">43.3.1</a> and&nbsp;<a href="#node_thm_43.3.2">43.3.2</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/iqueen2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.4"></a>
+<b>Exercise 43.3.4.</b>&nbsp;&nbsp; 
+Use the <tt><strong>draw.ss</strong></tt> teachpack to develop a view for the Queens
+problem. Recall that a view is a function that illustrates certain aspects
+of a problem in a graphical manner. The natural solution here is to display
+the intermediate stages of the solution process according to the algorithm
+of exercise&nbsp;<a href="#node_thm_43.3.3">43.3.3</a>, including the backtracking
+steps.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/iqueen3.html">Solution</a></p>
+<p></p>
+<p>
+In section&nbsp;<a href="curriculum-Z-H-40.html#node_sec_32.3">32.3</a> we discussed the Peg Solitaire
+problem. The goal of the game is to eliminate the pegs one by one, until
+only one peg is left. A player can eliminate a peg if one of the
+neighboring holes is unoccupied and if there is a peg in the hole in the
+opposite direction. In that case, the second peg can jump over the first
+one and the first one is eliminated.</p>
+<p>
+Just as with the Queens puzzle, we can represent the problem state with
+vectors and indicators for pegs and holes. In the real world, moving a peg
+corresponds to a physical action that changes the state of the board. When a
+player backtracks, the two pegs are placed back in their original
+positions. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_43.3.5"></a>
+<b>Exercise 43.3.5.</b>&nbsp;&nbsp; 
+Design a vector representation for the triangular peg solitaire
+board. Develop a function for creating a board with 
+a single hole.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/isolitaire0.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.6"></a>
+<b>Exercise 43.3.6.</b>&nbsp;&nbsp; 
+Design a data representation for a move in the Peg Solitaire problem.  Develop
+a function for making a move.  Develop a function for undoing a move. The two
+functions should rely exclusively on effects. Do the functions satisfy an
+equation analogous to <code class="scheme"><span class="variable">place-queen</span></code> and <code class="scheme"><span class="variable">unplace-queen</span></code> in
+exercise&nbsp;<a href="#node_thm_43.3.2">43.3.2</a>?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/isolitaire1.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.7"></a>
+<b>Exercise 43.3.7.</b>&nbsp;&nbsp; 
+Develop a backtracking algorithm for solving a Peg Solitaire problem whose
+hole is placed randomly.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/isolitaire2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_43.3.8"></a>
+<b>Exercise 43.3.8.</b>&nbsp;&nbsp; 
+Use the <tt><strong>draw.ss</strong></tt> teachpack to develop a view for the Peg Solitaire
+problem. Recall that a view is a function that illustrates certain aspects
+of a problem in a graphical manner. The natural solution here is to display
+the intermediate stages of the solution process according to the algorithm
+of exercise&nbsp;<a href="#node_thm_43.3.7">43.3.7</a>, including the backtracking
+steps.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/isolitaire3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+&nbsp;</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_225"></a><a href="#call_footnote_Temp_225"><sup><small>78</small></sup></a> A program could set up an
+entirely new board for every new stage in the algorithm and search for
+solutions in parallel. The additional work is, however, prohibitive for a
+human being, which is why humans shy away from such simulations.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-52.html">previous</a></span><span>, <a href="curriculum-Z-H-54.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-53.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-sort.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 19.1.6; How to Design Programs </title>
+</head>
+<body>
+<a href="abs-min-max.html">19.1.5</a> | <a href="../Book/curriculum-Z-H-25.html#node_thm_19.1.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Intermediate Student
+
+;; sort1 : list-of-numbers  -&gt;  list-of-numbers
+;; to construct a list with all items from alon in descending order
+(define (sort1 cmp alon)
+  (local ((define (sort alon)
+            (cond
+              [(empty? alon) empty]
+              [else (insert (first alon) (sort (rest alon)))]))
+          (define (insert an alon)
+            (cond
+              [(empty? alon) (list an)]
+              [else (cond
+                      [(cmp an (first alon)) (cons an alon)]
+                      [else (cons (first alon) (insert an (rest alon)))])])))
+    (sort alon)))
+
+(check-expect (sort1 &lt; empty) empty)
+(check-expect (sort1 &lt; (list 1)) (list 1))
+(check-expect (sort1 &lt; (list 2 1)) (list 1 2))
+(check-expect (sort1 &gt; empty) empty)
+(check-expect (sort1 &gt; (list 1)) (list 1))
+(check-expect (sort1 &gt; (list 1 2)) (list 2 1))
+
+(check-expect (sort1 &lt; (list 2 3 1 5 4)) (list 1 2 3 4 5))
+(check-expect (sort1 &gt; (list 2 3 1 5 4)) (list 5 4 3 2 1))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/abs-sort.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

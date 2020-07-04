@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/guess1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 5.1.2; How to Design Programs </title>
+</head>
+<body>
+<a href="eval-sym.html">5.1.1</a> | <a href="../Book/curriculum-Z-H-8.html#node_thm_5.1.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="guess2.html">5.1.3</a><pre>;; check-guess : number number -&gt; symbol
+;; to determine whether guess is larger, smaller, or equal to target
+
+;; EXAMPLES
+;; if the guess is 1 and the target is 1,
+;; the answer should be 'Perfect
+;; if the guess is 1 and the target is 2,
+;; the answer should be 'TooSmall
+;; if the guess is 1 and the target is 0, 
+;; the answer should be 'TooLarge
+
+(define (check-guess guess target)
+  (cond
+    ((= guess target) 'Perfect)
+    ((&lt; guess target) 'TooSmall)
+    ((&gt; guess target) 'TooLarge)))
+
+;; EXAMPLES TURNED INTO TESTS:
+(check-guess 1 1) "should be" 'Perfect
+(check-guess 1 2) "should be" 'TooSmall
+(check-guess 1 0) "should be" 'TooLarge
+
+;; after setting teachpack to guess.ss
+;(repl check-guess)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/guess1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

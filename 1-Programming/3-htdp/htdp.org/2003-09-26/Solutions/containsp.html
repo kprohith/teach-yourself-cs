@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/containsp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.3.3; How to Design Programs </title>
+</head>
+<body>
+<a href="doll-variant.html">9.3.2</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.3.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sum-eval.html">9.5.1</a><pre>;; contains? : symbol list-of-symbols -&gt; boolean
+;; determines if a-symbol appears on a-list
+
+#|
+;; TEMPLATE
+(define (contains? a-symbol a-list)
+  (cond
+    [(empty? a-list) ...]
+    [else (first a-list) ...
+          (contains? a-symbol (rest a-list)) ...]))
+|#
+
+(define (contains? a-symbol a-list)
+  (cond
+    [(empty? a-list) false]
+    [else (or (symbol=? a-symbol (first a-list))
+              (contains? a-symbol (rest a-list)))]))
+
+(contains? 'doll empty) "should be" false
+(contains? 'doll (cons 'doll empty)) "should be" true
+(contains? 'doll (cons 'rocket empty)) "should be" false
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/containsp.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

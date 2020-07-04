@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ip-qsort4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 43.1.6; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-53.html#node_thm_43.1.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+<pre>;; Language: Advanced Student
+
+;; [Vector Number] -&gt; [Vector Number]
+;; 3-averages for v
+
+(check-expect (ave3 (vector 1 2 3 2 1)) (vector 2 7/3 2))
+
+(define (ave3 v)
+ (build-vector (- (vector-length v) 2)
+               (lambda (i)
+                 (/ (+ (vector-ref v i) (vector-ref v (+ i 1)) (vector-ref v (+ i 2)))
+                    3))))
+
+;; [Vector Number] -&gt; Void
+;; effect: write the 3-averags of v back into v,
+;; for David: sets the leftmost and rightmost position to '-
+
+(define v (vector 1 2 3 2 1))
+
+(check-expect (begin (ave3! v) v) (vector '- 2 7/3 2 '-))
+
+(define (ave3! v)
+ (local ((define n (- (vector-length v) 1))
+
+         ;; [0,n) Number -&gt; Void
+         ;; effect: set v at i to the average of its immediate neighbors
+         ;; accu: pred is v at (vector-ref v (+ i 1))
+         (define (aux i pred)
+           (cond
+             [(= i 0) (vector-set! v i '-)]
+             [else (local ((define <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="e395a38a">[email&#160;protected]</a> (vector-ref v i)))
+                     (begin (vector-set! v i (/ (+ (vector-ref v (- i 1)) <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="4731072e">[email&#160;protected]</a> pred) 3))
+                            (aux (- i 1) <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="84f2c4ed">[email&#160;protected]</a>)))]))
+         ;; Number
+         (define <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="c5b385ab">[email&#160;protected]</a> (vector-ref v n)))
+   (begin
+     (vector-set! v n '-)
+     (aux (- n 1) <a href="../../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="4036002e">[email&#160;protected]</a>))))
+</pre>
+<script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/ip-qsort4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

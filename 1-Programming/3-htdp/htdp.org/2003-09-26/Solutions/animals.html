@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/animals.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 7.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="shape-area.html">7.1.3</a> | <a href="../Book/curriculum-Z-H-10.html#node_thm_7.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="vehicles.html">7.2.2</a><pre>;; a zoo-animal is either:
+;;   (make-spider LEGS SPACE)
+;;   (make-elephants SPACE)
+;;   (make-monkey INTELLIGENCE SPACE)
+;; where LEGS and SPACE is a number, and
+;; INTELLIGENCE is a symbol, one of:
+;;   'homer 'marge 'lisa (indicating dumb, average, or smart, repectively)
+
+(define-struct spider (legs space))
+(define-struct elephant (space))
+(define-struct monkey (intelligence space))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/animals.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

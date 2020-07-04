@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/filter.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 19.1.4; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-25.html#node_thm_19.1.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="abs-min-max.html">19.1.5</a><pre>;; below : number lon  -&gt;  lon
+;; to construct a list of those numbers
+;; on alon that are below t
+(define (below i l) 
+  (local ((define (below-i x)
+            (&gt; i x)))
+    (filter below-i l)))
+
+;; above : lon number  -&gt;  lon
+;; to construct a list of those numbers 
+;; on alon that are above t
+(define (above i l) 
+  (local ((define (above-i x)
+            (&lt; i x)))
+    (filter above-i l)))
+
+;; examples as tests
+(equal? (below 3 empty) empty)
+(equal? (below 3 (list 1 2 3 4 5))
+        (list 1 2))
+
+(equal? (above 3 empty) empty)
+(equal? (above 3 (list 1 2 3 4 5))
+        (list 4 5))
+
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/filter.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

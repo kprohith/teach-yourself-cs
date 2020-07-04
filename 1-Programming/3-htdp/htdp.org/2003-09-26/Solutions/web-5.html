@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 17.8.8; How to Design Programs </title>
+</head>
+<body>
+<a href="web-3.html">17.8.7</a> | <a href="../Book/curriculum-Z-H-22.html#node_thm_17.8.8">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="web-2.html">17.8.9</a><pre>;; Language: Beginning Student with List Abbreviations
+
+#| 17.8.8 tree=?
+------------------------------------------------------------
+;Data Definition:
+A binary-tree (short: BT) is either
+  1. false; or
+  2. (make-node n lft rgt)
+     where n is a number and lft and rgt are BTs
+|#
+(define-struct node (n left right))
+#|
+;template:
+(define (tree=? a-bt another-bt)
+  (cond
+    [(equal? false a-bt)...]
+    [else
+     ...(node-n a-bt)...(node-n another-bt)...
+     ...(tree=? (node-left a-bt)
+                (node-left another-bt))...
+     ...(tree=? (node-right a-bt)
+                (node-right another-bt))...]))
+|#
+;;tree=?: BT BT -&gt; boolean
+;;consumes two BTs and returns true
+;;if they are equal, false otherwise
+(define (tree=? a-bt another-bt)
+  (cond
+    [(equal? false a-bt) (equal? false another-bt)]
+    [else
+     (and (node? another-bt)
+          (= (node-n a-bt)
+             (node-n another-bt))
+          (tree=? (node-left a-bt)
+                  (node-left another-bt))
+          (tree=? (node-right a-bt)
+                  (node-right another-bt)))]))
+
+;Examples as Tests:
+(check-expect
+ (tree=? false false)
+ true)
+
+(check-expect
+ (tree=? (make-node 12 
+                    false
+                    false)
+         (make-node 12 
+                    false
+                    false))
+ true)
+
+(check-expect
+ (tree=? false false)
+ true)
+
+(check-expect
+ (tree=? (make-node 12 
+                    false
+                    false)
+         (make-node 18 
+                    false
+                    false))
+ false)
+
+(check-expect
+ (tree=?
+  (make-node 12 
+             (make-node 35
+                        false
+                        false)
+             (make-node 65
+                        (make-node 89
+                                   false
+                                   false)
+                        false))
+  (make-node 12
+             (make-node 35
+                        false
+                        false)
+             (make-node 65
+                        (make-node 89
+                                   false
+                                   false)
+                        false))) 
+ true)
+
+(check-expect
+ (tree=?
+  (make-node 12 
+             (make-node 35
+                        false
+                        false)
+             (make-node 65
+                        (make-node 89
+                                   false
+                                   false)
+                        false))
+  (make-node 12
+             (make-node 35
+                        false
+                        false)
+             (make-node 65
+                        (make-node 89
+                                   (make-node 7
+                                              false
+                                              false)
+                                   false)
+                        false))) 
+ false)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/web-5.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

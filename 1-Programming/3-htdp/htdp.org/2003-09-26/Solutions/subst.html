@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/subst.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.1.6; How to Design Programs </title>
+</head>
+<body>
+<a href="elim-expensive.html">10.1.5</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.1.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="recall.html">10.1.7</a><pre>;; name-robot : list-of-symbols -&gt; list-of-symbols
+;; replaces the word 'robot in the list of symbols with 'r2d2
+
+#|
+
+;; Template
+(define (name-robot a-los)
+  (cond
+    [(empty? a-los) ...]
+    [else ... (first a-los) ...
+          ... (name-robot (rest a-los)) ...]))
+
+|#
+
+(define (name-robot a-los)
+  (cond
+    [(empty? a-los) empty]
+    [else
+     (cond
+       [(eq? (first a-los) 'robot)
+        (cons 'r2d2 (name-robot (rest a-los)))]
+       [else
+        (cons (first a-los) (name-robot (rest a-los)))])]))
+
+;; Examples
+
+(name-robot empty) "should be" empty
+(name-robot (cons 'robot empty)) "should be" (cons 'r2d2 empty)
+(name-robot (cons 'doll empty)) "should be" (cons 'doll empty)
+
+(name-robot (cons 'robot (cons 'robot empty))) 
+"should be"
+(cons 'r2d2 (cons 'r2d2 empty))
+
+(name-robot (cons 'doll 
+                  (cons 'robot
+                        (cons 'monopoly
+                              (cons 'robot
+                                    (cons 'raygun
+                                          (cons 'dress
+                                                empty)))))))
+"should be"
+(cons 'doll 
+      (cons 'r2d2
+            (cons 'monopoly
+                  (cons 'r2d2
+                        (cons 'raygun
+                              (cons 'dress empty))))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/subst.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

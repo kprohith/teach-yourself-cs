@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sum-coins.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.3.2; How to Design Programs </title>
+</head>
+<body>
+<a href="taxed-wage.html">2.3.1</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.3.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="movie-theater.html">2.3.3</a><pre>;; sum-coins : number number number number -&gt; number
+;; computes the value of p pennies, n nickels, d dimes and q quarters,
+;; in pennies.
+
+;; EXAMPLES
+;; 1 penny should be worth 1 penny.
+;; 1 nickel should be worth 5 pennies.
+;; 1 dime should be worth 10 pennies.
+;; 1 quarter should be worth 25 pennies.
+;; 1 penny, 1 nickel, 1 dime and 1 quarter should be worth 41 pennies.
+
+(define (sum-coins p n d q)
+  (+ (* p 1)
+     (* n 5)
+     (* d 10)
+     (* q 25)))
+
+;; EXAMPLES TURNED INTO TESTS
+(sum-coins 1 0 0 0) "should be" 1
+(sum-coins 0 1 0 0) "should be" 5
+(sum-coins 0 0 1 0) "should be" 10
+(sum-coins 0 0 0 1) "should be" 25
+(sum-coins 1 1 1 1) "should be" 41
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/sum-coins.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

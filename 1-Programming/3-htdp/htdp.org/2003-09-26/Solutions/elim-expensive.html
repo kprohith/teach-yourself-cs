@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/elim-expensive.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.1.5; How to Design Programs </title>
+</head>
+<body>
+<a href="convertDM.html">10.1.4</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.1.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="subst.html">10.1.6</a><pre>;; eliminate-exp : number list-of-numbers -&gt; list-of-numbers
+;; eliminates expensive prices from the list of numbers. A
+;; price is expensive if it is more than ua.
+
+#|
+;; Template
+(define (eliminate-exp ua lotp)
+  (cond
+    [(empty? lotp) ...]
+    [else ... (first lotp) ...
+          ... (eliminate-exp ua (rest lotp)) ...]))
+|#
+
+(define (eliminate-exp ua lotp)
+  (cond
+    [(empty? lotp) empty]
+    [else (cond
+            [(&lt;= (first lotp) ua)
+             (cons (first lotp)
+                   (eliminate-exp ua (rest lotp)))]
+            [else
+             (eliminate-exp ua (rest lotp))])]))
+
+;; Examples
+(eliminate-exp 1.0 empty) "should be" empty
+(eliminate-exp 1.0 (cons 1.0 empty)) "should be" (cons 1.0 empty)
+(eliminate-exp 1.0 (cons 1.2 empty)) "should be" empty
+(eliminate-exp 1.0 (cons 2.95 (cons .95 (cons 1.0 (cons 5 empty))))) "should be"
+(cons .95 (cons 1.0 empty))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/elim-expensive.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

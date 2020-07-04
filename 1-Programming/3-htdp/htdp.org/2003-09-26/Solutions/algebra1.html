@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/algebra1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 2.2.5; How to Design Programs </title>
+</head>
+<body>
+<a href="convert3.html">2.2.4</a> | <a href="../Book/curriculum-Z-H-5.html#node_thm_2.2.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="taxed-wage.html">2.3.1</a><pre>(define (f n)
+  (+ (/ n 3) 2))
+
+(f 2) "should be" 8/3
+(f 5) "should be" 11/3
+(f 9) "should be" 5
+
+;; 1.
+
+(define (f n)
+  (+ (* n n) 10))
+(f 2) "should be" 14
+(f 9) "should be" 91
+
+;; 2.
+
+(define (f n)
+  (+ (* 1/2 n n) 20))
+(f 2) "should be" 22
+(f 9) "should be" 60.5
+
+;; 3.
+
+(define (f n)
+  (- 2 (/ 1 n)))
+(f 2) "should be" 1.5
+(f 9) "should be" 17/9
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/algebra1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

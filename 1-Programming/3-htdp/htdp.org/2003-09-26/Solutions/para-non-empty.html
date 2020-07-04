@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/para-non-empty.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 19.2.4; How to Design Programs </title>
+</head>
+<body>
+<a href="../Book/curriculum-Z-H-25.html#node_thm_19.2.4">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="sem-funcs.html">20.1.1</a><pre>;; Language: Intermediate Student
+
+;; Exercise 19.2.4. 
+
+;; Draft. a (non-empty-listof number) is either
+;; 1. (cons s empty), or
+;; 2. (cons s l) where l is a (non-empty-listof number)
+;; and s is always a number.
+
+;; last-number: non-empty-ls -&gt; number
+;; consumes a non-empty list of numbers and produces its last number
+
+(check-expect (last-number (list 1 2 3 4 5)) 5)
+(check-expect (last (list (list 1) (list 2) (list 3))) (list 3))
+
+(define (last-number non-empty-ls)
+  (cond
+    [(empty? (rest non-empty-ls)) (first non-empty-ls)]
+    [else (last-number (rest non-empty-ls))]))
+
+;; Generalizing to ITEM.
+
+;; a (non-empty-listof ITEM) is either
+;; 1. (cons s empty), or
+;; 2. (cons s l) where l is a (non-empty-listof ITEM)
+;; and s is always an ITEM.
+
+;; last: (non-empty-listof ITEM) -&gt; ITEM
+;; consumes a non-empty list of ITEMs and produces its last ITEM
+
+(check-expect (last '(a b c d e f)) 'f)
+
+(define (last non-empty-ls)
+  (cond
+    [(empty? (rest non-empty-ls)) (first non-empty-ls)]
+    [else (last (rest non-empty-ls))]))
+
+;; INSIGHT: in this case, the data-specific function and the 
+;; data-parametric one are identical because the former does 
+;; not exploit the knowledge about the nature of the list items.
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/para-non-empty.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

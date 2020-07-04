@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/copy.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 11.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="moving.html">10.3.6</a> | <a href="../Book/curriculum-Z-H-15.html#node_thm_11.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="tabulate-f.html">11.2.2</a><pre>;; repeat : natural-number -&gt; list-of-symbols
+(define (repeat n a-symbol)
+  (cond
+    [(zero? n) empty]
+    [else (cons a-symbol (repeat (sub1 n) a-symbol))]))
+
+;; Examples
+(repeat 0 'doll) "should be" empty
+(repeat 2 'rocket) "should be" (cons 'rocket (cons 'rocket empty))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/copy.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

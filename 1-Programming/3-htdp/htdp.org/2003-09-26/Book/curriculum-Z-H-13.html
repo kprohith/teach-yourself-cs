@@ -1,0 +1,1307 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-13.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-12.html">previous</a></span><span>, <a href="curriculum-Z-H-14.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_9"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_9">Section  9</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_9">Compound Data, Part 2: Lists</a></h1>
+<p> </p>
+<p>
+</p>
+<p>
+Structures are one way to represent compound information. They are useful
+when we know how many pieces of data we wish to combine.
+In many cases, however, we don't know how many things we wish to enumerate,
+and in that case we form a list. A list can be of arbitrary length, that
+is, it contains a finite, but undetermined number of pieces of data. </p>
+<p>
+Forming lists is something that all of us do. Before we go grocery
+shopping, we often write down a list of items that we want to
+purchase. When we plan out a day in the morning, we write down a list of
+things to do. During December, many children prepare Christmas wish lists.
+To plan a party, we list the people we want to invite. In short, arranging
+information in the form of lists is a ubiquitous part of our life, and we
+should learn to represent lists as Scheme data.  In this section, we first
+learn to create lists and then move on to developing functions that consume
+lists.</p>
+<p>
+</p>
+<a name="node_sec_9.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_9.1">9.1&nbsp;&nbsp;Lists</a></h2>
+<p> 
+</p>
+<p>
+</p>
+<p>
+When we form a list, we always start out with the empty list. In Scheme,
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+</pre></div><p>
+represents the empty list. From here, we can construct a longer list with
+the operation <code class="scheme"><span class="builtin">cons</span></code>. Here 
+is a simple example:
+<a name="node_idx_848"></a></p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Mercury</span> <span class="builtin">empty</span>) 
+</pre></div><p>
+In this example, we <code class="scheme"><span class="builtin">cons</span></code>tructed a list from the <code class="scheme"><span class="builtin">empty</span></code>
+list and the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">Mercury</span></code>. Figure&nbsp;<a href="#node_fig_Temp_60">25</a>
+presents this list in the same pictorial manner we used for structures.
+The box for <code class="scheme"><span class="builtin">cons</span></code> has two fields: <code class="scheme"><span class="builtin">first</span></code> and
+<code class="scheme"><span class="builtin">rest</span></code>. In this specific example the <code class="scheme"><span class="builtin">first</span></code> field contains
+<code class="scheme"><span class="keyword">'</span><span class="variable">Mercury</span></code> and the <code class="scheme"><span class="builtin">rest</span></code> field contains <code class="scheme"><span class="builtin">empty</span></code>.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_60"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+
+</p>
+
+<table noborder="" cellspacing="20" align="center">
+
+<!-- (cons 'Mercury empty) -->
+<tr><td align="left">(cons 'Mercury empty)</td><td>
+  <table border="" bgcolor="beige">
+  <tr> <td>'Mercury</td>
+       <td>empty</td>
+  </tr>
+  </table>
+</td></tr>
+
+<!-- (cons 'Venus (cons 'Mercury empty)) -->
+<tr><td align="left">(cons 'Venus (cons 'Mercury empty))</td><td>
+<table border="" bgcolor="tan">
+<tr> <td>'Venus</td>
+     <td>
+        <table border="" bgcolor="beige" align="center">
+        <tr> <td>'Mercury</td>
+             <td>empty</td>
+        </tr>
+        </table>
+     </td>
+</tr>
+</table>
+</td></tr>
+
+<!-- (cons 'Earth (cons 'Venus (cons 'Mercury empty))) -->
+<tr><td align="left">(cons 'Earth (cons 'Venus (cons 'Mercury empty)))</td><td>
+<table border="" bgcolor="earth">
+<tr> <td>'Earth</td>
+     <td>
+        <table border="" bgcolor="tan" align="center">
+        <tr> <td>'Venus</td>
+             <td>
+                <table border="" bgcolor="beige" align="center">
+                <tr> <td>'Mercury</td>
+                     <td>empty</td>
+                </tr>
+                </table>
+             </td>
+        </tr>
+        </table>
+     </td>
+</tr>
+</table>
+</td></tr>
+
+</table>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 25:</b>&nbsp;&nbsp;Building a list</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Once we have a list with one item on it, we can <code class="scheme"><span class="builtin">cons</span></code>truct lists
+with two items by using <code class="scheme"><span class="builtin">cons</span></code> again:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Venus</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Mercury</span> <span class="builtin">empty</span>))
+</pre></div><p>
+The middle row of figure&nbsp;<a href="#node_fig_Temp_60">25</a> shows how we should imagine
+the second list. It is also a box of two fields, but this time the
+<code class="scheme"><span class="builtin">rest</span></code> field contains a box. Indeed, it contains the box from the
+top row of the same figure. </p>
+<p>
+Finally, we construct a list with three items: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Earth</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Venus</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Mercury</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+The last row of figure&nbsp;<a href="#node_fig_Temp_60">25</a> illustrates the list with
+three items. Its <code class="scheme"><span class="builtin">rest</span></code> field contains a box that contains a box
+again. So, as we create lists we put boxes into boxes into boxes, etc. While
+this may appear strange at first glance, it is just like a set of
+Chinese gift boxes or a set of nested drinking cups, which we sometimes get
+for our early birthdays. The only difference is that Scheme programs can
+nest lists much deeper than any artist could nest physical boxes.</p>
+<p>
+</p>
+<p><a name="node_thm_9.1.1"></a>
+<b>Exercise 9.1.1.</b>&nbsp;&nbsp; 
+Create Scheme lists that represent 
+</p>
+<ol>
+<li><p>the list of all planets in our solar system; 
+</p>
+<li><p>the following meal: steak, pommes-frites, beans, bread, water, juice, 
+brie-cheese, and ice-cream; and
+</p>
+<li><p>the list of basic colors.
+</p>
+</li></ol><p>
+Sketch box representations of these lists, similar to those in
+figure&nbsp;<a href="#node_fig_Temp_60">25</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list1.html">Solution</a></p>
+<p></p>
+<p>
+We can also make lists of numbers. As before, <code class="scheme"><span class="builtin">empty</span></code> is
+the list without any items. Here is a list with 10 numbers: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="selfeval">0</span>
+  (<span class="builtin">cons</span> <span class="selfeval">1</span>
+    (<span class="builtin">cons</span> <span class="selfeval">2</span>
+      (<span class="builtin">cons</span> <span class="selfeval">3</span>
+        (<span class="builtin">cons</span> <span class="selfeval">4</span>
+          (<span class="builtin">cons</span> <span class="selfeval">5</span>
+            (<span class="builtin">cons</span> <span class="selfeval">6</span>
+              (<span class="builtin">cons</span> <span class="selfeval">7</span>
+                (<span class="builtin">cons</span> <span class="selfeval">8</span>
+                  (<span class="builtin">cons</span> <span class="selfeval">9</span> <span class="builtin">empty</span>))))))))))
+</pre></div><p>
+To build it requires 10 list <code class="scheme"><span class="builtin">cons</span></code>tructions and one <code class="scheme"><span class="builtin">empty</span></code> list. </p>
+<p>
+In general a list does not have to contain values of one kind, but may
+contain arbitrary values:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">RobbyRound</span>
+  (<span class="builtin">cons</span> <span class="selfeval">3</span> 
+    (<span class="builtin">cons</span> true
+      <span class="builtin">empty</span>)))
+</pre></div><p>
+Here the first item is a symbol, the second one is a number, and the last
+one a boolean. We could think of this list as the representation of a
+personnel record that includes the name of the employee, the number of
+years spent at the company, and whether the employee has health insurance
+through the company plan.</p>
+<p>
+Now suppose we are given a list of numbers. One thing we might wish to do
+is add up the numbers on the list. To make this more concrete, let us
+assume that we are only interested in lists of three numbers: </p>
+<p>
+<a name="node_idx_850"></a>A <i>list-of-3-numbers</i> is <br>
+</p>
+<div align="center">&nbsp; <code class="scheme">(<span class="builtin">cons</span> <span class="variable">x</span> (<span class="builtin">cons</span> <span class="variable">y</span> (<span class="builtin">cons</span> <span class="variable">z</span> <span class="builtin">empty</span>)))</code> &nbsp;</div>
+
+where <code class="scheme"><span class="variable">x</span></code>, <code class="scheme"><span class="variable">y</span></code>, and <code class="scheme"><span class="variable">z</span></code> are numbers.<p>
+We write down the contract, purpose, header, and examples as
+before: 
+<a name="node_idx_852"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-up-3</span> <span class="selfeval">:</span> <span class="variable">list-of-3-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to add up the three numbers in <code class="scheme"><span class="variable">a-list-of-3-numbers</span></code></span>
+<span class="comment">;; examples and tests: </span>
+<span class="comment">;;   <code class="scheme">(<span class="builtin">=</span> (<span class="variable">add-up-3</span> (<span class="builtin">cons</span> <span class="selfeval">2</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">3</span> <span class="builtin">empty</span>)))) <span class="selfeval">6</span>)</code></span>
+<span class="comment">;;   <code class="scheme">(<span class="builtin">=</span> (<span class="variable">add-up-3</span> (<span class="builtin">cons</span> <span class="selfeval">0</span> (<span class="builtin">cons</span> <span class="selfeval">1</span> (<span class="builtin">cons</span> <span class="selfeval">0</span> <span class="builtin">empty</span>)))) <span class="selfeval">1</span>)</code></span>
+(<span class="keyword">define</span> (<span class="variable">add-up-3</span> <span class="variable">a-list-of-3-numbers</span>) ...)
+</pre></div><p>
+To define the body, however, presents a problem. A <code class="scheme"><span class="builtin">cons</span></code>tructed
+list is like a structure.
+<a name="node_idx_854"></a>Hence we should layout a template with selector
+expressions next. Unfortunately, we don't know how to select items from a
+list.</p>
+<p>
+In analogy to structure selectors, Scheme implements operations for
+extracting the fields from a <code class="scheme"><span class="builtin">cons</span></code>tructed list: <code class="scheme"><span class="builtin">first</span></code> and
+<code class="scheme"><span class="builtin">rest</span></code>.<a name="call_footnote_Temp_61"></a><a href="#footnote_Temp_61"><sup><small>29</small></sup></a> The
+<code class="scheme"><span class="builtin">first</span></code> operation extracts the item that we used to
+<code class="scheme"><span class="builtin">cons</span></code>truct a list; the <code class="scheme"><span class="builtin">rest</span></code> operation extracts the list
+field. </p>
+<p>
+To describe how <code class="scheme"><span class="builtin">first</span></code>, <code class="scheme"><span class="builtin">rest</span></code>, and <code class="scheme"><span class="builtin">cons</span></code> are
+related, we can use equations that are similar to the equations that govern
+addition and subtraction and structure creation and field extraction: 
+<a name="node_idx_856"></a><a name="node_idx_858"></a></p>
+<div align="left"><pre class="scheme">  <span class="variable"><u><code class="scheme">(<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">10</span> <span class="builtin">empty</span>))</code></u></span>
+<span class="builtin">=</span> <span class="selfeval">10</span>
+
+  <span class="variable"><u><code class="scheme">(<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">10</span> <span class="builtin">empty</span>))</code></u></span>
+<span class="builtin">=</span> <span class="builtin">empty</span>
+
+  (<span class="builtin">first</span> <span class="variable"><u><code class="scheme">(<span class="builtin">rest</span> (<span class="builtin">cons</span> <span class="selfeval">10</span> (<span class="builtin">cons</span> <span class="selfeval">22</span> <span class="builtin">empty</span>)))</code></u></span>)
+<span class="builtin">=</span> <span class="variable"><u><code class="scheme">(<span class="builtin">first</span> (<span class="builtin">cons</span> <span class="selfeval">22</span> <span class="builtin">empty</span>))</code></u></span>
+<span class="builtin">=</span> <span class="selfeval">22</span>
+</pre></div><p>
+The last one demonstrates how to evaluate nested expressions.  The key is
+to think of <code class="scheme">(<span class="builtin">cons</span> <span class="variable">a-value</span> <span class="variable">a-list</span>)</code> as a value. And, as always, we
+start with the evaluation of the innermost parenthesized expressions that
+can be reduced, just as in arithmetic.
+<a name="node_idx_860"></a>In the above calculations, the
+expressions that are about to be reduced next are underlined.</p>
+<p>
+Using <code class="scheme"><span class="builtin">first</span></code> and <code class="scheme"><span class="builtin">rest</span></code> we can now write down a template for
+<code class="scheme"><span class="variable">add-up-3</span></code>:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">add-up-3</span> <span class="selfeval">:</span> <span class="variable">list-of-3-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to add up the three numbers in <code class="scheme"><span class="variable">a-list-of-3-numbers</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">add-up-3</span> <span class="variable">a-list-of-3-numbers</span>) 
+  ... (<span class="builtin">first</span> <span class="variable">a-list-of-3-numbers</span>) ... 
+  ... (<span class="builtin">first</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-3-numbers</span>)) ...
+  ... (<span class="builtin">first</span> (<span class="builtin">rest</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-3-numbers</span>))) ... )
+</pre></div><p>
+The three expressions remind us that the input, called
+<code class="scheme"><span class="variable">a-list-of-3-numbers</span></code>, contains three components and how to extract
+them. </p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_9.1.2"></a>
+<b>Exercise 9.1.2.</b>&nbsp;&nbsp; 
+Let <code class="scheme"><span class="variable">l</span></code> be the list 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="selfeval">10</span> (<span class="builtin">cons</span> <span class="selfeval">20</span> (<span class="builtin">cons</span> <span class="selfeval">5</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+What are the values of the following expressions? 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">rest</span> <span class="variable">l</span>)</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">first</span> (<span class="builtin">rest</span> <span class="variable">l</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">rest</span> (<span class="builtin">rest</span> <span class="variable">l</span>))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">first</span> (<span class="builtin">rest</span> (<span class="builtin">rest</span> <span class="variable">l</span>)))</code>
+</p>
+<li><p><code class="scheme">(<span class="builtin">rest</span> (<span class="builtin">rest</span> (<span class="builtin">rest</span> <span class="variable">l</span>)))</code>  &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list3.html">Solution</a></p>
+</li></ol><p>
+</p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.1.3"></a>
+<b>Exercise 9.1.3.</b>&nbsp;&nbsp;  
+Finish the development of <code class="scheme"><span class="variable">add-up-3</span></code>, that is, define the body and
+test the complete function on some examples. </p>
+<p>
+A list of three numbers is one possible representation for 3-dimensional
+points. The distance of a 3-dimensional point to the origin of the
+coordinate grid is computed in the same manner as that of 2-dimensional
+point: by squaring the numbers, adding them up, and taking the square root.</p>
+<p>
+Use the template for <code class="scheme"><span class="variable">add-up-3</span></code> to develop <code class="scheme"><span class="variable">distance-to-0-for-3</span></code>, 
+which computes the distance of a 3-dimensional point to the origin.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/add3.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.1.4"></a>
+<b>Exercise 9.1.4.</b>&nbsp;&nbsp;  
+Provide a data definition for lists of two symbols. Then develop the
+function <code class="scheme"><span class="variable">contains-2-doll?</span></code>, which consumes a list of two symbols and
+determines whether one of them is <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/in2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p></p>
+<p><strong>On the Precise Relationship between Cons and Structures</strong>:  The
+discussion of <code class="scheme"><span class="builtin">cons</span></code>, <code class="scheme"><span class="builtin">first</span></code>, and <code class="scheme"><span class="builtin">rest</span></code> suggests
+that <code class="scheme"><span class="builtin">cons</span></code> creates a structure and <code class="scheme"><span class="builtin">first</span></code> and <code class="scheme"><span class="builtin">rest</span></code>
+are ordinary selectors:
+<a name="node_idx_862"></a><a name="node_idx_864"></a><a name="node_idx_866"></a><a name="node_idx_868"></a><a name="node_idx_870"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">pair</span> (<span class="variable">left</span> <span class="variable">right</span>))
+
+(<span class="keyword">define</span> (<span class="variable">our-cons</span> <span class="variable">a-value</span> <span class="variable">a-list</span>) (<span class="builtin">make-pair</span> <span class="variable">a-value</span> <span class="variable">a-list</span>))
+
+(<span class="keyword">define</span> (<span class="variable">our-first</span> <span class="variable">a-pair</span>) (<span class="builtin">pair-left</span> <span class="variable">a-pair</span>))
+
+(<span class="keyword">define</span> (<span class="variable">our-rest</span> <span class="variable">a-pair</span>) (<span class="builtin">pair-right</span> <span class="variable">a-pair</span>))
+
+(<span class="keyword">define</span> (<span class="variable">our-cons?</span> <span class="variable">x</span>) (<span class="builtin">pair?</span> <span class="variable">x</span>))
+</pre></div><p></p>
+<p>
+Although these definitions are a good first approximation, they are
+inaccurate in one important point. DrScheme's version of <code class="scheme"><span class="builtin">cons</span></code> is
+really a checked version of <code class="scheme"><span class="builtin">make-pair</span></code>. Specifically, the
+<code class="scheme"><span class="builtin">cons</span></code> operation ensures that the <code class="scheme"><span class="variable">right</span></code> field is always a
+list, that is, <code class="scheme"><span class="builtin">cons</span></code>tructed or <code class="scheme"><span class="builtin">empty</span></code>. This suggests the
+following refinement: 
+<a name="node_idx_872"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">our-cons</span> <span class="variable">a-value</span> <span class="variable">a-list</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list</span>) (<span class="builtin">make-pair</span> <span class="variable">a-value</span> <span class="variable">a-list</span>)]
+    [(<span class="variable">our-cons?</span> <span class="variable">a-list</span>) (<span class="builtin">make-pair</span> <span class="variable">a-value</span> <span class="variable">a-list</span>)]
+    [<span class="keyword">else</span> (<span class="builtin">error</span> <span class="keyword">'</span><span class="variable">our-cons</span> <span class="selfeval">&quot;list as second argument expected&quot;</span>)]))
+</pre></div><p>
+The definitions for <code class="scheme"><span class="variable">our-first</span></code>, <code class="scheme"><span class="variable">our-rest</span></code>, and
+<code class="scheme"><span class="variable">our-cons?</span></code> remain the same. Finally, we must also promise not to
+use <code class="scheme"><span class="builtin">make-pair</span></code> directly so that we don't accidentally build a bad
+list.&nbsp;</p>
+<p>
+</p>
+<a name="node_sec_9.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_9.2">9.2&nbsp;&nbsp;Data Definitions for Lists of Arbitrary Length</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-14.html#node_sec_9.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+first, rest</a>
+</td></tr></table><p></p>
+<p>
+Suppose we wish to represent the inventory of a toy store that sells such
+things as dolls, make-up sets, clowns, bows, arrows, and soccer balls. To
+make an inventory, a store owner would start with an empty sheet of paper
+and slowly write down the names of the toys on the various shelves.</p>
+<p>
+Representing a list of toys in Scheme is straightforward. We can simply use
+Scheme's symbols for toys and then <code class="scheme"><span class="builtin">cons</span></code>truct lists from them. Here
+are a few short samples:
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">clown</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">bow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">clown</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))))
+</pre></div><p>
+For a real store, the list will contain many more items, and the list will
+grow and shrink over time. In any case, we cannot say in advance how many
+items these inventory lists will contain. Hence, if we wish to develop a
+function that consumes such lists, we cannot simply say that the input is a
+list with either one, two, three, or four items. We must be prepared to
+think about lists of arbitrary length.</p>
+<p>
+In other words, we need a data definition that precisely describes the
+class of lists that contain an arbitrary number of symbols.  Unfortunately,
+the data definitions we have seen so far can only describe classes of data
+where each item is of a fixed size, such as a structure with a specific
+number of components or a list with a specific number of items. So how can
+we describe a class of lists of arbitrary size?</p>
+<p>
+Looking back we see that all our examples fall into one of two
+categories. The store owner starts with an empty list and
+<code class="scheme"><span class="builtin">cons</span></code>tructs longer and longer lists. The construction proceeds by
+<code class="scheme"><span class="builtin">cons</span></code>tructing together a toy and another list of toys. Here is a
+data definition that reflects this process: </p>
+<p>
+<a name="node_idx_874"></a>A <i>list-of-symbols</i> is either
+</p>
+<ol>
+<li><p>the empty list, <code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">los</span>)</code> where <code class="scheme"><span class="variable">s</span></code> is a symbol and
+<code class="scheme"><span class="variable">los</span></code> is a list of symbols.   
+</p>
+</li></ol><p></p>
+<p>
+This definition is unlike any of the definitions we have seen so
+far or that we encounter in high school English or mathematics. Those
+definitions explain a new idea in terms of old, well-understood
+concepts. In contrast, this definition refers to <em>itself</em> in the item
+labeled&nbsp;2, which implies that it explains what a list of symbols is in
+terms of lists of symbols.  We call such definitions
+<small>S</small><small>E</small><small>L</small><small>F</small>-<small>R</small><small>E</small><small>F</small><small>E</small><small>R</small><small>E</small><small>N</small><small>T</small><small>I</small><small>A</small><small>L</small> 
+<a name="node_idx_876"></a>or <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>V</small><small>E</small>.
+<a name="node_idx_878"></a></p>
+<p>
+At first glance, a definition that explains or specifies something in terms
+of itself does not seem to make much sense. This first impression, however,
+is wrong. A recursive definition, such as the one above, makes sense as
+long as we can construct some elements from it; the definition is correct
+if we can construct all intended elements.<a name="call_footnote_Temp_62"></a><a href="#footnote_Temp_62"><sup><small>30</small></sup></a></p>
+<p>
+Let's check whether our specific data definition makes sense and contains
+all the elements we are interested in. From the first clause we immediately
+know that <code class="scheme"><span class="builtin">empty</span></code> is a list of symbols. From the second clause we
+know that we can create larger lists with <code class="scheme"><span class="builtin">cons</span></code> from a symbol and a
+list of symbols. Thus <code class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)</code> is a list of symbols
+because we just determined that <code class="scheme"><span class="builtin">empty</span></code> is one and we know that
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> is a symbol. There is nothing special about
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. Any other symbol could serve equally well to form a number
+of one-item lists of symbols:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">make-up-set</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">water-gun</span> <span class="builtin">empty</span>)
+...
+</pre></div><p>
+Once we have lists that contain one symbol, we can use the same method to
+build lists with two items:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">Barbie</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">robot</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">make-up-set</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">water-gun</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> <span class="builtin">empty</span>))
+...
+</pre></div><p>
+From here, it is easy to see how we can form lists that contain an
+arbitrary number of symbols. More important still for our problem, all
+possible inventories are adequately described by our data
+definition.</p>
+<p>
+</p>
+<p><a name="node_thm_9.2.1"></a>
+<b>Exercise 9.2.1.</b>&nbsp;&nbsp;  
+Show that all the inventory lists discussed at the beginning of this
+section belong to the class <code class="scheme"><span class="variable">list-of-symbols</span></code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list5.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.2.2"></a>
+<b>Exercise 9.2.2.</b>&nbsp;&nbsp;  
+Do all lists of two symbols also belong to the class <code class="scheme"><span class="variable">list-of-symbols</span></code>?
+Provide a concise argument.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list6.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.2.3"></a>
+<b>Exercise 9.2.3.</b>&nbsp;&nbsp;  
+Provide a data definition for the class of list of booleans. The
+class contains all arbitrarily large lists of booleans.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/list7.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_9.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_9.3">9.3&nbsp;&nbsp;Processing Lists of Arbitrary Length</a></h2>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-14.html#node_sec_9.3"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+<strong>Un</strong>natural<br>
+Recursions</a>
+</td></tr></table><p></p>
+<p>
+A real store will want to have a large inventory on-line, that is, put into
+a computer, so that an employee can quickly determine whether a toy is
+available or not. For simplicity, assume that we need
+<code class="scheme"><span class="variable">contains-doll?</span></code>, a function that checks whether the store has a
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. Translated into Scheme terminology, the function determines
+whether <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> occurs on some list of symbols.</p>
+<p>
+Because we already have a rigorous definition of <code class="scheme"><span class="variable">contains-doll?</span></code>'s
+input, we turn to the contract, header, and purpose statement: 
+<a name="node_idx_880"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">contains-doll?</span> <span class="selfeval">:</span> <span class="variable">list-of-symbols</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> occurs on <code class="scheme"><span class="variable">a-list-of-symbols</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>) ...)
+</pre></div><p>
+Following the general design recipe,
+<a name="node_idx_882"></a>
+we next make up some examples that illustrate
+<code class="scheme"><span class="variable">contains-doll?</span></code> purpose. First, we clearly need to determine the
+output for the simplest input: <code class="scheme"><span class="builtin">empty</span></code>. Since the list does not
+contain any symbol, it certainly does not contain <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, and the
+answer should be <code class="scheme">false</code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">contains-doll?</span> <span class="builtin">empty</span>) 
+           false)
+</pre></div><p>
+Next, we consider lists with a single item. Here are two examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)) 
+           false)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="builtin">empty</span>))
+           true)
+</pre></div><p>
+In the first case, the answer is <code class="scheme">false</code> because the single item on the
+list is not <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>; in the second case, the item is <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>,
+and the answer is <code class="scheme">true</code>. Finally, here are two more general examples,
+with lists of several items: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">bow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ax</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))))
+           false)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">contains-doll?</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>))))
+           true)
+</pre></div><p>
+Again, the answer in the first case must be <code class="scheme">false</code> because the list
+does not contain <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, and in the second case it must be
+<code class="scheme">true</code> because <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> is one of the items on the list provided
+to the function. </p>
+<p>
+The next step is to design a function template that matches the data
+definition.  Since the data definition for lists of symbols has two
+clauses, the function's body must be a <strong>cond</strong>-expression. The
+<strong>cond</strong>-expression determines which of the two kinds of lists the
+function received: the <code class="scheme"><span class="builtin">empty</span></code> list or a <code class="scheme"><span class="builtin">cons</span></code>tructed list:
+<a name="node_idx_884"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) ...]
+    [(<span class="builtin">cons?</span> <span class="variable">a-list-of-symbols</span>) ...]))
+</pre></div><p>
+Instead of <code class="scheme">(<span class="builtin">cons?</span> <span class="variable">a-list-of-symbols</span>)</code>, we can use <code class="scheme"><span class="keyword">else</span></code> in
+the second clause.</p>
+<p>
+We can add one more hint to the template by studying each clause of the
+<strong>cond</strong>-expression in turn. Specifically, recall that the design recipe
+<a name="node_idx_886"></a>
+suggests
+annotating each clause with selector expressions if the corresponding class
+of inputs consists of compounds. In our case, we know that <code class="scheme"><span class="builtin">empty</span></code>
+does not have compounds, so there are no components. Otherwise the list is
+<code class="scheme"><span class="builtin">cons</span></code>tructed from a symbol and another list of symbols, and we
+remind ourselves of this fact by adding <code class="scheme">(<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>)</code>
+and <code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)</code> to the template:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) ... (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>) ...]))
+</pre></div><p></p>
+<p>
+</p>
+<p>
+Now that we have a template based on our design recipes
+<a name="node_idx_888"></a><a name="node_idx_890"></a>for mixed and
+compound data, we turn to the definition of the function's body, dealing
+with each <code class="scheme"><span class="keyword">cond</span></code>-clause separately.  If <code class="scheme">(<span class="builtin">empty?</span>
+<span class="variable">a-list-of-symbols</span>)</code> is true, the input is the empty list, in which case the
+function must produce the result <code class="scheme">false</code>.  In the second case,
+<code class="scheme">(<span class="builtin">cons?</span>  <span class="variable">a-list-of-symbols</span>)</code> is true. The annotations in the
+template remind us that there is a first symbol and the rest of the list.
+So let us consider an example that falls into this category:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> 
+  (<span class="builtin">cons</span> ...
+      ... <span class="builtin">empty</span>)))
+</pre></div><p>
+The function, just like a human being, must clearly compare the first item
+with <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. In this example, the first symbol is <code class="scheme"><span class="keyword">'</span><span class="variable">arrow</span></code>
+and not <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, so the comparison will yield <code class="scheme">false</code>. If we had
+considered some other example instead, say, 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span>
+  (<span class="builtin">cons</span> ...
+      ... <span class="builtin">empty</span>)))
+</pre></div><p>
+the function would determine that the first item on the input is
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, and would therefore respond with <code class="scheme">true</code>.  All of this
+implies that the second line in the <strong>cond</strong>-expression should contain
+another <strong>cond</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) <span class="keyword">'</span><span class="variable">doll</span>) 
+             true]
+            [<span class="keyword">else</span>
+             ... (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>) ...])]))
+</pre></div><p>
+Furthermore, if the comparison of <code class="scheme">(<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>)</code> yields
+<code class="scheme">true</code>, the function is done and produces <code class="scheme">true</code>, too. </p>
+<p>
+If the comparison yields <code class="scheme">false</code>, we are left with another list of
+symbols: <code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)</code>. Clearly, we can't know the
+final answer in this case, because depending on what ``<tt>...</tt>'' represents,
+the function must produce <code class="scheme">true</code> or <code class="scheme">false</code>. Put differently, if
+the first item is not <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, we need some way to check whether the
+rest of the list contains <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. </p>
+<p>
+Fortunately, we have just such a function: <code class="scheme"><span class="variable">contains-doll?</span></code>, which
+according to its purpose statement determines whether a list contains
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. The purpose statement implies that if <code class="scheme"><span class="variable">l</span></code> is a list
+of symbols, <code class="scheme">(<span class="variable">contains-doll?</span> <span class="variable">l</span>)</code> tells us whether <code class="scheme"><span class="variable">l</span></code>
+contains the symbol <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. Similarly, <code class="scheme">(<span class="variable">contains-doll?</span>
+(<span class="builtin">rest</span> <span class="variable">l</span>))</code> determines whether the rest of <code class="scheme"><span class="variable">l</span></code> contains
+<code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>. And in the same vein, <code class="scheme">(<span class="variable">contains-doll?</span>  (<span class="builtin">rest</span>
+<span class="variable">a-list-of-symbols</span>))</code> determines whether or not <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code> is in
+<code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)</code>, which is precisely what we need to know
+now.</p>
+<p>
+Here is the complete definition of the function: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">contains-doll?</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">cond</span>
+            [(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) <span class="keyword">'</span><span class="variable">doll</span>) true]
+            [<span class="keyword">else</span> (<span class="variable">contains-doll?</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>))])]))
+</pre></div><p>
+It consumes a list of symbols and determines whether or not it is empty. If
+it is, the result is <code class="scheme">false</code>. Otherwise, the list is not empty and the
+result of the function depends on the first item of the list. If the first
+item is <code class="scheme"><span class="keyword">'</span><span class="variable">doll</span></code>, the result is <code class="scheme">true</code>; if not, the function's
+result is the result of searching the <code class="scheme"><span class="builtin">rest</span></code> of the input
+list -- whatever it is. </p>
+<p>
+</p>
+<p><a name="node_thm_9.3.1"></a>
+<b>Exercise 9.3.1.</b>&nbsp;&nbsp; 
+Use DrScheme to test the definition of <code class="scheme"><span class="variable">contains-doll?</span></code> on our examples: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">doll</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">bow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">arrow</span> (<span class="builtin">cons</span> <span class="keyword">'</span><span class="variable">ball</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/doll-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_9.3.2"></a>
+<b>Exercise 9.3.2.</b>&nbsp;&nbsp; 
+Another way of formulating the second <code class="scheme"><span class="keyword">cond</span></code>-clause in the function 
+<code class="scheme"><span class="variable">contains-doll?</span></code> is to understand 
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">contains-doll?</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>))
+</pre></div><p>
+as a condition that evaluates to either <code class="scheme"><span class="builtin">true</span></code> or <code class="scheme"><span class="builtin">false</span></code>,
+and to combine it appropriately with the condition
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">symbol=?</span> (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) <span class="keyword">'</span><span class="variable">doll</span>)
+</pre></div><p>
+Reformulate the definition of <code class="scheme"><span class="variable">contains-doll?</span></code> according to this
+observation.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/doll-variant.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.3.3"></a>
+<b>Exercise 9.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">contains?</span></code>, which consumes a symbol and a list
+of symbols and determines whether or not the symbol occurs in the
+list.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/containsp.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<a name="node_sec_9.4"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_9.4">9.4&nbsp;&nbsp;Designing Functions for Self-Referential Data Definitions</a></h2>
+<p> 
+</p>
+<p>
+<a name="node_idx_892"></a></p>
+<p>
+At first glance, self-referential data definitions seem to be far more
+complex than those for compound or mixed data. But, as the example in the
+preceding subsection shows, our design recipes still work. Nevertheless, in
+this section we discuss a new design recipe that works better for
+self-referential data definitions. As implied by the preceding section, the
+new recipe generalizes those for compound and mixed data. The new parts
+concern the process of discovering when a self-referential data definition
+is needed, deriving a template, and defining the function body:</p>
+<p>
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>Data Analysis and Design:</b></dt><dd> If a problem statement discusses
+compound information of arbitrary size, we need a recursive or
+self-referential data definition. At this point, we have only seen one such
+class, <code class="scheme"><span class="variable">list-of-symbols</span></code>, but it is easy to imagine other, yet
+similar classes of lists. We will get to know many other examples in this
+and the following part.<a name="call_footnote_Temp_63"></a><a href="#footnote_Temp_63"><sup><small>31</small></sup></a> <p>
+For a recursive data definition to be valid, it must satisfy two
+conditions. First, it must contain at least two clauses. Second, at least
+one of the clauses must not refer back to the definition. It is good
+practice to identify the self-references explicitly with arrows from the
+references in the data definition back to its beginning. </p>
+<p>
+Our running example for this section are functions that consume lists of
+symbols: </p>
+<p>
+<a name="node_idx_894"></a></p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/dd-list.gif" alt="list data def with arrow">
+<p>
+</p>
+</dd><dt><b>Template:</b></dt><dd> A self-referential data definition specifies a mixed class
+of data, and one of the clauses should specify a subclass of compound
+data. Hence the design of the template can proceed according to the recipes
+in sections&nbsp;<a href="curriculum-Z-H-9.html#node_sec_6.5">6.5</a>
+and&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.2">7.2</a>. Specifically, we formulate a
+<strong>cond</strong>-expression with as many <code class="scheme"><span class="keyword">cond</span></code>-clauses as there are
+clauses in the data definition, match each recognizing condition to the
+corresponding clause in the data definition, and write down appropriate
+selector expressions in all <code class="scheme"><span class="keyword">cond</span></code>-lines that process compound
+values.<p>
+In addition, we inspect each selector expression. For each that extracts a
+value of the same class of data as the input, we draw an arrow back to the
+function parameter. At the end, we must have as many arrows as we have in
+the data definition.</p>
+<p>
+Let's return to the running example. The template for a list-processing
+function contains a <strong>cond</strong>-expression with two clauses and one arrow: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<img src="../icons/fun-list.gif" alt="list data def with arrow">
+<p>
+For simplicity, this book will use a textual alternative to arrows. Instead
+of drawing an arrow, the templates contain self-applications of the function
+to the selector expression(s):
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">fun-for-los</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) ...
+      ... (<span class="variable">fun-for-los</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)) ...]))
+</pre></div><p>
+We refer to these self-applications as <small>N</small><small>A</small><small>T</small><small>U</small><small>R</small><small>A</small><small>L</small> <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>O</small><small>N</small><small>S</small>.
+<a name="node_idx_896"></a> </p>
+<p>
+</p>
+</dd><dt><b>Body:</b></dt><dd> For the design of the body we start with those
+<code class="scheme"><span class="keyword">cond</span></code>-lines that do not contain natural recursions. They are
+called <small>B</small><small>A</small><small>S</small><small>E</small> <small>C</small><small>A</small><small>S</small><small>E</small><small>S</small>.
+<a name="node_idx_898"></a>The corresponding answers are typically easy
+to formulate or are already given by the examples.<p>
+Then we deal with the self-referential cases. We start by reminding
+ourselves what each of the expressions in the template line computes. For
+the recursive application we assume that the function already works as
+specified in our purpose statement. <strong>The rest is then a matter of
+combining the various values.</strong></p>
+<p>
+Suppose we wish to define the function <code class="scheme"><span class="variable">how-many</span></code>, which determines
+how many symbols are on a list of symbols. Assuming we have followed the
+design recipe, we have the following: 
+<a name="node_idx_900"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">how-many</span> <span class="selfeval">:</span> <span class="variable">list-of-symbols</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to determine how many symbols are on <code class="scheme"><span class="variable">a-list-of-symbols</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">how-many</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-list-of-symbols</span>) ... 
+      ... (<span class="variable">how-many</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)) ...]))
+</pre></div><p></p>
+<p>
+The answer for the base case is <code class="scheme"><span class="selfeval">0</span></code> because the empty list contains
+nothing. The two expressions in the second clause compute the
+<code class="scheme"><span class="builtin">first</span></code> item and the number of symbols on the <code class="scheme">(<span class="builtin">rest</span>
+<span class="variable">a-list-of-symbols</span>)</code>. To compute how many symbols there are on all of
+<code class="scheme"><span class="variable">a-list-of-symbols</span></code>, we just need to add <code class="scheme"><span class="selfeval">1</span></code> to the value of
+the latter expression:
+<a name="node_idx_902"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">how-many</span> <span class="variable">a-list-of-symbols</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-symbols</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="variable">how-many</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-symbols</span>)) <span class="selfeval">1</span>)]))
+</pre></div><p></p>
+<p>
+</p>
+</dd><dt><b>Combining Values:</b></dt><dd> In many cases, the combination step can be
+expressed with Scheme's primitives, for example, <code class="scheme"><span class="builtin">+</span></code>, <code class="scheme"><span class="keyword">and</span></code>,
+or <code class="scheme"><span class="builtin">cons</span></code>. If the problem statement suggests that we ask questions
+about the first item, we may need a nested
+<code class="scheme"><span class="keyword">cond</span></code>-statement. Finally, in some cases, we may have to define
+auxiliary functions.
+</dd></dl><p>
+Figure&nbsp;<a href="#node_fig_Temp_64">26</a> summarizes this discussion in the usual format;
+those design steps that we didn't discuss are performed as before.  The
+following section discusses several examples in detail.</p>
+<p>
+<a name="node_idx_904"></a>
+<a name="node_idx_906"></a>
+<a name="node_idx_908"></a>
+<a name="node_idx_910"></a>
+<a name="node_idx_912"></a>
+<a name="node_idx_914"></a>
+<a name="node_idx_916"></a>
+<a name="node_idx_918"></a>
+<a name="node_idx_920"></a>
+<a name="node_idx_922"></a>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_64"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p></p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Data<br>
+&nbsp;&nbsp;Analysis<br>
+&nbsp;&nbsp;and Design
+</div><p>  </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate a data definition </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop a data definition for mixed data with at
+least two alternatives <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> one alternative must not refer to the
+definition <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> explicitly identify all self-references in the data
+definition</div><p></p></td></tr>
+<tr><td valign="top">
+<p></p>
+<div align="left">
+Contract<br>
+Purpose and<br>
+Header<br>
+</div><p>
+</p>
+</td><td valign="top">
+<p></p>
+<div align="left">to name the function;<br>
+to specify its classes of<br>
+&nbsp;&nbsp;input data and its<br>
+&nbsp;&nbsp;class of output data;<br>
+to describe its purpose;<br>
+to formulate a header
+</div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">name the function, the classes of input data, the
+class of output data, and
+specify its purpose: <br>
+&nbsp;;; <i>name</i> : <i>in1</i> <i>in2</i> <tt>...</tt>--> <i>out</i> <br>
+&nbsp;;; to compute <tt>...</tt> from <i>x1</i> <tt>...</tt><br>
+&nbsp;(<strong>define</strong> (<i>name x1 x2 <tt>...</tt></i>) <tt>...</tt>)
+</div><p></p></td></tr>
+<tr><td valign="top">Examples &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to characterize the input-<br>
+output relationship via examples </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">create examples of the input-output relationship
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> make sure there is at least one example per subclass</div><p></p></td></tr>
+<tr><td valign="top">Template        
+</td><td valign="top"><p></p>
+<div align="left">to formulate an outline </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop a <strong>cond</strong>-expression with one clause per
+alternative <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> add selector expressions to each clause <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> annotate the
+body with <em>natural recursions</em> <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> T<small>E</small><small>S</small><small>T</small>: the  self-references
+<a name="node_idx_924"></a>in this template and the data definition match!</div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define the function </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">formulate a Scheme expression for each simple
+<strong>cond</strong>-line <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> explain for all other <strong>cond</strong>-clauses what each
+natural recursion computes according to the purpose statement</div><p></p></td></tr>
+<tr><td valign="top">Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to discover mistakes<br>
+&nbsp;&nbsp;(``typos'' and logic) </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">apply the function to the inputs of the examples 
+<img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> check that the outputs are as predicted</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 26:</b>&nbsp;&nbsp;Designing a function for self-referential data</td></tr>
+<tr><td> 
+<div align="center">&nbsp;(Refines the recipes in 
+figures&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> (pg.&nbsp;<a href="curriculum-Z-H-5.html">5</a>), 
+<a href="curriculum-Z-H-9.html#node_fig_Temp_39">12</a> (pg.&nbsp;<a href="curriculum-Z-H-9.html">9</a>), and
+<a href="curriculum-Z-H-10.html#node_fig_Temp_51">18</a> (pg.&nbsp;<a href="curriculum-Z-H-10.html">10</a>))&nbsp;</div>
+
+<p></p>
+<p>
+</p>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_9.5"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_9.5">9.5&nbsp;&nbsp;More on Processing Simple Lists</a></h2>
+<p></p>
+<p>
+Let us now look at another aspect of inventory management: the cost of an
+inventory. In addition to a list of the available toys, a store owner
+should also maintain a list of the cost of each item. The cost list permits
+the owner to determine how much the current inventory is worth or, given
+the inventory at the beginning of the year and that of the end of the year,
+how much profit the store makes.</p>
+<p>
+A list of costs is most easily represented as a list. For example: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="selfeval">1.22</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>))
+(<span class="builtin">cons</span> <span class="selfeval">17.05</span> (<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+Again, for a real store, we cannot place an arbitrary limit on the size of
+such a list, and functions that process such cost lists must be prepared to 
+consume lists of arbitrary size. </p>
+<p>
+Suppose the toy store needs a function that computes the value of an
+inventory from the cost of the individual toys. We call this function
+<code class="scheme"><span class="variable">sum</span></code>. Before we can define <code class="scheme"><span class="variable">sum</span></code>, we must figure out how to
+describe all possible lists of numbers that the function may consume. In
+short, we need a data definition that precisely defines what an arbitrarily
+large list of numbers is. We can obtain this definition by replacing
+``symbol'' with ``number'' in the definition of lists of symbols:</p>
+<p>
+<a name="node_idx_926"></a>A <i>list-of-numbers</i> is either
+</p>
+<ol>
+<li><p>the empty list, <code class="scheme"><span class="builtin">empty</span></code>, or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">n</span> <span class="variable">lon</span>)</code> where <code class="scheme"><span class="variable">n</span></code> is a number and
+<code class="scheme"><span class="variable">lon</span></code> is a list of numbers.
+</p>
+</li></ol><p></p>
+<p>
+Given that this data definition is self-referential again, we must first
+confirm that it actually defines some lists and that it defines all those
+inventories that we wish to represent. All of the examples above are lists
+of numbers. The first one, <code class="scheme"><span class="builtin">empty</span></code>, is included explicitly. The
+second and third are <code class="scheme"><span class="builtin">cons</span></code>tructed by adding the numbers
+<code class="scheme"><span class="selfeval">1.22</span></code> and <code class="scheme"><span class="selfeval">2.59</span></code>, respectively, to the empty list. The
+others are lists of numbers for similar reasons.</p>
+<p>
+As always, we start the development of the function with a contract, header,
+and purpose statement: 
+<a name="node_idx_928"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">sum</span> <span class="selfeval">:</span> <span class="variable">list-of-numbers</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">number</span></code></span>
+<span class="comment">;; to compute the sum of the numbers on <code class="scheme"><span class="variable">a-list-of-nums</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">a-list-of-nums</span>) ...)
+</pre></div><p>
+Then we continue with function examples: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">sum</span> <span class="builtin">empty</span>) 
+   <span class="selfeval">0</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">sum</span> (<span class="builtin">cons</span> <span class="selfeval">1.00</span> <span class="builtin">empty</span>))
+   <span class="selfeval">1.0</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">=</span> (<span class="variable">sum</span> (<span class="builtin">cons</span> <span class="selfeval">17.05</span> (<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>))))
+   <span class="selfeval">20.86</span>)
+</pre></div><p>
+If <code class="scheme"><span class="variable">sum</span></code> is applied to <code class="scheme"><span class="builtin">empty</span></code>, the store has no inventory
+and the result should be <code class="scheme"><span class="selfeval">0</span></code>. If the input is <code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">1.00</span>
+<span class="builtin">empty</span>)</code>, the inventory contains only one toy, and the cost of the toy is
+the cost of the inventory. Hence the result is <code class="scheme"><span class="selfeval">1.00</span></code>. Finally, for
+<code class="scheme">(<span class="builtin">cons</span> <span class="selfeval">17.05</span> (<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>)))</code>, <code class="scheme"><span class="variable">sum</span></code> should
+yield </p>
+<div align="center"><img src="curriculum1b-Z-G-1.gif" border="0" alt="[curriculum1b-Z-G-1.gif]"></div><p></p>
+<p>
+For the design of <code class="scheme"><span class="variable">sum</span></code>'s template, we follow the design recipe,
+step by step. First, we add the <strong>cond</strong>-expression: 
+<a name="node_idx_930"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">a-list-of-nums</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-nums</span>) ...]
+    [(<span class="builtin">cons?</span> <span class="variable">a-list-of-nums</span>) ...]))
+</pre></div><p>
+The second clause indicates with a comment that it deals with
+<code class="scheme"><span class="builtin">cons</span></code>tructed lists. Second, we add the appropriate selector
+expressions for each clause: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">a-list-of-nums</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-nums</span>) ...]
+    [(<span class="builtin">cons?</span> <span class="variable">a-list-of-nums</span>)
+     ... (<span class="builtin">first</span> <span class="variable">a-list-of-nums</span>) ... (<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>) ...]))
+</pre></div><p>
+Finally, we add the natural recursion of <code class="scheme"><span class="variable">sum</span></code> that reflects the
+self-reference in the data definition: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">a-list-of-nums</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-nums</span>) ...]
+    [<span class="keyword">else</span> ... (<span class="builtin">first</span> <span class="variable">a-list-of-nums</span>) ... (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>)) ...]))
+</pre></div><p>
+The final template reflects almost every aspect of the data definition: the
+two clauses, the <code class="scheme"><span class="builtin">cons</span></code>truction in the second clauses, and the
+self-reference of the second clauses. The only part of the data definition
+that the function template does not reflect is that the first item of a
+<code class="scheme"><span class="builtin">cons</span></code>tructed input is a number. </p>
+<p>
+Now that we have a template, let us define the answers for the
+<strong>cond</strong>-expression on a clause-by-clause basis. In the first
+clause, the input is <code class="scheme"><span class="builtin">empty</span></code>, which means that the store has no
+inventory. We already agreed that in this case the inventory is worth
+nothing, which means the corresponding answer is <code class="scheme"><span class="selfeval">0</span></code>. In the second
+clause of the template, we find two expressions:
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">a-list-of-nums</span>)</code>, which extracts the cost of the first
+toy; and </p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>))</code>, which, according to the purpose statement of <code class="scheme"><span class="variable">sum</span></code>,
+computes the sum of <code class="scheme">(<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>)</code>. 
+</p>
+</li></ol><p>
+From these two reminders of what the expressions already compute for us, 
+we see that the expression 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">a-list-of-nums</span>) (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>)))
+</pre></div><p>
+computes the answer in the second <code class="scheme"><span class="keyword">cond</span></code>-clause. </p>
+<p>
+Here is the complete definition of <code class="scheme"><span class="variable">sum</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">sum</span> <span class="variable">a-list-of-nums</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">a-list-of-nums</span>) <span class="selfeval">0</span>]
+    [<span class="keyword">else</span> (<span class="builtin">+</span> (<span class="builtin">first</span> <span class="variable">a-list-of-nums</span>) (<span class="variable">sum</span> (<span class="builtin">rest</span> <span class="variable">a-list-of-nums</span>)))]))
+</pre></div><p>
+A comparison of this definition with the template and the data definition
+shows that the step from the data definition to the template is the major
+step in the function development process. Once we have derived the template
+from a solid understanding of the set of possible inputs, we can focus on
+the creative part: combining values. For simple examples, this step is
+easy; for others, it requires rigorous thinking.</p>
+<p>
+We will see in future sections that this relationship between the shape of
+the data definition and the function is not a coincidence. Defining the
+class of data that a function consumes always determines to a large extent
+the shape of the function.</p>
+<p>
+</p>
+<p><a name="node_thm_9.5.1"></a>
+<b>Exercise 9.5.1.</b>&nbsp;&nbsp; 
+Use DrScheme to test the definition of <code class="scheme"><span class="variable">sum</span></code> on the following sample
+lists of numbers: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span> 
+(<span class="builtin">cons</span> <span class="selfeval">1.00</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">17.05</span> (<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>)))
+</pre></div><p>
+Compare the results with our specifications. Then apply <code class="scheme"><span class="variable">sum</span></code> to the
+following examples: 
+</p>
+<div align="left"><pre class="scheme"><span class="builtin">empty</span>
+(<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>)
+(<span class="builtin">cons</span> <span class="selfeval">1.22</span> (<span class="builtin">cons</span> <span class="selfeval">2.59</span> <span class="builtin">empty</span>))
+</pre></div><p>
+First determine what the result <em>should</em> be; then use DrScheme to
+evaluate the expressions. 
+&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/sum-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.5.2"></a>
+<b>Exercise 9.5.2.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">how-many-symbols</span></code>, which consumes a list of
+symbols and produces the number of items in the list.</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">how-many-numbers</span></code>, which counts how many
+numbers are in a list of numbers. How do <code class="scheme"><span class="variable">how-many-symbols</span></code> and
+<code class="scheme"><span class="variable">how-many-numbers</span></code> differ?&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/how-manyS.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.5.3"></a>
+<b>Exercise 9.5.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">dollar-store?</span></code>, which consumes a list of prices
+(numbers) and checks whether all of the prices are below <code class="scheme"><span class="selfeval">1</span></code>.  </p>
+<p>
+For example, the following expressions should evaluate to <code class="scheme"><span class="builtin">true</span></code>:
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">dollar-store?</span> <span class="builtin">empty</span>)
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">not</span> (<span class="variable">dollar-store?</span> (<span class="builtin">cons</span> <span class="selfeval">.75</span> (<span class="builtin">cons</span> <span class="selfeval">1.95</span> (<span class="builtin">cons</span> <span class="selfeval">.25</span> <span class="builtin">empty</span>)))))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">dollar-store?</span> (<span class="builtin">cons</span> <span class="selfeval">.15</span> (<span class="builtin">cons</span> <span class="selfeval">.05</span> (<span class="builtin">cons</span> <span class="selfeval">.25</span> <span class="builtin">empty</span>))))
+</pre></div><p></p>
+<p>
+Generalize the function so that it consumes a list of prices (numbers) and
+a threshold price (number) and checks that all prices in the list are below
+the threshold. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/dollar-store.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.5.4"></a>
+<b>Exercise 9.5.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">check-range1?</span></code>, which consumes a list of
+temperature measurements (represented as numbers) and checks whether all
+measurements are between 5<sup><em>o</em></sup><em>C</em> and 95<sup><em>o</em></sup><em>C</em>. </p>
+<p>
+Generalize the function to <code class="scheme"><span class="variable">check-range?</span></code>, which consumes a list of
+temperature measurements and a legal interval and checks whether all
+measurements are within the legal interval.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/check-range1.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_9.5.5"></a>
+<b>Exercise 9.5.5.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">convert</span></code>.  It consumes a list of digits and
+produces the corresponding number. The first digit is the least
+significant, and so on.</p>
+<p>
+Also develop the function <code class="scheme"><span class="variable">check-guess-for-list</span></code>. It implements a
+general version of the number-guessing game of exercise&nbsp;<a href="curriculum-Z-H-8.html#node_thm_5.1.3">5.1.3</a>.
+The function consumes a list of digits, which represents the player's
+<code class="scheme"><span class="variable">guess</span></code>, and a number, which represents the randomly chosen and
+hidden number.  Depending on how the <code class="scheme"><span class="variable">convert</span></code>ed digits relate to
+<code class="scheme"><span class="variable">target</span></code>, <code class="scheme"><span class="variable">check-guess-for-list</span></code> produces one of the
+following three answers: <code class="scheme"><span class="keyword">'</span><span class="variable">TooSmall</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">Perfect</span></code>, or
+<code class="scheme"><span class="keyword">'</span><span class="variable">TooLarge</span></code>.</p>
+<p>
+The rest of the game is implemented by <tt><strong>guess.ss</strong></tt>. To play the
+game, use the teachpack to <tt><strong>guess.ss</strong></tt> and evaluate the expression
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">guess-with-gui-list</span> <span class="selfeval">5</span> <span class="variable">check-guess-for-list</span>)
+</pre></div><p>
+<em>after</em> the functions have been thoroughly developed.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/guess3.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_9.5.6"></a>
+<b>Exercise 9.5.6.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">delta</span></code>, which consumes two price lists, that
+is, lists of numbers. The first represents the inventory at the beginning
+of a time period, the second one the inventory at the end. The function
+outputs the difference in value. If the value of the inventory has
+increased, the result is positive; if the value has decreased, it is
+negative.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/delta.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.5.7"></a>
+<b>Exercise 9.5.7.</b>&nbsp;&nbsp; 
+Define the function <code class="scheme"><span class="variable">average-price</span></code>. It consumes a list of toy prices
+and computes the average price of a toy. The average is the total of all
+prices divided by the number of toys. </p>
+<p>
+</p>
+<p>
+<a name="node_idx_932"></a></p>
+<p></p>
+<p><strong>Iterative Refinement</strong>:  First develop a function that works on non-empty lists.
+Then produce a checked function (see section&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.5">7.5</a>) that
+signals an error when the function is applied to an empty
+list.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/average-price.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_9.5.8"></a>
+<b>Exercise 9.5.8.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">draw-circles</span></code>, which consumes a <code class="scheme"><span class="variable">posn</span></code>
+<code class="scheme"><span class="variable">p</span></code> and a list of numbers. Each number of the list represents the
+radius of some circle. The function draws concentric red circles around
+<code class="scheme"><span class="variable">p</span></code> on a canvas, using the operation <code class="scheme"><span class="variable">draw-circle</span></code>. Its
+result is <code class="scheme">true</code>, if it can draw all of them; otherwise an error has
+occurred and the function does not need to produce a value.</p>
+<p>
+Use the teachpack <tt><strong>draw.ss</strong></tt>; create the canvas with <code class="scheme">(<span class="variable">start</span> <span class="selfeval">300</span>
+<span class="selfeval">300</span>)</code>. Recall that <tt><strong>draw.ss</strong></tt> provides the structure definition for
+<code class="scheme"><span class="variable">posn</span></code> (see
+section&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.1">7.1</a>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/draw-list-shapes.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_61"></a><a href="#call_footnote_Temp_61"><sup><small>29</small></sup></a> The traditional names are <code class="scheme"><span class="variable">car</span></code> and
+<code class="scheme"><span class="variable">cdr</span></code>, but we will not use these nonsensical names.</p>
+<p><a name="footnote_Temp_62"></a><a href="#call_footnote_Temp_62"><sup><small>30</small></sup></a> It is common that a
+data definition describes a class of data that contains more than the
+intended elements. This limitation is inherent and is just one of the many
+symptoms of the limits of computing.</p>
+<p><a name="footnote_Temp_63"></a><a href="#call_footnote_Temp_63"><sup><small>31</small></sup></a> Numbers also seem to be arbitrarily
+large. For inexact numbers, this is an illusion. For precise integers,
+this is indeed the case, and we will discuss them later in this part.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-12.html">previous</a></span><span>, <a href="curriculum-Z-H-14.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-13.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/extract2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 10.2.5; How to Design Programs </title>
+</head>
+<body>
+<a href="phone-directory.html">10.2.4</a> | <a href="../Book/curriculum-Z-H-14.html#node_thm_10.2.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="inventory1.html">10.2.6</a><pre>;; extract&gt;1 : inventory -&gt; inventory
+;; extracts the portion of the inventory whose prices are bigger than $1
+
+(define-struct ir (name price))
+#|
+;; Template
+(define (extract&gt;1 inv)
+  (cond
+    [(empty? inv) ...]
+    [else (ir-name (first inv))
+          (ir-price (first inv))
+          (extract&gt;1 (rest inv))]))
+|#
+
+(define (extract&gt;1 inv)
+  (cond
+    [(empty? inv) empty]
+    [else (cond
+            [(&gt; (ir-price (first inv)) 1)
+             (cons (first inv) (extract&gt;1 (rest inv)))]
+            [else 
+             (extract&gt;1 (rest inv))])]))
+
+;; Examples
+(extract&gt;1 empty) "should be" empty
+(extract&gt;1 (cons (make-ir 'doll .50) empty)) "should be" empty
+(extract&gt;1 (cons (make-ir 'rocket 1.50) empty))
+"should be"
+(cons (make-ir 'rocket 1.50) empty)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/extract2.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

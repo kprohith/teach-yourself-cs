@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tax.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.4.2; How to Design Programs </title>
+</head>
+<body>
+<a href="interest.html">4.4.1</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.4.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="credit.html">4.4.3</a><pre>;; tax : number -&gt; number
+;; to deteremine the amount of tax owed, for a given gross-pay
+(define (tax gross-pay)
+  (cond
+    [(&lt;= gross-pay 240) 0]
+    [(&lt;= gross-pay 480) (* gross-pay .15)]
+    [else (* gross-pay .28)]))
+
+;; EXAMPLES AS TESTS
+(tax 10) "should be" 0
+(tax 240) "should be" 0
+(tax 300) "should be" 45
+(tax 480) "should be" 72
+(tax 500) "should be" 140
+
+;; netpay : number -&gt; number
+;; to determine the amount of income, after taxes.
+(define (netpay hours-worked)
+  (- (* hours-worked 12) 
+     (tax (* hours-worked 12))))
+
+;; EXAMPLES AS TESTS
+(netpay 1) "should be" 12
+(netpay 40) "should be" 408
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/tax.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

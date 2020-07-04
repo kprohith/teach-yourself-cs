@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/average-price.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 9.5.7; How to Design Programs </title>
+</head>
+<body>
+<a href="delta.html">9.5.6</a> | <a href="../Book/curriculum-Z-H-13.html#node_thm_9.5.7">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="draw-list-shapes.html">9.5.8</a><pre>;; average-price : list-of-numbers -&gt; number
+;; calculates the average price on a-lon
+
+#|
+;; Template
+(define (average-price a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (average-price (rest a-lon)) ...]))
+
+|#
+
+;; Now we are stuck. We followed the recipe blindly. Let's step back and
+;; see how we computed the average for the examples. We summed up the
+;; numbers AND we counted the numbers AND we divided the first by the
+;; second. Aha -- we no longer have the option of choosing auxiliaries; we
+;; must do so to write simple programs.
+
+(define (average-price a-lon)
+  (/ (sum a-lon) 
+     (count a-lon)))
+
+;; sum : list-of-numbers -&gt; number
+;; calcuates the sum of the numbers on a-lon
+#|
+;; Template
+(define (sum a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (sum (rest a-lon)) ...]))
+
+|#
+
+(define (sum a-lon)
+  (cond
+    [(empty? a-lon) 0]
+    [else (+ (first a-lon)
+             (sum (rest a-lon)))]))
+
+;; count : list-of-numbers -&gt; number
+;; counts the number of numbers on a-lon
+
+#|
+;; Template
+(define (count a-lon)
+  (cond
+    [(empty? a-lon) ...]
+    [else ... (first a-lon) ...
+          ... (count (rest a-lon)) ...]))
+|#
+
+(define (count a-lon)
+  (cond
+    [(empty? a-lon) 0]
+    [else (+ 1 (count (rest a-lon)))]))
+
+;; Examples:
+(sum empty) "should be" 0
+(sum (cons 1 (cons 2 (cons 3 empty)))) "should be" 6
+(sum (cons 1.25 (cons 3.75 (cons 4.00 empty)))) "should be" 9.00
+
+(count empty) "should be" 0
+(count (cons 1 empty)) "should be" 1
+(count (cons 1 (cons 2 (cons 3 empty)))) "should be" 3
+(count (cons 1.25 (cons 3.75 (cons 4.00 empty)))) "should be" 3
+
+(average-price (cons 1.00 empty)) "should be" 1.00
+(average-price (cons 0.50 (cons 1.50 empty))) "should be" 1.00
+(average-price (cons 1.25 (cons 3.75 (cons 4.00 empty)))) "should be" 3.00
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/average-price.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

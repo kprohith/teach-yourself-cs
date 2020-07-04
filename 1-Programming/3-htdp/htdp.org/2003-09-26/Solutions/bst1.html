@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 14.2.1; How to Design Programs </title>
+</head>
+<body>
+<a href="proper-bea.html">14.1.6</a> | <a href="../Book/curriculum-Z-H-19.html#node_thm_14.2.1">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="bst1-search.html">14.2.2</a><pre>;; Language: Beginning Student
+
+;      11 'Bobby
+;         \  
+;          \
+;         12 'Luke
+
+
+;      11 'Bobby
+;        /  
+;       /
+;    24 'Luke
+
+
+;      11 'Bobby
+;        /     \
+;       /       \
+;    24 'Luke    5  'Paul
+
+
+#|
+A BT is either
+  1. false; or
+  2. (make-node soc pn lft rgt) 
+     where soc is a number, pn is a symbol, and lft and rgt are BTs.
+|#
+(define-struct node (ssn name left right))
+
+(define bt1 (make-node 11 'Bobby false (make-node 12 'Luke false false)))
+(define bt2 (make-node 11 'Bobby (make-node 12 'Luke false false) false))
+(define bt3 (make-node 11 'Bobby (make-node 12 'Luke false false) (make-node 5 'Paul false false))) 
+
+;; bt-contains?: number BT -&gt; boolean
+;; consumes a number and binary-tree and determines if a-bt contains n
+(define (bt-contains? n a-bt)
+  (cond
+    [(boolean? a-bt) false]
+    [else
+     (or (= n (node-ssn a-bt))
+         (bt-contains? n (node-left a-bt))
+         (bt-contains? n (node-right a-bt)))]))
+
+(equal? (bt-contains? 11 bt1) true)
+(equal? (bt-contains? 5 bt3) true)
+(equal? (bt-contains? 9 bt3) false)
+(equal? (bt-contains? 12 bt2) true)
+(equal? (bt-contains? 5 bt2) false)
+(equal? (bt-contains? 12 bt3) true)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/bst1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

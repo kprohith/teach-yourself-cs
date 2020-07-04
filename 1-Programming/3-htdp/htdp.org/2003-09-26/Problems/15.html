@@ -1,0 +1,65 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Problems/15.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 --><head><title>HtDP Problem Set</title></head><body bgcolor="white"><br><table width="100%"><tr><td align="left"><h3>HtDP Problem Set</h3></td><td align="right"><h3>Section 15</h3></td></tr></table><br><div><hr><a name="1"><font color="red">Problem 1: </font></a><blockquote>
+The following set of problems deal with taxonomic classification.
+Organisms are classified according to a heirarchy of types such
+as kingdom, phylum, and so on.
+These types have associated names, for example 
+the kingdom "Plantae" representing plants.
+Humans are categorized in the kingdom "Animalia" and
+have the genus "Homo" and the species "Sapien".
+Use a biology textbook or other reference to create some
+example classifications.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM1">Solution</a></p></div><div><hr><a name="2"><font color="red">Problem 2: </font></a><blockquote>
+
+<pre>A T-node (taxonomic node) is one of
+  Level or
+  empty
+
+A Level is a structure
+  (make-level Type Symbol List-of-T-node)
+
+(define-struct level (type name children))
+
+A Type is one of
+  'kingdom
+  'phylum
+  'class
+  'order
+  'family
+  'genus
+  'species
+
+A List-of-T-node is one of
+  empty
+  (cons T-node List-of-T-node)
+</pre>
+
+Develop the function <em>child-names</em>.
+The function consumes the name of a Level and a T-node and
+returns a list of names of the Level's immediate children.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM2">Solution</a></p></div><div><hr><a name="3"><font color="red">Problem 3: </font></a><blockquote>
+Develop the function <em>is-classified?</em>.
+The function consumes a Type, a string representing the
+name of the Type, and a T-node and
+determines whether or not the name occurs with that
+Type in the tree.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM3">Solution</a></p></div><div><hr><a name="4"><font color="red">Problem 4: </font></a><blockquote>
+Develop the function <em>get-type</em>.
+The function consumes a string representing
+the name of a Type  and a T-node and
+returns the first Type associated with that name or
+false if no Types are associated with it.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM4">Solution</a></p></div><div><hr><a name="5"><font color="red">Problem 5: </font></a><blockquote>
+Develop the function <em>get-all-of-type</em>.
+The function consumes a Type and a T-node and
+returns a list of names associated with that Type
+in the tree.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM5">Solution</a></p></div><div><hr><a name="6"><font color="red">Problem 6: </font></a><blockquote>
+Develop the function <em>get-species-under-type</em>.
+The function consumes a Type, a string representing
+the Type's associated name, and a T-node then
+returns all species' names classified under that name.
+Hint: use the function from the previous problem to
+help you.
+</blockquote><p align="right"><img src="hand.right.gif" alt="Solution"><a href="Solutions/sol15.html#PROBLEM6">Solution</a></p></div><br><hr><table width="90%"><tr><td align="left"><address><a href="../../cdn-cgi/l/email-protection.html#6517041c080a0b01250606164b0b00104b000110">Jamie Raymond</a></address></td><td align="right"><address>Matthias Felleisen</address></td></tr><tr><td align="left">&nbsp;</td><td align="right"><p>01 december 2003 </p></td></tr></table><script data-cfasync="false" src="../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body><!-- Copied from https://htdp.org/2003-09-26/Problems/15.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 13.0.5; How to Design Programs </title>
+</head>
+<body>
+<a href="list-cons3.html">13.0.4</a> | <a href="../Book/curriculum-Z-H-17.html#node_thm_13.0.5">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-cons1.html">13.0.6</a><pre>;; 1.
+(cons 'a (list 0 false)) 
+"should be"
+(cons 'a (cons 0 (cons false empty)))
+"should be"
+(list 'a 0 false)
+
+;; 2.
+(list (cons 1 (cons 13 empty))) 
+"should be"
+(cons (cons 1 (cons 13 empty)) empty)
+"should be"
+(list (list 1 13))
+
+;; 3.
+(list empty empty (cons 1 empty)) 
+"should be"
+(cons empty (cons empty (cons (cons 1 empty) empty)))
+"should be"
+(list empty empty (list 1))
+
+;; 4.
+(cons 'a (cons (list 1) (list false empty)))
+"should be"
+(cons 'a (cons (cons 1 empty) (cons false (cons empty empty))))
+"should be"
+(list 'a (list 1) false empty)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons4.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

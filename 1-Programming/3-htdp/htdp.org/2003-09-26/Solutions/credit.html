@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/credit.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 4.4.3; How to Design Programs </title>
+</head>
+<body>
+<a href="tax.html">4.4.2</a> | <a href="../Book/curriculum-Z-H-7.html#node_thm_4.4.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="quad1.html">4.4.4</a><pre>;; pay-back : number -&gt; number
+;; computes the amount of cash back the credit card holder receives.
+
+;; Examples
+;; $400 gets $1
+;; $1400 gets $5.75
+;; $2000 gets $10.00
+;; $2600 gets $14.75
+
+(define (pay-back a)
+  (cond
+    [(&lt;= a 500)
+     (pay-back-0-500 a)]
+    [(and (&gt; a 500) (&lt;= a 1500))
+     (pay-back-500-1500 a)]
+    [(and (&gt; a 1500) (&lt;= a 2500))
+     (pay-back-1500-2500 a)]
+    [else
+     (pay-back-2500+ a)]))
+
+;; pay-back-0-500 : number -&gt; number
+;; computes the pay back for amounts between 0 and 500
+(define (pay-back-0-500 a)
+  (* a (* .25 1/100)))
+
+;; pay-back-500-1500 : number -&gt; number
+;; computes the pay back for amounts between 500 and 1500
+(define (pay-back-500-1500 a)
+  (+ (pay-back-0-500 500)
+     (* (- a 500) (* .50 1/100))))
+
+;; pay-back-1500-2500 : number -&gt; number
+;; computes the pay back for amounts between 1500 and 2500
+(define (pay-back-1500-2500 a)
+  (+ (pay-back-500-1500 1500)
+     (* (- a 1500) (* .75 1/100))))
+
+;; pay-back-2500+ : number -&gt; number
+;; computes the pay back for amounts between 2500 and higher
+(define (pay-back-2500+ a)
+  (+ (pay-back-1500-2500 2500)
+     (* (- a 2500) (* 1 1/100))))
+
+;; EXAMPLES AS TESTS
+
+(pay-back-0-500 400) "should be" 1
+(pay-back 400) "should be" 1
+
+(pay-back-500-1500 1400) "should be" 5.75
+(pay-back 1400) "should be" 5.75
+
+(pay-back-1500-2500 2000) "should be" 10.00
+(pay-back 2000) "should be" 10.00
+
+(pay-back-2500+ 2600) "should be" 14.75
+(pay-back 2600) "should be" 14.75
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/credit.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

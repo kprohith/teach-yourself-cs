@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/queen1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 28.2.2; How to Design Programs </title>
+</head>
+<body>
+<a href="queen0.html">28.2.1</a> | <a href="../Book/curriculum-Z-H-35.html#node_thm_28.2.2">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="queen2.html">28.2.3</a><pre>;; Language: Intermediate Student
+
+#| 
+  A (Chess)Board is [Listof Row]. 
+  A Row is [Listof Boolean].
+|#
+
+; -------------------------------------------------------------------------
+
+;; build-board : Nat (Nat Nat -&gt; Boolean) -&gt; Board
+;; to create a board of size n x n, 
+;; fill each position with indices i and j with (f i j)
+(define (build-board n f)
+  (build-list n (lambda (i) (build-list n (lambda (j) (f i j))))))
+   
+;; board-ref : Board Nat Nat  -&gt;  Boolean
+;; to access a position with indices i, j on a-board
+(define (board-ref a-board i j)
+  (local [;; extract-from : N [Listof X] -&gt; X
+          ;; extracts the nth element from l. l must have at least n elements.
+          (define (extract-from n l)
+            (cond
+              [(zero? n) (first l)]
+              [else (extract-from (- n 1) (rest l))]))]
+    (extract-from j (extract-from i a-board))))
+
+;; board-dim : Board -&gt; Nat
+;; to determine the size of the board
+(define (board-dim a-board) (length a-board))
+
+;; examples as tests
+(check-expect (build-board 2 (lambda (x y) (odd? (+ x y))))
+              (list (list false true)
+                    (list true false)))
+
+(check-expect (board-ref (build-board 2 (lambda (x y) (odd? x))) 0 1) false)
+
+(check-expect (board-ref (build-board 2 (lambda (x y) (odd? x))) 1 0) true)
+
+(check-expect (board-dim (build-board 3 (lambda (x y) false))) 3)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/queen1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

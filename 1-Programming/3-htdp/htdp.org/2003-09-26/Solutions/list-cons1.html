@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 13.0.6; How to Design Programs </title>
+</head>
+<body>
+<a href="list-cons4.html">13.0.5</a> | <a href="../Book/curriculum-Z-H-17.html#node_thm_13.0.6">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="list-cons5.html">13.0.7</a><pre>;; 1.
+(list (symbol=? 'a 'b) (symbol=? 'c 'c) false) 
+"should be"
+(cons false (cons true (cons false empty)))
+
+;; 2.
+(list (+ 10 20) (* 10 20) (/ 10 20)) 
+"should be"
+(cons 30 (cons 200 (cons 1/2 empty)))
+
+;; 3.
+(list 'dana 'jane 'mary 'laura) 
+"should be"
+(cons 'dana (cons 'jane (cons 'mary (cons 'laura empty))))
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/list-cons1.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

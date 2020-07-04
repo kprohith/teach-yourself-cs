@@ -1,0 +1,312 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-8.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-7.html">previous</a></span><span>, <a href="curriculum-Z-H-9.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_5"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_5">Section  5</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_5">Symbolic Information</a></h1>
+<p> 
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-9.html#node_chap_5"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Symbols, <br>
+Images</a>
+</td></tr></table><p></p>
+<p>
+These days computers mostly process symbolic information such as names,
+words, directions, or images. All modern programming
+languages
+<a name="node_idx_374"></a>support at
+least one way of representing symbolic information. Scheme supports several
+ways to express symbolic information: symbols, strings, (keyboard)
+characters, and images. A <i>symbol</i> 
+<a name="node_idx_376"></a>is a sequence of keyboard
+characters<a name="call_footnote_Temp_29"></a><a href="#footnote_Temp_29"><sup><small>16</small></sup></a> preceded by a single
+forward quotation mark: 
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="keyword">'</span><span class="variable">the</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">dog</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">ate</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">a</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">chocolate</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">cat!</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">two^3</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="keyword">'</span><span class="variable">and%so%on?</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></div>
+
+Like a number, a symbol has no inherent meaning. It is up to the function's
+user to relate symbolic data and real-world information, though the
+connection is typically obvious in a specific context. For example,
+<code class="scheme"><span class="keyword">'</span><span class="variable">east</span></code> will usually refer to the direction where the sun rises, 
+<code class="scheme"><span class="keyword">'</span><span class="variable">professor</span></code> will be the title of a person teaching and researching
+at a university.<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_30"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+&nbsp;</p>
+<p></p>
+<p><br>
+
+</p>
+
+  <center><img src="../icons/planets0.gif" alt="[planets in DrScheme]"></center>
+ &nbsp;<br>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 7:</b>&nbsp;&nbsp;The planets as images in DrScheme</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Like numbers, symbols are atomic pieces of data. Their purpose is to
+represent things such as family and first names, job titles, commands,
+announcements, and so on.  Scheme provides only one basic operation on
+symbols: <code class="scheme"><span class="builtin">symbol=?</span></code>, a comparison operation. It consumes two
+symbols and produces <code class="scheme">true</code> if and only if the two symbols are
+identical:
+</p>
+<ol>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme">(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">Hello</span> <span class="keyword">'</span><span class="variable">Hello</span>) <span class="builtin">=</span> true</code> 
+</p>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme">(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">Hello</span> <span class="keyword">'</span><span class="variable">Howdy</span>) <span class="builtin">=</span> false</code> 
+</p>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme">(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">Hello</span> <span class="variable">x</span>) <span class="builtin">=</span> true</code>  if <code class="scheme"><span class="variable">x</span></code> stands for <code class="scheme"><span class="keyword">'</span><span class="variable">Hello</span></code>
+</p>
+<li><p><b></b>&nbsp;&nbsp; <code class="scheme">(<span class="builtin">symbol=?</span> <span class="keyword">'</span><span class="variable">Hello</span> <span class="variable">x</span>) <span class="builtin">=</span> false</code>  if <code class="scheme"><span class="variable">x</span></code> stands for <code class="scheme"><span class="keyword">'</span><span class="variable">Howdy</span></code>
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<p>
+<a name="node_idx_378"></a><a name="node_idx_380"></a><a name="node_idx_382"></a></p>
+<p>
+Symbols were first introduced to computing by researchers in artificial
+intelligence who wanted to design functions that could have conversations
+with people. Consider the function <code class="scheme"><span class="variable">reply</span></code>, which replies with some
+remark to the following greetings: ``good morning,'' ``how are you,''
+``good afternoon,'' and ``good evening.'' Each of those short sentences
+can be represented as a symbol: <code class="scheme"><span class="keyword">'</span><span class="variable">GoodMorning</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">HowAreYou</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">GoodAfternoon</span></code>, and <code class="scheme"><span class="keyword">'</span><span class="variable">GoodEvening</span></code>.
+Thus, <code class="scheme"><span class="variable">reply</span></code> consumes a symbol and replies with a symbol:
+<a name="node_idx_384"></a></p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">reply</span> <span class="selfeval">:</span> <span class="variable">symbol</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">symbol</span></code></span>
+<span class="comment">;; to determine a reply for the greeting <code class="scheme"><span class="variable">s</span></code></span>
+(<span class="keyword">define</span> (<span class="variable">reply</span> <span class="variable">s</span>) ...)
+</pre></div><p>
+Furthermore, the function must distinguish among four situations, implying,
+according to our design recipe
+<a name="node_idx_386"></a>from section&nbsp;<a href="curriculum-Z-H-7.html#node_sec_4.4">4.4</a>, a four-clause <strong>cond</strong>-expression:
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">reply</span> <span class="variable">s</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodMorning</span>) ...]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">HowAreYou?</span>) ...]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodAfternoon</span>) ...]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodEvening</span>) ...]))
+</pre></div><p>
+The <code class="scheme"><span class="keyword">cond</span></code>-clauses match the four symbols, which is naturally much
+easier than matching four intervals.</p>
+<p>
+From this function template it is a short step to the final
+function. Here is one version of <code class="scheme"><span class="variable">reply</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">reply</span> <span class="variable">s</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodMorning</span>) <span class="keyword">'</span><span class="variable">Hi</span>]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">HowAreYou?</span>) <span class="keyword">'</span><span class="variable">Fine</span>]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodAfternoon</span>) <span class="keyword">'</span><span class="variable">INeedANap</span>]
+    [(<span class="builtin">symbol=?</span> <span class="variable">s</span> <span class="keyword">'</span><span class="variable">GoodEvening</span>) <span class="keyword">'</span><span class="variable">BoyAmITired</span>]))
+</pre></div><p>
+We can think of many different ways of how to replace the ``<tt>...</tt>'' in the
+template with replies. But no matter what we replace them with, the basic
+template could be defined without concern for the output of the function. We
+will see in subsequent sections that this focus on the input data is
+actually the norm and that concern for the output data can be postponed.</p>
+<p>
+<strong>A Note on Strings</strong>: A <i>string</i> 
+<a name="node_idx_388"></a>is a second form of symbolic
+data. Like a symbol, a string consists of a sequence of keyboard characters, but
+they are enclosed in string quotes:
+</p>
+<div align="center"><table><tr><td>
+
+<code class="scheme"><span class="selfeval">&quot;the dog&quot;</span></code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">&quot;isn't&quot;</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">&quot;made of&quot;</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">&quot;chocolate&quot;</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">&quot;two^3&quot;</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code class="scheme"><span class="selfeval">&quot;and so on?&quot;</span></code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr></table></div>
+
+In contrast to symbols, strings are not atomic. They are compound data,
+which we discuss later in the book. For now, we use strings as if they were
+fancy symbols; the only operation needed is <code class="scheme"><span class="builtin">string=?</span></code>, which
+compares two strings the way <code class="scheme"><span class="builtin">symbol=?</span></code> compares two
+symbols. Otherwise we ignore strings, and when we use them, we act as if
+they were symbols.&nbsp;<p>
+<strong>A Note on Images</strong>: An <i>image</i> 
+<a name="node_idx_390"></a>is a third form of symbolic
+data, and it is fun to develop functions that process images.  Like symbols, images
+don't have any a priori meaning, but we tend to connect them easily with
+the intended information.</p>
+<p>
+DrScheme supports images: see figure&nbsp;<a href="#node_fig_Temp_30">7</a>, which shows the
+beginning of a function that manipulates planet pictures.  Images are values like
+numbers and booleans. They can therefore be used inside of expressions. Most often
+though, we give images names because they are typically used by several
+functions. If we don't like the picture, it is then easily replaced with a
+different one (see section&nbsp;<a href="curriculum-Z-H-6.html#node_sec_3.2">3.2</a>).&nbsp;</p>
+<p>
+</p>
+<a name="node_sec_5.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_5.1">5.1&nbsp;&nbsp;Finger Exercises with Symbols</a></h2>
+<p>
+</p>
+<p></p>
+<table border="2"><tr><td><a href="../Companion/drscheme-Z-H-9.html#node_sec_5.1"><img src="../icons/plt.gif" border="0" alt="[../icons/plt.gif]"><br>
+Teachpacks</a>
+</td></tr></table><p></p>
+<p>
+</p>
+<p><a name="node_thm_5.1.1"></a>
+<b>Exercise 5.1.1.</b>&nbsp;&nbsp;    
+Evaluate <code class="scheme">(<span class="variable">reply</span> <span class="keyword">'</span><span class="variable">HowAreYou?</span>)</code> by hand and with DrScheme's
+stepper. Formulate a complete set of examples for <code class="scheme"><span class="variable">reply</span></code> as boolean 
+expressions (using <code class="scheme"><span class="builtin">symbol=?</span></code>).&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/eval-sym.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<p><a name="node_thm_5.1.2"></a>
+<b>Exercise 5.1.2.</b>&nbsp;&nbsp;   
+Develop the function <code class="scheme"><span class="variable">check-guess</span></code>. It consumes two numbers, <code class="scheme"><span class="variable">guess</span></code>
+and <code class="scheme"><span class="variable">target</span></code>. Depending on how <code class="scheme"><span class="variable">guess</span></code> relates to <code class="scheme"><span class="variable">target</span></code>,
+the function produces one of the following three answers: <code class="scheme"><span class="keyword">'</span><span class="variable">TooSmall</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">Perfect</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">TooLarge</span></code>.</p>
+<p>
+The function implements one part of a two-player number guessing game. One player
+picks a random number between 0 and 99999. The other player's goal is to
+determine this number, called <code class="scheme"><span class="variable">target</span></code>, with the least number of
+guesses. To each guess, the first player responds with one of the three responses
+that <code class="scheme"><span class="variable">check-guess</span></code> implements.</p>
+<p>
+The function <code class="scheme"><span class="variable">check-guess</span></code> and the teachpack <tt><strong>guess.ss</strong></tt> implement the
+first player. The teachpack picks the random number, pops up a window in which
+the second player can choose digits, and hands over the <code class="scheme"><span class="variable">guess</span></code> and the
+<code class="scheme"><span class="variable">target</span></code> to <code class="scheme"><span class="variable">check-guess</span></code>. To play the game, set the
+teachpack to <tt><strong>guess.ss</strong></tt> using the <code class="verbatim">Language|Set teachpack</code> option. 
+Then evaluate the expression
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">guess-with-gui</span> <span class="variable">check-guess</span>)
+</pre></div><p>
+after <code class="scheme"><span class="variable">check-guess</span></code> has been thoroughly tested.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/guess1.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_5.1.3"></a>
+<b>Exercise 5.1.3.</b>&nbsp;&nbsp;   
+Develop the function <code class="scheme"><span class="variable">check-guess3</span></code>. It implements a larger portion of
+the number guessing game of exercise&nbsp;<a href="#node_thm_5.1.2">5.1.2</a> than the function
+<code class="scheme"><span class="variable">check-guess</span></code>. Now the teachpack hands over the <code class="scheme"><span class="variable">digits</span></code> that
+the user guesses, not the number that they form. </p>
+<p>
+To simplify the problem a little bit, the game works with only three
+numbers. Thus, <code class="scheme"><span class="variable">check-guess3</span></code> consumes three digits and a number. The
+first digit is the least significant, the third one is the most significant. The
+number is called <code class="scheme"><span class="variable">target</span></code> and represents the randomly chosen number.
+Depending on how <code class="scheme"><span class="variable">guess</span></code>, the number determined by the three digits,
+relates to <code class="scheme"><span class="variable">target</span></code>, <code class="scheme"><span class="variable">check-guess3</span></code> produces one of the following
+three answers: <code class="scheme"><span class="keyword">'</span><span class="variable">TooSmall</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">Perfect</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">TooLarge</span></code>.</p>
+<p>
+The rest of the game is still implemented by <tt><strong>guess.ss</strong></tt>. To play
+the game with <code class="scheme"><span class="variable">check-guess3</span></code>, evaluate
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">guess-with-gui-3</span> <span class="variable">check-guess3</span>)
+</pre></div><p>
+after the function has been thoroughly tested.</p>
+<p>
+<strong>Hint:</strong> Remember to develop an auxiliary function per concept.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/guess2.html">Solution</a></p>
+<p> </p>
+<p>
+</p>
+<p><a name="node_thm_5.1.4"></a>
+<b>Exercise 5.1.4.</b>&nbsp;&nbsp; 
+Develop <code class="scheme"><span class="variable">what-kind</span></code>.  The function consumes the coefficients <code class="scheme"><span class="variable">a</span></code>,
+<code class="scheme"><span class="variable">b</span></code>, and <code class="scheme"><span class="variable">c</span></code> of a quadratic equation. It then determines whether
+the equation is degenerate and, if not, how many solutions the equation has. The
+function produces one of four symbols: <code class="scheme"><span class="keyword">'</span><span class="variable">degenerate</span></code>, <code class="scheme"><span class="keyword">'</span><span class="variable">two</span></code>,
+<code class="scheme"><span class="keyword">'</span><span class="variable">one</span></code>, or <code class="scheme"><span class="keyword">'</span><span class="variable">none</span></code>.</p>
+<p>
+<strong>Hint:</strong>  Compare with exercise&nbsp;<a href="curriculum-Z-H-7.html#node_thm_4.4.4">4.4.4</a>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/quad2.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_5.1.5"></a>
+<b>Exercise 5.1.5.</b>&nbsp;&nbsp;  
+Develop the function <code class="scheme"><span class="variable">check-color</span></code>. It implements a key portion of a
+color guessing game.  One player picks two colors for two squares; we call
+those <i>targets</i>.
+<a name="node_idx_392"></a>The other one tries to guess which color is
+assigned to which square; they are guesses.  The first player's response
+to a guess is to check the colors and to produce one of the following
+answers:
+</p>
+<ol>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">Perfect</span></code>, if the first target is equal to the first
+guess and the second target is equal to the second guess; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">OneColorAtCorrectPosition</span></code>, if the first guess is equal to
+the first target or the second guess is equal to the second target; </p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">OneColorOccurs</span></code>, if either guess is one of the two targets;
+and</p>
+<p>
+</p>
+<li><p><code class="scheme"><span class="keyword">'</span><span class="variable">NothingCorrect</span></code>, otherwise. 
+</p>
+</li></ol><p>
+These four answers are the only answers that the first player gives. The
+second player is to guess the two chosen target colors with as few guesses
+as possible. </p>
+<p>
+The function <code class="scheme"><span class="variable">check-color</span></code> simulates the first player's checking action. It
+consumes four colors; for simplicity, we assume that a color is a symbol, say,
+<code class="scheme"><span class="keyword">'</span><span class="variable">red</span></code>.  The first two arguments to <code class="scheme"><span class="variable">check-color</span></code> are ``targets,''
+the latter two are ``guesses.'' The function produces one of the four answers.</p>
+<p>
+When the function is tested, use the teachpack to <tt><strong>master.ss</strong></tt> to play
+the color-guessing game.<a name="call_footnote_Temp_31"></a><a href="#footnote_Temp_31"><sup><small>17</small></sup></a>  The teachpack
+provides the function <code class="scheme"><span class="variable">master</span></code>. Evaluate <code class="scheme">(<span class="variable">master</span> <span class="variable">check-color</span>)</code> 
+and choose colors with the mouse.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/check-guess.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div class="footnoterule"><hr></div><p></p>
+<div class="footnote"><p><a name="footnote_Temp_29"></a><a href="#call_footnote_Temp_29"><sup><small>16</small></sup></a> Not all keyboard characters are legal in symbols.  For
+example, a blank space or a comma are illegal.</p>
+<p><a name="footnote_Temp_31"></a><a href="#call_footnote_Temp_31"><sup><small>17</small></sup></a> MasterMind, the commercial version of
+this game, is played in a different manner.</p>
+</div>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-7.html">previous</a></span><span>, <a href="curriculum-Z-H-9.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-8.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

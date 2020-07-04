@@ -1,0 +1,1241 @@
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/typos.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+
+<head>
+<title>Typos</title>
+<body bgcolor="white">
+
+<h3><a href="#mistakes">Mistakes</a> and <a href="#typos">Typos</a>
+ in <cite>How to Design Programs</cite></h3>
+
+<hr>
+
+<h4><a name="mistakes">Mistakes:</a></h4>
+
+<table bgcolor="pink">
+<tr><td>
+<p>The third printing of the book may contain the following <font color="red">mistakes</font>. They have been corrected in the on-line version:
+
+<ol>
+<li>page 136: 
+<code>
+(dollar-store? (cons .75 (cons 0.95 (cons .25 empty))))
+</code>
+should be 
+<code>
+(dollar-store? (cons .75 (cons .95 (cons .25 empty))))
+</code>
+(D. Tucker)
+
+<!-- ------------------------------------------------------- -->
+<li>page 313: Figure 57 mistakenly states the contract for the built-in
+sort function as 
+<code>
+quick-sort : (X X -> boolean) (listof X) -> (listof X)
+</code>
+The actual contract is: 
+<code>
+quicksort : (listof X) (X X -> boolean) -> (listof X)
+</code>
+(J. Cone)
+
+<li>page 317: Exercise 21.4.5 had to be revised as follows to conform to
+the interface of the <tt>arrow.ss</tt> teachpack: 
+
+<p>
+<table bgcolor="beige" width="80%" align="center">
+<tr><td>
+
+<pre><p>Modify the functions of exercises 21.4.3 and 21.4.4 so that pictures
+move up and down on a canvas.
+
+<p>Modify all definitions so that a shape can also be a line; a line has a
+start position, an end position, and a color.
+
+<p>Define <code>LUNAR</code>, a list that sketches a lunar lander picture
+(see figure 58). The list should consist of rectangles, circles, and lines.
+
+<p>Develop the program <code>lunar-lander</code>. It places LUNAR at the top of a
+canvas and then uses the modified functions to move the lander up or down. 
+
+<p>Use the teachpack <tt>arrow.ss</tt> to give users control over how fast and when
+the lunar lander should move: 
+<pre><code>
+(start 500 100)
+(draw LUNAR)
+(control-up-down LUNAR 10 move-lander draw-losh)
+</code></pre>
+If time permits, modify the function so that a player can move the lander up,
+down, left or right. Use <code>controller</code> from <tt>arrow.ss</tt> to control the
+movements in all directions.
+</pre></td></tr></table>
+
+<p>Thanks to  Dung Nguyen and David Kay, Irvine, CA</p>
+
+</li></ol>
+
+</td></tr></table>
+
+<hr>
+
+<p>
+The following items correct errors in the <em>first and second
+printing</em> of the book. They have all been <strong>corrected</strong> in 
+the third printing of the book and the on-line version.
+</p>
+
+<ol>
+
+<!-- ------------------------------------------------------- -->
+<li>page 24: 
+ 
+
+<p>The problem statement correctly specifies that "[d]ecreasing the price by a
+dime ($.10) increases attendance by 15." Later, the book includes the
+sentence "The base attendance at a price of five dollars is 120, and for
+each 15 cents less than five dollars, 10 more attendees show up." This
+second claim is incorrect. </p>
+
+<p>Thanks to Chuck Floyd, Kerrville, TX</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 92 (figure 19)
+
+<p>The book specifies that 
+<pre>  ;;A shape is either
+  ;;1. a circle, or
+  ;;2. a structure.
+</pre>
+Naturally, this should be 
+<pre>  ;;A shape is either
+  ;;1. a circle, or
+  ;;2. a square.
+</pre>
+
+<p>Thanks to Jamie Raymond, Houston, TX</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 122
+
+<p>The book incorrectly defines our-cons as: 
+<pre>(define (our-cons a-value a-list) (make-pair a d))
+</pre>
+It should be
+<pre>(define (our-cons a-value a-list) (make-pair a-value a-list))
+</pre>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<li>page 122: 
+<quote>
+<pre>(define (our-cons a-value a-list)
+  (cond
+    [(empty? a-list) (make-pair any a-list)]
+    [(our-cons? a-list) (make-pair any a-list)]
+    [else (error 'cons "list as second argument expected")]))
+</pre>
+</quote>
+should be 
+<quote>
+<pre>(define (our-cons a-value a-list)
+  (cond
+    [(empty? a-list) (make-pair a-value a-list)]
+    [(our-cons? a-list) (make-pair a-value a-list)]
+    [else (error 'our-cons "list as second argument expected")]))
+</pre>
+</quote> 
+<p>Thanks to Nguyen Cong Vu, Ho Chi Min City, Viet Nam</p>
+
+
+<!-- ------------------------------------------------------- -->
+<li>page 158 (exercise 11.3.1) 
+
+<p>The book mistakenly specifies <code>random</code> as a function that
+consumes a natural number. Instead, <code>random</code> consumes an integer
+greater than or equal to 1 (and less than or equal to 2147483647).</p>
+
+<p>Thanks to Marvin D. Hernandez, Miami, FL</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 159 (exercise 11.3.2) 
+
+<p>The exercise had been misinterpreted twice. The new wording is: 
+
+and produces a list of that many numbers, each randomly chosen
+from the range from 20 to 120.
+
+<blockquote>
+Develop the function <code>tie-dyed</code>. It consumes a natural number and
+produces a list of that many numbers,  each randomly chosen
+in the range from <code>20</code> to <code>120</code>. Use
+<code>tie-dyed</code> to apply <code>draw-circles</code> from exercise~9.5.8.
+</blockquote>
+
+<p>Thanks to Stephen Bloch, New York, NY</p>
+
+<!-- ------------------------------------------------------- -->
+<li>pages 172-175
+
+<p>The section switches from the development of a descending sort to that
+of an ascending sort during the transition from the development of
+<code>sort</code> to the development of <code>insert</code>. 
+
+<p>Figure 33 (page 175) should be as follows: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>;; <code>sort : list-of-numbers -> list-of-numbers</code>
+;; to create a list of numbers with the same numbers as
+;; <code>alon</code> sorted in descending order
+(define (sort alon)
+  (cond
+    [(empty? alon) empty]
+    [(cons? alon) (insert (first alon) (sort (rest alon)))]))
+
+;; <code>insert : number list-of-numbers (sorted) -> list-of-numbers</code>
+;; to create a list of numbers from <code>n</code> and the numbers on
+;; <code>alon</code> that is sorted in descending order; <code>alon</code> is sorted
+(define (insert n alon)
+  (cond
+    [(empty? alon) (cons n empty)]
+    [else (cond
+	    [<font color="red">(>= n (first alon))</font> (cons n alon)]
+	    [<font color="red">(<  n (first alon))</font> (cons (first alon) (insert n (rest alon)))])]))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Daniel P. Friedman, Bloomington, IN</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 174
+
+<p>"make-structure" should be "make-mail".</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 182
+
+<p>We have added the following paragraph at the end of the page: 
+
+<p>
+Also, use the Scheme operation <code>append</code>, which consumes two lists
+and produces the concatenation of the two lists. For example: 
+<pre>  (append (list 'a 'b 'c) (list 'd 'e)) 
+= (list 'a 'b 'c 'd 'e)
+</pre>
+
+
+<p>Thanks to Stephen Bloch, Garden City, NY</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 236
+
+<p>
+<pre><code>
+(list-pick (cons 'a empty) 3)
+;; expected value: 
+false
+</code>
+should be
+<code>
+(list-pick (cons 'a empty) 3)
+;; expected value: 
+(error 'list-pick "...")
+</code>
+</pre>
+
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+
+
+<!-- ------------------------------------------------------- -->
+<li>pages 237-241: 
+
+<p>Replace all occurrences of 
+<code>
+(define (list-pick n alos) 
+</code>
+<br>with 
+<code>
+(define (list-pick alos n) 
+</code></p>
+
+<p>Thanks to Jesse Janzer and Matthew Litman, Atlanta, GA. </p>
+
+<!-- ------------------------------------------------------- -->
+<li>pages 240, 241
+
+<p>Replace all occurrences of <code>false</code> with 
+<code>
+(error 'list-pick "list too short")
+</code>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>pages 267
+
+<p>
+<pre>4.   (+ (local ((define (f x) (g (+ x 1)))
+		(define (g x y) (+ x y)))
+	  (f 10))
+	555)
+</pre>
+should be 
+<pre>4.   (+ (local ((define (f x) (g (+ x 1) 22))
+		(define (g x y) (+ x y)))
+	  (f 10))
+	555)
+</pre>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>pages 316, 317: 
+
+Exercise 21.4.1 should read :
+<blockquote>
+Abstract the functions <code>draw<font color="red">-a-</font>circle</code> and
+<code>clear<font color="red">-a-</font>circle</code> into a 
+single function <code>process-circle</code>. 
+<br>
+Define <code>translate-circle</code> using <code>process-<font color="red">circle</font></code>. 
+</blockquote>
+
+Exercise 21.4.2 should read: 
+<blockquote>
+Abstract the functions <code>draw<font color="red">-a-</font>rectangle</code> and
+<code>clear<font color="red">-a-</font>rectangle</code> into a single
+function <code>process-rectangle</code>.  
+<br>
+Define <code>translate-rectangle</code> using <code>process-<font color="red">rectangle</font></code>. 
+</blockquote>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 319
+
+<p>The definition of <code>sort</code> is incorrect. It should be as
+follows: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre><code>
+;; sort : (listof number) -> (listof number)
+(define (sort <font color="red">a-list</font>)
+  (local ((define (insert an alon) 
+            (cond 
+              [(empty? alon) (list an)] 
+              [else (cond 
+                      [(> an (first alon)) (cons an alon)] 
+                      [else (cons (first alon) (insert an (rest alon)))])]))) 
+    (reduce empty insert <font color="red">a-list</font>))) 
+</code>
+</pre>
+</td></tr></table>
+
+<p>Thanks to David Kay, Irvine, CA</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 376
+
+<p>The enumerations are missing a number each. Here are the
+correct versions: 
+<pre>  1.  18 is evenly divisible by 1, 2, 3, 6, 9, and 18; 
+  2.  24 is evenly divisible by 1, 2, 3, 4, 6, 8, 12, and 24.
+</pre>
+
+<p>Thanks to Daniel P. Friedman, Bloomington, IN</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 386
+
+<p>The sequence of Bezier images is misleading. Here is an improved
+version:
+
+<center>
+<table>
+<tr>
+<td><img src="icons/bezier1.gif">
+</td><td><img src="icons/bezier2.gif">
+</td><td><img src="icons/bezier3.gif">
+</td></tr></table>
+</center>
+
+<!-- ------------------------------------------------------- -->
+<li>page 390: Exercise 27.2.3 should read: 
+
+<blockquote>
+Design <code>file->list-of-checks</code>.  The function consumes a file of
+numbers and outputs a list of restaurant records.  
+</blockquote></li></p>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+
+<!-- ------------------------------------------------------- -->
+<li>page 451
+
+<p>The application of <code> make-last-item </code> in <code>invert</code>
+receives the arguments in the wrong order: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>(define (invert alox)
+  (cond
+    [(empty? alox) empty]
+    [else (make-last-item <font color="red">(first alox) (invert (rest alox))</font>)]))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Daniel P. Friedman, Bloomington, IN</p>
+
+<!-- ------------------------------------------------------- -->
+
+<li>page 404/405: The text states that 
+<blockquote>
+"Its solution is x = 2, y = 1, and z = 1"
+</blockquote>
+in reference to the list-specified system of equations. Instead, it should
+read: 
+<blockquote>
+"Its solution is x = 1, y = 1, and z = 1"
+</blockquote>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 432 
+
+<p>Figure 81 contains a mistake in the definition of
+<code>vector-sum</code>. Here is the correct version: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>;; <code>vector-sum : (vectorof number) -> number</code>
+;; to compute the sum of the numbers in <code>v</code>
+(define (vector-sum v) 
+  (vector-sum-aux <font color="red">v (vector-length v)</font>))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Nguyen Cong Vu, Open University, Ho Chi Minh City, Viet Nam</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 534: 
+
+<p>The function definition in exercise 37.2.7 should read as
+follows: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>(define (reveal-list! <font color="red">cw</font> <font color="red">sw</font> guess)
+  (local ((define (reveal-one chosen-letter status-letter)
+	    (cond
+	      [(symbol=? chosen-letter guess) guess]
+	      [else status-letter])))
+    (set! status-word (map reveal-one <font color="red">cw</font> <font color="red">sw</font>))))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 558
+
+<p>In exercise 38.4.3, part 3 the program is illegal in Advanced
+Scheme. Here is the corrected version: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>(define (make-box x)
+  (local ((define contents x)
+	  (define (new y)
+	    (set! <font color="red">contents</font> y))
+	  (define (peek)
+	    <font color="red">contents</font>))
+    (list new peek)))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Dung X. Nguyen, Houston, TX. </p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 564
+
+<p>In exercise 38.4.4 the <code> make-box </code> function is illegal in
+Advanced Scheme. Here is the corrected version: </p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>(define (make-box x)
+  (local ((define contents x)
+	  (define (new y)
+	    (set! <font color="red">contents</font> y))
+	  (define (peek)
+	    <font color="red">contents</font>))
+    (list new peek)))
+</pre>
+</td></tr></table>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>pages 620, 621: 
+
+<p>The contract and header for <code>count-a-vowel</code> are repeatedly
+misstated. Here is the correction: 
+</p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre>;; <code>count-a-vowel : letter (vector number number number number number) -> void</code>
+;; effect: to modify <code>counts</code> at the appropriate place if <code>l</code> is a vowel, 
+;; none otherwise
+(define (count-a-vowel l counts) 
+  ...)
+</pre>
+</td></tr></table>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+<!-- ------------------------------------------------------- -->
+<li>page 658: 
+
+<p>The definition of <code>for-interval</code> should be as follows:</p>
+
+<table bgcolor="beige" align="center">
+<tr><td>
+<pre><code>
+(define (for-interval i end? step action)
+  (cond
+    [(end? i) (action i)]
+    [else <font color="red">(begin
+	    (action i)</font>
+	    (for-interval (step i) end? step action)])))
+</code>
+</pre>
+</td></tr></table>
+
+<p>Thanks to Hrvoje Blazevic (Master, LPG/C Harriette N)</p>
+
+</li></ol>
+
+<!-- ====================================================== -->
+
+<hr>
+
+<h4><a name="typos">Typos:</a></h4>
+
+<p>We have also found the following <font color="red">typos</font>:
+
+<ol>
+
+<li>page 7: "lanuages" should be "languages" (D.P. Friedman)
+
+<li>page 16: "DrScheme's catches" should be "DrScheme catches" (D.P. Friedman)
+<li>page 20: "for process" should be "for a process" (D.P. Friedman)
+<li>page 21: 
+"The <code>area-of-disk</code> program ..."
+should be
+"The <code>area-of-ring</code> program ..." (R. Egli)
+
+
+"for process" should be "for a process" (D.P. Friedman)
+<li>page 23: <code>revenue : number number -&gt; number</code>
+should be 
+<code>revenue : number -&gt; number</code>
+<li>page 25 (figure 5): replace "attendance" with "attendees" (J. Zachary)
+
+<li>page 26: "in the both columns" should be "in both columns"
+(D.P. Friedman)
+
+<li>page 28: "invokes" should be "evokes" (J. Zachary)
+
+<li>page 34: 4.2.2 "four" should be "three" 
+
+<li>page 36: Read: "After clicking the Execute button we can compare the two
+numbers." (Joe Zachary)
+
+<li>page 59: the box should contain '606-7771 in its "phone" compartment (M. D. Hernandez)
+<li>page 67: superfluous ")" at end of first expected value (M. D. Hernandez)
+
+<li>page 81: wrong font for "first" in structure definition (D.P. Friedman)
+<li>page 84: two extra "}" in the data definition of shape 
+<li>page 86: two extra "}" in the data definition of shape (D. Tucker)
+<li>page 92: figure 19, right hand column definition of
+<code>perimeter-circle</code> should use <code>circle-radius</code> [not
+<code>circle-length</code>] (G. Hosford)
+<li>page 108: "when we evaluate an the error expression" should be "when we
+evaluate the error expression" (V. Proulx)
+<li>page 108: "must look the pragmatics" should be "must look at the pragmatics" (D.P. Friedman)
+
+<li>page 119: "juice brie cheese" should be "juice, brie-cheese" (D. Tucker, G. Hosford)
+<li>page 134: "on on" should be "on" (D.P. Friedman)
+<li>page 140: "euro accounts" should be "euro amounts"
+<li>page 143: "a the" should be "the" (D.P. Friedman)
+<li>page 146: "each objects" should be "each object"
+
+<li>page 153: read: "flavors <font color="red">of</font> definitions" (Joe Zachary)
+
+<li>page 154: read "A function on natural numbers must extract the number
+that went into <font color="red">the construction of</font> a positive
+natural number" (Joe Zachary)
+
+<li>page 158: "namers" should be "names" (Joe Zachary)
+
+<li>page 159: "The typical riot uses \scheme{'red} only." should be
+"The typical riot uses \scheme{RED} only."
+
+<li>page 159: "Develop the function \scheme{create-prices}, which consumes
+a natural number and produces a list with a corresponding <font color="red">number</font> of prices between \$.10 and \$10.00 with
+increments of a dime."
+
+<li>page 162: "cond-clauses" should be "cond-clause" (Joe Zachary)
+
+<li>page 166: <code>
+(define (tabulate-f-up-to-20 n-above-20) ...)
+</code>
+ should be 
+<code>
+(define (tabulate-f-up-to-20 n-below-20) ...)
+</code>
+Hrvoje Blazevic
+
+<li>page 167, exercise 11.5.2: "Eliminate + from these definitions, too." should be 
+ "Eliminate + from this definition, too." (B. Duba)
+
+<li>page 169: "means of combining" should be "means combining" (J. Zachary)
+
+<li>page 172: "create a sorted list" should be "creates a sorted list" (D.P. Friedman)
+
+<li>page 178: "we discuss the first alternative" should be "we discuss the
+second alternative" (S. Bloch)
+
+<li>page 179 (figure 34): 
+<code>
+(draw-solid-line (first a-poly) (second a-poly) RED)
+</code> 
+should be
+<code>
+(draw-solid-line (first a-poly) (second a-poly) 'red)
+</code> (J. Raymond)
+
+
+<li>page 192: "conventions concerning on" should be "conventions concerning on"
+(D.P. Friedman) 
+
+<li>page 198:
+"The contracts differ slightly."
+should be
+"The results differ slightly."
+(S. Bloch)
+
+<li>page 201: "tha is" should be "that is" (D.P. Friedman)
+<li>page 202: "larger than 65" should be "larger than 66" (Joe Zachary)
+<li>page 215: ex 15.1.2: The second sentence should read 
+"It determines how far the first
+blue-eyed descendant, if one exists, is removed from the given parent."
+(Sharon Salveter)
+<li>page 218: "fun-for-parent" should be "fun-parent",
+ "for-for-loc" should be "fun-children" (D.P. Friedman)
+<li>page 223: "the file named read!" should be "a file named read!" (Joe Zachary)
+<li>page 225: "directly apply to" should be "directly applies to" (D.P. Friedman)
+<li>page 227: added "Do not define your own dir structures." to create-dir
+(Hrvoje Blazevic)
+<li>page 228: 
+  changed "in the content field" to 
+ "in a <code>dir</code> structure" in 16.3.3 
+ (Hrvoje Blazevic)
+
+<li>page 235: "that a natural" should be "that consumes a natural" (D.P. Friedman)
+
+<li>page 236: 
+ change all occurrences of null? to empty?
+ (Hrvoje Blazevic)
+
+<li>page 239: "like list-pick0" should be "like list-pick" (D.P. Friedman)
+<li>page 240: "consider the second part" should be "consider the first part" (D.P. Friedman)
+
+<li>page 244:  "data definition data definition" should be "data definition" (D.P. Friedman)
+
+<li>page 244: "choses" should be "chooses"
+
+<li>page 244:
+ in the three test cases, use <code>reveal-list</code> instead of <code>
+ reveal 
+ </code>
+ (Hrvoje Blazevic)
+
+
+<li>page 247: "if it the pattern" should be "if the pattern" (D.P. Friedman)
+
+<li>page 249: 
+<code>
+(interpret-with-one-def (substitute val-of-arg fun-para fun-body) a-fun-def)
+</code>
+should be
+<code>
+(interpret-with-one-def (subst ... ... ...) a-fun-def)
+</code>
+
+
+<li>page 253: "contain the numbers" should be "contain the same numbers" (D.P. Friedman)
+<li>page 258: "test cases" should be "test" (D.P. Friedman)
+<li>page 258: In Ex. 17.8.11, "section 17.1" should be "section 17.3"
+(Jeffere H.)
+
+<li>page 259: "a good <code>local</code> definitions" should be "a good
+understanding of <code>local</code> definitions" (D.P. Friedman)
+
+<li>page 261: "Determine which of the following definitions or expressions
+is legal and which one is not:" should be "Determine which of the following
+definitions or expressions are legal and which ones are not:"
+(D.P. Friedman)
+
+<li>page 266: <code>
+(local ((define (f x) exp-1))) exp)
+</code>
+ should be 
+<code>
+(local ((define (f x) exp-1)) exp)
+</code>
+
+(H. Blazevic)
+
+<li>page 266: <code>
+(local ((define PI 3))) exp)
+</code>
+ should be 
+<code>
+(local ((define PI 3)) exp)
+</code>
+
+(H. Blazevic)
+
+<li>page 263: "f-1' instead of f-11" should be "f-1' instead of f-1" (D.P. Friedman)
+
+<li>page 264: "which of y's" should be "which of the y's" (D.P. Friedman)
+
+<li>page 264: 
+<pre>= (define y 10)
+  (define y1 10)
+  (define z1 20)
+  (+ 10 z1)
+</pre>
+was duplicated (Nguyen Cong Vu)
+
+
+<li>page 269: "lists of records on rock stars" should be "lists of records
+of rock stars" (Joe Zachary)
+
+<li>page 270: "For 'Sean," should be "For 'Wen," (D.P. Friedman)
+<li>page 273: "in in" should be "in" (D.P. Friedman)
+<li>page 274: "to write to" should be "to write two" (D.P. Friedman)
+
+<li>page 276: "variables, function, and structures" should be "variables,
+functions, and structures" (Joe Zachary)
+
+<li>page 287: <code>
+(cons 6 empty)
+</code>
+ should be 
+<code>
+(cons 4 empty)
+</code>
+(H. Blazevic)
+
+<li>page 291: "The first variant flattened ..." should be "The first variant
+flattens ..." (Joe Zachary)
+
+
+<li>page 292: "Test each of them with the following two lists:"
+ should be 
+"Test each of them with the following three lists:"
+(H. Blazevic)
+
+
+<li>page 295: the foonote was accidentally inlined (D.P. Friedman)
+
+<li>page 316: "perparation" should be "preparation"
+
+<li>page 324: 
+<br><code>filter2 : (X Y -> boolean) -> (Y (listof X) -> (listof X))</code>
+<br>should be
+<br><code>filter2 : (X Y -> boolean) -> ((listof X) Y -> (listof X))</code>
+(H. Blazevic)
+
+<li>page 327: "to obtain obtain" should be "to obtain" (D.P. Friedman)
+
+<li>page 328: Here is the correct contract of <code>draw-message</code>: 
+<code>gui-item [message%] string -&gt; true</code> 
+
+<br><code>get-text</code> should be <code> text-contents </code>
+
+(J. Zachary)
+
+<li>page 330: "functionq" should be "function" (D.P. Friedman)
+
+<li>page 331: 
+<br><code>
+(define digit-choosers
+  (build-list 3 (lambda (i) (make-choice DIGITS))))
+</code>
+<br>should be
+<br><code>
+(define digit-choosers
+  (local ((define (builder i) (make-choice DIGITS)))
+    (build-list 3 builder)))
+</code>
+(H. Blazevic)
+
+<li>page 338: 
+"multiplying a fixed constant wit"
+should be
+"multiplying a fixed constant with" (Joe Zachary)
+
+<li>page 339: 
+"to add just a few of the first few terms" 
+should be 
+"to add just the first few terms"
+(D.P. Friedman)
+
+<li>page 346: "The teachpack graphing.ss provides two operations for
+drawing lines: <code>graph-line</code>. The operation consumes a line like
+<code>y</code> and a color, say, <code>RED</code>." <br> should be <br> "The
+teachpack graphing.ss provides one operation for drawing lines:
+<code>graph-line</code>. The operation consumes a line like <code>y</code> and a
+color, say, <code>'red</code>." (Joe Zachary)
+
+<li>page 349: 
+"the answer will be depend on e" should be
+"the answer will depend on e" (H. Blazevic)
+
+<li>page 358: 
+"until drops" 
+should be 
+"until it drops
+off the table"
+(D.P. Friedman)
+
+<li>page 359 (figure 66): the two occurrences of <tt>RED</tt> should be
+<tt>'red</tt>  (H. Blazevic)
+
+<li>page 359: "directiones" should be "directions" (J. Zachary)
+
+<li>page 369: 
+"<b>how</b>the it works" 
+should be 
+"<b>how</b> it works" 
+(D.P. Friedman)
+
+<li>page 373: "algorith" should be "algorithm"
+
+<li>page 379: "wreck" should be "wreak" (J. Zachary)
+
+<li>page 393: "Here f(m) > 0," should be "Here f(m) < 0," (H. Blazevic)
+
+<li>pages 392-395: "Mean Value Theorem" should be "Intermediate Value
+Theorem" (B. Richter)
+
+<li>page 400:
+<code>
+(define (fprime (d/dx f))))
+</code>
+should be 
+<code>
+(define fprime (d/dx f)))
+</code>
+(H. Blazevic)
+
+<li>page 405: "2 x + 2 y + z z = 2" should be "2 x + 2 y + z = 2"
+(H. Blazevic)
+
+<li>page 411: ";; to create a path from some node on <code>lo-originations</code> to
+<code>destination</code>" should be ";; to create a path from some node on
+<code>lo-Os</code> to <code>D</code>" (J. Zachary)
+
+<li>page 412: the calculation should read: 
+<code><pre>  (find-route 'B 'D Cyclic-graph)
+= ... (find-route 'B 'D Cyclic-graph) ...
+= ... (find-route<font color="red">/list</font> (list 'E 'F) 'D Cyclic-graph) ...
+= ... (find-route 'E 'D Cyclic-graph) ...
+= ... (find-route<font color="red">/list</font> (list 'C 'F) 'D Cyclic-graph) ...
+= ... (find-route 'C 'D Cyclic-graph) ...
+= ... (find-route<font color="red">/list</font> (list 'B 'D) 'D Cyclic-graph) ...
+= ... (find-route 'B 'D Cyclic-graph) ...
+= ... </pre>
+</code>
+(H. Blazevic)
+
+<li>page 425: "a functions running time" should be "a function's running time"
+(D.P. Friedman)
+
+<li>page 434 (ex. 29.4.7): The exercise should read:  
+Develop the function <code>norm</code>, which consumes a vector of numbers and
+produces <font color="red">the square root of the sum of the squares of its
+numbers.</font> (H. Blazevic)
+
+<li>page 435: "veloicity" should "velocity" 
+    (Nguyen Cong Vu, Open University, Ho Chi Minh City, Viet Nam)
+
+<li>page 437: 
+"a vector of the same how-many as" should be "a vector of the same length as"
+(D.P. Friedman)
+
+<li>page 441: 
+"this loss make a" should be "this loss makes a"
+(D.P. Friedman)
+
+<li>page 447: "(rest ag)" should be "(rest sg)" (H. Blazevic)
+
+<li>page 457: Exercise 31.3.1 should read 
+
+<blockquote>
+A second difference between the two functions concerns the order of
+addition. While the original version of <tt>sum</tt> adds up the numbers
+<font color="red">from right to left</font>, the accumulator-style version
+adds them up <font color="red">from left to right</font>.  </blockquote>
+
+Furthermore, replace <code>(sum (g-series 1000))</code>
+with <code>(sum (g-series #i1000))</code>
+
+(H. Blazevic)
+
+<li>page 467: 
+"this application <code>all-blue-eyed-ancestors</code> loses"
+should be
+"this application of <code>all-blue-eyed-ancestors</code> loses"
+(D.P. Friedman)
+
+<li>page 474: 
+"for the states we have reach so far"
+should be"
+for the states we have reached so far"
+(D.P. Friedman)
+
+<li>page 477: 
+"consume a the board"
+should be
+"consume a board"
+(D.P. Friedman)
+
+<li>page 481: 
+"choice is to round the number and to the closest representable equivalent"
+should be
+"choice is to round the number to the closest representable equivalent"
+(D.P. Friedman)
+
+<li>page 498:
+<code>
+(set! (if z x y) 5)
+</code>
+should be
+<code>
+(set! (z x y) 5)
+</code>
+
+(H. Blazevic)
+
+<li>page 504: 
+"a variable <code>define</code>d at top-level variable"
+should be
+"a variable <code>define</code>d at top-level"
+(D.P. Friedman)
+
+<li>page 504: 
+"Supposed we evaluate"
+should be
+"Suppose we evaluate"
+(D.P. Friedman)
+
+<li>page 517: 
+"whether the functions has the desired result"
+should be
+"the function has the desired result and effect"
+(D.P. Friedman)
+
+<li>page 517: "efffects" should be "effects"
+
+<li>page 518: 
+"a particular good one"
+should be
+"a particularly good one"
+(D.P. Friedman)
+
+<li>page 523 (figure 103): "check-guess" should be "check-color" (H. Blazevic)
+
+<li>page 528: 
+"Thus, the matching action is a build a word as long as <code>chosen-word</code>
+but to use <code>'_</code> as the letters."
+should be
+"Thus, the matching action is to build a word as long as
+<code>chosen-word</code> from <code>'_</code>.
+(D.P. Friedman)
+
+<li>pages 536/537:
+<code>chosen-wor</code>
+should be
+<code>chosen-word</code>
+(D.P. Friedman)
+
+<li>page 566: 
+"Alonzo Church in the last 1920s as follows:"
+should be 
+"Alonzo Church in the late 1920s as follows:"
+(D.P. Friedman)
+
+<li>page 575: The last line of the definition of
+<code>next-color</code> requires a closing ")". (D. Smith)
+
+<li>page 577: This sets the light at <code>'<a href="../cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="4132342f3328322401222c34">[email&#160;protected]</a></code> to green. (H. Blazevic)
+
+<li>page 595
+"in the structure name p"
+should be 
+"in the structure named p"
+(D.P. Friedman)
+
+<li>page 603: 
+<code>
+(define (board-set! a-board i j) ...)
+</code>
+should be 
+<code>
+(define (board-flip! a-board i j) ...)
+</code> (H. Blazevic)
+
+<li>page 616
+"a self-referential descriptions"
+should be 
+"a self-referential description"
+(D.P. Friedman)
+
+<li>page 616: 
+<code>
+reset : -> true
+</code>
+should be 
+<code>
+reset : -> void
+</code> (H. Blazevic)
+
+<li>page 625: 
+"<code>hand0</code> becomes a card with two hands"
+should be 
+"<code>hand0</code> becomes a hand with two cards"
+(H. Blazevic)
+
+<li>page 629:
+"preceeds"
+should be 
+"precedes"
+(D.P. Friedman)
+
+<li>page 631
+<code>(sorted-insert! 1 CLUBS hand0)</code>
+should be 
+<code>(sorted-insert! 2 CLUBS hand0)</code>
+(D.P. Friedman)
+
+<li>page 634: 
+the last line of figure 124, 
+"<code>manage</code>))" 
+should be
+"<code>service-manager</code>))" 
+
+<p>Furthermore, the defininition of <code>service-manager</code> should be: 
+<pre><code>
+(define (service-manager msg)
+  (cond
+    [(symbol=? msg 'insert!) 
+     (lambda (r s)
+       (cond
+	 [(> r (hand-rank the-hand))
+	  (set! the-hand (make-hand r s the-hand))]
+	 [else (insert-aux! <font color="red">r s</font> the-hand)]))]
+    [else (error 'managed-hand "message not understood")]))
+</code>
+</pre>
+(H. Blazevic)
+
+<li>page 635:
+"determing"
+should be 
+"determining"
+(D.P. Friedman)
+
+<li>page 636:
+"structure-mutating the functions"
+should be 
+"structure-mutating  functions"
+(D.P. Friedman)
+
+<li>page 637:
+"<code>equal-posn?: posn posn -> boolean</code>"
+should be
+"<code>equal-posn : posn posn -> boolean</code>"
+(H. Blazevic)
+
+<li>page 639:
+<code><pre>;; <code>eq-posn? : posn posn -> boolean</code>
+;; to determine whether two <code>posn</code> structures 
+;; are affected by the same mutation 
+(define (equal-posn p1 p2) ...)
+</pre>
+</code>
+should be
+<code><pre>;; <code><font color="red">eq-posn</font> : posn posn -> boolean</code>
+;; to determine whether two <code>posn</code> structures 
+;; are affected by the same mutation 
+(define (<font color="red">eq-posn</font> p1 p2) ...)
+</pre>
+</code>
+
+<p>
+"<code>
+(define (equal-posn p1 p2)
+</code>"
+should be
+"
+<code>
+(define (<font color="red">eq-posn</font> p1 p2)
+</code>
+"
+
+<p>
+(H. Blazevic)
+</p>
+
+<li>page 640:
+"
+<code>
+(define (equal-posn p1 p2)
+</code>
+"
+should be
+"
+<code>
+(define (<font color="red">eq-posn</font> p1 p2)
+</code>
+"
+
+<p><code>equal-posn</code> should always be <code>eq-posn </code>
+
+<p>
+<code><pre>;; <code>eq-posn? : posn posn -> boolean</code>
+;; to determine whether two <code>posn</code> structures 
+;; are affected by the same mutation 
+(define (equal-posn p1 p2) ...)
+</pre>
+</code>
+should be
+<code><pre>;; <code><font color="red">eq-posn</font> : posn posn -> boolean</code>
+;; to determine whether two <code>posn</code> structures 
+;; are affected by the same mutation 
+(define (<font color="red">eq-posn</font> p1 p2) ...)
+</pre>
+</code>
+
+(H. Blazevic)
+</p>
+
+<li>page 641: ex. 42.2.1 <tt>eq-posn?</tt> should be <tt>eq-posn</tt> (H. Blazevic)
+
+<li>page 655: 
+<code><pre>(define (partition V left right)
+  (local ((define pivot-position left)
+          (define the-pivot (vector-ref V left))
+          (define (partition-aux left right)
+            (local ((define new-right (find-new-right V the-pivot right left))
+                    (define new-left (find-new-left V the-pivot left right)))
+	      ... )))
+    (partition left right)))
+</pre>
+</code>
+should be 
+<code><pre>(define (partition V left right)
+  (local ((define pivot-position left)
+          (define the-pivot (vector-ref V left))
+          (define (partition-aux left right)
+            (local ((define new-right (find-new-right V the-pivot <font color="red">left right</font>))
+                    (define new-left (find-new-left V the-pivot left right)))
+	      ... )))
+    (<font color="red">partition-aux</font> left right)))
+</pre>
+</code>
+
+(H. Blazevic)
+
+<li>page 656 (figure 131): 
+<code><pre>(define (partition V left right)
+  (local ((define pivot-position left)
+          (define the-pivot (vector-ref V left))
+          (define (partition-aux left right)
+            (local ((define new-right (find-new-right V the-pivot right left))
+                    (define new-left (find-new-left V the-pivot left right)))
+              (cond
+                [(>= new-left new-right)
+                 (begin
+                   (swap V pivot-position new-right)
+                   new-right)]
+                [else 
+                 (begin
+                   (swap V new-left new-right)
+                   (partition-aux new-left new-right))]))))
+    (partition-aux left right)))
+</pre>
+</code>
+should be 
+<code><pre>(define (partition V left right)
+  (local ((define pivot-position left)
+          (define the-pivot (vector-ref V left))
+          (define (partition-aux left right)
+            (local ((define new-right (find-new-right V the-pivot <font color="red">left right</font>))
+                    (define new-left (find-new-left V the-pivot left right)))
+              (cond
+                [(>= new-left new-right)
+                 (begin
+                   (swap V pivot-position new-right)
+                   new-right)]
+                [else ; (< new-left new-right)
+                 (begin
+                   (swap V new-left new-right)
+                   (partition-aux new-left new-right))]))))
+    (<font color="red">partition-aux</font> left right)))
+</pre>
+</code>
+
+(H. Blazevic)
+
+<li>page 658: 
+<code>(list 1.10 329/300 328/300)</code>
+should be 
+<code>
+(list 1.10 329/300 <font color="red">82/75</font>) 
+</code>
+(H. Blazevic)
+
+<li>page 660:
+"related with each other"
+should be 
+"related to each other"
+(D.P. Friedman)
+
+<li>page 670:
+"cannot possible produce"
+should be 
+"cannot possibly produce"
+(D.P. Friedman)
+
+<li>page 678: "extrance" should be "entrance"
+</li></ol>
+
+<hr>
+
+<address>
+<a href="../cdn-cgi/l/email-protection.html#e19598918e92a189958591cf8e9386">The Authors</a>
+</address>
+<script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body></head><!-- Copied from https://htdp.org/2003-09-26/typos.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

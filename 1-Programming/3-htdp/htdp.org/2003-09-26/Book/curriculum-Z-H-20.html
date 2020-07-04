@@ -1,0 +1,771 @@
+<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-20.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<!--
+
+Generated from curriculum.tex by tex2page, v 2003-09-19
+(running on MzScheme 205.2, unix), 
+(c) Dorai Sitaram, 
+http://www.ccs.neu.edu/~dorai/tex2page/tex2page-doc.html
+
+-->
+<head>
+<title>
+How to Design Programs: 
+An Introduction to Computing and Programming
+</title>
+<link rel="stylesheet" type="text/css" href="curriculum-Z-S.css" title="default">
+<meta name="robots" content="noindex,follow">
+</head>
+<body>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-19.html">previous</a></span><span>, <a href="curriculum-Z-H-21.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+<a name="node_chap_15"></a>
+<h1 class="chapter">
+<div class="chapterheading"><a href="curriculum-Z-H-1.html#node_toc_node_chap_15">Section  15</a></div><br>
+<a href="curriculum-Z-H-1.html#node_toc_node_chap_15">Mutually Referential Data Definitions</a></h1>
+<p> </p>
+<p>
+In the preceding section, we developed data representations of family
+trees, Web pages, and Scheme expressions.  Developing functions for these
+data definitions was based on one and the same design
+recipe. If we wish to develop more realistic representations of Web pages
+or Scheme expressions, or if we wish to study descendant family trees
+rather than ancestor trees, we must learn to describe classes of data that
+are interrelated. That is, we must formulate several data definitions at
+once where the data definitions not only refer to themselves, but also
+refer to other data definitions.</p>
+<p>
+</p>
+<a name="node_sec_15.1"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_15.1">15.1&nbsp;&nbsp;Lists of Structures, Lists in Structures</a></h2>
+<p></p>
+<p>
+When we build a family tree retroactively, we often start from the child's
+perspective and proceed from there to parents, grandparents, etc. As we
+construct the tree, we write down who is whose child rather than who is
+whose parents. We build a <i>descendant family tree</i>.
+<a name="node_idx_1076"></a></p>
+<p>
+Drawing a descendant tree proceeds just like drawing an ancestor tree,
+except that all arrows are reversed.  Figure&nbsp;<a href="#node_fig_Temp_86">40</a> represents
+the same family as that of figure&nbsp;<a href="curriculum-Z-H-19.html#node_fig_Temp_81">35</a>, but drawn from the
+descendant perspective. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_86"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><img src="curriculum2-Z-G-3.gif" border="0" alt="[curriculum2-Z-G-3.gif]">
+</td></tr>
+<tr><td align="center"><b>Figure 40:</b>&nbsp;&nbsp;A descendant family tree</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Representing these new kinds of family trees and their nodes in a computer
+requires a different class of data than do the ancestor family trees. This
+time a node must include information about the children instead of the two
+parents. Here is a structure definition:
+<a name="node_idx_1078"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">parent</span> (<span class="variable">children</span> <span class="variable">name</span> <span class="variable">date</span> <span class="variable">eyes</span>))
+</pre></div><p>
+The last three fields in a parent structure contain the same basic
+information as a corresponding child structure, but the contents of the
+first one poses an interesting question. Since a parent may have an
+arbitrary number of children, the <code class="scheme"><span class="variable">children</span></code> field must contain an
+undetermined number of nodes, each of which represents one child.</p>
+<p>
+The natural choice is to insist that the <code class="scheme"><span class="variable">children</span></code> field always
+stands for a list of <code class="scheme"><span class="variable">parent</span></code> structures. The list represents the
+children; if a person doesn't have children, the list is <code class="scheme"><span class="builtin">empty</span></code>.
+This decision suggests the following data definition:
+</p>
+<blockquote>
+<p></p>
+<div align="left">
+A <em>parent</em> is a structure:
+<div align="center"><table><tr><td>
+
+<code class="scheme">(<span class="builtin">make-parent</span> <span class="variable">loc</span> <span class="variable">n</span> <span class="variable">d</span> <span class="variable">e</span>)</code>
+</td></tr></table></div>
+
+where <code class="scheme"><span class="variable">loc</span></code> is a list of children, 
+<code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">e</span></code> are symbols, 
+and <code class="scheme"><span class="variable">d</span></code> is a number. 
+</div><p>
+</p>
+</blockquote>
+Unfortunately, this data definition violates our criteria concerning
+definitions. In particular, it mentions the name of a collection that is
+not yet defined: list of children. <p>
+Since it is impossible to define the class of parents without knowing what
+a list of children is, let's start from the latter:
+</p>
+<blockquote>
+<p></p>
+<div align="left">
+A <em>list of children</em> is either
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">p</span> <span class="variable">loc</span>)</code> 
+where <code class="scheme"><span class="variable">p</span></code> is a parent 
+and <code class="scheme"><span class="variable">loc</span></code> is a list of children.
+</p>
+</li></ol><p>
+</p>
+</div><p>
+</p>
+</blockquote>
+This second definition looks standard, but it suffers from the same problem
+as the one for <code class="scheme"><span class="variable">parents</span></code>. The unknown class it refers to is that of
+the class of parents, which cannot be defined without a definition for the
+list of children, and so on. <p>
+The conclusion is that the two data definitions refer to each other and are
+only meaningful if introduced <em>together</em>:</p>
+<p>
+<a name="node_idx_1080"></a><a name="node_idx_1082"></a>A <i>parent</i> is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-parent</span> <span class="variable">loc</span> <span class="variable">n</span> <span class="variable">d</span> <span class="variable">e</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">loc</span></code> is a list of children, <code class="scheme"><span class="variable">n</span></code> and <code class="scheme"><span class="variable">e</span></code> are symbols, and <code class="scheme"><span class="variable">d</span></code> is a number. <p>
+</p>
+<p></p>
+<p></p>
+<p>
+A <i>list-of-children</i> is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code> or
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">p</span> <span class="variable">loc</span>)</code>     where <code class="scheme"><span class="variable">p</span></code> is a parent and <code class="scheme"><span class="variable">loc</span></code> is a list of children.
+</p>
+</li></ol><p></p>
+<p>
+When two (or more) data definitions refer to each other, they are
+said to be <small>M</small><small>U</small><small>T</small><small>U</small><small>A</small><small>L</small><small>L</small><small>Y</small> <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>V</small><small>E</small> 
+<a name="node_idx_1084"></a><a name="node_idx_1086"></a>or <small>M</small><small>U</small><small>T</small><small>U</small><small>A</small><small>L</small><small>L</small><small>Y</small> <small>R</small><small>E</small><small>F</small><small>E</small><small>R</small><small>E</small><small>N</small><small>T</small><small>I</small><small>A</small><small>L</small>.
+<a name="node_idx_1088"></a><a name="node_idx_1090"></a></p>
+<p>
+Now we can translate the family tree of figure&nbsp;<a href="#node_fig_Temp_86">40</a> into our
+Scheme data language. Before we can create a <code class="scheme"><span class="variable">parent</span></code> structure, of
+course, we must first define all of the nodes that represent children. And,
+just as in section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.1">14.1</a>, the best way to do this is
+to name a <code class="scheme"><span class="variable">parent</span></code> structure before we reuse it in a list of
+children. Here is an example: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> <span class="variable">Gustav</span> (<span class="builtin">make-parent</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Gustav</span> <span class="selfeval">1988</span> <span class="keyword">'</span><span class="variable">brown</span>))
+
+(<span class="builtin">make-parent</span> (<span class="builtin">list</span> <span class="variable">Gustav</span>) <span class="keyword">'</span><span class="variable">Fred</span> <span class="selfeval">1950</span> <span class="keyword">'</span><span class="variable">yellow</span>)
+</pre></div><p>
+To create a <code class="scheme"><span class="variable">parent</span></code> structure for Fred, we first define one for
+Gustav so that we can form <code class="scheme">(<span class="builtin">list</span> <span class="variable">Gustav</span>)</code>, the list of children for
+Fred. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_87">41</a> contains the complete Scheme representation for
+our descendant tree. To avoid repetitions, it also includes definitions for
+lists of children. Compare the definitions with figure&nbsp;<a href="curriculum-Z-H-19.html#node_fig_Temp_82">36</a>
+(see page&nbsp;<a href="curriculum-Z-H-19.html">19</a>), which represents the same family as an
+ancestor tree. </p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_87"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><div align="left"><pre class="scheme"><span class="comment">;; Youngest Generation:</span>
+(<span class="keyword">define</span> <span class="variable">Gustav</span> (<span class="builtin">make-parent</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Gustav</span> <span class="selfeval">1988</span> <span class="keyword">'</span><span class="variable">brown</span>))
+
+(<span class="keyword">define</span> <span class="variable">Fred&amp;Eva</span> (<span class="builtin">list</span> <span class="variable">Gustav</span>))
+
+<span class="comment">;; Middle Generation:</span>
+(<span class="keyword">define</span> <span class="variable">Adam</span> (<span class="builtin">make-parent</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Adam</span> <span class="selfeval">1950</span> <span class="keyword">'</span><span class="variable">yellow</span>))
+(<span class="keyword">define</span> <span class="variable">Dave</span> (<span class="builtin">make-parent</span> <span class="builtin">empty</span> <span class="keyword">'</span><span class="variable">Dave</span> <span class="selfeval">1955</span> <span class="keyword">'</span><span class="variable">black</span>))
+(<span class="keyword">define</span> <span class="variable">Eva</span> (<span class="builtin">make-parent</span> <span class="variable">Fred&amp;Eva</span> <span class="keyword">'</span><span class="variable">Eva</span> <span class="selfeval">1965</span> <span class="keyword">'</span><span class="variable">blue</span>))
+(<span class="keyword">define</span> <span class="variable">Fred</span> (<span class="builtin">make-parent</span> <span class="variable">Fred&amp;Eva</span> <span class="keyword">'</span><span class="variable">Fred</span> <span class="selfeval">1966</span> <span class="keyword">'</span><span class="variable">pink</span>))
+
+(<span class="keyword">define</span> <span class="variable">Carl&amp;Bettina</span> (<span class="builtin">list</span> <span class="variable">Adam</span> <span class="variable">Dave</span> <span class="variable">Eva</span>))
+
+<span class="comment">;; Oldest Generation:</span>
+(<span class="keyword">define</span> <span class="variable">Carl</span> (<span class="builtin">make-parent</span> <span class="variable">Carl&amp;Bettina</span> <span class="keyword">'</span><span class="variable">Carl</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+(<span class="keyword">define</span> <span class="variable">Bettina</span> (<span class="builtin">make-parent</span> <span class="variable">Carl&amp;Bettina</span> <span class="keyword">'</span><span class="variable">Bettina</span> <span class="selfeval">1926</span> <span class="keyword">'</span><span class="variable">green</span>))
+</pre></div><p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 41:</b>&nbsp;&nbsp;A Scheme representation of the descendant family tree</td></tr>
+<tr><td> 
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+Let us now study the development of <code class="scheme"><span class="variable">blue-eyed-descendant?</span></code>, the
+natural companion of <code class="scheme"><span class="variable">blue-eyed-ancestor?</span></code>. It consumes a
+<code class="scheme"><span class="variable">parent</span></code> structure and determines whether it or any of its
+descendants has blue eyes:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-descendant?</span> <span class="selfeval">:</span> <span class="variable">parent</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-parent</span></code> or any of its descendants (children, </span>
+<span class="comment">;; grandchildren, and so on) have <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>) ...)
+</pre></div><p> 
+Here are three simple examples, formulated as tests: 
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">boolean=?</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">Gustav</span>) <span class="builtin">false</span>)
+(<span class="builtin">boolean=?</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">Eva</span>) <span class="builtin">true</span>)
+(<span class="builtin">boolean=?</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">Bettina</span>) <span class="builtin">true</span>)
+</pre></div><p>
+A glance at figure&nbsp;<a href="#node_fig_Temp_86">40</a> explains the answers in each case.</p>
+<p>
+According to our rules, the template for <code class="scheme"><span class="variable">blue-eyed-descendant?</span></code> is
+simple. Since its input is a plain class of structures, the template
+contains nothing but selector expressions for the fields in the structure:
+<a name="node_idx_1092"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>)
+  ... (<span class="builtin">parent-children</span> <span class="variable">a-parent</span>) ... 
+  ... (<span class="builtin">parent-name</span> <span class="variable">a-parent</span>) ... 
+  ... (<span class="builtin">parent-date</span> <span class="variable">a-parent</span>) ... 
+  ... (<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>) ... )
+</pre></div><p>
+The structure definition for <code class="scheme"><span class="variable">parent</span></code> specifies four fields so there
+are four expressions. </p>
+<p>
+The expressions in the template remind us that the eye color of the parent
+is available and can be checked. Hence we add a <strong>cond</strong>-expression 
+that compares <code class="scheme">(<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>)</code> to <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>) <span class="keyword">'</span><span class="variable">blue</span>) true]
+    [<span class="keyword">else</span> 
+      ... (<span class="builtin">parent-children</span> <span class="variable">a-parent</span>) ... 
+      ... (<span class="builtin">parent-name</span> <span class="variable">a-parent</span>) ... 
+      ... (<span class="builtin">parent-date</span> <span class="variable">a-parent</span>) ...]))
+</pre></div><p>
+The answer is <code class="scheme">true</code> if the condition holds. The <code class="scheme"><span class="keyword">else</span></code> clause
+contains the remaining expressions.  The <code class="scheme"><span class="variable">name</span></code> and <code class="scheme"><span class="variable">date</span></code>
+field have nothing to do with the eye color of a person, so we can ignore
+them. This leaves us with
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">parent-children</span> <span class="variable">a-parent</span>)
+</pre></div><p>
+an expression that extracts the list of children from the <code class="scheme"><span class="variable">parent</span></code>
+structure. </p>
+<p>
+If the eye color of some <code class="scheme"><span class="variable">parent</span></code> structure is not <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code>,
+we must clearly search the list of children for a blue-eyed descendant.
+Following our guidelines for complex functions, we add the function to our
+wish list and continue from there. The function that we want to put on a
+wish list consumes a list of children and checks whether any of these or
+their grandchildren has blue eyes. Here are the contract, header, and
+purpose statement:
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-children?</span> <span class="selfeval">:</span> <span class="variable">list-of-children</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether any of the structures on <code class="scheme"><span class="variable">aloc</span></code> is blue-eyed</span>
+<span class="comment">;; or has any blue-eyed descendant</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-children?</span> <span class="variable">aloc</span>) ...)
+</pre></div><p></p>
+<p>
+Using <code class="scheme"><span class="variable">blue-eyed-children?</span></code> we can complete the definition of 
+<code class="scheme"><span class="variable">blue-eyed-descendant?</span></code>: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>) <span class="keyword">'</span><span class="variable">blue</span>) true]
+    [<span class="keyword">else</span> (<span class="variable">blue-eyed-children?</span> (<span class="builtin">parent-children</span> <span class="variable">a-parent</span>))]))
+</pre></div><p>
+That is, if <code class="scheme"><span class="variable">a-parent</span></code> doesn't have blue eyes, we just look through
+the list of its children. </p>
+<p>
+Before we can test <code class="scheme"><span class="variable">blue-eyed-descendant?</span></code>, we must define the
+function on our wish list. To make up examples and tests for
+<code class="scheme"><span class="variable">blue-eyed-children?</span></code>, we use the list-of-children definitions in
+figure&nbsp;<a href="#node_fig_Temp_87">41</a>:
+</p>
+<div align="left"><pre class="scheme">(<span class="builtin">not</span> (<span class="variable">blue-eyed-children?</span> (<span class="builtin">list</span> <span class="variable">Gustav</span>)))
+</pre></div><p>
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-children?</span> (<span class="builtin">list</span> <span class="variable">Adam</span> <span class="variable">Dave</span> <span class="variable">Eva</span>))
+</pre></div><p>
+Gustav doesn't have blue eyes and doesn't have any recorded descendants.
+Hence, <code class="scheme"><span class="variable">blue-eyed-children?</span></code> produces <code class="scheme">false</code> for <code class="scheme">(<span class="builtin">list</span>
+<span class="variable">Gustav</span>)</code>. In contrast, <code class="scheme"><span class="variable">Eva</span></code> has blue eyes, and therefore
+<code class="scheme"><span class="variable">blue-eyed-children?</span></code> produces <code class="scheme">true</code> for the second list of
+children. </p>
+<p>
+Since the input for <code class="scheme"><span class="variable">blue-eyed-children?</span></code> is a list, the template is
+the standard pattern: 
+</p>
+<div align="left"><pre class="scheme">(<span class="keyword">define</span> (<span class="variable">blue-eyed-children?</span> <span class="variable">aloc</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloc</span>) ...]
+    [<span class="keyword">else</span>
+      ... (<span class="builtin">first</span> <span class="variable">aloc</span>) ...
+      ... (<span class="variable">blue-eyed-children?</span> (<span class="builtin">rest</span> <span class="variable">aloc</span>)) ...]))
+</pre></div><p></p>
+<p>
+Next we consider the two cases. If <code class="scheme"><span class="variable">blue-eyed-children?</span></code>'s input is
+<code class="scheme"><span class="builtin">empty</span></code>, the answer is <code class="scheme">false</code>. Otherwise we have two
+expressions: 
+</p>
+<ol>
+<li><p><code class="scheme">(<span class="builtin">first</span> <span class="variable">aloc</span>)</code>, which extracts the first item, a
+<code class="scheme"><span class="variable">parent</span></code> structure, from the list; and</p>
+<p>
+</p>
+<li><p><code class="scheme">(<span class="variable">blue-eyed-children?</span> (<span class="builtin">rest</span> <span class="variable">aloc</span>))</code>, which determines whether
+any of the structures on <code class="scheme"><span class="variable">aloc</span></code> is blue-eyed or has any blue-eyed
+descendant. 
+</p>
+</li></ol><p>
+Fortunately we already have a function that determines whether a
+<code class="scheme"><span class="variable">parent</span></code> structure or any of its descendants has blue eyes:
+<code class="scheme"><span class="variable">blue-eyed-descendant?</span></code>. This suggests that we check whether
+</p>
+<div align="left"><pre class="scheme">(<span class="variable">blue-eyed-descendant?</span> (<span class="builtin">first</span> <span class="variable">aloc</span>))
+</pre></div><p>
+holds and, if so, <code class="scheme"><span class="variable">blue-eyed-children?</span></code> can produce <code class="scheme">true</code>. If
+not, the second expression determines whether we have more luck with the
+rest of the list. </p>
+<p>
+Figure&nbsp;<a href="#node_fig_Temp_88">42</a> contains the complete definitions for both
+functions: <code class="scheme"><span class="variable">blue-eyed-descendant?</span></code> and <code class="scheme"><span class="variable">blue-eyed-children?</span></code>.
+Unlike any other group of functions, these two functions refer to each
+other. They are <small>M</small><small>U</small><small>T</small><small>U</small><small>A</small><small>L</small><small>L</small><small>Y</small> <small>R</small><small>E</small><small>C</small><small>U</small><small>R</small><small>S</small><small>I</small><small>V</small><small>E</small>.
+<a name="node_idx_1094"></a><a name="node_idx_1096"></a><a name="node_idx_1098"></a>Not surprisingly, the mutual references in the definitions match the mutual
+references in data definitions.  The figure also contains a pair of
+alternative definitions that use <code class="scheme"><span class="keyword">or</span></code> instead of nested
+<strong>cond</strong>-expressions.</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_88"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><a name="node_idx_1100"></a><a name="node_idx_1102"></a><div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-descendant?</span> <span class="selfeval">:</span> <span class="variable">parent</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-parent</span></code> any of the descendants (children, </span>
+<span class="comment">;; grandchildren, and so on) have <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">symbol=?</span> (<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>) <span class="keyword">'</span><span class="variable">blue</span>) true]
+    [<span class="keyword">else</span> (<span class="variable">blue-eyed-children?</span> (<span class="builtin">parent-children</span> <span class="variable">a-parent</span>))]))
+
+<span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-children?</span> <span class="selfeval">:</span> <span class="variable">list-of-children</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether any of the structures in <code class="scheme"><span class="variable">aloc</span></code> is blue-eyed</span>
+<span class="comment">;; or has any blue-eyed descendant</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-children?</span> <span class="variable">aloc</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloc</span>) false]
+    [<span class="keyword">else</span>
+      (<span class="keyword">cond</span>
+        [(<span class="variable">blue-eyed-descendant?</span> (<span class="builtin">first</span> <span class="variable">aloc</span>)) true]
+        [<span class="keyword">else</span> (<span class="variable">blue-eyed-children?</span> (<span class="builtin">rest</span> <span class="variable">aloc</span>))])]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<hr><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="left"><pre class="scheme"><span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-descendant?</span> <span class="selfeval">:</span> <span class="variable">parent</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether <code class="scheme"><span class="variable">a-parent</span></code> any of the descendants (children, </span>
+<span class="comment">;; grandchildren, and so on) have <code class="scheme"><span class="keyword">'</span><span class="variable">blue</span></code> in the <code class="scheme"><span class="variable">eyes</span></code> field</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-descendant?</span> <span class="variable">a-parent</span>)
+  (<span class="keyword">or</span> (<span class="builtin">symbol=?</span> (<span class="builtin">parent-eyes</span> <span class="variable">a-parent</span>) <span class="keyword">'</span><span class="variable">blue</span>)
+      (<span class="variable">blue-eyed-children?</span> (<span class="builtin">parent-children</span> <span class="variable">a-parent</span>))))
+
+<span class="comment">;; <code class="scheme"><span class="variable">blue-eyed-children?</span> <span class="selfeval">:</span> <span class="variable">list-of-children</span> &nbsp;<tt>-&gt;</tt>&nbsp; <span class="variable">boolean</span></code></span>
+<span class="comment">;; to determine whether any of the structures in <code class="scheme"><span class="variable">aloc</span></code> is blue-eyed</span>
+<span class="comment">;; or has any blue-eyed descendant</span>
+(<span class="keyword">define</span> (<span class="variable">blue-eyed-children?</span> <span class="variable">aloc</span>)
+  (<span class="keyword">cond</span>
+    [(<span class="builtin">empty?</span> <span class="variable">aloc</span>) false]
+    [<span class="keyword">else</span> (<span class="keyword">or</span> (<span class="variable">blue-eyed-descendant?</span> (<span class="builtin">first</span> <span class="variable">aloc</span>))
+              (<span class="variable">blue-eyed-children?</span> (<span class="builtin">rest</span> <span class="variable">aloc</span>)))]))
+</pre></div><p></p>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 42:</b>&nbsp;&nbsp;Two programs for finding a blue-eyed descendant</td></tr>
+<tr><td>
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<p><a name="node_thm_15.1.1"></a>
+<b>Exercise 15.1.1.</b>&nbsp;&nbsp; 
+Evaluate <code class="scheme">(<span class="variable">blue-eyed-descendant?</span> <span class="variable">Eva</span>)</code> by hand.  Then evaluate
+<code class="scheme">(<span class="variable">blue-eyed-descendant?</span> <span class="variable">Bettina</span>)</code>.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/be-desc-eval.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.1.2"></a>
+<b>Exercise 15.1.2.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">how-far-removed</span></code>. It determines how far a
+blue-eyed descendant, if one exists, is removed from the given parent. If
+the given <code class="scheme"><span class="variable">parent</span></code> has blue eyes, the distance is <code class="scheme"><span class="selfeval">0</span></code>; if
+<code class="scheme"><span class="variable">eyes</span></code> is not blue but at least one its children's eyes are,
+the distance is <code class="scheme"><span class="selfeval">1</span></code>; and so on.  If no descendant of the given
+<code class="scheme"><span class="variable">parent</span></code> has blue eyes, the function returns <code class="scheme">false</code> when it is
+applied to the corresponding family tree.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/desc-distance.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.1.3"></a>
+<b>Exercise 15.1.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">count-descendants</span></code>, which consumes a parent
+and produces the number of descendants, including the parent. </p>
+<p>
+Develop the function <code class="scheme"><span class="variable">count-proper-descendants</span></code>, which consumes a
+parent and produces the number of proper descendants, that is, all nodes in
+the family tree, not counting the parent.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/desc-count-ft.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.1.4"></a>
+<b>Exercise 15.1.4.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">eye-colors</span></code>, which consumes a parent and
+produces a list of all eye colors in the tree. An eye color may occur more
+than once in the list. </p>
+<p>
+<strong>Hint:</strong>  Use the Scheme operation <code class="scheme"><span class="builtin">append</span></code>, which consumes two lists
+and produces the concatenation of the two lists.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/desc-ec-ft.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p>
+</p>
+<a name="node_sec_15.2"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_15.2">15.2&nbsp;&nbsp;Designing Functions for Mutually Referential Definitions</a></h2>
+<p> <a name="node_idx_1104"></a></p>
+<p>
+The recipe for designing functions on mutually referential data definitions
+generalizes that for self-referential data. Indeed, it offers only two
+pieces of additional advice. First, we must create <em>several</em>
+templates simultaneously, one for each data definition. Second, we must 
+annotate templates with self-references and
+<small>C</small><small>R</small><small>O</small><small>S</small><small>S</small>-<small>R</small><small>E</small><small>F</small><small>E</small><small>R</small><small>E</small><small>N</small><small>C</small><small>E</small><small>S</small>,
+<a name="node_idx_1106"></a>that is, references among different templates. Here is a more detailed
+explanation of the differences:  
+</p>
+<dl><dt></dt><dd>
+</dd><dt><b>The data analysis and design:</b></dt><dd> If a problem mentions a number of
+different classes of information (of arbitrary size), we need a group of
+data definitions that are self-referential and that refer to each other.
+In these groups, we identify the self-references and the cross-references
+between two data definitions.<p>
+In the above example, we needed two interrelated definitions:
+<a name="node_idx_1108"></a><a name="node_idx_1110"></a></p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+</td></tr><tr><td>
+<p>
+</p>
+
+<img src="../icons/dd-tree.gif" alt="tree data def with arrow">
+</td></tr><tr><td>
+<p>
+</p>
+</td></tr></table></div>
+<p>
+The first one concerns parents and another one for list of children. The
+first (unconditionally) defines a parent in terms of symbols, numbers, and
+a list of children, that is, it contains a cross-reference to the second
+definition. This second definition is a conditional definition. Its first
+clause is simple; its second clause references both the definition for
+<code class="scheme"><span class="variable">parent</span></code>s and <code class="scheme"><span class="variable">list-of-children</span></code>.</p>
+<p>
+</p>
+</dd><dt><b>Contract, Purpose, Header:</b></dt><dd> To process interrelated classes of data, we
+typically need as many functions as there are class definitions. Hence, we must
+formulate as many contracts, purpose statements, and headers in parallel as there
+are data definitions. <p>
+</p>
+</dd><dt><b>Templates:</b></dt><dd> The templates are created in parallel, following the advice
+concerning compound data, mixed data, and self-referential data. Finally, we must
+determine for each selector expression in each template whether it corresponds to a
+cross-reference to some definition. If so, we annotate it in the same way we
+annotate cross-references.<p>
+Here are the templates for our running example: </p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+
+<p><img src="../icons/fun-tree.gif" alt="tree data def with arrow">
+<p>
+The <code class="scheme"><span class="variable">fun-parent</span></code> template is unconditional because the data
+definition for <code class="scheme"><span class="variable">parent</span></code>s does not contain any clauses. It contains
+a cross-reference to the second template: to process the
+<code class="scheme"><span class="variable">children</span></code> field of a <code class="scheme"><span class="variable">parent</span></code> structure. By the same rules,
+<code class="scheme"><span class="variable">fun-children</span></code> is conditional. The second <code class="scheme"><span class="keyword">cond</span></code>-clause
+contains one self-reference, for the <code class="scheme"><span class="builtin">rest</span></code> of the list, and one
+cross-reference for the <code class="scheme"><span class="builtin">first</span></code> item of the list, which is a
+<code class="scheme"><span class="variable">parent</span></code> structure.</p>
+<p>
+A comparison of the data definitions and the templates shows how analogous the two
+are. To emphasize the similarity in self-references and cross-references, the data
+definitions and templates have been annotated with arrows. It is easy to see how
+corresponding arrows have the same origin and destination in the two pictures. </p>
+<p>
+</p>
+</dd><dt><b>The body:</b></dt><dd> As we proceed to create the final definitions, we start
+with a template or a <code class="scheme"><span class="keyword">cond</span></code>-clause that does not contain
+self-references to the template and cross-references to other templates.
+The results are typically easy to formulate for such templates or
+<code class="scheme"><span class="keyword">cond</span></code>-clauses.<p>
+The rest of this step proceeds as before. When we deal with other clauses
+or functions, we remind ourselves what each expression in the template
+computes, assuming that <em>all</em> functions already work as specified in
+the contracts. Then we decide how to combine these pieces of data into a
+final answer. As we do that, we must not forget the guidelines concerning
+the composition of complex functions (sections&nbsp;<a href="curriculum-Z-H-10.html#node_sec_7.3">7.3</a>
+and&nbsp;<a href="curriculum-Z-H-16.html#node_chap_12">12</a>).  
+</p>
+</dd></dl><p>
+Figure&nbsp;<a href="#node_fig_Temp_89">43</a> summarizes the extended design recipe. 
+</p>
+<p>
+<a name="node_idx_1112"></a>
+<a name="node_idx_1114"></a>
+<a name="node_idx_1116"></a>
+<a name="node_idx_1118"></a>
+<a name="node_idx_1120"></a>
+<a name="node_idx_1122"></a>
+<a name="node_idx_1124"></a>
+<a name="node_idx_1126"></a>
+<a name="node_idx_1128"></a>
+<a name="node_idx_1130"></a>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+
+</p>
+<p>
+</p>
+<p></p>
+<center><table bgcolor="beige"><tr><td><a name="node_fig_Temp_89"></a>
+<div class="figure" align="center"><table width="100%"><tr><td align="center"><p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+<div align="center"><table><tr><td>
+
+<table border="1"><tr><td valign="top">Phase            </td><td valign="top">Goal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">Activity </td></tr>
+<tr><td valign="top"><p></p>
+<div align="left">
+Data<br>
+&nbsp;&nbsp;Analysis<br>
+and Design
+</div><p>  </p>
+</td><td valign="top"><p></p>
+<div align="left">to formulate a group of related data definitions </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop a group of mutually recursive data
+definitions <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> at least one definition or one alternative in a definition
+must refer to basic data <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> <em>explicitly identify all references among the
+data definitions</em></div><p></p></td></tr>
+<tr><td valign="top">Template        
+</td><td valign="top"><p></p>
+<div align="left">to formulate a group of function outlines </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">develop <em>as many templates as there are data
+definitions <em>simultaneously</em></em> <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> develop each templates according to
+the rules for compound and/or mixed data definitions as appropriate <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> annotate the templates with recursions and cross-applications to match the
+(cross-)references in the data definitions</div><p></p></td></tr>
+<tr><td valign="top">Body&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</td><td valign="top"><p></p>
+<div align="left">to define a group of functions </div><p></p>
+</td><td valign="top"><p></p>
+<div align="left">formulate a Scheme expression for each template,
+and for each <strong>cond</strong>-clause in a template <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> explain what each
+expression in each template computes <img src="curriculum-Z-G-D-4.gif" border="0" alt="[curriculum-Z-G-D-4.gif]"> use additional auxiliary
+functions where necessary</div><p></p></td></tr>
+<tr><td valign="top">
+</td></tr></table>
+</td></tr></table></div>
+<p>
+</p>
+<p></p>
+<p></p>
+<p>
+</p>
+</td></tr>
+<tr><td align="center"><b>Figure 43:</b>&nbsp;&nbsp;Designing groups of functions for groups of data definitions</td></tr>
+<tr><td>
+
+<div align="center">&nbsp;the essential steps; for others see 
+figures&nbsp;<a href="curriculum-Z-H-5.html#node_fig_Temp_22">4</a> (pg.&nbsp;<a href="curriculum-Z-H-5.html">5</a>), 
+<a href="curriculum-Z-H-9.html#node_fig_Temp_39">12</a> (pg.&nbsp;<a href="curriculum-Z-H-9.html">9</a>), and
+<a href="curriculum-Z-H-10.html#node_fig_Temp_51">18</a> (pg.&nbsp;<a href="curriculum-Z-H-10.html">10</a>)&nbsp;</div>
+
+</td></tr></table></div><p></p>
+</td></tr></table></center><p></p>
+<p>
+</p>
+<a name="node_sec_15.3"></a>
+<h2><a href="curriculum-Z-H-1.html#node_toc_node_sec_15.3">15.3&nbsp;&nbsp;Extended Exercise: More on Web Pages</a></h2>
+<p></p>
+<p>
+With mutually referential data definitions we can represent Web pages in a
+more accurate manner than in section&nbsp;<a href="curriculum-Z-H-19.html#node_sec_14.3">14.3</a>. Here is the basic
+structure definition: 
+<a name="node_idx_1132"></a></p>
+<div align="left"><pre class="scheme">(<span class="keyword">define-struct</span> <span class="variable">wp</span> (<span class="variable">header</span> <span class="variable">body</span>))
+</pre></div><p>
+The two fields contain the two essential pieces of data in a Web page: a
+<code class="scheme"><span class="variable">header</span></code> and a <code class="scheme"><span class="variable">body</span></code>.  The data definition specifies that a
+body is a list of words and Web pages:</p>
+<p>
+<a name="node_idx_1134"></a><a name="node_idx_1136"></a><a name="node_idx_1138"></a>A <i>Web-page</i> (short: <i>WP</i>) is a structure:<br>
+</p>
+<div align="center">&nbsp;<code class="scheme">(<span class="builtin">make-wp</span> <span class="variable">h</span> <span class="variable">p</span>)</code>&nbsp;</div>
+
+where <code class="scheme"><span class="variable">h</span></code> is a symbol and <code class="scheme"><span class="variable">p</span></code> is a (Web) document.<p>
+</p>
+<p></p>
+<p></p>
+<p>
+A (<i>Web</i>) <i>document</i> is either
+</p>
+<ol>
+<li><p><code class="scheme"><span class="builtin">empty</span></code>,
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">s</span> <span class="variable">p</span>)</code> <br>
+where <code class="scheme"><span class="variable">s</span></code> is a symbol and <code class="scheme"><span class="variable">p</span></code> is a document, or 
+</p>
+<li><p><code class="scheme">(<span class="builtin">cons</span> <span class="variable">w</span> <span class="variable">p</span>)</code> <br>
+where <code class="scheme"><span class="variable">w</span></code> is a Web page and <code class="scheme"><span class="variable">p</span></code> is a document. 
+</p>
+</li></ol><p></p>
+<p>
+</p>
+<p><a name="node_thm_15.3.1"></a>
+<b>Exercise 15.3.1.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">size</span></code>, which consumes a Web page and produces
+the number of symbols (words) it contains. &nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/wp-count.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.3.2"></a>
+<b>Exercise 15.3.2.</b>&nbsp;&nbsp; 
+</p>
+<p>
+Develop the function <code class="scheme"><span class="variable">wp-to-file</span></code>. The function consumes a Web page
+and produces a list of symbols. The list contains all the words in a body
+and all the headers of embedded Web pages. The bodies of immediately
+embedded Web pages are ignored.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/wp-to-file.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.3.3"></a>
+<b>Exercise 15.3.3.</b>&nbsp;&nbsp; 
+Develop the function <code class="scheme"><span class="variable">occurs</span></code>. It consumes a symbol and a Web page
+and determines whether the former occurs anywhere in the latter, including
+the embedded Web pages.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/wp-occurs.html">Solution</a></p>
+<p></p>
+<p>
+</p>
+<p><a name="node_thm_15.3.4"></a>
+<b>Exercise 15.3.4.</b>&nbsp;&nbsp; 
+Develop the program <code class="scheme"><span class="variable">find</span></code>. The function consumes a Web page and a
+symbol. It produces <code class="scheme">false</code>, if the symbol does not occur in the body
+of the page or its embedded Web pages. If the symbol occurs at least once, 
+it produces a list of the headers that are encountered on the way to the
+symbol. </p>
+<p>
+<strong>Hint:</strong>  Define an auxiliary like <code class="scheme"><span class="variable">find</span></code> that produces only
+<code class="scheme"><span class="builtin">true</span></code> when a Web page contains the desired word. Use it to define
+<code class="scheme"><span class="variable">find</span></code>. Alternatively, use <code class="scheme"><span class="builtin">boolean?</span></code> to determine whether a
+natural recursion of <code class="scheme"><span class="variable">find</span></code> produced a list or a boolean. Then
+compute the result again. We will discuss this second technique, called
+backtracking, in the intermezzo at the end of this
+part.&nbsp;&nbsp;<img src="../icons/hand.right.gif">
+&nbsp;<a href="../Solutions/wp-find.html">Solution</a></p>
+<p></p>
+<p>
+
+</p>
+<div align="right" class="navigation"><i>[Go to <span><a href="curriculum.html">first</a>, <a href="curriculum-Z-H-19.html">previous</a></span><span>, <a href="curriculum-Z-H-21.html">next</a></span> page<span>; &nbsp;&nbsp;</span><span><a href="curriculum-Z-H-1.html#node_toc_start">contents</a></span><span><span>; &nbsp;&nbsp;</span><a href="curriculum-Z-H-55.html#node_index_start">index</a></span>]</i></div><p></p>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Book/curriculum-Z-H-20.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>

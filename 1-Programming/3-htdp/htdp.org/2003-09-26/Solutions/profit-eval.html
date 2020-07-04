@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/profit-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+<head>
+<title>Exercise 3.1.3; How to Design Programs </title>
+</head>
+<body>
+<a href="movie-examples2.html">3.1.2</a> | <a href="../Book/curriculum-Z-H-6.html#node_thm_3.1.3">Problem Statement</a>
+ | <a href="contents.html">Table of Contents</a>
+ | <a href="profit-comp.html">3.1.4</a><pre>;; How to design a program  
+(define (profit-left ticket-price) 
+  (- (revenue ticket-price) 
+     (cost ticket-price))) 
+
+(define (revenue ticket-price) 
+  (*  (attendees ticket-price) ticket-price)) 
+
+(define (cost ticket-price) 
+  (+ 180  
+     (* .04 (attendees ticket-price)))) 
+
+(define (attendees ticket-price) 
+  (+ 120 
+     (* (/ 15 .10) (- 5.00 ticket-price)))) 
+
+
+;; How not to design a program  
+(define (profit-right price) 
+  (- (* (+ 120 
+           (* (/ 15 .10) 
+              (- 5.00 price))) 
+        price) 
+     (+ 180  
+        (* .04 
+           (+ 120 
+              (* (/ 15 .10) 
+                 (- 5.00 price))))))) 
+
+
+;; results for original profit-left and profit-right
+(profit-left 3.00) "should be"
+(profit-right 3.00)
+(profit-left 4.00) "should be"
+(profit-right 4.00)
+(profit-left 5.00) "should be"
+(profit-right 5.00)
+</pre>
+</body>
+<!-- Copied from https://htdp.org/2003-09-26/Solutions/profit-eval.html by Cyotek WebCopy 1.8.0.652, 01 July 2020, 17:43:44 -->
+</html>
